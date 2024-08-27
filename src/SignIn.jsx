@@ -8,6 +8,9 @@ function SignIn() {
 
     return (
         <div className="signForm">
+                <div className="image-container">
+                    {/* I WILL DISPLAY IT IN CSS */}
+                </div>
             <h2 className="signinhead">Sign In</h2>
             <form className="form">
                 <input type="text" placeholder="Username" />

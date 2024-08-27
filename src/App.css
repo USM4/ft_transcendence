@@ -43,11 +43,11 @@
   gap:20px;
   margin:80px;
   padding:1px; */
-  padding: 50px 20px;
+  padding: 50px 30px;
   margin: 0 auto;
   max-width: 500px;
   margin-top: 300px;
-
+  background-color: black;
 }
 
 input {

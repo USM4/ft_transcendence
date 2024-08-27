@@ -8,7 +8,7 @@ const Navbar = function() {
         <ul className ="navbar">
           <li>
                 
-            <button className="navbutton"> Logo </button></li>
+            <button className="navbutton"> Authentification </button></li>
           <li>
             <Link to="signin">
             <button className="navbutton"> Sign in</button>
