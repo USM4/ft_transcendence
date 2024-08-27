@@ -6,9 +6,11 @@ const Navbar = function() {
     return(
         <div className="navigate"> 
         <ul className ="navbar">
-          <li>
-                
-            <button className="navbutton"> Authentification </button></li>
+          <li>    
+            <Link to="/">
+            <button className="navbutton"> Authentification </button>
+            </Link>
+            </li>
           <li>
             <Link to="signin">
             <button className="navbutton"> Sign in</button>

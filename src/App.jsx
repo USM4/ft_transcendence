@@ -12,6 +12,7 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
+          <Route path='/' element={''}/>
           <Route path='/signin' element={<SignIn/>} />
           {/* <Route path='/signup' element={<SignUp/>} /> */}
         </Routes>
