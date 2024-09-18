@@ -8,10 +8,10 @@ function SignIn() {
 
     return (
         <div className="signForm">
-                <div className="image-container">
-                    {/* I WILL DISPLAY IT IN CSS */}
-                </div>
             <h2 className="signinhead">Sign In</h2>
+                <button className="intra_sign_in">
+                    Sign in with intra
+                </button>
             <form className="form">
                 <input type="text" placeholder="Username" />
                 <input type="password" placeholder="Password" />
