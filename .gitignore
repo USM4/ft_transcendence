@@ -29,7 +29,6 @@ env
 .*
 *.py.bak
 
-
 /site/
 /htmlcov/
 /coverage/
