@@ -1,1 +1,0 @@
-class AuthSerializer(serializers.ModelSerializers):
