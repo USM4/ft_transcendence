@@ -19,3 +19,17 @@
 **URL (Routing Layer)**
 > A URL is the address or path that someone visits to access a specific view. It’s like the address of a house. In Django, the URL is how the system knows which view to call when a request is made.  
 > When you visit a website, you type a URL (like example.com/books/). That URL leads to a specific page (or view) on the website, which shows you the data you requested (like a list of books).  
+
+_Steps for JWT authentification_  
+-> Step 1: Sign-Up (Registration)
+A user sends their details (username, email, password) to /signup/.  
+The SignUpView view validates and saves the user data.  
+-> Step 2: Password Hashing  
+In real applications, passwords should be hashed before saving.  
+-> Step 3: Sign-In (Login)  
+*The user sends their username and password to a sign-in URL.*  
+*The backend verifies if the credentials are correct.*  
+-> Step 4: Token Generation for Authentication   
+>For session management, it's common to generate JWT (JSON Web Tokens) in DRF  
+
+
