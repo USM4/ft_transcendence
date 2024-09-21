@@ -19,7 +19,7 @@ function SignIn() {
                 <input type="text" placeholder="email or username" />
                 <input type="password" className="signInPassword" placeholder="password" />
                 <p className="forgotPasswordSignIn">Forgot password ?</p>
-                <button className="signinbutton" type="button" onClick={handleSignInClick}>
+                <button className="signinbutton" type="submit" onClick={handleSignInClick}>
                     Login
                 </button>
                 <div className="msgSignIn">
