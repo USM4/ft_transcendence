@@ -38,3 +38,4 @@ env
 /env/
 MANIFEST
 coverage.*
+db.sqlite3
