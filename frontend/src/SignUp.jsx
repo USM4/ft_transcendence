@@ -9,29 +9,35 @@ function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [newpassword, setNewPassword] = useState('');
+    const [errorMessages, setErrorMessages] = useState([]);
+    const [successMessages, setSuccessMessages] = useState([]);
+
 
     const handleSignUpClick = async(e) => {
+        setErrorMessages([]);  // Clear error messages on new submission
+        setSuccessMessages([]);
         e.preventDefault();
-        if (password !== newpassword) 
-        {
-            console.log("Passwords not matching");
-            return;
-        }
         const response = await fetch('http://127.0.0.1:8000/auth/signup/',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, email, password}),
+            body: JSON.stringify({username, email, password , newpassword}),
         });
         const data = await response.json();
         console.log(data);
         if (response.ok)
-            console.log("Signed up successfully!");
+        {
+            const successmsg = Object.values(data);
+            setSuccessMessages(successmsg);
+        }
         else 
         {
-            if (response.status === 400)
-                console.error(data.error);
+            if (!response.ok) {
+                const errors = Object.values(data);
+                setErrorMessages(errors);
+            }
+        
         }
     };
 
@@ -73,6 +79,20 @@ function SignUp() {
                     <Link to="/signin" className="msgSignIn"><span className="signUpLink">Sign In</span></Link>
                 </div>                
             </form>
+            {errorMessages.length > 0 && (
+            <div className="error-messages">
+                {errorMessages.map((error, index) => (
+                    <p key={index} className="error">{error}</p>
+                ))}
+            </div>
+            )}
+            {successMessages.length > 0 && (
+            <div className="success-messages">
+                {successMessages.map((success, index) => (
+                    <p key={index} >{success}</p>
+                ))}
+            </div>
+            )}
         </div>
     )
 };

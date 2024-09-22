@@ -24,13 +24,13 @@
 
 ![alt text](16new.png)  
 
->User starts by logging in using a login form implemented with React  
->This causes the React code to send the username and the password to the server address /api/login as an HTTP POST request.  
->If the username and the password are correct, the server generates a token that somehow identifies the logged-in user.  
->The backend responds with a status code indicating the operation was successful and returns the token with the response.  
->The browser saves the token, for example to the state of a React application.  
->When the user creates a new note (or does some other operation requiring identification), the React code sends the token to the server with the request.  
->The server uses the token to identify the user  
+> -> User starts by logging in using a login form implemented with React  
+> -> This causes the React code to send the username and the password to the server address /api/login as an HTTP POST request.  
+> -> If the username and the password are correct, the server generates a token that somehow identifies the logged-in user.  
+> -> The backend responds with a status code indicating the operation was successful and returns the token with the response.  
+> -> The browser saves the token, for example to the state of a React application.  
+> -> When the user creates a new note (or does some other operation requiring identification), the React code sends the token to the server with the request.  
+> -> The server uses the token to identify the user  
 
 
 

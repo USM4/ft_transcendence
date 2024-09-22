@@ -132,3 +132,13 @@
 .forgotPasswordSignIn:hover{
   cursor: pointer;
 }
+
+.error-messages{
+  font-size: 13px;
+  color:  #f5b83d;
+}
+
+.success-messages{
+  font-size: 14px;
+  color: #bde052;
+}
