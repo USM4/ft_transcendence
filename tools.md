@@ -4,5 +4,6 @@
 -> pip install Django 
 -> pip install djangorestframework
 -> pip install django-cors-headers
+-> pip install djangorestframework-simplejwt
 **Inspect the Database Schema**   
 >PRAGMA table_info(authentification_client);  

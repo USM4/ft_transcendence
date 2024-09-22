@@ -1,12 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
+from django.contrib.auth import authenticate
 from rest_framework.views import APIView
-from .serializers import ClientSerializer
+from .models import Client
+from .serializers import ClientSignUpSerializer
 
 class SignUpView(APIView):
     def post(self, request):
         # print(request.data)
-        serializer = ClientSerializer(data=request.data)
+        serializer = ClientSignUpSerializer(data=request.data)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')
@@ -21,4 +23,34 @@ class SignUpView(APIView):
             serializer.save()
             return Response({"success": "User created successfully "}, status=status.HTTP_201_CREATED)
         return Response({"error": "User Already signed up"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+class SignInView(APIView):
+    def post(self, request):
+        parse_login = request.data.get('login')
+        password = request.data.get('password')
+        if '@' in parse_login and '.' in parse_login:
+            try:
+                client = Client.objects.get(email=parse_login)
+                username = client.username
+            except Client.DoesNotExist:
+                return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            username = parse_login
+        # print(password)
+        # print(username)
+        client = authenticate(username=username, password=password)
+        print('#########################################')
+        # if client is not None:
+        # else:
+        #     print("Client not found")
+        # client = Client.objects.get(username=username)
+        # print(client.is_active)
+        if client is not None:
+            print('goood')
+            return Response({"success": "logged in created successfully "}, status=status.HTTP_200_OK)
+        print('bad')
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+# refresh = RefresToken.for_user(client)
+# access = str(refresh.access_token)
+# return Response({'refresh': str(refresh),'access': access,},status=status.HTTP_200_OK)
+# return Response({'refresh': str(refresh),'access': access,},status=status.HTTP_200_OK)

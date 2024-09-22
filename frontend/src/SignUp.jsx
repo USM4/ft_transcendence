@@ -14,7 +14,7 @@ function SignUp() {
 
 
     const handleSignUpClick = async(e) => {
-        setErrorMessages([]);  // Clear error messages on new submission
+        setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
         const response = await fetch('http://127.0.0.1:8000/auth/signup/',{
