@@ -6,8 +6,6 @@ import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <Router>

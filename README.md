@@ -20,16 +20,22 @@
 > A URL is the address or path that someone visits to access a specific view. It’s like the address of a house. In Django, the URL is how the system knows which view to call when a request is made.  
 > When you visit a website, you type a URL (like example.com/books/). That URL leads to a specific page (or view) on the website, which shows you the data you requested (like a list of books).  
 
-_Steps for JWT authentification_  
--> Step 1: Sign-Up (Registration)
-A user sends their details (username, email, password) to /signup/.  
-The SignUpView view validates and saves the user data.  
--> Step 2: Password Hashing  
-In real applications, passwords should be hashed before saving.  
--> Step 3: Sign-In (Login)  
-*The user sends their username and password to a sign-in URL.*  
-*The backend verifies if the credentials are correct.*  
--> Step 4: Token Generation for Authentication   
->For session management, it's common to generate JWT (JSON Web Tokens) in DRF  
+**Steps for JWT authentification**  
+
+![alt text](16new.png)  
+
+$ User starts by logging in using a login form implemented with React  
+$ This causes the React code to send the username and the password to the server address /api/login as an HTTP POST request.  
+$ If the username and the password are correct, the server generates a token that somehow identifies the logged-in user.  
+$ The backend responds with a status code indicating the operation was successful and returns the token with the response.  
+$ The browser saves the token, for example to the state of a React application.  
+$ When the user creates a new note (or does some other operation requiring identification), the React code sends the token to the server with the request.  
+$ The server uses the token to identify the user  
+
+
+
+
+
+
 
 

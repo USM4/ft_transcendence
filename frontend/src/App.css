@@ -14,7 +14,6 @@
   align-items: center;
   list-style-type: none;
   line-height: 4.5;
-  font-weight: 10;
   gap: 20px;
 }
 
@@ -22,14 +21,14 @@
   font-family: inherit;
   background-color: transparent;
   border: none;
-  font-size: 30px;
+  font-size: 20px;
   color: rgb(247, 243, 130);
   cursor: pointer;
   transition: transform 0.5s ease, background-color 0.3s ease;
 }
 .navbutton:hover {
   transform: scale(1.1);
-  font-size: 34px ;
+  font-size: 22px ;
   color: black;
   /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
 }

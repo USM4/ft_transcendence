@@ -3,14 +3,14 @@ from rest_framework import serializers
 from .models import Client
 
 class ClientSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
 
     class Meta:
         model = Client
-        fields = ['username', 'password']
+        fields = ['username', 'email' , 'password']
 
     def create(self, validated_data):
-        client = Client(username=validated_data['username'])
+        client = Client(username=validated_data['username'], email=validated_data['email']) 
         client.set_password(validated_data['password'])
+        # print('dkhel lhna ')
         client.save()
         return client

@@ -6,6 +6,7 @@ import SignIn from './SignIn.jsx'
 
 function SignUp() {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [newpassword, setNewPassword] = useState('');
 
@@ -16,24 +17,22 @@ function SignUp() {
             console.log("Passwords not matching");
             return;
         }
-
         const response = await fetch('http://127.0.0.1:8000/auth/signup/',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, password}),
+            body: JSON.stringify({username, email, password}),
         });
         const data = await response.json();
+        console.log(data);
         if (response.ok)
-            console.log("Signed up successfully !!!!!!!!!!!! ");
-        else
+            console.log("Signed up successfully!");
+        else 
         {
-            const data = await response.json();
-            setErrorMessage(data.error || "Sign up failed!"); // Show error message if available
-            console.log("Sign up failed!");
+            if (response.status === 400)
+                console.error(data.error);
         }
-        console.log("Sign up button clicked");
     };
 
     return (
@@ -45,22 +44,24 @@ function SignUp() {
             </button>
             <form className="form" onSubmit={handleSignUpClick}>
                 <input  type="text"
-                        placeholder="email or username"
-                        autoComplete="username"
+                        placeholder="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        />
+                <input  type="email"
+                        placeholder="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         />
                 <input  type="password"
                         className="signInPassword"
                         placeholder="password"
-                        autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         />
                 <input  type="password"
                         className="signInPassword"
                         placeholder="confirm your password"
-                        autoComplete="current-password"
                         value={newpassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         />

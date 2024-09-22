@@ -8,16 +8,13 @@ const Navbar = function() {
         <ul className ="navbar">
           <li>    
             <Link to="/">
-            <button className="navbutton"> Auth </button>
+            <button className="navbutton"> Smash it </button>
             </Link>
             </li>
           <li>
             <Link to="signin">
             <button className="navbutton"> Sign in</button>
             </Link>
-            {/* <Link to="signup">
-            <button className="navbutton"> Sign Up</button>
-            </Link> */}
             </li>
         </ul>
       </div>
