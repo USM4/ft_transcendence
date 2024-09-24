@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
+# from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import check_password
 from rest_framework.views import APIView
 from .models import Client
 from .serializers import ClientSignUpSerializer
@@ -36,20 +37,19 @@ class SignInView(APIView):
                 return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             username = parse_login
-        # print(password)
-        # print(username)
-        client = authenticate(username=username, password=password)
-        print('#########################################')
         # if client is not None:
-        # else:
-        #     print("Client not found")
-        # client = Client.objects.get(username=username)
-        # print(client.is_active)
-        if client is not None:
-            print('goood')
-            return Response({"success": "logged in created successfully "}, status=status.HTTP_200_OK)
-        print('bad')
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            client = Client.objects.get(username=username)
+            if check_password(password, client.password):
+                print('goood')
+                return Response({"success": "logged in created successfully "}, status=status.HTTP_200_OK)
+            else:
+                print('bad')
+                return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        except Client.DoesNotExist:
+            print('bad')
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 # refresh = RefresToken.for_user(client)
 # access = str(refresh.access_token)
 # return Response({'refresh': str(refresh),'access': access,},status=status.HTTP_200_OK)
