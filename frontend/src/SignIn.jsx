@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 import "./App.css"
 
@@ -8,7 +10,7 @@ function SignIn() {
     const [password, setPassword] = useState('')
     const [errorMessages, setErrorMessages] = useState([]);
     const [successMessages, setSuccessMessages] = useState([]);
-    
+    const navigate = useNavigate();    
     const handleSignInClick = async(e) => {
         setErrorMessages([]);
         setSuccessMessages([]);
@@ -23,10 +25,7 @@ function SignIn() {
         const data = await response.json();
         console.log(data);
         if (response.ok)
-        {
-            const successmsg = Object.values(data);
-            setSuccessMessages(successmsg);
-        }
+            navigate('/dashboard');
         else 
         {
             if (!response.ok) {

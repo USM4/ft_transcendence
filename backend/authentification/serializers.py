@@ -11,6 +11,5 @@ class ClientSignUpSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         client = Client(username=validated_data['username'], email=validated_data['email']) 
         client.set_password(validated_data['password'])
-        # print('dkhel lhna ')
         client.save()
         return client
