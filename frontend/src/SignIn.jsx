@@ -23,16 +23,18 @@ function SignIn() {
             body: JSON.stringify({login, password}),
         });
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         if (response.ok)
+        {
+            console.log(Object.values(data));
             navigate('/dashboard');
+        }
         else 
         {
             if (!response.ok) {
                 const errors = Object.values(data);
                 setErrorMessages(errors);
             }
-        
         }
     };
 

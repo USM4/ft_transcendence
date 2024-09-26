@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from .models import Client
 from .serializers import ClientSignUpSerializer
@@ -38,11 +39,11 @@ class SignInView(APIView):
             username = parse_login
         client = authenticate(username=username, password=password)
         if client is not None:
-            return Response({"success": "User logged in successfully "}, status=status.HTTP_201_CREATED)
+            refresh = RefreshToken.for_user(client)
+            access = str(refresh.access_token)
+            return Response({"refresh": str(refresh), "access": str(access)} , status=status.HTTP_201_CREATED)
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-# refresh = RefresToken.for_user(client)
-# access = str(refresh.access_token)
 # 'refresh': str(refresh),
 # 'access':  str(refresh.access_token),
 # try:
