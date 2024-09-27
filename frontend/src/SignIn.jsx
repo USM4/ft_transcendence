@@ -20,10 +20,10 @@ function SignIn() {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials : 'include',
             body: JSON.stringify({login, password}),
         });
         const data = await response.json();
-        // console.log(data);
         if (response.ok)
         {
             console.log(Object.values(data));

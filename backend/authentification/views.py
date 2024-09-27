@@ -39,17 +39,10 @@ class SignInView(APIView):
             username = parse_login
         client = authenticate(username=username, password=password)
         if client is not None:
+            response = Response()
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            return Response({"refresh": str(refresh), "access": str(access)} , status=status.HTTP_201_CREATED)
+            response.set_cookie('access', access,httponly=True, samesite=None, secure=True)
+            response.data = {"valid" : "hmed"}
+            return response
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
-# 'refresh': str(refresh),
-# 'access':  str(refresh.access_token),
-# try:
-#     client = Client.objects.get(username=username)
-#     if check_password(password, client.password):
-#         return Response({"success": "logged in successfully"
-#                         }, status=status.HTTP_200_OK)
-#     else:
-#         # print('bad')
