@@ -5,16 +5,18 @@ import Navbar from './Navbar.jsx'
 import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
 import Dashboard from './Dashboard.jsx'
+import HomePage from './HomePage.jsx';
 
 function App() {
   return (
     <>
-      <Router>
+        <Router>
         <Navbar />
         <Routes>
-          <Route path='/' element={''}/>
+          <Route path='/' element={<HomePage/>}/>
           <Route path='/signin' element={<SignIn/>} />
           <Route path='/signup' element={<SignUp/>} />
+          
           <Route path='/dashboard' element={<Dashboard/>} />
         </Routes>
       </Router>

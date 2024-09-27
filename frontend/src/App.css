@@ -17,6 +17,43 @@
   gap: 20px;
 }
 
+.container{
+  display: flex;
+  margin-top: 100px;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
+.logo{
+
+  padding: 10px;
+  border: 2px solid rgb(247, 243, 130);
+  font-family: inherit;
+  background-color: transparent;
+  font-size: 20px;
+  color: rgb(247, 243, 130);
+  cursor: pointer;
+}
+
+.logo a:hover{
+  color: #fff;
+}
+
+.body{
+  text-align: left;
+  color: rgb(247, 243, 130);
+  font-family: inherit;
+  font-size:larger;
+  height: max-content;
+}
+
+.hamster{
+  width: 400px;
+  height: 100%;
+  box-shadow: 0 70px 60px rgba(0, 0, 0, 0.5);
+}
+
 .navbutton {
   font-family: inherit;
   background-color: transparent;
