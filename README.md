@@ -33,6 +33,13 @@
 > -> The server uses the token to identify the user  
 
 
+**OAuth**  
+-> What is OAuth?
+>OAuth (Open Authorization) is a standard protocol that allows third-party services to exchange secure user data without exposing   
+>their passwords. It involves a flow where the user grants permission to an app (your DRF backend) to access certain information  
+>from their account (like name, email) on a provider (Google, Facebook, etc.).  
+
+
 
 
 
