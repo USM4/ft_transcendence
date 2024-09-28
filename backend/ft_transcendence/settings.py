@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # Required by allauth    
+    # Authentication and allauth apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.oauth2',  # Base for OAuth2
+    'allauth.socialaccount.providers.42school', 
+    'dj_rest_auth',
 ]
 
 MIDDLEWARE = [
@@ -97,12 +106,33 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
 }
 
+CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-key')
+SECRET_ID = os.getenv('SECRET_ID', 'default-secret-key')
+
+SOCIALACCOUNT_PROVIDERS = {
+        '42school': {
+        'SCOPE': ['public'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'APP': {
+            'client_id': CLIENT_ID,
+            'secret': SECRET_ID,
+            'key': ''
+        }
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "username"
 
 AUTH_PASSWORD_VALIDATORS = [
     {

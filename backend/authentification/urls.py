@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from authentification.views import SignUpView
 from authentification.views import SignInView
 
