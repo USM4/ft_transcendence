@@ -28,13 +28,6 @@ function SignIn() {
          if (response.ok)
             {
                 console.log(Object.values(val));
-                fetch('http://127.0.0.1:8000/auth/some_view/', {
-                    method: 'GET',
-                    credentials: 'include'
-                })
-                .then(response => response.json())
-                .then( val=> console.log(val));
-                // console.log('vdslanbdsvdakbvxkbdjksbjkbjkabdkjbvjkba')
                 navigate('/dashboard');
             }
             else 
