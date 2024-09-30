@@ -15,27 +15,64 @@ function SignIn() {
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-        const response = await fetch('http://127.0.0.1:8000/auth/signin/',{
-            method: 'POST',
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+          }
+          
+          // Use the getCookie function to get the JWT token and set it in the headers for every request.
+          const token = getCookie('access');
+          console.log(`Token: ${token}`); // Add this line
+          const response = await fetch('http://127.0.0.1:8000/auth/signin/',{
+              method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
-            credentials : 'include',
             body: JSON.stringify({login, password}),
+            credentials : 'include'
         });
-        const data = await response.json();
+        // const data = await response.json();
         if (response.ok)
         {
-            console.log(Object.values(data));
+            // console.log(Object.values(data));
             navigate('/dashboard');
         }
         else 
         {
             if (!response.ok) {
-                const errors = Object.values(data);
-                setErrorMessages(errors);
+                // const errors = Object.values(data);
+                // setErrorMessages(errors);
             }
         }
+
+    // const handleSignInClick = async(e) => {
+    //     setErrorMessages([]);
+    //     setSuccessMessages([]);
+    //     e.preventDefault();
+    //     await fetch('http://127.0.0.1:8000/auth/signin/',{
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         credentials : 'include',
+    //         body: JSON.stringify({login, password}),
+    //     }).then(data => {return data.json()})
+    //     .then(
+    //         data => {
+    //             console.log(data);
+    //             if (data.ok)
+    //                 navigate('/dashboard');
+    //             else
+    //                 navigate('/signin');
+    //         }
+    //     )
+    //     .catch(err => {
+    //         navigate('/signin')
+    //         console.log(err);
+    //     })
+        
     };
 
     return (
@@ -45,7 +82,7 @@ function SignIn() {
                 <img src="./42.svg"></img>
                 <p>Sign in with intra</p>
             </button>
-            <form className="form">
+            <form className="form" action="http://127.0.0.1:8000/auth/signin/">
                 <input  type="text"
                         placeholder="email or username"
                         value ={login}

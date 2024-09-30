@@ -25,10 +25,13 @@ class SignUpView(APIView):
             return Response({"success": "User created successfully "}, status=status.HTTP_201_CREATED)
         return Response({"error": "User Already signed up"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class SignInView(APIView):
     def post(self, request):
         parse_login = request.data.get('login')
         password = request.data.get('password')
+        print(f"\nparse login : {parse_login}\n")
+        print(f"\npassword : {password}\n")
         if '@' in parse_login and '.' in parse_login:
             try:
                 client = Client.objects.get(email=parse_login)
@@ -38,11 +41,19 @@ class SignInView(APIView):
         else:
             username = parse_login
         client = authenticate(username=username, password=password)
-        if client is not None:
-            response = Response()
+        if client :
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            response.set_cookie('access', access,httponly=True, samesite=None, secure=True)
-            response.data = {"valid" : "hmed"}
+            data = {
+                'msg': 'success',
+            }
+            response = Response(data, status=status.HTTP_200_OK)
+            response.set_cookie(
+                'access',
+                access,
+                httponly=True,
+                secure=False,
+                samesite=None,
+            )
             return response
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
