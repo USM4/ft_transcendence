@@ -15,15 +15,6 @@ function SignIn() {
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-          }
-          
-          // Use the getCookie function to get the JWT token and set it in the headers for every request.
-          const token = getCookie('access');
-          console.log(`Token: ${token}`); // Add this line
           const response = await fetch('http://127.0.0.1:8000/auth/signin/',{
               method: 'POST',
             headers: {
