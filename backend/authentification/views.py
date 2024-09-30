@@ -49,11 +49,18 @@ class SignInView(APIView):
             }
             response = Response(data, status=status.HTTP_200_OK)
             response.set_cookie(
-                'access',
+                'client',
                 access,
                 httponly=True,
-                secure=False,
-                samesite=None,
+                samesite='None',
+                secure=True
             )
             return response
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+class SomeView(APIView):
+    def get(self, request):
+        cookies = request.COOKIES
+        print("Current Cookies: ", cookies)
+        return Response({'cookies': str(cookies)}, status=status.HTTP_200_OK)

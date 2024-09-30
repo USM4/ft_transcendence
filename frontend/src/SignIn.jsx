@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,31 +10,38 @@ function SignIn() {
     const [password, setPassword] = useState('')
     const [errorMessages, setErrorMessages] = useState([]);
     const [successMessages, setSuccessMessages] = useState([]);
-    const navigate = useNavigate();    
+    const navigate = useNavigate();
     const handleSignInClick = async(e) => {
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
           const response = await fetch('http://127.0.0.1:8000/auth/signin/',{
-              method: 'POST',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({login, password}),
             credentials : 'include'
         });
-        // const data = await response.json();
-        if (response.ok)
-        {
-            // console.log(Object.values(data));
-            navigate('/dashboard');
-        }
-        else 
+         // Include credentials to send cookies
+         const val = await response.json();
+         if (response.ok)
+            {
+                console.log(Object.values(val));
+                fetch('http://127.0.0.1:8000/auth/some_view/', {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then( val=> console.log(val));
+                // console.log('vdslanbdsvdakbvxkbdjksbjkbjkabdkjbvjkba')
+                navigate('/dashboard');
+            }
+            else 
         {
             if (!response.ok) {
-                // const errors = Object.values(data);
-                // setErrorMessages(errors);
+                const errors = Object.values(val);
+                setErrorMessages(errors);
             }
         }
 
