@@ -95,8 +95,6 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
-    "BLACKLIST_AFTER_ROTATION": False,
-    "UPDATE_LAST_LOGIN": False,
 }
 
 # CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-key')
@@ -128,12 +126,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
-]
 
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -157,12 +155,16 @@ STATIC_URL = 'static/'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-#for localhost and dev
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
 
+
+#for localhost and dev
+# CSRF_COOKIE_SAMESITE = 'Lax'
+# SESSION_COOKIE_SAMESITE = 'Lax'
+
+CSRF_COOKIE_SECURE = False  # Same here for local testing
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SAMESITE = None  # Allow cross-origin cookies
+CSRF_COOKIE_SAMESITE = None 
 #after deploying it 
 # CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SECURE = True

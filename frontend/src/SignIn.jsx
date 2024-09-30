@@ -12,58 +12,31 @@ function SignIn() {
     const [successMessages, setSuccessMessages] = useState([]);
     const navigate = useNavigate();
     const handleSignInClick = async(e) => {
+        e.preventDefault();
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-          const response = await fetch('http://127.0.0.1:8000/auth/signin/',{
+        const response = await fetch('http://127.0.0.1:8000/auth/signin/',{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                        'Content-Type': 'application/json',
             },
             body: JSON.stringify({login, password}),
-            credentials : 'include'
+            credentials : 'include',
         });
-         // Include credentials to send cookies
-         const val = await response.json();
-         if (response.ok)
-            {
-                console.log(Object.values(val));
-                navigate('/dashboard');
-            }
-            else 
+        const val = await response.json();
+        if (response.ok)
+        {
+            console.log(Object.values(val));
+            navigate('/dashboard');
+        }
+        else 
         {
             if (!response.ok) {
                 const errors = Object.values(val);
                 setErrorMessages(errors);
             }
         }
-
-    // const handleSignInClick = async(e) => {
-    //     setErrorMessages([]);
-    //     setSuccessMessages([]);
-    //     e.preventDefault();
-    //     await fetch('http://127.0.0.1:8000/auth/signin/',{
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         credentials : 'include',
-    //         body: JSON.stringify({login, password}),
-    //     }).then(data => {return data.json()})
-    //     .then(
-    //         data => {
-    //             console.log(data);
-    //             if (data.ok)
-    //                 navigate('/dashboard');
-    //             else
-    //                 navigate('/signin');
-    //         }
-    //     )
-    //     .catch(err => {
-    //         navigate('/signin')
-    //         console.log(err);
-    //     })
-        
     };
 
     return (
@@ -73,7 +46,7 @@ function SignIn() {
                 <img src="./42.svg"></img>
                 <p>Sign in with intra</p>
             </button>
-            <form className="form" action="http://127.0.0.1:8000/auth/signin/">
+            <form className="form" >
                 <input  type="text"
                         placeholder="email or username"
                         value ={login}

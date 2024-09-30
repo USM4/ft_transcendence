@@ -8,7 +8,6 @@ from .serializers import ClientSignUpSerializer
 
 class SignUpView(APIView):
     def post(self, request):
-        # print(request.data)
         serializer = ClientSignUpSerializer(data=request.data)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
@@ -52,9 +51,8 @@ class SignInView(APIView):
                 'client',
                 access,
                 httponly=True,
-                samesite='Strict',
-                secure=False
+                samesite='None',
+                secure=True,
             )
             return response
-        else:
-            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
