@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link, redirect } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -11,12 +11,16 @@ function SignIn() {
     const [errorMessages, setErrorMessages] = useState([]);
     const [successMessages, setSuccessMessages] = useState([]);
     const navigate = useNavigate();
+    const handle42Intra = () =>{
+        const redirectUrl = window.
+    };
     const handleSignInClick = async(e) => {
         e.preventDefault();
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-        const response = await fetch('http://localhost:8000/auth/signin/',{
+        const response = await fetch('http://localhost:8000/auth/signin/',
+        {
             method: 'POST',
             headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +46,7 @@ function SignIn() {
     return (
         <div className="signForm">
             <h2 className="signinhead">Sign In</h2>
-            <button className="intra_sign_in">
+            <button className="intra_sign_in" type="submit" onClick={handle42Intra}>
                 <img src="./42.svg"></img>
                 <p>Sign in with intra</p>
             </button>

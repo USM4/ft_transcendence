@@ -43,10 +43,7 @@ class SignInView(APIView):
         if client :
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            data = {
-                'msg': 'success',
-            }
-            response = Response(data, status=status.HTTP_200_OK)
+            response = Response({"success":"Logged in successfully !"}, status=status.HTTP_200_OK)
             response.set_cookie(
                 'client',
                 access,

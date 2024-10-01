@@ -97,8 +97,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
 }
 
-# CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-key')
-# SECRET_ID = os.getenv('SECRET_ID', 'default-secret-key')
+CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-key')
+SECRET_ID = os.getenv('SECRET_ID', 'default-secret-key')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -127,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
@@ -157,14 +156,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#for localhost and dev
-# CSRF_COOKIE_SAMESITE = 'Lax'
-# SESSION_COOKIE_SAMESITE = 'Lax'
-
-CSRF_COOKIE_SECURE = False  # Same here for local testing
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
-SESSION_COOKIE_SAMESITE = None  # Allow cross-origin cookies
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False 
+SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None 
-#after deploying it 
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True

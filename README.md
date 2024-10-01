@@ -39,7 +39,18 @@
 >their passwords. It involves a flow where the user grants permission to an app (your DRF backend) to access certain information  
 >from their account (like name, email) on a provider (Google, Facebook, etc.).  
 
-
+**How OAuth works**
+* Library (42 API): The place where you can get the book (user data).  
+* Library Card (Authorization code): To rent a book, you first need to get a library card.  
+* Library Reception (Backend): You have to show your library card to the reception to get the actual book.  
+* Book (Access token): Once the reception verifies your card, they give you the book.  
+* You: The user.  
+  
+1. Step 1: You (user) walk to the library (42 API) and ask for a library card (authorization code).  
+2.  Step 2: The library gives you a card (authorization code) and tells you to go to the reception (backend) to get the book.  
+3. Step 3: You take your library card to the reception (backend) and give it to them. They check your card to verify if it's valid.  
+4. Step 4: If your card is valid, the reception (backend) gives you the book (access token), which is what you wanted.  
+5. Step 5: You (the user) now have the book (access token), and you can start reading it (accessing user data).  
 
 
 
