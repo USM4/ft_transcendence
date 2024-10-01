@@ -100,10 +100,16 @@ class ExtractCodeFromIntraUrl(APIView):
             return Response({'error':  "getting user infos failed"}, status=400)
         user_data = user_info_response.json()
         user_email = user_data.get('email')
-        # nchecki wach kayn loggih l dashboard ila makanch n creaah
-        user, created = Client.objects.get_or_create(email=user_email)
-        login(request ,user)
-        return redirect('http://localhost:5173/dashboard')
+        print("user_email")
+        print(user_email)
+        user = Client.objects.filter(email=user_email).first()
+        if user is None:
+            user = Client(email=user_email)
+            user.save()
+            return redirect('http://localhost:5173/dashboard')
+        else:
+            return redirect('http://localhost:5173/dashboard')
+        # login(request ,user)
 
         
     
