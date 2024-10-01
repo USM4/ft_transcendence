@@ -89,16 +89,16 @@ AUTH_USER_MODEL = 'authentification.Client'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES' : (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
 }
-
-CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-key')
-SECRET_ID = os.getenv('SECRET_ID', 'default-secret-key')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

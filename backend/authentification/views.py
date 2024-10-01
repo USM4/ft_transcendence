@@ -1,10 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate , login
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from .models import Client
 from .serializers import ClientSignUpSerializer
+import requests
+import os
+from dotenv import load_dotenv
+from django.shortcuts import redirect
 
 class SignUpView(APIView):
     def post(self, request):
@@ -53,3 +57,55 @@ class SignInView(APIView):
             )
             return response
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+class ExtractCodeFromIntraUrl(APIView):
+    def get(self, request):
+        print('#################################')
+        code = request.GET.get('code')
+        if not code:
+            return Response({'error':  "Faced a code problem in the url"}, status=400)
+        # daba nprepariw request l intra bach exchangiw l code b access token
+        token_url = 'https://api.intra.42.fr/oauth/token'
+        load_dotenv()
+        CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-id')
+        SECRET_ID = os.getenv('SECRET_ID', 'default-secret-id')
+        client_id = CLIENT_ID
+        client_secret = SECRET_ID
+        redirect_uri = 'http://localhost:8000/accounts/42school/login/callback/'
+        # json li aytseft f request
+        # print("client_id:", client_id)
+        # print("client_secret:", client_secret)
+        json_data = {
+            'grant_type': 'authorization_code',
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'code': code,
+            'redirect_uri': redirect_uri
+        }
+        headers = {'Content-Type': 'application/json'}
+        # nsefto request l intra w n extractiw l user info b dak l access token li ayjina
+        # print("Request payload:", json_data)
+        response = requests.post(token_url,json=json_data, headers=headers)
+        if response.status_code != 200:
+            return Response({'error':  "exchanging token problem with intra"}, status=400)
+        data = response.json()
+        access_token = data.get('access_token')
+        print('#################################')
+        # nakhod l user info bl  access token li jebt mn 3end intra
+        user_url_intra = 'https://api.intra.42.fr/v2/me'
+        user_info_response = requests.get(user_url_intra, headers={
+            'Authorization': f'Bearer {access_token}'
+        })
+        if response.status_code != 200:
+            return Response({'error':  "getting user infos failed"}, status=400)
+        user_data = user_info_response.json()
+        user_email = user_data.get('email')
+        # nchecki wach kayn loggih l dashboard ila makanch n creaah
+        user, created = Client.objects.get_or_create(email=user_email)
+        login(request ,user)
+        return redirect('http://localhost:5173/dashboard')
+
+        
+    
+    
+

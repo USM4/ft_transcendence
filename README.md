@@ -52,8 +52,8 @@
 4. Step 4: If your card is valid, the reception (backend) gives you the book (access token), which is what you wanted.  
 5. Step 5: You (the user) now have the book (access token), and you can start reading it (accessing user data).  
 
+**Use Cases Of**
 
-
-
-
+* Use View when developing a traditional web application with HTML responses.  
+* Use APIView when building APIs that need to return JSON and handle different data formats, as well  as when you need built-in support for authentication and permissions.  
 
