@@ -58,9 +58,19 @@ class SignInView(APIView):
             return response
         return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+def get_unique_username(old_username):
+    unique_username = old_username
+    count = 1
+    
+    while Client.objects.filter(username=unique_username).exists():
+        unique_username = f"{old_username}{count}"
+        count += 1
+    
+    return unique_username
+
 class ExtractCodeFromIntraUrl(APIView):
     def get(self, request):
-        print('#################################')
         code = request.GET.get('code')
         if not code:
             return Response({'error':  "Faced a code problem in the url"}, status=400)
@@ -90,28 +100,25 @@ class ExtractCodeFromIntraUrl(APIView):
             return Response({'error':  "exchanging token problem with intra"}, status=400)
         data = response.json()
         access_token = data.get('access_token')
-        print('#################################')
         # nakhod l user info bl  access token li jebt mn 3end intra
         user_url_intra = 'https://api.intra.42.fr/v2/me'
         user_info_response = requests.get(user_url_intra, headers={
             'Authorization': f'Bearer {access_token}'
         })
-        if response.status_code != 200:
-            return Response({'error':  "getting user infos failed"}, status=400)
         user_data = user_info_response.json()
         user_email = user_data.get('email')
-        print("user_email")
-        print(user_email)
         user = Client.objects.filter(email=user_email).first()
+        # print("##################################################")
+        # print(user.username)
+        # print("##################################################")
+        username = user_data.get('login')
+        #ila makanch had l user ghaycreeyih bl infos d inta
         if user is None:
-            user = Client(email=user_email)
+            user = Client(email=user_email, username=username)
             user.save()
             return redirect('http://localhost:5173/dashboard')
         else:
+            #ila kan bnefs l infos ghay redirectih nichan l dashboard
             return redirect('http://localhost:5173/dashboard')
-        # login(request ,user)
-
-        
-    
     
 

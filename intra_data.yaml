@@ -1,0 +1,20 @@
+id: 112901
+email: oredoine@student.1337.ma
+login: oredoine
+first_name: Oussama
+last_name: Redoine
+usual_full_name: Oussama Redoine
+usual_first_name: None
+url: https://api.intra.42.fr/v2/users/oredoine
+phone: hidden
+displayname: Oussama Redoine
+kind: student
+image: {
+  link: https://cdn.intra.42.fr/users/acee4f027e91019dffdd36e123e0f65d/oredoine.jpg
+  versions: {
+    large: https://cdn.intra.42.fr/users/9d02b6fc0528ffc955f1baf6704e1e28/large_oredoine.jpg
+    medium: https://cdn.intra.42.fr/users/23f5de7715c15b4618a395ff3d95ab0c/medium_oredoine.jpg
+    small: https://cdn.intra.42.fr/users/1b78966aac7c5d78e2e7c8013556c48e/small_oredoine.jpg
+    micro: https://cdn.intra.42.fr/users/ad3b722ca593ccc84715de08c97cf602/micro_oredoine.jpg
+  }
+}
