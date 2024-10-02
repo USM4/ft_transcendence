@@ -55,19 +55,7 @@ class SignInView(APIView):
                 samesite='None',
                 secure=True,
             )
-            return response
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-def get_unique_username(old_username):
-    unique_username = old_username
-    count = 1
-    
-    while Client.objects.filter(username=unique_username).exists():
-        unique_username = f"{old_username}{count}"
-        count += 1
-    
-    return unique_username
+        return response
 
 class ExtractCodeFromIntraUrl(APIView):
     def get(self, request):
@@ -116,9 +104,17 @@ class ExtractCodeFromIntraUrl(APIView):
         if user is None:
             user = Client(email=user_email, username=username)
             user.save()
-            return redirect('http://localhost:5173/dashboard')
-        else:
-            #ila kan bnefs l infos ghay redirectih nichan l dashboard
-            return redirect('http://localhost:5173/dashboard')
+        #ila kan bnefs l infos ghay redirectih nichan l dashboard
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)
+        response = redirect('http://localhost:5173/dashboard')
+        response.set_cookie(
+            'user',
+            access,
+            httponly=True,
+            samesite='None',
+            secure=True,
+        )
+        return  response
     
 
