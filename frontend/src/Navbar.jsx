@@ -12,17 +12,17 @@ function Navbar () {
             </Link>
           </li>
           <li>
-            <Link to="features">
+            <Link to="/features">
             <button className="navbutton"> Features</button>
             </Link>
           </li>
           <li>
-            <Link to="howtoplay">
+            <Link to="/howtoplay">
             <button className="navbutton"> How to Play</button>
             </Link>
           </li>
           <li>
-            <Link to="signin">
+            <Link to="/signin">
             <button className="navbutton"> Sign in</button>
             </Link>
           </li>

@@ -182,5 +182,19 @@
 
 .Dashboard{
   margin-top: 50%;
-  color: red;
+  font-size: 40px;
+  color: green;
+}
+
+.features{
+  margin-top: 20%;
+  width: 100%;
+  font-size: 25px;
+  color:rgb(247, 243, 130);
+}
+.title-text{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  color:#f5b83d;
 }

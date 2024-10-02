@@ -12,7 +12,14 @@ function SignUp() {
     const [errorMessages, setErrorMessages] = useState([]);
     const [successMessages, setSuccessMessages] = useState([]);
 
-
+    const handle42Intra = () =>{
+        const client_id=import.meta.env.VITE_CLIENT_ID;
+        const auth_url = 'https://api.intra.42.fr/oauth/authorize';
+        const response_type = 'code';
+        const redirectUri='http://localhost:8000/accounts/42school/login/callback/';
+        const auth_url_concatinated = `${auth_url}?client_id=${client_id}&redirect_uri=${redirectUri}&response_type=${response_type}`;
+        window.location.href = auth_url_concatinated;
+    };
     const handleSignUpClick = async(e) => {
         setErrorMessages([]);
         setSuccessMessages([]);
@@ -37,14 +44,13 @@ function SignUp() {
                 const errors = Object.values(data);
                 setErrorMessages(errors);
             }
-        
         }
     };
 
     return (
         <div className="signForm">
             <h2 className="signinhead">Sign Up</h2>
-            <button className="intra_sign_in">
+            <button className="intra_sign_in" type='submit' onClick={handle42Intra}>
                 <img src="./42.svg"></img>
                 <p>Sign up with intra</p>
             </button>

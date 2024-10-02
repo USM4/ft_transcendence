@@ -6,16 +6,20 @@ import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
 import Dashboard from './Dashboard.jsx'
 import HomePage from './HomePage.jsx';
+import Features from './Features.jsx';
+import HowToPlay from './HowToPlay.jsx'
 
 function App() {
   return (
     <>
         <Router>
-        <Navbar/>
+        
         <Routes>
-          <Route path='/' element={<HomePage/>}/>
-          <Route path='/signin' element={<SignIn/>}/>
-          <Route path='/signup' element={<SignUp/>}/>
+          <Route path='/' element={<><Navbar/><HomePage/></>}/>
+          <Route path='/signin' element={<><Navbar/><SignIn/></>}/>
+          <Route path='/signup' element={<><Navbar/><SignUp/></>}/>
+          <Route path='/features' element={<><Navbar/><Features/></>}/>
+          <Route path='/howtoplay' element={<><Navbar/><HowToPlay/></>}/>
           <Route path='/dashboard' element={<Dashboard/>}/>
         </Routes>
       </Router>

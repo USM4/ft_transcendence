@@ -1,12 +1,2 @@
--> add email beside username
--> errors catch (front  form validation )
--> password security 
-->
-
-Home
-Aboutgame:  chat, and tournaments.
-Features : chat, and tournaments.
-How to Play
-Tournaments
-Sign In
-Sign Up
+-> i have to remove sign up with intra and let it sign up manually 
+-> have to protect route for dashboard and it s elements (send a request and get a response if the token is valid which means is it authenticated or not)

@@ -55,7 +55,8 @@ class SignInView(APIView):
                 samesite='None',
                 secure=True,
             )
-        return response
+            return response
+        return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ExtractCodeFromIntraUrl(APIView):
     def get(self, request):
@@ -117,4 +118,3 @@ class ExtractCodeFromIntraUrl(APIView):
         )
         return  response
     
-

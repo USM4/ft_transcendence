@@ -3,7 +3,7 @@ function Dashboard() {
 
     return (
         <div>
-            <h1 className="Dashboard">DASHBOARD</h1>
+            <h1 className="Dashboard">Welcome to the dashboard</h1>
         </div>
     )
 }
