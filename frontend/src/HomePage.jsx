@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 function HomePage() {
     return(
         <div className="container">
-            <div className="body">
+            <div className="body-text">
             <h2>Serve up some fun with live ping-pong, chat,</h2>
             <h2>and good vibes – all in one click!</h2>
             </div>

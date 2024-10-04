@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './Navbar.jsx'
 import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
-import Dashboard from './Dashboard.jsx'
+import Dashboard from './Dashboard/Dashboard.jsx'
 import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
 import HowToPlay from './HowToPlay.jsx'

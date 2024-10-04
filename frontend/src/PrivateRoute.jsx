@@ -1,12 +1,9 @@
 import React from "react";
-import Dashboard from "./Dashboard";
 
-function PrivateRoute() {
-
-    
+function PrivateRouteLayout() {
     return(
-            <div> 
+            <div>
             </div>
     )
 };
-export default PrivateRoute;
+export default PrivateRouteLayout;
