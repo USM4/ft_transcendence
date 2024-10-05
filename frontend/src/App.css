@@ -267,11 +267,12 @@
   justify-content: space-around;
   list-style: none;
   padding: 20px 0;
-  background-color: #33332d;
+  background-color: #000;
 }
 
 
 .main-dashbord-content{
+  color: rgb(235, 135, 85);
   margin-top: 30%;
 }
 
@@ -279,7 +280,26 @@
 .nav-btns{
   font-family: inherit;
   font-size: 18px;
-  border: none;
-  background-color: inherit;
+  width: 150px;
+  height: 40px;
+  border-radius: 20px solid;
+  border: none ;
+  color: rgb(235, 135, 85);
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.nav-btns:hover{
+  border-radius: 0px solid;
+  color: #000;
+  background-color: rgb(235, 135, 85);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-icons{
+  display: inline;
+
+  /* background-color: red; */
+  align-items: right;
 
 }

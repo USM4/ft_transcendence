@@ -1,6 +1,8 @@
 import React from "react";
 import SideBar from "./SideBar.jsx";
-
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import SearchIcon from '@mui/icons-material/Search';
+import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 function Dashboard() {
 
     return (
@@ -10,9 +12,12 @@ function Dashboard() {
           </div>
           <div className="dash-navbar">
             <ul >
-              <li><button className="nav-btns">notification</button></li>
-              <li><button className="nav-btns">search</button></li>
-              <li><button className="nav-btns">profile</button></li>
+              <li><button className="nav-btns">Notifications</button></li>
+              {/* <li><div className="nav-icons"><NotificationsIcon/></div></li> */}
+              <li><button className="nav-btns">Search</button></li>
+              {/* <li><div className="nav-icons"><SearchIcon/></div></li> */}
+              <li><button className="nav-btns">Profile</button></li>
+              {/* <li><div className="nav-icons"><PermIdentityIcon/></div></li> */}
             </ul>
           </div> 
          <div className="main-dashbord-content">
