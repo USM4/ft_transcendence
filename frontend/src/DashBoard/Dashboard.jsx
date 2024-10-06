@@ -3,6 +3,7 @@ import SideBar from "./SideBar.jsx";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import '../App.css'
 function Dashboard() {
 
     return (
