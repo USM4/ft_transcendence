@@ -9,11 +9,6 @@ import ReorderIcon from '@mui/icons-material/Reorder';
 function SideBar() {
     const SideBarData = [
         {
-            title: "List",
-            icon: <ReorderIcon/>,
-            link: '/dashboard'
-        },
-        {
             title: "Home",
             icon: <HomeIcon/>,
             link: "/dashboard"
@@ -42,25 +37,16 @@ function SideBar() {
         },
 
     ]
-    const first_icon = SideBarData[0];
-    const last_icon = SideBarData[SideBarData.length - 1];
-    const middle_icons = SideBarData.slice(1, SideBarData.length - 1)
     return (
         <div className="SideBar">
             <ul>
-                <li className="first-sidebar-icon" onClick={() => {window.location.pathname = first_icon.link}}>
-                    <div> {first_icon.icon}</div>
-                </li>
-                {middle_icons.map((value, key) => {
+                {SideBarData.map((value, key) => {
                 return(
                     <li  className="middle-sidebar-icon" key={key} onClick={() => {window.location.pathname = value.link}}>
                         <div>{value.icon}</div>
                     </li>
                 );
                 })}
-                <li className="last-sidebar-icon" onClick={() => {window.location.pathname = last_icon.link}}>
-                    <div> {last_icon.icon}</div>
-                </li>
             </ul>
         </div>
 
