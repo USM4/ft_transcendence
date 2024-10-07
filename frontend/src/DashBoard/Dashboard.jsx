@@ -8,10 +8,10 @@ function Dashboard() {
 
     return (
       <div className="dashboard-container">
+        <div></div>
           <SideBar/>
          <div className="main-dashbord-content">
           <div>
-
            <h1>Welcome to the Dashboard</h1>
            <p>This is your main content area.</p>
           </div>
