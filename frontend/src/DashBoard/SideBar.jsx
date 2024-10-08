@@ -15,7 +15,7 @@ function SideBar() {
     },
     {
       title: "Chat",
-      icon: <SendIcon />,
+      icon: <SendIcon/>,
       // chat scoope
       link: "/dashboard",
     },
