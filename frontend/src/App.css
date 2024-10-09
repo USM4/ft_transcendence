@@ -281,9 +281,9 @@ body {
 }
 
 .dashboard-navbar{
- display: flex;
+  display: flex;
 justify-content: space-between;
- align-items: center;
+align-items: center;
 height: 50px;
 padding-top: 10px;
 }
@@ -294,6 +294,8 @@ padding-top: 10px;
   width: 400px;
   height: 40px;
   padding-left: 8px;
+  background-color: #000;
+  border: none;
 }
 
 .search-btn{
@@ -301,6 +303,15 @@ padding-top: 10px;
   justify-content: center;
   margin: 0 auto;
 }
+
+.search-icon{
+  background-color: #000;
+  color: rgb(235, 135, 85);
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
 .notification-and-profile {
   display: flex;
   align-items: center;
@@ -311,6 +322,12 @@ padding-top: 10px;
   display: flex;
   align-items: center;
   justify-content: end;
+  
+}
+.notification-icon{
+  color: rgb(235, 135, 85);
+  background-color: transparent;
+  border: none;
 }
 
 .profile{
@@ -319,4 +336,10 @@ padding-top: 10px;
   justify-content: flex-end;
   align-items: center;
   margin-right: 50px;
+}
+
+.profile-img {
+  height: 4px;
+  width: 4px;
+  border-radius: 50%;
 }

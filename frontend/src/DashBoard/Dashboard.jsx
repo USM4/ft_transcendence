@@ -12,18 +12,18 @@ function Dashboard() {
         <div className="dashboard-navbar">
           <div className="search-btn">
             <input className="search-input" placeholder="Search" />
-            <button>
+            <button className="search-icon">
               <SearchIcon />
             </button>
           </div>
           <div className="notification-and-profile">
             <div className="notification">
-              <button>
+              <button className="notification-icon">
                 <NotificationsIcon />
               </button>
             </div>
             <div className="profile">
-              <a>Profile</a>
+              <div className="profile-img"><img src="realone.png"/></div>
             </div>
           </div>
         </div>
