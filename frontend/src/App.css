@@ -14,6 +14,11 @@
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 html,
@@ -23,6 +28,7 @@ body {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .dashboard-container{
@@ -339,7 +345,112 @@ padding-top: 10px;
 }
 
 .profile-img {
-  height: 4px;
-  width: 4px;
+  height: 35px;
+  width: 35px;
   border-radius: 50%;
+}
+
+.dashboard-components{
+  display: flex;
+  flex-direction: row;
+  width: 70%;
+  height: 100%;
+  margin: 0 auto;
+  gap:10px;
+  overflow: hidden;
+  /* border: 1px solid red; */
+}
+
+.dashboard-components .dashboard-stats{
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  height: 100%;
+  gap: 10px;
+}
+
+
+.dashboard-components .right-side-dashboard {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  height: 100%;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.dashboard-components .dashboard-stats .stats-graph {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  border: 2px solid rgb(235, 135, 85);
+}
+
+.dashboard-components .dashboard-stats .wins-ratio {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height:30%; 
+  background-color: #000;
+  border: 2px solid rgb(235, 135, 85);
+}
+
+.dashboard-components .right-side-dashboard .match-history{
+  width: 100%;
+  height: 50%;
+  background-color: #000;
+  border: 2px solid rgb(235, 135, 85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 0;
+}
+.dashboard-components .right-side-dashboard .match-history p{
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.dashboard-components .right-side-dashboard .dashboard-friends{
+
+  width: 100%;
+  height: 50%;
+  background-color: #000;
+  border: 2px solid rgb(235, 135, 85);
+}
+
+.match-history-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.match-history-container .match-history-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 7px;
+}
+.match-history-container .match-history-item:hover{
+  background-color: rgb(61, 61, 61);;
+}
+
+.match-history-item .img-user1 , 
+.match-history-item .img-user2 {
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: 2px solid rgb(235, 135, 85);
+}
+
+.match-history-item .match-history-score{
+  
+}
+
+.match-history-item  img{
+  width: 40px;
+  height: 40px;
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import SideBar from "./SideBar.jsx";
+import MatchHistory from "./MatchHistory.jsx";
+import DashboardFriends from "./DashboardFriends.jsx";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import "../App.css";
@@ -23,11 +25,52 @@ function Dashboard() {
               </button>
             </div>
             <div className="profile">
-              <div className="profile-img"><img src="realone.png"/></div>
+              <img className="profile-img" src="realone.png" />
             </div>
           </div>
         </div>
-
+        <div className="dashboard-components">
+          <div className="dashboard-stats">
+            <div className="stats-graph">
+              <p>stats-graph</p>
+            </div>
+            <div className="wins-ratio">
+              <p>wins-ratio</p>
+            </div>
+          </div>
+          <div className="right-side-dashboard">
+              <div className="match-history">
+                <p> Match History </p> 
+                <div className="match-history-container">
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                  <MatchHistory/>
+                </div>
+              </div>
+              <div className="dashboard-friends">
+                <p>dashboard-friends</p> 
+                <div className="friends-container">
+                  <DashboardFriends/>
+                </div>
+              </div>
+          </div>
+        </div>
         {/* <Outlet/> */}
       </div>
     </div>
