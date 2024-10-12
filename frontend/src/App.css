@@ -364,11 +364,31 @@ padding-top: 10px;
 .dashboard-components .dashboard-stats{
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 70%;
   height: 100%;
   gap: 10px;
 }
 
+.dashboard-stats .stats-graph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  border-radius: 2px ;
+  border: 1px solid rgb(235, 135, 85);
+  background-color: #000;
+}
+
+.dashboard-stats .stats-graph p{
+  margin: 0;
+  font-size: 22px;
+  font-weight: bolder;
+  color: #008080;
+}
 
 .dashboard-components .right-side-dashboard {
   display: flex;
@@ -377,14 +397,6 @@ padding-top: 10px;
   height: 100%;
   gap: 10px;
   overflow: hidden;
-}
-
-.dashboard-components .dashboard-stats .stats-graph {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-  border: 2px solid rgb(235, 135, 85);
 }
 
 .dashboard-components .dashboard-stats .wins-ratio {
@@ -409,10 +421,10 @@ padding-top: 10px;
 .dashboard-components .right-side-dashboard .match-history p{
   font-size: 22px;
   font-weight: bold;
+  color: #008080;
 }
 
 .dashboard-components .right-side-dashboard .dashboard-friends{
-
   width: 100%;
   height: 50%;
   background-color: #000;
@@ -435,7 +447,7 @@ padding-top: 10px;
   padding: 5px 7px;
 }
 .match-history-container .match-history-item:hover{
-  background-color: rgb(61, 61, 61);;
+  background-color:#181815;
 }
 
 .match-history-item .img-user1 , 
@@ -453,4 +465,65 @@ padding-top: 10px;
 .match-history-item  img{
   width: 40px;
   height: 40px;
+}
+ /***************** match-history = dashboard-friends **************************/
+ /***************** match-history-container = friends-container **************************/
+ .dashboard-friends{
+   width: 100%;
+   height: 50%;
+   display: flex;
+   flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  overflow-y: auto;
+}
+.dashboard-friends .dashboard-friends-title{
+  font-size: 22px;
+  font-weight: bold;
+  color : #008080
+  
+}
+
+.friends-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  /* background-color: green; */
+  font-size: 18px;
+  /* font-weight: ; */
+}
+
+.friends-container .dashboard-friend-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  color: #edd696;
+  /* background-color: green; */
+}
+.friends-container .dashboard-friend-item:hover{
+  background-color: #181815;
+}
+
+.friend-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+.dashboard-friend-item .friend-info img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: 2px solid #f4d35e;
+}
+
+.friends-container .invite-btn{
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgb(235, 135, 85);
 }
