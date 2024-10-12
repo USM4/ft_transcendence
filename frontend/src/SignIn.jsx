@@ -53,7 +53,7 @@ function SignIn() {
                 <img src="./42.svg"></img>
                 <p>Sign in with intra</p>
             </button>
-            <form className="form" >
+            <form className="form-validation" >
                 <input  type="text"
                         placeholder="email or username"
                         value ={login}

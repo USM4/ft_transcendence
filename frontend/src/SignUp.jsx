@@ -43,7 +43,7 @@ function SignUp() {
     return (
         <div className="signForm">
             <h2 className="signinhead">Sign Up</h2>
-            <form className="form" onSubmit={handleSignUpClick}>
+            <form className="form-validation" onSubmit={handleSignUpClick}>
                 <input  type="text"
                         placeholder="username"
                         value={username}

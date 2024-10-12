@@ -4,6 +4,7 @@ import SideBar from "./SideBar.jsx";
 import MatchHistory from "./MatchHistory.jsx";
 import DashboardFriends from "./DashboardFriends.jsx";
 import DashboardChart from "./DashboardChart.jsx";
+import DashboardDoghnuts from "./DashboardDoghnuts.jsx";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import "../App.css";
@@ -34,11 +35,12 @@ function Dashboard() {
         <div className="dashboard-components">
           <div className="dashboard-stats">
               <div className="stats-graph">
-                  <div className="stats-graph-title"><p>stats-graph</p></div>
+                  <div className="stats-graph-title"><p>Player Statistics</p></div>
                   <div className="dashboard-chart"><DashboardChart/></div>
               </div>
             <div className="wins-ratio">
-              {/* <p>wins-ratio</p> */}
+              <div className="doghnuts-container"><DashboardDoghnuts/></div>
+              <div className="leaderboard-container"></div>
             </div>
           </div>
           <div className="right-side-dashboard">
