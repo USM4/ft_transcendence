@@ -420,7 +420,7 @@ padding-top: 10px;
 .wins-ratio .doghnuts-container{
   width: 50%;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   justify-content: center;
   align-items: center;
   border-radius: 10px;
@@ -431,12 +431,34 @@ padding-top: 10px;
 
 .wins-ratio .leaderboard-container{
   display: flex;
-  align-items: center;
+  flex-direction: column;
   border-radius: 10px;
   width: 50%;
+  height: 100%;
   background-color: #000;
   border: 2px solid rgb(235, 135, 85);
 }
+
+.leaderboard-container .leaderboard-title {
+  display: flex;
+  justify-content: center;
+  /* flex-direction: column; */
+  /* align-items: center; */
+  font-size: 22px;
+  font-weight: bold;
+  color: #008080;
+}
+
+.leaderboard-container .leaderboard-subcomponent
+{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  align-items: center;
+}
+
 
 .dashboard-components .right-side-dashboard .match-history{
   width: 100%;
@@ -512,8 +534,7 @@ padding-top: 10px;
 .dashboard-friends .dashboard-friends-title{
   font-size: 22px;
   font-weight: bold;
-  color : #008080
-  
+  color : #008080  
 }
 
 .friends-container{

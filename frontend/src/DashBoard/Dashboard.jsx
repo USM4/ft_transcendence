@@ -41,7 +41,13 @@ function Dashboard() {
             <div className="wins-ratio">
               <div className="doghnuts-container"><DashboardDoghnuts/></div>
               <div className="leaderboard-container">
-                <p></p>
+                <div className="leaderboard-title"><p>Leaderboard</p></div>
+                <div className="leaderboard-subcomponent">
+                  <DashboardFriends/>
+                  <DashboardFriends/>
+                  <DashboardFriends/>
+                </div>
+
               </div>
             </div>
           </div>
