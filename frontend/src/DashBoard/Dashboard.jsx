@@ -40,7 +40,9 @@ function Dashboard() {
               </div>
             <div className="wins-ratio">
               <div className="doghnuts-container"><DashboardDoghnuts/></div>
-              <div className="leaderboard-container"></div>
+              <div className="leaderboard-container">
+                <p></p>
+              </div>
             </div>
           </div>
           <div className="right-side-dashboard">

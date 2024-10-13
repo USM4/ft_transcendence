@@ -23,7 +23,7 @@ function DashboardDoghnuts(params) {
         ],
         datasets: [{
           label: 'Victory',
-          data: [100, 100, 100],
+          data: [100, 70, 99],
           fill: true,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgb(255, 99, 132)',
@@ -33,7 +33,7 @@ function DashboardDoghnuts(params) {
           pointHoverBorderColor: 'rgb(255, 99, 132)'
         }, {
           label: 'Defeat',
-          data: [0, 0, 0],
+          data: [20, 20, 0],
           fill: true,
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
           borderColor: 'rgb(54, 162, 235)',
@@ -45,11 +45,11 @@ function DashboardDoghnuts(params) {
         , 
         {
           label: 'Draw',
-          data: [28, 48, 40],
+          data: [0, 50, 40],
           fill: true,
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgb(54, 162, 235)',
-          pointBackgroundColor: 'rgb(54, 162, 235)',
+          borderColor: '#edd696',
+          pointBackgroundColor: '#edd696',
           pointBorderColor: '#fff',
           pointHoverBackgroundColor: '#fff',
           pointHoverBorderColor: 'rgb(54, 162, 235)'
@@ -63,10 +63,10 @@ function DashboardDoghnuts(params) {
         },
         scales: {
           r: {
-            suggestedMin: 0,
+            suggestedMin: 50,
             suggestedMax: 100,
             ticks: {
-              stepSize: 20
+              stepSize: 50
             }
           }
         }
