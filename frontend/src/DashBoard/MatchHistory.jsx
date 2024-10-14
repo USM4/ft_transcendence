@@ -1,11 +1,12 @@
 import React from "react";
+import skull from '../../public/skull.jpeg'
 
 
 function MatchHistory() {
 
     return(
         <div className="match-history-item">
-                <img src="skull.jpeg" className="img-user1"/>
+                <img src={skull} className="img-user1"/>
             <div className="match-history-score">
                 1 - 7
             </div>

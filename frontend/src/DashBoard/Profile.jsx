@@ -12,15 +12,7 @@ import "../App.css";
 function Profile() {
     return(
         <div className="profile-component">
-            <div className="dashboard-container">
-                <SideBar />
-                <div className="main-dashbord-content">
-                    <DashboardNavbar/>
-                </div>
-            </div>
-            <div className="profile-container">
-
-            </div>
+            Profile dzb hh
         </div>
         
     )

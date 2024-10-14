@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './Navbar.jsx'
 import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
-import Dashboard from './Dashboard/Dashboard.jsx'
+import NavbarSideBar from './DashBoard/NavBarSideBar.jsx'
+import Dashboard from './DashBoard/Dashboard.jsx';
 import Profile from './Dashboard/Profile.jsx'
 import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
@@ -21,8 +22,10 @@ function App() {
           <Route path='/signup' element={<><Navbar/><SignUp/></>}/>
           <Route path='/features' element={<><Navbar/><Features/></>}/>
           <Route path='/howtoplay' element={<><Navbar/><HowToPlay/></>}/>
-          <Route path='/dashboard' element={<Dashboard/>}/>
-          <Route path='/dashboard/profile' element={<Profile/>}/>
+          <Route path='/dashboard' element={<NavbarSideBar/>}>
+            <Route path='' element={<Dashboard/>}/>
+            <Route path='profile' element={<Profile/>}/>
+          </Route>
         </Routes>
       </Router>
       

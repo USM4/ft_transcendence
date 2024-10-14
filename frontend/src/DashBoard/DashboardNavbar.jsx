@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
 import SearchIcon from "@mui/icons-material/Search";
 import '../App.css'
 
 function DashboardNavbar() {
+    const navigate = useNavigate()
     const [showNotification, setShowNotification] = useState(false)
     const [profileToggle, setprofileToggle] = useState(false)
     return(
@@ -34,10 +35,12 @@ function DashboardNavbar() {
             {profileToggle && (
               <div className="profile-dropdown">
                 <button className="dropdown-elements" onClick={() => {
-                window.location.pathname = '/profile';}}>profile</button>
+                  navigate('profile')
+                }}>profile</button>
                 <button className="dropdown-elements" >settings</button>
                 <button onClick={() => {
-                window.location.pathname = '/';}} 
+                navigate('/')
+                }} 
                 className="dropdown-elements">Logout</button>
               </div>
               )

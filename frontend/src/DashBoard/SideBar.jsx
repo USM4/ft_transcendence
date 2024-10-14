@@ -6,7 +6,9 @@ import GamepadIcon from "@mui/icons-material/Gamepad";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import ReorderIcon from "@mui/icons-material/Reorder";
+import { useNavigate } from "react-router-dom";
 function SideBar() {
+  const navigate = useNavigate();
   const SideBarData = [
     {
       title: "Home",
@@ -44,9 +46,13 @@ function SideBar() {
             <li
               className={`middle-sidebar-icon-${value.title}`}
               key={key}
+              // onClick={() => {
+              //   window.location.pathname = value.link;
+              // }}
               onClick={() => {
-                window.location.pathname = value.link;
+                navigate(value.link);
               }}
+        
             >
               <div>{value.icon}</div>
             </li>
