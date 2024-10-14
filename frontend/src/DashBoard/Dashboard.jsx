@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import SideBar from "./SideBar.jsx";
+import DashboardNavbar from "./DashboardNavbar.jsx";
 import MatchHistory from "./MatchHistory.jsx";
 import DashboardFriends from "./DashboardFriends.jsx";
 import Leaderboard from "./Leaderboard.jsx";
+import NotificationsToggle from "./NotificationsToggle.jsx";
 import DashboardChart from "./DashboardChart.jsx";
 import DashboardDoghnuts from "./DashboardDoghnuts.jsx";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -15,24 +17,9 @@ function Dashboard() {
     <div className="dashboard-container">
       <SideBar />
       <div className="main-dashbord-content">
-        <div className="dashboard-navbar">
-          <div className="search-btn">
-            <input className="search-input" placeholder="Search" />
-            <button className="search-icon">
-              <SearchIcon />
-            </button>
-          </div>
-          <div className="notification-and-profile">
-            <div className="notification">
-              <button className="notification-icon">
-                <NotificationsIcon />
-              </button>
-            </div>
-            <div className="profile">
-              <img className="profile-img" src="realone.png" />
-            </div>
-          </div>
-        </div>
+        {/* dashboard navbar */}
+        <DashboardNavbar/>
+        {/* Dashboard Body */}
         <div className="dashboard-components">
           <div className="dashboard-stats">
               <div className="stats-graph">
