@@ -3,6 +3,7 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import SideBar from "./SideBar.jsx";
 import MatchHistory from "./MatchHistory.jsx";
 import DashboardFriends from "./DashboardFriends.jsx";
+import Leaderboard from "./Leaderboard.jsx";
 import DashboardChart from "./DashboardChart.jsx";
 import DashboardDoghnuts from "./DashboardDoghnuts.jsx";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -43,11 +44,14 @@ function Dashboard() {
               <div className="leaderboard-container">
                 <div className="leaderboard-title"><p>Leaderboard</p></div>
                 <div className="leaderboard-subcomponent">
-                  <DashboardFriends/>
-                  <DashboardFriends/>
-                  <DashboardFriends/>
+                  <Leaderboard/>
+                  <Leaderboard/>
+                  <Leaderboard/>
+                  <Leaderboard/>
+                  <Leaderboard/>
+                  <Leaderboard/>
+                  <Leaderboard/>
                 </div>
-
               </div>
             </div>
           </div>
