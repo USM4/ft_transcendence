@@ -627,6 +627,16 @@ padding-top: 10px;
   padding: 5px;
   color: #edd696;
 }
+
+.dashboard-friend-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  color: #edd696;
+
+}
+
 .friends-container .dashboard-friend-item:hover{
   background-color: #181815;
 }
@@ -735,11 +745,123 @@ padding-top: 10px;
   color: #000;
 }
 .profile-component .bottom-side-prfl{
+  display: flex;
   width: 90%;
   height: 70%;
   margin: auto;
   border-radius: 10px;
-  background-color: #008080; 
+  /* background-color: #008080;  */
+  gap: 10px;
+  flex-direction: row;
 }
 
-.
+.bottom-side-prfl .left-prfl-component{
+  display: flex;
+  flex-direction: column;
+  width: 35%;
+  border: 2px solid #D4FCB5;
+  border-radius: 10px;
+}
+
+.left-prfl-component .friends-list-title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.left-prfl-component .prfl-friend-list-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 10px;
+  overflow-y: auto;
+}
+
+.prfl-friend-list-container .profile-friend-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+  cursor: pointer;
+}
+
+
+.profile-friend-item .profile-friend-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px;
+}
+.profile-friend-item .profile-friend-info p{
+  font-size: 18px;
+}
+
+.profile-friend-item .dm-friend{
+  display: flex;
+  gap: 30px;
+}
+
+.dm-friend .invite-btn{
+  background-color: transparent;
+  color: #D4FCB5;
+  border: none;
+  cursor: pointer;
+}
+
+
+.prfl-friend-list-container .profile-friend-item:hover{
+  background-color: #bde052;
+  color: #000;
+}
+
+.prfl-friend-list-container .profile-friend-item:hover .profile-friend-info p,
+.prfl-friend-list-container .profile-friend-item:hover .dm-friend .invite-btn {
+  color: #000;
+}
+.profile-friend-item .profile-friend-info img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: 2px solid #D4FCB5;
+}
+
+
+
+.bottom-side-prfl .right-prfl-component{
+  display: flex;
+  width: 65%;
+  flex-direction: column;
+  gap: 10px;
+}
+.bottom-side-prfl .right-prfl-component .prfl-chart{
+  display: flex;
+  height: 50%;
+  border-radius: 10px;
+  border: 2px solid #D4FCB5;
+}
+
+.bottom-side-prfl .right-prfl-component .history-and-radar{
+  display: flex;
+  flex-direction: row;
+  height: 50%;
+  gap: 10px;
+}
+
+.bottom-side-prfl .right-prfl-component .prfl-match-history{
+  width: 50%;
+  border-radius: 10px;
+  border: 2px solid #D4FCB5;
+}
+
+
+.bottom-side-prfl .right-prfl-component .prfl-radar{
+  width: 50%;
+  border-radius: 10px;
+  border: 2px solid #D4FCB5;
+}

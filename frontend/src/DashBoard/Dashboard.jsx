@@ -44,7 +44,7 @@ function Dashboard(params) {
             </div>
             </div>
             <div className="dashboard-friends">
-            <p className="dashboard-friends-title">Friends</p> 
+            <p className="dashboard-friends-title">Online Friends</p> 
             <div className="friends-container">
                 <DashboardFriends/>
                 <DashboardFriends/>

@@ -7,6 +7,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import SideBar from "./SideBar";
+import ProfileFriendList from "./ProfileFriendList.jsx"
 import oredoine from "../../public/oredoine.jpeg";
 import "../App.css";
 
@@ -27,8 +28,35 @@ function Profile() {
       </div>
       <div className="bottom-side-prfl">
         <div className="left-prfl-component">
+            <div className="friends-list-title">Friends List</div>
+            <div className="prfl-friend-list-container">
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+            </div>
         </div>
         <div className="right-prfl-component">
+            <div className="prfl-chart">
+                <div> Chart </div>
+            </div>
+            <div className="history-and-radar">
+                <div className="prfl-match-history"> </div>
+                <div className="prfl-radar"> </div>
+            </div>
         </div>
       </div>
         
