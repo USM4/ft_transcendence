@@ -3,6 +3,7 @@ import { BrowserRouter, Outlet, Route, Routes, useNavigate } from "react-router-
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
 import SearchIcon from "@mui/icons-material/Search";
+import oredoine from "../../public/oredoine.jpeg";
 import '../App.css'
 
 function DashboardNavbar() {
@@ -31,7 +32,7 @@ function DashboardNavbar() {
               )}
           </div>
           <div className="profile">
-            <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn"><img className="profile-img" src="oredoine.jpeg" /></button>
+            <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn"><img className="profile-img" src={oredoine} /></button>
             {profileToggle && (
               <div className="profile-dropdown">
                 <button className="dropdown-elements" onClick={() => {
