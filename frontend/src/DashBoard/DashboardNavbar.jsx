@@ -38,7 +38,10 @@ function DashboardNavbar() {
                 <button className="dropdown-elements" onClick={() => {
                   navigate('profile')
                 }}>profile</button>
-                <button className="dropdown-elements" >settings</button>
+                <button onClick={() => {
+                navigate('settings')
+                }} className="dropdown-elements" >settings</button>
+                
                 <button onClick={() => {
                 navigate('/')
                 }} 

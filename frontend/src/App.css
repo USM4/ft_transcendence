@@ -396,7 +396,9 @@ padding-top: 10px;
   color: #333;
   border-bottom: 1px solid #ddd;
   cursor: pointer;
-
+}
+.profile-dropdown .dropdown-elements:hover{
+  background-color: #ddd;
 }
 /* background-color: transparent; */
 
@@ -965,4 +967,15 @@ padding-top: 10px;
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+
+.settings-component{
+  width: 90%;
+  height: 80%;
+  margin: auto;
+  border-radius: 10px;
+  border: 2px solid rgb(178, 187, 240);
+  background-color: black;
+    
 }

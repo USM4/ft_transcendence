@@ -44,6 +44,11 @@ function Profile() {
                 <ProfileFriendList/>
                 <ProfileFriendList/>
                 <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
+                <ProfileFriendList/>
             </div>
         </div>
         <div className="right-prfl-component">
@@ -72,7 +77,6 @@ function Profile() {
             </div>
         </div>
       </div>
-        
     </div>
   );
 }

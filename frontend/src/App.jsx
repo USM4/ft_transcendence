@@ -7,15 +7,15 @@ import SignUp from './SignUp.jsx'
 import NavbarSideBar from './DashBoard/NavBarSideBar.jsx'
 import Dashboard from './DashBoard/Dashboard.jsx';
 import Profile from './Dashboard/Profile.jsx'
+import ProfileSettings from'./Dashboard/ProfileSettings.jsx';
 import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
-import HowToPlay from './HowToPlay.jsx'
+import HowToPlay from './HowToPlay.jsx';
 
 function App() {
   return (
     <>
         <Router>
-        
         <Routes>
           <Route path='/' element={<><Navbar/><HomePage/></>}/>
           <Route path='/signin' element={<><Navbar/><SignIn/></>}/>
@@ -25,6 +25,7 @@ function App() {
           <Route path='/dashboard' element={<NavbarSideBar/>}>
             <Route path='' element={<Dashboard/>}/>
             <Route path='profile' element={<Profile/>}/>
+            <Route path='settings' element={<ProfileSettings/>}/>
           </Route>
         </Routes>
       </Router>

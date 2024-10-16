@@ -3,8 +3,8 @@ import "../App.css";
 import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
 import GamepadIcon from "@mui/icons-material/Gamepad";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ReorderIcon from "@mui/icons-material/Reorder";
 import { useNavigate } from "react-router-dom";
 function SideBar() {
@@ -28,9 +28,9 @@ function SideBar() {
       link: "/dashboard",
     },
     {
-      title: "Friends",
-      icon: <PeopleAltIcon />,
-      link: "/dashboard",
+      title: "Profile",
+      icon: <PersonOutlineIcon />,
+      link: "/dashboard/profile",
     },
   ];
   const logout = {
