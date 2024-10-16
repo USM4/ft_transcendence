@@ -13,7 +13,7 @@ import {
 import { colors } from "@mui/material";
 ChartJS.register( RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-function DashboardDoghnuts(params) {
+function DashboardDoghnuts() {
 
     const data = {
         labels: [

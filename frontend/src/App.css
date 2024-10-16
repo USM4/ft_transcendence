@@ -814,7 +814,6 @@ padding-top: 10px;
   cursor: pointer;
 }
 
-
 .prfl-friend-list-container .profile-friend-item:hover{
   background-color: #bde052;
   color: #000;
@@ -841,9 +840,27 @@ padding-top: 10px;
 }
 .bottom-side-prfl .right-prfl-component .prfl-chart{
   display: flex;
+  flex-direction: column;
   height: 50%;
   border-radius: 10px;
   border: 2px solid #D4FCB5;
+}
+.prfl-chart .prfl-chart-title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: bold;
+  
+}
+.prfl-chart .profile-barchart{
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
 }
 
 .bottom-side-prfl .right-prfl-component .history-and-radar{
@@ -857,6 +874,73 @@ padding-top: 10px;
   width: 50%;
   border-radius: 10px;
   border: 2px solid #D4FCB5;
+  padding: 10px;
+}
+
+.prfl-match-history .prfl-history-title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.prfl-match-history .prfl-match-history-results{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prfl-match-history-results .profile-match-history-item{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.prfl-match-history-results .profile-match-history-item:hover{
+  background-color: #bde052;
+  color: #000;
+}
+
+.profile-match-history-item .profile-score-collection{
+  padding: 0 20px;
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-match-history-item .details-icon{
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.profile-match-history-item .details-icon button{
+  border: none;
+  background-color: transparent;
+  color:#D4FCB5;
+  padding: 0 20px;
+  cursor: pointer;
+  
+}
+
+.profile-match-history-item .details-icon button:hover{
+  color: #000;
+}
+.profile-match-history-item .profile-match-history-score{
+  font-weight: bold;
+  font-size: 18px;
+}
+
+
+.profile-match-history-item img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50px;
+  border: 2px solid #D4FCB5;
 }
 
 
@@ -864,4 +948,21 @@ padding-top: 10px;
   width: 50%;
   border-radius: 10px;
   border: 2px solid #D4FCB5;
+  padding: 10px;
+}
+
+.prfl-radar .prfl-radar-title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.prfl-radar .prfl-radar-component{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }

@@ -10,6 +10,9 @@ import SideBar from "./SideBar";
 import ProfileFriendList from "./ProfileFriendList.jsx"
 import oredoine from "../../public/oredoine.jpeg";
 import "../App.css";
+import ProfileBarChart from "./ProfileBarChart.jsx";
+import ProfileRadar from "./ProfileRadar.jsx";
+import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 
 function Profile() {
   return (
@@ -41,21 +44,31 @@ function Profile() {
                 <ProfileFriendList/>
                 <ProfileFriendList/>
                 <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
             </div>
         </div>
         <div className="right-prfl-component">
             <div className="prfl-chart">
-                <div> Chart </div>
+                <div className="prfl-chart-title"> Statistics </div>
+                <div className="profile-barchart"> <ProfileBarChart/></div>
             </div>
             <div className="history-and-radar">
-                <div className="prfl-match-history"> </div>
-                <div className="prfl-radar"> </div>
+                <div className="prfl-match-history"> 
+                  <div className="prfl-history-title"> Match History </div>
+                  <div className="prfl-match-history-results">
+                    <ProfileMatchHistory/>
+                    <ProfileMatchHistory/>
+                    <ProfileMatchHistory/>
+                    <ProfileMatchHistory/>
+                    <ProfileMatchHistory/>
+                    <ProfileMatchHistory/>
+                  </div>
+                </div>
+                <div className="prfl-radar">
+                  <div className="prfl-radar-title"> Skills </div>
+                  <div className="prfl-radar-component">
+                    <ProfileRadar/>
+                  </div>
+                </div>
             </div>
         </div>
       </div>
