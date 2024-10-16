@@ -971,11 +971,95 @@ padding-top: 10px;
 
 
 .settings-component{
-  width: 90%;
+  width: 80%;
   height: 80%;
   margin: auto;
   border-radius: 10px;
   border: 2px solid rgb(178, 187, 240);
   background-color: black;
-    
+  display: flex;
+  padding: 40px 40px;
+  gap: 20px;
 }
+
+.settings-component .profile-settings{
+  width: 40%;
+  display: flex;
+  border-radius: 10px;
+  border: 2px solid rgb(178, 187, 240);
+  padding: 20px;
+  background-color: #000;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.profile-settings .settings-user-image{
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 50px;;
+  gap: 30px;
+  
+}
+.profile-settings .settings-user-image img{
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  border: 3px solid rgb(178, 187, 240);
+}
+
+.profile-settings .settings-user-image p{
+  font-size: 22px;
+  font-weight: bold;
+  font-family: inherit;
+  color: rgb(178, 187, 240);
+}
+
+
+.settings-component .settings-options{
+  width: 80%;  
+  height: 60%;  
+  border-radius: 10px;
+  border: 3px solid rgb(178, 187, 240);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin: auto;
+}
+
+.settings-options .general-profile-settings button, .two-fa-settings button{
+  width: 500px;
+  height: 60px;
+  font-size: 19px;
+  font-family: inherit;
+  background-color: transparent;
+  border: 2px solid rgb(178, 187, 240);
+  cursor: pointer;
+  
+}
+.settings-options .general-profile-settings button:hover, .two-fa-settings button:hover{
+  background-color: rgb(178, 187, 240);
+  color: #000;
+}
+
+/* .settings-options  button{
+  width: 500px;
+  height: 60px;
+} */
+
+
+.settings-component .profile-edit-settings{
+  width: 60%;
+  display: flex;
+  border-radius: 10px;
+  border: 2px solid rgb(178, 187, 240);
+  background-color: #000;
+}
+
+
