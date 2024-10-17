@@ -13,16 +13,16 @@ function DashboardChart() {
         label: 'Oussama steps',
         data: [65, 59, 80, 81, 56, 55, 40],
         fill: false,
-        backgroundColor: 'rgba(235, 135, 85,1)',
-        borderColor: 'rgb(235, 135, 85)',
+        backgroundColor: 'rgba(174, 255, 218,1)',
+        borderColor: 'rgb(174, 255, 218) ',
         tension: 0.1,
       },
       {
         label: 'Challenger1 steps',
         data: [65, 100, 30, 66, 55, 90, 200],
         fill: false,
-        backgroundColor: 'rgba(0,128,128,1)',
-        borderColor: '#008080',
+        backgroundColor: 'rgba(0, 191, 255,1)',
+        borderColor: 'rgb(0, 191, 255) ',
         tension: 0.1,
       },
     ],
@@ -34,7 +34,7 @@ function DashboardChart() {
       legend: {
         position: 'bottom',
         labels: {
-            color: '#f4d35e', // Set the color of the legend labels
+            color: 'rgb(0, 0, 128)', // Set the color of the legend labels
           },
       },
     },

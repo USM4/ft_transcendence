@@ -48,8 +48,8 @@ function DashboardDoghnuts() {
           data: [0, 50, 40],
           fill: true,
           backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: '#edd696',
-          pointBackgroundColor: '#edd696',
+          borderColor: 'rgb(174, 255, 218)',
+          pointBackgroundColor: 'rgb(174, 255, 218)',
           pointBorderColor: '#fff',
           pointHoverBackgroundColor: '#fff',
           pointHoverBorderColor: 'rgb(54, 162, 235)'

@@ -14,7 +14,7 @@ function ProfileBarChart() {
         data: [65, 59, 80, 81, 56, 55, 40],
         fill: false,
         backgroundColor: 'green',
-        borderColor: 'rgb(235, 135, 85)',
+        borderColor: 'rgb(174, 255, 218)',
         tension: 0.1,
       },
       {
@@ -22,7 +22,7 @@ function ProfileBarChart() {
         data: [65, 100, 30, 66, 55, 90, 200],
         fill: false,
         backgroundColor: '#D4FCB5',
-        borderColor: '#008080',
+        borderColor: 'rgb(0, 191, 255) ',
         tension: 0.1,
       },
     ],
@@ -34,7 +34,7 @@ function ProfileBarChart() {
       legend: {
         position: 'bottom',
         labels: {
-            color: '#f4d35e', // Set the color of the legend labels
+            color: 'rgb(0, 0, 128)', // Set the color of the legend labels
           },
       },
     },

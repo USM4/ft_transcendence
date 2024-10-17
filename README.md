@@ -9,7 +9,7 @@
 
 # DRF  
 **Model (Database Layer)**
->A model in Django (or DRF) represents the structure of your data and the tables in the database. Think of a model as a blueprint for   creating objects that are stored in a database.  
+>A model in Django (or DRF) represents the structure of your data and the tables in the database. Think of a model as a rgb(0, 191, 255) print for   creating objects that are stored in a database.  
 >Imagine you are filling out a form for a library card. The form asks for specific details like your name, email, and address. The model defines what fields you need (e.g., name, email, address) and the types of data (e.g., text, integers, dates).
 
 **View (Logic Layer)**

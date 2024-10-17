@@ -70,21 +70,21 @@ function ProfileSettings(){
                                  )}
                             </div>
                         </>
-                ) : (
-                    <>
-                        <div className="update-avatar">
-                            <p> Update Avatar : </p>
-                            {/* onChange={handleFileChange} */}
-                            <div className="custom-file-upload">
-                                <input type="file" accept="image/*"/>
-                            </div>
-                        </div>
-                        <div className="update-nickname"> 
-                            <p>Update Nickname : </p>
-                            <input type="text"/>
-                        </div>
-                    </>
-                )}
+                    ) : (
+                            <>
+                                <div className="update-avatar">
+                                    <p> Update Avatar : </p>
+                                    {/* onChange={handleFileChange} */}
+                                    <div className="custom-file-upload">
+                                        <input type="file" accept="image/*"/>
+                                    </div>
+                                </div>
+                                <div className="update-nickname"> 
+                                    <p>Update Nickname : </p>
+                                    <input type="text"/>
+                                </div>
+                            </>
+                    )}
                 
                 <div className="save-settings">
                     <button>Save</button>
