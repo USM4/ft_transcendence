@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 /* @tailwind base;
 @tailwind components;
@@ -1132,4 +1133,28 @@ padding-top: 10px;
 .profile-edit-settings .save-settings button:hover{ 
   background-color: #000;
   color: rgb(178, 187, 240);
+}
+
+
+.two-factor-collection {
+  display: flex;
+  padding: 0 40px;
+  flex-direction: column;
+  gap: 40px;
+  height: 100%;
+}
+
+.two-factor-collection p{
+  font-family: inherit;
+  font-size: 20px;
+  color: rgb(178, 188, 239);
+}
+
+.two-factor-collection .two-fa-options{
+  display: flex;
+  gap: 20px;
+  color: rgb(255, 200, 200);
+}
+.two-factor-collection .enable-info p{
+  color: rgb(255, 223, 128);
 }

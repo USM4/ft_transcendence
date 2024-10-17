@@ -9,14 +9,14 @@ import oredoine from '/oredoine.jpeg'
 
 function ProfileSettings(){
     const [isTwoFactor,setisTwoFactor] = useState(false)
-    // const [isEnabled,setIsEnabled] = useState(false)
+    const [isEnabled,setIsEnabled] = useState(false)
     
     const handleSwitch = () => {
         setisTwoFactor(!isTwoFactor);
     };
-    // const handleEnableChange = (event) => {
-    //     setIsEnabled(event.target.value === 'enable');
-    // };
+    const handleEnableChange = (event) => {
+        setIsEnabled(event.target.value === 'enable');
+    };
     return(
         <div className="settings-component">
             <div className="profile-settings">
@@ -35,7 +35,40 @@ function ProfileSettings(){
                 </div>
                 {isTwoFactor ? (
                         <>
-                          
+                           <div className="two-factor-collection">
+                                 <p>
+                                     Two Factor Authentication (2FA) adds an extra layer of security to your account. 
+                                     With 2FA enabled, you'll need to provide a second form of verification, such as a code sent to your mobile device, in addition to your password.
+                                 </p>
+                                 <div className="two-fa-options">
+                                     
+                                         <input 
+                                             type="radio" 
+                                             value="enable" 
+                                             checked={isEnabled} 
+                                             onChange={handleEnableChange} 
+                                         />
+                                         Enable 2FA
+                                     
+                                     
+                                         <input 
+                                             type="radio" 
+                                             value="disable" 
+                                             checked={!isEnabled} 
+                                             onChange={handleEnableChange} 
+                                         />
+                                         Disable 2FA
+                                     
+                                 </div>
+                                 {isEnabled && (
+                                     <div className="enable-info">
+                                         <p>
+                                            Please download an authentication app (like Google Authenticator) or check your SMS for codes.
+                                            Make sure to keep your backup codes safe!
+                                         </p>
+                                     </div>
+                                 )}
+                            </div>
                         </>
                 ) : (
                     <>
