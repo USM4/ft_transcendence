@@ -11,7 +11,7 @@ function DashboardChart() {
     datasets: [
       {
         label: 'Oussama steps',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: [200, 59, 150, 81, 56, 155, 40],
         fill: false,
         backgroundColor: 'rgba(174, 255, 218,1)',
         borderColor: 'rgb(174, 255, 218) ',

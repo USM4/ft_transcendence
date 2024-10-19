@@ -45,7 +45,7 @@ function ProfileSettings(){
                                          <input 
                                              type="radio" 
                                              value="enable" 
-                                             checked={isEnabled} 
+                                             checked={isEnabled}
                                              onChange={handleEnableChange} 
                                          />
                                          Enable 2FA
@@ -54,7 +54,7 @@ function ProfileSettings(){
                                          <input 
                                              type="radio" 
                                              value="disable" 
-                                             checked={!isEnabled} 
+                                             checked={(!isEnabled)} 
                                              onChange={handleEnableChange} 
                                          />
                                          Disable 2FA
