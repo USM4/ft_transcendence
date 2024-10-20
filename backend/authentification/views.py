@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from .models import Client
 from .serializers import ClientSignUpSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 import os
 from dotenv import load_dotenv
@@ -73,8 +74,6 @@ class ExtractCodeFromIntraUrl(APIView):
         client_secret = SECRET_ID
         redirect_uri = 'http://localhost:8000/accounts/42school/login/callback/'
         # json li aytseft f request
-        # print("client_id:", client_id)
-        # print("client_secret:", client_secret)
         json_data = {
             'grant_type': 'authorization_code',
             'client_id': client_id,
@@ -84,7 +83,6 @@ class ExtractCodeFromIntraUrl(APIView):
         }
         headers = {'Content-Type': 'application/json'}
         # nsefto request l intra w n extractiw l user info b dak l access token li ayjina
-        # print("Request payload:", json_data)
         response = requests.post(token_url,json=json_data, headers=headers)
         if response.status_code != 200:
             return Response({'error':  "exchanging token problem with intra"}, status=400)
@@ -96,13 +94,9 @@ class ExtractCodeFromIntraUrl(APIView):
             'Authorization': f'Bearer {access_token}'
         })
         user_data = user_info_response.json()
-        # print("user_data")
-        # print(user_data)
+
         user_email = user_data.get('email')
         user = Client.objects.filter(email=user_email).first()
-        # print("##################################################")
-        # print(user.username)
-        # print("##################################################")
         username = user_data.get('login')
         #ila makanch had l user ghaycreeyih bl infos d inta
         if user is None:
@@ -122,8 +116,10 @@ class ExtractCodeFromIntraUrl(APIView):
         return  response
 
 class VerifyTokenView(APIView):
-    print('request.credentials')
     # permission_classes = [IsAuthenticated]
-    # def get(self, request):
-    #     print(request.credentials)
-    # return Response({'authenticated': True}, status=200)
+    def get(self, request):
+        print("User:", request.user)
+        if request.user.is_authenticated:
+            return Response({'authenticated': True}, status=200)
+        return Response({'error': 'Unauthorized'}, status=401)
+

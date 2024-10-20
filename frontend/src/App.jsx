@@ -24,9 +24,9 @@ function App() {
           <Route path='/features' element={<><Navbar/><Features/></>}/>
           <Route path='/howtoplay' element={<><Navbar/><HowToPlay/></>}/>
           <Route path='/dashboard' element={<ProtectedRoute component={NavbarSideBar} />}>
-          <Route path='' element={<ProtectedRoute component={Dashboard} />} />
-          <Route path='profile' element={<ProtectedRoute component={Profile} />} />
-          <Route path='settings' element={<ProtectedRoute component={ProfileSettings} />} />
+            <Route path='' element={<ProtectedRoute component={Dashboard} />} />
+            <Route path='profile' element={<ProtectedRoute component={Profile} />} />
+            <Route path='settings' element={<ProtectedRoute component={ProfileSettings} />} />
           </Route>
         </Routes>
       </Router>

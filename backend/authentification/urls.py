@@ -10,5 +10,4 @@ urlpatterns = [
     path("signup/",SignUpView.as_view(), name='signUp'),
     path('42school/login/callback/', ExtractCodeFromIntraUrl.as_view(), name='intra_callback'),
     path("verify_token/", VerifyTokenView.as_view(), name='verify_token'),
-
 ]

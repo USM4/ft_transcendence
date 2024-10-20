@@ -2,36 +2,36 @@ import { useEffect, useState } from 'react';
 import { Route, Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ component: Component }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(null); // Start with null for loading state
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('http://localhost:8000/auth/verify_token/',
-          {
-            credentials: 'include',
+    useEffect(() => {
+      const verifyToken = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/auth/verify_token/',  {
+              method: 'GET',
+              credentials: 'include',
           });
-        if (response.ok) {
-          setIsAuthenticated(true);
-          
-        } else {
+          if (response.ok) {
+            const data = await response.json();
+            setIsAuthenticated(data.authenticated);
+          } else
+              setIsAuthenticated(false);
+        } catch (error) {
+          console.error('Error verifying token:', error);
           setIsAuthenticated(false);
         }
-      } catch (error) {
-        setIsAuthenticated(false);
-      }
-      setLoading(false);
-    };
-
-    checkAuth();
-  }, []);
-
-  if (loading) {
+      };
+  
+      verifyToken();
+    }, []);
+    
+  if (isAuthenticated === null)
     return <div>Loading...</div>;
-  }
 
-  return isAuthenticated ? <Component /> : <Navigate to="/signin" />;
-};
+  if (!isAuthenticated)
+    return <Navigate to="/signin" />;
+
+  return <Component />;
+  };
 
 export default ProtectedRoute;
