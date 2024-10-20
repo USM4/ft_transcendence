@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from .models import Client
 from .serializers import ClientSignUpSerializer
+from rest_framework.permissions import IsAuthenticated
 import requests
 import os
 from dotenv import load_dotenv
@@ -95,6 +96,8 @@ class ExtractCodeFromIntraUrl(APIView):
             'Authorization': f'Bearer {access_token}'
         })
         user_data = user_info_response.json()
+        # print("user_data")
+        # print(user_data)
         user_email = user_data.get('email')
         user = Client.objects.filter(email=user_email).first()
         # print("##################################################")
@@ -110,11 +113,17 @@ class ExtractCodeFromIntraUrl(APIView):
         access = str(refresh.access_token)
         response = redirect('http://localhost:5173/dashboard')
         response.set_cookie(
-            'user',
+            'client',
             access,
             httponly=True,
             samesite='None',
             secure=True,
         )
         return  response
-    
+
+class VerifyTokenView(APIView):
+    print('request.credentials')
+    # permission_classes = [IsAuthenticated]
+    # def get(self, request):
+    #     print(request.credentials)
+    # return Response({'authenticated': True}, status=200)

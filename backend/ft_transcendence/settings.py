@@ -98,6 +98,11 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
+    'AUTH_COOKIE': 'client',  # Name of your access token cookie
+    'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
+    'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HttpOnly
+    'AUTH_COOKIE_PATH': '/',  # Available throughout the site
+    'AUTH_COOKIE_SAMESITE': 'None',
 }
 
 # Password validation
