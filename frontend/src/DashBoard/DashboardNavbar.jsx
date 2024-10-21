@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
@@ -11,6 +11,34 @@ function DashboardNavbar() {
     const navigate = useNavigate()
     const [showNotification, setShowNotification] = useState(false)
     const [profileToggle, setprofileToggle] = useState(false)
+    const [user, setUser] = useState(null)
+    useEffect(() => {
+      const getData = async () =>{
+        try {
+          const response = await fetch('http://localhost:8000/auth/profile/',
+            {
+              method: 'GET',
+              credentials: 'include',
+            }
+          )
+          if(response.ok)
+          {
+            const data = await response.json();
+            setUser(data)
+            console.log(user.avatar);
+          }
+          else
+            console.error('error getting data ');          
+          
+        } catch (error) {
+            console.error('error getting data :', error);          
+        }
+        
+      }
+      getData();
+    }, []);
+    if(user === null)
+      return <div> fetching user data .. </div>
     const handleLogout = async () =>{
       try {
           const response = await fetch( 'http://localhost:8000/auth/logout/',
@@ -28,6 +56,8 @@ function DashboardNavbar() {
         console.error('Error logging out :', error);
       }
     }
+
+    
     return(
         <div className="dashboard-navbar">
         <div className="search-btn">
@@ -50,7 +80,7 @@ function DashboardNavbar() {
           </div>
           <div className="profile">
             <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
-              <img className="profile-img" src={oredoine} />
+                <img className="profile-img" src={user.avatar} />
             </button>
             {profileToggle && (
               <div className="profile-dropdown">

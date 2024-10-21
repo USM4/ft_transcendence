@@ -98,9 +98,11 @@ class ExtractCodeFromIntraUrl(APIView):
         user_email = user_data.get('email')
         user = Client.objects.filter(email=user_email).first()
         username = user_data.get('login')
-        avatar = user_data.get('avatar')
+        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        # print(user_data.get('image'))
         # print('avatar', avatar)
         #ila makanch had l user ghaycreeyih bl infos d inta
+        avatar = user_data.get('image', {}).get('versions', {}).get('large')
         if user is None:
             user = Client(email=user_email, username=username, avatar=avatar)
             user.save()
@@ -128,7 +130,7 @@ class VerifyTokenView(APIView):
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        response = Response({'Logged out successfullt': True}, status=200)
+        response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         return response
 
@@ -139,5 +141,4 @@ class ProfileView(APIView):
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/realone.png',   
-
         })

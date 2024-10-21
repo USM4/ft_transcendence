@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class Client(AbstractUser):
-    avatar = models.ImageField(upload_to='avatars/', default='/hamster.png', blank=True, null=True)
+    avatar = models.URLField(max_length=500, blank=True, null=True)
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
