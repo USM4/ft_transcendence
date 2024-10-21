@@ -113,10 +113,10 @@ class ExtractCodeFromIntraUrl(APIView):
             samesite='None',
             secure=True,
         )
-        return  response
+        return response
 
 class VerifyTokenView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         print("User:", request.user)
         if request.user.is_authenticated:

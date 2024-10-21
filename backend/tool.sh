@@ -7,4 +7,5 @@ pip install django-cors-headers
 pip install djangorestframework-simplejwt
 pip install requests
 pip install python-dotenv
+python -m pip install Pillow
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"

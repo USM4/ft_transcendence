@@ -13,7 +13,7 @@ const ProtectedRoute = ({ component: Component }) => {
           });
           if (response.ok) {
             const data = await response.json();
-            setIsAuthenticated(data.authenticated);
+            setIsAuthenticated(true);
           } else
               setIsAuthenticated(false);
         } catch (error) {
