@@ -4,12 +4,27 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
 import SearchIcon from "@mui/icons-material/Search";
 import oredoine from "../../public/oredoine.jpeg";
+import hamster from "../../public/hamster.png";
 import '../App.css'
 
 function DashboardNavbar() {
     const navigate = useNavigate()
     const [showNotification, setShowNotification] = useState(false)
     const [profileToggle, setprofileToggle] = useState(false)
+    const [avatar, setAvatar] = useState({hamster})
+    const getProfileData = async () =>{
+      const response = await fetch( 'link', 
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+      )
+      if(response.ok)
+      {
+        const data = await response.json();
+        setAvatar(data.avatar);
+      }
+    }
     return(
         <div className="dashboard-navbar">
         <div className="search-btn">
@@ -32,7 +47,9 @@ function DashboardNavbar() {
               )}
           </div>
           <div className="profile">
-            <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn"><img className="profile-img" src={oredoine} /></button>
+            <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
+            <img className="profile-img" src={avatar} />
+            </button>
             {profileToggle && (
               <div className="profile-dropdown">
                 <button className="dropdown-elements" onClick={() => {

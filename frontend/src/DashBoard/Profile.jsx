@@ -9,6 +9,7 @@ import ReorderIcon from "@mui/icons-material/Reorder";
 import SideBar from "./SideBar";
 import ProfileFriendList from "./ProfileFriendList.jsx"
 import oredoine from "../../public/oredoine.jpeg";
+import skull from "../../public/skull.jpeg";
 import "../App.css";
 import ProfileBarChart from "./ProfileBarChart.jsx";
 import ProfileRadar from "./ProfileRadar.jsx";
