@@ -18,7 +18,7 @@ function NavbarSideBar() {
     <div className="dashboard-container">
       <SideBar />
       <div className="main-dashbord-content">
-        {/* <DashboardNavbar/> */}
+        <DashboardNavbar/>
         <Outlet/>
       </div>
     </div>

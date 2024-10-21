@@ -125,3 +125,10 @@ class VerifyTokenView(APIView):
             return Response({'authenticated': True}, status=200)
         return Response({'error': 'Unauthorized'}, status=401)
 
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        response = Response({'Logged out successfullt': True}, status=200)
+        response.delete_cookie('client')
+        return response
+

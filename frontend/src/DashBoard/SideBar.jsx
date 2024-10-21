@@ -33,6 +33,19 @@ function SideBar() {
       link: "/dashboard/profile",
     },
   ];
+    const handleLogout = async () =>{
+    const response = await fetch( 'http://localhost:8000/auth/logout/',
+    {
+      method: 'POST',
+      credentials: 'include',
+    }
+    )
+    if(response.ok)
+    {
+      const data = await response.json();
+      navigate('/signin')
+    }
+  }
   const logout = {
     title: "Logout",
     icon: <KeyboardReturnIcon />,
@@ -62,9 +75,7 @@ function SideBar() {
       <div className="logout-icon-container">
         <div
           className={`middle-sidebar-icon-${logout.title}`}
-          onClick={() => {
-            window.location.pathname = logout.link;
-          }}
+          onClick={handleLogout}
         >
           <div className="logout-icon">{logout.icon}</div>
         </div>

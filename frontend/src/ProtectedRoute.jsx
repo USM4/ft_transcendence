@@ -21,7 +21,6 @@ const ProtectedRoute = ({ component: Component }) => {
           setIsAuthenticated(false);
         }
       };
-  
       verifyToken();
     }, []);
     

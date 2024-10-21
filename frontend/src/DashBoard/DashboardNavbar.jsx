@@ -11,18 +11,21 @@ function DashboardNavbar() {
     const navigate = useNavigate()
     const [showNotification, setShowNotification] = useState(false)
     const [profileToggle, setprofileToggle] = useState(false)
-    const [avatar, setAvatar] = useState({hamster})
-    const getProfileData = async () =>{
-      const response = await fetch( 'link', 
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
-      )
-      if(response.ok)
-      {
-        const data = await response.json();
-        setAvatar(data.avatar);
+    const handleLogout = async () =>{
+      try {
+          const response = await fetch( 'http://localhost:8000/auth/logout/',
+          {
+            method: 'POST',
+            credentials: 'include',
+          }
+          )
+          if(response.ok)
+          {
+            const data = await response.json();
+            navigate('/signin')
+          }  
+      } catch (error) {
+        console.error('Error logging out :', error);
       }
     }
     return(
@@ -35,7 +38,6 @@ function DashboardNavbar() {
         </div>
         <div className="notification-and-profile">
           <div className="notification">
-            {/* <button onClick={showNotificationToggle} className="notification-icon"> */}
             <button onClick={()=>setShowNotification(!showNotification)} className="notification-icon">
               <NotificationsIcon/>
             </button>
@@ -48,7 +50,7 @@ function DashboardNavbar() {
           </div>
           <div className="profile">
             <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
-            <img className="profile-img" src={avatar} />
+              <img className="profile-img" src={oredoine} />
             </button>
             {profileToggle && (
               <div className="profile-dropdown">
@@ -59,10 +61,8 @@ function DashboardNavbar() {
                 navigate('settings')
                 }} className="dropdown-elements" >settings</button>
                 
-                <button onClick={() => {
-                navigate('/')
-                }} 
-                className="dropdown-elements">Logout</button>
+                <button onClick={handleLogout} 
+                className="dropdown-elements" >Logout</button>
               </div>
               )
             }  
