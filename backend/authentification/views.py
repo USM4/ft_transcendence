@@ -98,11 +98,11 @@ class ExtractCodeFromIntraUrl(APIView):
         user_email = user_data.get('email')
         user = Client.objects.filter(email=user_email).first()
         username = user_data.get('login')
-        # avater = user_data.get('avatar')
+        avatar = user_data.get('avatar')
         # print('avatar', avatar)
         #ila makanch had l user ghaycreeyih bl infos d inta
         if user is None:
-            user = Client(email=user_email, username=username) #, avatar=avatar
+            user = Client(email=user_email, username=username, avatar=avatar)
             user.save()
         #ila kan bnefs l infos ghay redirectih nichan l dashboard
         refresh = RefreshToken.for_user(user)
@@ -132,3 +132,12 @@ class LogoutView(APIView):
         response.delete_cookie('client')
         return response
 
+class ProfileView(APIView):
+    def get(self, request):
+        user  = request.user
+        return Response({
+            'email': user.email,
+            'username': user.username,
+            'avatar': user.avatar if user.avatar else '/realone.png',   
+
+        })
