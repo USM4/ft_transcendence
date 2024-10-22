@@ -4,7 +4,6 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
 import SearchIcon from "@mui/icons-material/Search";
 import oredoine from "../../public/oredoine.jpeg";
-import hamster from "../../public/hamster.png";
 import '../App.css'
 
 function DashboardNavbar() {
@@ -32,8 +31,7 @@ function DashboardNavbar() {
           
         } catch (error) {
             console.error('error getting data :', error);          
-        }
-        
+        } 
       }
       getData();
     }, []);
