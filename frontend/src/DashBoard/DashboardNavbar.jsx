@@ -11,32 +11,9 @@ function DashboardNavbar() {
     const [showNotification, setShowNotification] = useState(false)
     const [profileToggle, setprofileToggle] = useState(false)
     const [user, setUser] = useState(null)
-    useEffect(() => {
-      const getData = async () =>{
-        try {
-          const response = await fetch('http://localhost:8000/auth/profile/',
-            {
-              method: 'GET',
-              credentials: 'include',
-            }
-          )
-          if(response.ok)
-          {
-            const data = await response.json();
-            setUser(data)
-            console.log(user.avatar);
-          }
-          else
-            console.error('error getting data ');          
-          
-        } catch (error) {
-            console.error('error getting data :', error);          
-        } 
-      }
-      getData();
-    }, []);
-    if(user === null)
-      return <div> fetching user data .. </div>
+
+   /////////////////////////////////
+   
     const handleLogout = async () =>{
       try {
           const response = await fetch( 'http://localhost:8000/auth/logout/',
