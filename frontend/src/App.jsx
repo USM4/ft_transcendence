@@ -12,10 +12,12 @@ import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
+import UserDataProvider from './Dashboard/UserDataContext.jsx' 
 
 function App() {
   return (
     <>
+    {/* <UserDataProvider> */}
         <Router>
         <Routes>
           <Route path='/' element={<><Navbar/><HomePage/></>}/>
@@ -23,13 +25,18 @@ function App() {
           <Route path='/signup' element={<><Navbar/><SignUp/></>}/>
           <Route path='/features' element={<><Navbar/><Features/></>}/>
           <Route path='/howtoplay' element={<><Navbar/><HowToPlay/></>}/>
-          <Route path='/dashboard' element={<ProtectedRoute component={NavbarSideBar} />}>
+          <Route path='/dashboard' element={
+            <UserDataProvider>
+              <ProtectedRoute component={NavbarSideBar} />
+            </UserDataProvider>
+          }>
             <Route path='' element={<ProtectedRoute component={Dashboard} />} />
             <Route path='profile' element={<ProtectedRoute component={Profile} />} />
             <Route path='settings' element={<ProtectedRoute component={ProfileSettings} />} />
           </Route>
         </Routes>
       </Router>
+    {/* </UserDataProvider> */}
       
     </>
   )

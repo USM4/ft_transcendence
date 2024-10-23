@@ -1,10 +1,10 @@
 import React from "react";
-import { useContext , createContext, useState, useEffect} from 'react';
+import { useContext , useState, useEffect} from 'react';
 
-function UserDataContext() 
-{
+
+export const UserDataContext = useContext();
+const UserDataProvider = ({ children }) => {
     const {user, setUser} = useState(null)
-    
     useEffect(() => {
         const getData = async () =>{
           try {
@@ -35,11 +35,10 @@ function UserDataContext()
       }, []);
       if(user === null)
         return <div> fetching user data .. </div>
-
     return(
-        <>
-
-        </>
+        <UserDataContext.Provider value={{ user, setUser }}>
+        {children}
+      </UserDataContext.Provider>
     )    
 }
-export default UserDataContext;
+export default UserDataProvider;

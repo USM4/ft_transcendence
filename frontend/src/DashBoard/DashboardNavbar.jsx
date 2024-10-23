@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BrowserRouter, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
 import SearchIcon from "@mui/icons-material/Search";
 import oredoine from "../../public/oredoine.jpeg";
+import UserDataContext from './UserDataContext.jsx'
 import '../App.css'
 
 function DashboardNavbar() {
     const navigate = useNavigate()
     const [showNotification, setShowNotification] = useState(false)
     const [profileToggle, setprofileToggle] = useState(false)
-    const [user, setUser] = useState(null)
-
-   /////////////////////////////////
+  
+    const {user} = useContext(UserDataContext);
    
     const handleLogout = async () =>{
       try {
