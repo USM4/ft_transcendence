@@ -3,8 +3,8 @@ import { BrowserRouter, Outlet, Route, Routes, useNavigate } from "react-router-
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
 import SearchIcon from "@mui/icons-material/Search";
-import oredoine from "../../public/oredoine.jpeg";
-import UserDataContext from './UserDataContext.jsx'
+// import oredoine from "../../public/oredoine.jpeg";
+import { UserDataContext } from './UserDataContext.jsx'
 import '../App.css'
 
 function DashboardNavbar() {
@@ -13,18 +13,18 @@ function DashboardNavbar() {
     const [profileToggle, setprofileToggle] = useState(false)
   
     const {user} = useContext(UserDataContext);
-   
-    const handleLogout = async () =>{
+    if(!user)
+        console.log('no data for this user')
+    const handleLogout = async () => {
       try {
           const response = await fetch( 'http://localhost:8000/auth/logout/',
           {
             method: 'POST',
             credentials: 'include',
-          }
-          )
+          })
           if(response.ok)
           {
-            const data = await response.json();
+            // const data = await response.json();
             navigate('/signin')
           }  
       } catch (error) {
@@ -55,7 +55,7 @@ function DashboardNavbar() {
           </div>
           <div className="profile">
             <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
-                <img className="profile-img" src={user.avatar} />
+              <img className="profile-img" src={user.avatar || './anonyme.png'} alt=""/>
             </button>
             {profileToggle && (
               <div className="profile-dropdown">

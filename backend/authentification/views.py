@@ -140,5 +140,5 @@ class ProfileView(APIView):
         return Response({
             'email': user.email,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else '/anonyme.png',
+            'avatar': user.avatar if user.avatar else './anonyme.png',
         })

@@ -1,12 +1,12 @@
 import React from "react";
-import { useContext , useState, useEffect} from 'react';
+import { useContext, createContext, useState, useEffect} from 'react';
 
 
-export const UserDataContext = useContext();
-const UserDataProvider = ({ children }) => {
-    const {user, setUser} = useState(null)
+export const UserDataContext = createContext();
+function UserDataProvider ({ children }) {
+    const [user, setUser] = useState(null)
     useEffect(() => {
-        const getData = async () =>{
+        const getData = async () => {
           try {
             const response = await fetch('http://localhost:8000/auth/profile/',
               {
@@ -17,8 +17,8 @@ const UserDataProvider = ({ children }) => {
             if(response.ok)
             {
               const data = await response.json();
-              setUser(data)
-              console.log(user.avatar);
+              setUser(data);
+              // console.log(user.avatar);
             }
             else
               console.error('error getting data ');          
@@ -33,12 +33,12 @@ const UserDataProvider = ({ children }) => {
         // }
         getData();
       }, []);
-      if(user === null)
-        return <div> fetching user data .. </div>
+    if(user === null)
+      return <div> fetching user data .. </div>
     return(
         <UserDataContext.Provider value={{ user, setUser }}>
         {children}
       </UserDataContext.Provider>
-    )    
-}
+    );    
+};
 export default UserDataProvider;
