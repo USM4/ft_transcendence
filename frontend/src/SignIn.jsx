@@ -29,7 +29,7 @@ function SignIn() {
         {
             method: 'POST',
             headers: {
-                    'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({login, password}),
             credentials: 'include',
@@ -37,7 +37,6 @@ function SignIn() {
         const val = await response.json();
         if (response.ok)
         {
-            console.log(Object.values(val));
             navigate('/dashboard');
         }
         else 

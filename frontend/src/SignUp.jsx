@@ -24,7 +24,6 @@ function SignUp() {
             body: JSON.stringify({username, email, password , newpassword}),
         });
         const data = await response.json();
-        console.log(data);
         if (response.ok)
         {
             const successmsg = Object.values(data);

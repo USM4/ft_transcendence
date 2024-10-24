@@ -5,7 +5,7 @@ from authentification.views import SignInView
 from authentification.views import ExtractCodeFromIntraUrl
 from authentification.views import VerifyTokenView
 from authentification.views import LogoutView
-from authentification.views import ProfileView
+from authentification.views import DashboardView
 
 urlpatterns = [
     path("signin/",SignInView.as_view(), name='signIn'),
@@ -13,5 +13,5 @@ urlpatterns = [
     path('42school/login/callback/', ExtractCodeFromIntraUrl.as_view(), name='intra_callback'),
     path("verify_token/", VerifyTokenView.as_view(), name='verify_token'),
     path("logout/", LogoutView.as_view(), name='logout'),
-    path("profile/", ProfileView.as_view(), name='profile'),
+    path("dashboard/", DashboardView.as_view(), name='dashboard'),
 ]

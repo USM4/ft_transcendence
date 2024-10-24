@@ -17,7 +17,7 @@ import UserDataProvider from './Dashboard/UserDataContext.jsx'
 function App() {
   return (
     <>
-    <UserDataProvider>
+    {/* <UserDataProvider> */}
         <Router>
         <Routes>
           <Route path='/' element={<><Navbar/><HomePage/></>}/>
@@ -26,9 +26,9 @@ function App() {
           <Route path='/features' element={<><Navbar/><Features/></>}/>
           <Route path='/howtoplay' element={<><Navbar/><HowToPlay/></>}/>
           <Route path='/dashboard' element={
-            // <UserDataProvider>
+            <UserDataProvider>
               <ProtectedRoute component={NavbarSideBar} />
-            // </UserDataProvider>
+            </UserDataProvider>
           }>
             <Route path='' element={<ProtectedRoute component={Dashboard} />} />
             <Route path='profile' element={<ProtectedRoute component={Profile} />} />
@@ -36,7 +36,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
-    </UserDataProvider>
+    {/* </UserDataProvider> */}
       
     </>
   )

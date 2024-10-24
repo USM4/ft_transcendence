@@ -13,8 +13,6 @@ function DashboardNavbar() {
     const [profileToggle, setprofileToggle] = useState(false)
   
     const {user} = useContext(UserDataContext);
-    if(!user)
-        console.log('no data for this user')
     const handleLogout = async () => {
       try {
           const response = await fetch( 'http://localhost:8000/auth/logout/',
@@ -23,16 +21,12 @@ function DashboardNavbar() {
             credentials: 'include',
           })
           if(response.ok)
-          {
-            // const data = await response.json();
-            navigate('/signin')
-          }  
+            navigate('/signin') 
       } catch (error) {
-        console.error('Error logging out :', error);
+          console.error('Error logging out :', error);
       }
     }
 
-    
     return(
         <div className="dashboard-navbar">
         <div className="search-btn">
@@ -55,7 +49,7 @@ function DashboardNavbar() {
           </div>
           <div className="profile">
             <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
-              <img className="profile-img" src={user.avatar || './anonyme.png'} alt=""/>
+              <img className="profile-img" src={user?.avatar || './player.jpeg'} alt=""/>
             </button>
             {profileToggle && (
               <div className="profile-dropdown">

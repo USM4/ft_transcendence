@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from django.contrib.auth import authenticate , login
+from django.contrib.auth import authenticate , logout
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from .models import Client
@@ -130,15 +130,16 @@ class VerifyTokenView(APIView):
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
+        logout(request)
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         return response
 
-class ProfileView(APIView):
+class DashboardView(APIView):
     def get(self, request):
         user  = request.user
         return Response({
             'email': user.email,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else './anonyme.png',
+            'avatar': user.avatar if user.avatar else './player1.jpeg',
         })
