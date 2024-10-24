@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import DashboardNavbar from "./DashboardNavbar";
 import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
@@ -10,19 +10,22 @@ import SideBar from "./SideBar";
 import ProfileFriendList from "./ProfileFriendList.jsx"
 import oredoine from "../../public/oredoine.jpeg";
 import skull from "../../public/skull.jpeg";
+import player from "../../public/player1.jpeg";
 import "../App.css";
 import ProfileBarChart from "./ProfileBarChart.jsx";
 import ProfileRadar from "./ProfileRadar.jsx";
+import { UserDataContext } from './UserDataContext.jsx'
 import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 
 function Profile() {
+  const {user} = useContext(UserDataContext);
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
         <div className="profile-img-name">
-          <img src={oredoine} alt="" />
+          <img src={user?.avatar || player} alt=""/>
           <div className="profile-infos">
-            <div className="profile-name"> Oussama Redoine</div>
+            <div className="profile-name"> {user.username}</div>
             <div className="profile-bio">ag1hegoat is the greatest man a live, the king , the only</div>
           </div>
         </div>

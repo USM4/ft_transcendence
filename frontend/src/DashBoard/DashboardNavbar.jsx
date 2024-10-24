@@ -49,7 +49,7 @@ function DashboardNavbar() {
           </div>
           <div className="profile">
             <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
-              <img className="profile-img" src={user?.avatar || './player.jpeg'} alt=""/>
+              <img className="profile-img" src={user?.avatar || './player1.jpeg'} alt=""/>
             </button>
             {profileToggle && (
               <div className="profile-dropdown">

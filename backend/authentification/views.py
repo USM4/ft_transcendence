@@ -141,5 +141,5 @@ class DashboardView(APIView):
         return Response({
             'email': user.email,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else './player1.jpeg',
+            'avatar': user.avatar if user.avatar else '/player1.jpeg',
         })
