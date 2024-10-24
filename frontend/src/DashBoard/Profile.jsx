@@ -1,4 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+
 import DashboardNavbar from "./DashboardNavbar";
 import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
@@ -15,10 +17,13 @@ import "../App.css";
 import ProfileBarChart from "./ProfileBarChart.jsx";
 import ProfileRadar from "./ProfileRadar.jsx";
 import { UserDataContext } from './UserDataContext.jsx'
+import SettingsIcon from '@mui/icons-material/Settings';
 import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 
 function Profile() {
   const {user} = useContext(UserDataContext);
+  const navigate = useNavigate();
+  const [stranger,setStranger] = useState(false)
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -29,9 +34,20 @@ function Profile() {
             <div className="profile-bio">ag1hegoat is the greatest man a live, the king , the only</div>
           </div>
         </div>
-        <div className="add-friend-btn">
-          <button>Add friend</button>
-        </div>
+        {stranger ? (
+          <div className="add-friend-btn">
+            <button>Add friend</button>
+          </div>
+
+        ) :
+        (
+          <div className="profile-settings-icon">
+            <button onClick={() => navigate('/dashboard/settings')}>
+              <SettingsIcon fontSize="large"/>
+            </button>          
+          </div>
+        )
+      }
       </div>
       <div className="bottom-side-prfl">
         <div className="left-prfl-component">

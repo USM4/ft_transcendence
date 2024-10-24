@@ -130,7 +130,6 @@ class VerifyTokenView(APIView):
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        logout(request)
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         return response

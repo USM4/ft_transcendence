@@ -743,6 +743,14 @@ padding-top: 10px;
   cursor: pointer;
   transition: transform 0.5s ease, background-color 0.3s ease;
 }
+
+.top-side-prfl .profile-settings-icon button{
+  background-color: transparent;
+  color: #D4FCB5;
+  border: none;
+  cursor: pointer;
+}
+
 .top-side-prfl .add-friend-btn button:hover{
   transform: scale(1.0);
   background-color: #bde052;
