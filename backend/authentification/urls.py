@@ -6,6 +6,7 @@ from authentification.views import ExtractCodeFromIntraUrl
 from authentification.views import VerifyTokenView
 from authentification.views import LogoutView
 from authentification.views import DashboardView
+from authentification.views import SendFriendRequest
 
 urlpatterns = [
     path("signin/",SignInView.as_view(), name='signIn'),
@@ -14,4 +15,5 @@ urlpatterns = [
     path("verify_token/", VerifyTokenView.as_view(), name='verify_token'),
     path("logout/", LogoutView.as_view(), name='logout'),
     path("dashboard/", DashboardView.as_view(), name='dashboard'),
+    path("send_friend_request/", SendFriendRequest.as_view(), name='send_friend_request'),
 ]

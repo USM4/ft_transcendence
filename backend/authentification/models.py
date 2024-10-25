@@ -10,10 +10,7 @@ class Client(AbstractUser):
     #     return self.username
 
 class FriendShip(models.Model):
-    from_user = models.ForeignKey(Client, related_name='friendships_initiated', on_delete=models.CASCADE)
-    to_user = models.ForeignKey(Client, related_name='friendships_received', on_delete=models.CASCADE)
+    from_user = models.ForeignKey(Client, related_name='sent_requests', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(Client, related_name='received_requests', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-
 

@@ -34,6 +34,7 @@ function SideBar() {
     },
   ];
     const handleLogout = async () =>{
+    alert('are you sure')
     const response = await fetch( 'http://localhost:8000/auth/logout/',
     {
       method: 'POST',
@@ -75,7 +76,7 @@ function SideBar() {
       <div className="logout-icon-container">
         <div
           className={`middle-sidebar-icon-${logout.title}`}
-          onClick={handleLogout}
+          onClick={ handleLogout }
         >
           <div className="logout-icon">{logout.icon}</div>
         </div>

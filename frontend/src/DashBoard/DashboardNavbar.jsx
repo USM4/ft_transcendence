@@ -15,6 +15,7 @@ function DashboardNavbar() {
     const {user} = useContext(UserDataContext);
     const handleLogout = async () => {
       try {
+          alert('are you sure')
           const response = await fetch( 'http://localhost:8000/auth/logout/',
           {
             method: 'POST',

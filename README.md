@@ -57,6 +57,7 @@
 * Use View when developing a traditional web application with HTML responses.  
 * Use APIView when building APIs that need to return JSON and handle different data formats, as well  as when you need built-in support for authentication and permissions.  
 
+# FriendShip
 
 **Database Relationships**  
   
@@ -83,3 +84,13 @@
 * is the list of people who sent you friend requests.  
 
 
+**CASCADE:**
+>When the referenced object is deleted,  
+>also delete the objects that have references to it (when you remove a blog post for instance,  
+>you might want to delete comments as well). SQL equivalent: CASCADE.  
+
+**Send Friend Request**  
+1. we get the user id whom we will send friend request  
+2. create a new friend request instance where we set to_user = the user whom the request will be sent to ,  
+3. from_user will be the user who is sending the request i.e request.user or current user  
+-> source : [text](https://medium.com/analytics-vidhya/add-friends-with-689a2fa4e41d)

@@ -24,6 +24,26 @@ function Profile() {
   const {user} = useContext(UserDataContext);
   const navigate = useNavigate();
   const [stranger,setStranger] = useState(false)
+  const sendFriendRequest = async() =>{
+      const user_id = user.id;
+      const response = await fetch('http://localhost:8000/auth/send_friend_request/',
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({user_id}),
+      }
+      )
+      const data = await response.json();
+      if(response.ok)
+      {
+        console.log('data',data)
+      }
+      else
+        console.log('something wrong', data)
+  }
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -34,9 +54,9 @@ function Profile() {
             <div className="profile-bio">ag1hegoat is the greatest man a live, the king , the only</div>
           </div>
         </div>
-        {stranger ? (
+        {!stranger ? (
           <div className="add-friend-btn">
-            <button>Add friend</button>
+            <button onClick={sendFriendRequest}>Add friend</button>
           </div>
 
         ) :

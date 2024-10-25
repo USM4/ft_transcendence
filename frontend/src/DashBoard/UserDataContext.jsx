@@ -18,11 +18,11 @@ function UserDataProvider ({ children }) {
               const data = await response.json();
               setUser(data);
             }
-            else
-              console.error('error getting data ');
+            // else
+              // console.error('error getting data ');
             
           } catch (error) {
-              console.error('error getting data :', error);
+              // console.error('error getting data :', error);
           } 
         }
         getData();

@@ -137,8 +137,28 @@ class LogoutView(APIView):
 class DashboardView(APIView):
     def get(self, request):
         user  = request.user
+        if user is None:
+            return Response({'error': 'Unauthorized'}, status=401)
         return Response({
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
         })
+
+class SendFriendRequest(APIView):
+    def post(self, request):
+        from_user = request.user
+        to_user = request.data.get('to_user')
+        print('to_id_user', to_user)
+        if not to_user:
+            return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            to_user = Client.objects.get(id=to_user)
+        except Client.DoesNotExist:
+            return Response({'error': 'Recipient user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if FriendShip.objects.filter(from_user=from_user, to_user=to_user).exists():
+            return Response({'error': 'request already sent'}, status=400)
+        FriendShip.objects.create(from_user=from_user, to_user=to_user)
+        return Response({'success': 'friend request sent successfully'})
