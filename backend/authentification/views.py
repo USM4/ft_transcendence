@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate , logout
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from .models import Client
+from .models import FriendShip
 from .serializers import ClientSignUpSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -140,6 +141,7 @@ class DashboardView(APIView):
         if user is None:
             return Response({'error': 'Unauthorized'}, status=401)
         return Response({
+            'id': user.id,
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
@@ -148,6 +150,7 @@ class DashboardView(APIView):
 class SendFriendRequest(APIView):
     def post(self, request):
         from_user = request.user
+        print("data", request.data)
         to_user = request.data.get('to_user')
         print('to_id_user', to_user)
         if not to_user:

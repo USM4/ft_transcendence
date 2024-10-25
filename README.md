@@ -83,7 +83,6 @@
 **friendships_received**  
 * is the list of people who sent you friend requests.  
 
-
 **CASCADE:**
 >When the referenced object is deleted,  
 >also delete the objects that have references to it (when you remove a blog post for instance,  
@@ -94,3 +93,10 @@
 2. create a new friend request instance where we set to_user = the user whom the request will be sent to ,  
 3. from_user will be the user who is sending the request i.e request.user or current user  
 -> source : [text](https://medium.com/analytics-vidhya/add-friends-with-689a2fa4e41d)
+
+**Accept Friend Request**  
+
+1. we get the request id of the request we are going to accept  
+2. also we make sure that to_user of the request is the current user i.e the user whom the request is sent is the current user accesing the request ,  
+3. then we add the current user to from_user’s ( the user who sent the request) friends field  
+4. we also add the from_user to the current user’s friends field  

@@ -25,7 +25,8 @@ function Profile() {
   const navigate = useNavigate();
   const [stranger,setStranger] = useState(false)
   const sendFriendRequest = async() =>{
-      const user_id = user.id;
+      const to_user = 5;
+      console.log("Sending friend request to user ID:", to_user);
       const response = await fetch('http://localhost:8000/auth/send_friend_request/',
       {
         method: 'POST',
@@ -33,7 +34,7 @@ function Profile() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({user_id}),
+        body: JSON.stringify({to_user}),
       }
       )
       const data = await response.json();
