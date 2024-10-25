@@ -4,7 +4,7 @@ import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import skull from "../../public/skull.jpeg"
 
 function ProfileFriendList() {
-
+    
     return(
         <div className="profile-friend-item">
             <div className="profile-friend-info">

@@ -57,3 +57,29 @@
 * Use View when developing a traditional web application with HTML responses.  
 * Use APIView when building APIs that need to return JSON and handle different data formats, as well  as when you need built-in support for authentication and permissions.  
 
+
+**Database Relationships**  
+  
+>Many To Many  
+* A user can have many friends.  
+* A friend can be a friend of many users.  
+>One to Many  
+* Teacher and Students: One teacher can teach many students, but each student only has one main teacher.  
+> One to One    
+* Person and Passport: Each person has one passport, and each passport is linked to one person.  
+
+
+**Foreign Key (FK):**  
+>A Foreign Key creates a link between two tables.  
+>It connects one table's primary key to another table, showing relationships between records.  
+
+**Primary Key (PK):**
+>A Primary Key is a unique identifier for each row in a table. No two rows can have the same primary key.  
+
+**friendships_initiated**
+* is the list of people you sent friend requests to.  
+
+**friendships_received**  
+* is the list of people who sent you friend requests.  
+
+

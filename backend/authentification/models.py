@@ -8,3 +8,12 @@ class Client(AbstractUser):
     password = models.CharField(max_length=255)
     # def __str__(self):
     #     return self.username
+
+class FriendShip(models.Model):
+    from_user = models.ForeignKey(Client, related_name='friendships_initiated', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(Client, related_name='friendships_received', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
+
