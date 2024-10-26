@@ -70,7 +70,8 @@ class ExtractCodeFromIntraUrl(APIView):
         token_url = 'https://api.intra.42.fr/oauth/token'
         load_dotenv()
         CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-id')
-        SECRET_ID = os.getenv('SECRET_ID', 'default-secret-id')
+        SECRET_ID = os.getenv('SECRET_ID')
+        print("SECRET ID :", SECRET_ID)
         client_id = CLIENT_ID
         client_secret = SECRET_ID
         redirect_uri = 'http://localhost:8000/accounts/42school/login/callback/'
@@ -82,6 +83,7 @@ class ExtractCodeFromIntraUrl(APIView):
             'code': code,
             'redirect_uri': redirect_uri
         }
+
         headers = {'Content-Type': 'application/json'}
         # nsefto request l intra w n extractiw l user info b dak l access token li ayjina
         response = requests.post(token_url,json=json_data, headers=headers)
@@ -165,3 +167,6 @@ class SendFriendRequest(APIView):
             return Response({'error': 'request already sent'}, status=400)
         FriendShip.objects.create(from_user=from_user, to_user=to_user)
         return Response({'success': 'friend request sent successfully'})
+class AcceptFriendRequest(APIView):
+    def(self, request):
+        
