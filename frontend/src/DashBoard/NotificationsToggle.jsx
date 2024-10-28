@@ -17,9 +17,22 @@ function NotificationsToggle() {
         } catch (error) {
             console.error('Error fetching notification:', error);
         }
-        // useEffect (() => {
-        //     handleNotification();
-        // }, []);
+
+    }
+    const acceptFriendRequest = async () =>{
+        try {
+            const response = await fetch('http://localhost:8000/auth/accept_friend_request/',
+            {
+                method: 'POST',
+                credentials: 'include',
+            })
+            if(response.ok)
+            {
+                
+            }
+        } catch (error) {
+            
+        }
     }
 
     return (
@@ -32,11 +45,12 @@ function NotificationsToggle() {
                     Notifications.map((notification) => (
                         <div key={notification.id} className="notification" >
                             <div style={{color: 'black'}}>{notification.message}</div>
+                            <button onClick={acceptFriendRequest}> Accept </button>
                         </div>
                     ))
                 ) : (
-                    // <p style={{color: 'black'}}>No new Notifications</p>
                     <></>
+                    // <p style={{color: 'black'}}>No new Notifications</p>
                 )}
             </div>
         </div>

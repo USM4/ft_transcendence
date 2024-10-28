@@ -100,3 +100,8 @@
 2. also we make sure that to_user of the request is the current user i.e the user whom the request is sent is the current user accesing the request ,  
 3. then we add the current user to from_user’s ( the user who sent the request) friends field  
 4. we also add the from_user to the current user’s friends field  
+
+**The auto_now_add**  
+* will set the timezone.now() only when the instance is created, and auto_now will update the field every time the save a method is called.  
+
+

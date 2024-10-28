@@ -8,6 +8,7 @@ from authentification.views import LogoutView
 from authentification.views import DashboardView
 from authentification.views import SendFriendRequest
 from authentification.views import NotificationList
+from authentification.views import AcceptFriendRequest
 
 urlpatterns = [
     path("signin/",SignInView.as_view(), name='signIn'),
@@ -17,6 +18,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name='logout'),
     path("dashboard/", DashboardView.as_view(), name='dashboard'),
     path("send_friend_request/", SendFriendRequest.as_view(), name='send_friend_request'),
+    path("accept_friend_request/", SendFriendRequest.as_view(), name='accept_friend_request'),
     path("notifications/", NotificationList.as_view(), name='notifications'),
 
 ]

@@ -150,9 +150,9 @@ class DashboardView(APIView):
 class SendFriendRequest(APIView):
     def post(self, request):
         from_user = request.user
-        print("data", request.data)
+        # print("data", request.data)
         to_user = request.data.get('to_user')
-        print('to_id_user', to_user)
+        # print('to_id_user', to_user)
         if not to_user:
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -170,51 +170,6 @@ class SendFriendRequest(APIView):
         if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request.").exists():
             Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request.")
         return Response({'success': 'friend request sent successfully'})
-# class SendFriendRequest(APIView):
-#     # permission_classes = [IsAuthenticated]
-    
-#     def post(self, request):
-#         from_user = request.user
-#         print("data", request.data)
-        
-#         to_user_id = request.data.get('to_user')
-#         print('to_id_user', to_user_id)
-        
-#         if not to_user_id:
-#             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         try:
-#             to_user = Client.objects.get(id=to_user_id)
-#         except Client.DoesNotExist:
-#             return Response({'error': 'Recipient user not found'}, status=status.HTTP_404_NOT_FOUND)
-
-#         # Check if the friend request or friendship already exists
-#         existing_request = FriendShip.objects.filter(from_user=from_user, to_user=to_user).first()
-        
-#         if existing_request:
-#             # Check if there is an existing notification for this friend request
-#             existing_notification = Notification.objects.filter(
-#                 user=to_user,
-#                 message=f"{from_user.username} sent you a friend request."
-#             ).exists()
-            
-#             if not existing_notification:
-#                 # If no notification exists, create one
-#                 Notification.objects.create(
-#                     user=to_user,
-#                     message=f"{from_user.username} sent you a friend request."
-#                 )
-#             return Response({'error': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         # Create the friend request if none exists
-#         FriendShip.objects.create(from_user=from_user, to_user=to_user)
-        
-#         Notification.objects.create(
-#             user=to_user,
-#             message=f"{from_user.username} sent you a friend request."
-#         )
-
-#         return Response({'success': 'Friend request sent successfully'}, status=status.HTTP_201_CREATED)
 
 class NotificationList(APIView):
     def get(self, request):
@@ -223,5 +178,15 @@ class NotificationList(APIView):
         return Response(data)
 
 
-# class AcceptFriendRequest(APIView):
-#     def(self, request):
+class AcceptFriendRequest(APIView):
+    def post(self, request):
+        request_id = request.data.get('request_id')
+        try:
+            friend_request = FriendRequest.objects.get(id=request_id, status='pending')
+            friend_request.status = 'accepted'
+            friend_request.save()
+
+            # Additional logic to add users to each other's friend lists could go here
+            return Response({"message": "Friend request accepted "}, status=200)
+        except FriendRequest.DoesNotExist:
+            return Response({"error": "Friend request not found "}, status=404)
