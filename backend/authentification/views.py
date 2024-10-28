@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from .models import Client
 from .models import FriendShip
+from .models import Notification
 from .serializers import ClientSignUpSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -101,9 +102,6 @@ class ExtractCodeFromIntraUrl(APIView):
         user_email = user_data.get('email')
         user = Client.objects.filter(email=user_email).first()
         username = user_data.get('login')
-        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        # print(user_data.get('image'))
-        # print('avatar', avatar)
         #ila makanch had l user ghaycreeyih bl infos d inta
         avatar = user_data.get('image', {}).get('versions', {}).get('large')
         if user is None:
@@ -165,8 +163,65 @@ class SendFriendRequest(APIView):
 
         if FriendShip.objects.filter(from_user=from_user, to_user=to_user).exists():
             return Response({'error': 'request already sent'}, status=400)
+
+        # Create the friend request
         FriendShip.objects.create(from_user=from_user, to_user=to_user)
+        # Check if a notification for this friend request already exists
+        if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request.").exists():
+            Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request.")
         return Response({'success': 'friend request sent successfully'})
-class AcceptFriendRequest(APIView):
-    def(self, request):
+# class SendFriendRequest(APIView):
+#     # permission_classes = [IsAuthenticated]
+    
+#     def post(self, request):
+#         from_user = request.user
+#         print("data", request.data)
         
+#         to_user_id = request.data.get('to_user')
+#         print('to_id_user', to_user_id)
+        
+#         if not to_user_id:
+#             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         try:
+#             to_user = Client.objects.get(id=to_user_id)
+#         except Client.DoesNotExist:
+#             return Response({'error': 'Recipient user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+#         # Check if the friend request or friendship already exists
+#         existing_request = FriendShip.objects.filter(from_user=from_user, to_user=to_user).first()
+        
+#         if existing_request:
+#             # Check if there is an existing notification for this friend request
+#             existing_notification = Notification.objects.filter(
+#                 user=to_user,
+#                 message=f"{from_user.username} sent you a friend request."
+#             ).exists()
+            
+#             if not existing_notification:
+#                 # If no notification exists, create one
+#                 Notification.objects.create(
+#                     user=to_user,
+#                     message=f"{from_user.username} sent you a friend request."
+#                 )
+#             return Response({'error': 'Friend request already sent'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         # Create the friend request if none exists
+#         FriendShip.objects.create(from_user=from_user, to_user=to_user)
+        
+#         Notification.objects.create(
+#             user=to_user,
+#             message=f"{from_user.username} sent you a friend request."
+#         )
+
+#         return Response({'success': 'Friend request sent successfully'}, status=status.HTTP_201_CREATED)
+
+class NotificationList(APIView):
+    def get(self, request):
+        notifications = Notification.objects.filter(user=request.user, is_read=False)
+        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
+        return Response(data)
+
+
+# class AcceptFriendRequest(APIView):
+#     def(self, request):

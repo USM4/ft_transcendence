@@ -13,6 +13,7 @@ function DashboardNavbar() {
     const [profileToggle, setprofileToggle] = useState(false)
   
     const {user} = useContext(UserDataContext);
+    
     const handleLogout = async () => {
       try {
           alert('are you sure')
