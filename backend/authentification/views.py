@@ -174,7 +174,7 @@ class SendFriendRequest(APIView):
 class NotificationList(APIView):
     def get(self, request):
         notifications = Notification.objects.filter(user=request.user, is_read=False)
-        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
+        data = [{'id': id, 'message': message, 'created_at': created_at} for n in notifications]
         return Response(data)
 
 
@@ -185,8 +185,9 @@ class AcceptFriendRequest(APIView):
             friend_request = FriendRequest.objects.get(id=request_id, status='pending')
             friend_request.status = 'accepted'
             friend_request.save()
-
-            # Additional logic to add users to each other's friend lists could go here
+            
+            sender=friend_reque
+                        
             return Response({"message": "Friend request accepted "}, status=200)
         except FriendRequest.DoesNotExist:
             return Response({"error": "Friend request not found "}, status=404)

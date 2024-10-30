@@ -24,6 +24,12 @@ class FriendShip(models.Model):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
 
+class Friend(models.Model):
+    user = models.ForeignKey(Client, related_name="friends" ,on_delete=models.CASCADE)
+    friend = models.ForeignKey(Client,related_name="friends_with" ,on_delete=models.CASCADE)
+    is_blocked = models.BooleanField(default=False)
+
+
 class Notification(models.Model):
     user = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='notifications')
     message = models.CharField(max_length=255)
