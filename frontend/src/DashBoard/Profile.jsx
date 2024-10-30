@@ -113,19 +113,6 @@ function Profile() {
                     <ProfileMatchHistory/>
                     <ProfileMatchHistory/>
                     <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
                   </div>
                 </div>
                 <div className="prfl-radar">

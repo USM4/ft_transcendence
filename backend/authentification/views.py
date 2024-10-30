@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from .models import Client
 from .models import FriendShip
 from .models import Notification
+from .models import Friend
 from .serializers import ClientSignUpSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -174,20 +175,24 @@ class SendFriendRequest(APIView):
 class NotificationList(APIView):
     def get(self, request):
         notifications = Notification.objects.filter(user=request.user, is_read=False)
-        data = [{'id': id, 'message': message, 'created_at': created_at} for n in notifications]
+        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
         return Response(data)
 
 
 class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
+        print(f"Looking for friend request with ID: {request_id}")
         try:
-            friend_request = FriendRequest.objects.get(id=request_id, status='pending')
+            friend_request = FriendShip.objects.get(id=request_id, status='pending')
             friend_request.status = 'accepted'
             friend_request.save()
             
-            sender=friend_reque
-                        
+            sender = friend_request.to_user
+            receiver = friend_request.from_user
+            Friend.objects.create(user=sender, friend=receiver)
+            Friend.objects.create(user=receiver, friend=sender)
+
             return Response({"message": "Friend request accepted "}, status=200)
-        except FriendRequest.DoesNotExist:
+        except FriendShip.DoesNotExist:
             return Response({"error": "Friend request not found "}, status=404)

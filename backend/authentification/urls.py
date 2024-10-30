@@ -18,7 +18,6 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name='logout'),
     path("dashboard/", DashboardView.as_view(), name='dashboard'),
     path("send_friend_request/", SendFriendRequest.as_view(), name='send_friend_request'),
-    path("accept_friend_request/", SendFriendRequest.as_view(), name='accept_friend_request'),
     path("notifications/", NotificationList.as_view(), name='notifications'),
-
+    path("accept_friend_request/", AcceptFriendRequest.as_view(), name='accept_friend_request'),
 ]

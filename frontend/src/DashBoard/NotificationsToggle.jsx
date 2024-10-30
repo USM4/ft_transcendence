@@ -19,16 +19,20 @@ function NotificationsToggle() {
         }
 
     }
-    const acceptFriendRequest = async () =>{
+    const acceptFriendRequest = async (requestId) =>{
         try {
             const response = await fetch('http://localhost:8000/auth/accept_friend_request/',
             {
                 method: 'POST',
                 credentials: 'include',
+                            headers: {
+                'Content-Type': 'application/json',
+            },
+                body: JSON.stringify({request_id: requestId }),
             })
             if(response.ok)
             {
-                
+                console.log('successfully accepteeeeeeeeeeed');
             }
         } catch (error) {
             
@@ -41,17 +45,14 @@ function NotificationsToggle() {
                 Show Notifications
             </button>
             <div >
-                {Notifications.length ? (
+                {
                     Notifications.map((notification) => (
                         <div key={notification.id} className="notification" >
                             <div style={{color: 'black'}}>{notification.message}</div>
-                            <button onClick={acceptFriendRequest}> Accept </button>
+                            <button  onClick={() => acceptFriendRequest(notification.id)}> Accept </button>
                         </div>
                     ))
-                ) : (
-                    <></>
-                    // <p style={{color: 'black'}}>No new Notifications</p>
-                )}
+                }
             </div>
         </div>
     );

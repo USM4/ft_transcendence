@@ -44,8 +44,6 @@ function DashboardNavbar() {
             </button>
               {showNotification && ( <div className="notifications-container">
                   <NotificationsToggle/>
-                  <NotificationsToggle/>
-                  <NotificationsToggle/>
                 </div>
               )}
           </div>
