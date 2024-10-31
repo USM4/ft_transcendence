@@ -104,4 +104,7 @@
 **The auto_now_add**  
 * will set the timezone.now() only when the instance is created, and auto_now will update the field every time the save a method is called.  
 
+**Fiter() in React and Django**  
 
+* In React, filter() is a method available on JavaScript arrays. It creates a new array with all elements that pass the test implemented by the provided function.  
+* In Django REST Framework, filter() is often used in the context of querysets to retrieve a subset of records from the database based on certain criteria. It is part of Django’s ORM   (Object-Relational Mapping).  

@@ -182,7 +182,6 @@ class NotificationList(APIView):
 class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
-        print(f"Looking for friend request with ID: {request_id}")
         try:
             friend_request = FriendShip.objects.get(id=request_id, status='pending')
             friend_request.status = 'accepted'
@@ -196,3 +195,9 @@ class AcceptFriendRequest(APIView):
             return Response({"message": "Friend request accepted "}, status=200)
         except FriendShip.DoesNotExist:
             return Response({"error": "Friend request not found "}, status=404)
+
+# class FriendsList(APIView):
+#     def get(self, request):
+#         users = Client.objects.all()
+#         data = [{'id': u.id, 'username': u.username, 'email': u.email, 'avatar': u.avatar if u.avatar else '/player1.jpeg',} for u in users]
+#         return Response({"data": data})

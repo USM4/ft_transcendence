@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 function NotificationsToggle() {
     const [Notifications,setNotification] = useState([])
+
     const handleNotification = async () => {
         try {
             const response = await fetch( 'http://localhost:8000/auth/notifications/',
@@ -17,7 +18,7 @@ function NotificationsToggle() {
         } catch (error) {
             console.error('Error fetching notification:', error);
         }
-
+    
     }
     const acceptFriendRequest = async (requestId) =>{
         try {
@@ -25,14 +26,17 @@ function NotificationsToggle() {
             {
                 method: 'POST',
                 credentials: 'include',
-                            headers: {
-                'Content-Type': 'application/json',
-            },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({request_id: requestId }),
             })
             if(response.ok)
             {
-                console.log('successfully accepteeeeeeeeeeed');
+                    setNotification((prevNotifications) =>
+                    prevNotifications.filter(notification => notification.id !== requestId)
+            );
+                alert('Friend Request Accepted successfully!');
             }
         } catch (error) {
             

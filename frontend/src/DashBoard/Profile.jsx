@@ -76,20 +76,7 @@ function Profile() {
             <div className="prfl-friend-list-container">
                 <ProfileFriendList/>
                 <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-                <ProfileFriendList/>
+
             </div>
         </div>
         <div className="right-prfl-component">
@@ -101,8 +88,6 @@ function Profile() {
                 <div className="prfl-match-history"> 
                   <div className="prfl-history-title"> Match History </div>
                   <div className="prfl-match-history-results">
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
                     <ProfileMatchHistory/>
                     <ProfileMatchHistory/>
                     <ProfileMatchHistory/>
