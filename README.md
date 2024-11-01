@@ -108,3 +108,5 @@
 
 * In React, filter() is a method available on JavaScript arrays. It creates a new array with all elements that pass the test implemented by the provided function.  
 * In Django REST Framework, filter() is often used in the context of querysets to retrieve a subset of records from the database based on certain criteria. It is part of Django’s ORM   (Object-Relational Mapping).  
+
+**Create Context**
