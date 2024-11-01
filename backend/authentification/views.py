@@ -111,7 +111,6 @@ class ExtractCodeFromIntraUrl(APIView):
         #ila kan bnefs l infos ghay redirectih nichan l dashboard
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
-
         response = redirect('http://localhost:5173/dashboard')
         response.set_cookie(
             'client',

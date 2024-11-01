@@ -18,7 +18,6 @@ function NotificationsToggle() {
         } catch (error) {
             console.error('Error fetching notification:', error);
         }
-    
     }
     
     const acceptFriendRequest = async (requestId) =>{
@@ -41,13 +40,15 @@ function NotificationsToggle() {
                 alert('Friend Request Accepted successfully!');
             }
         } catch (error) {
-            
+
         }
     }
 
     return (
         <div className="notif-invitation-text">
-            <button onClick={handleNotification}>Notifications</button>
+            <button onClick={handleNotification}>
+                Show Notifications
+            </button>
             <div >
                 {
                     Notifications.map((notification) => (

@@ -13,6 +13,7 @@ import Features from './Features.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import UserDataProvider from './Dashboard/UserDataContext.jsx'
+import FriendDataProvider from './Dashboard/FriendDataContext.jsx'
 
 function App() {
   return (
@@ -30,8 +31,15 @@ function App() {
               <ProtectedRoute component={NavbarSideBar} />
             </UserDataProvider>
           }>
-            <Route path='' element={<ProtectedRoute component={Dashboard} />} />
-            <Route path='profile' element={<ProtectedRoute component={Profile} />} />
+          <Route path='' element={
+            <FriendDataProvider>
+              <ProtectedRoute component={Dashboard} />
+            </FriendDataProvider>} 
+          />
+          <Route path='profile' element={
+            <FriendDataProvider>
+              <ProtectedRoute component={Profile} />
+            </FriendDataProvider>} />
             <Route path='settings' element={<ProtectedRoute component={ProfileSettings} />} />
           </Route>
         </Routes>

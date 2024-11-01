@@ -17,31 +17,16 @@ import "../App.css";
 import ProfileBarChart from "./ProfileBarChart.jsx";
 import ProfileRadar from "./ProfileRadar.jsx";
 import { UserDataContext } from './UserDataContext.jsx'
+import { FriendDataContext } from './FriendDataContext.jsx'
 import SettingsIcon from '@mui/icons-material/Settings';
 import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 
 function Profile() {
   const {user} = useContext(UserDataContext);
-  const [friends,setFriends] = useState([]);
   const navigate = useNavigate();
   const [stranger,setStranger] = useState(false)
-  // const [dependency,setDependency] = useState(false)
-
-  const fetchFriendList = async () => {
-    const response = await fetch('http://localhost:8000/auth/friends/',
-    {
-        method: 'GET',
-        credentials: 'include',
-    })
-    if(response.ok){
-        const responseData = await response.json();
-        setFriends(responseData.data);
-        console.log(responseData.data);
-    }
-    else{
-      console.log('something went wrong');
-    }
-  }
+  const {friends} = useContext(FriendDataContext);
+  
   const sendFriendRequest = async() =>{
       const to_user = 2;
       console.log("Sending friend request to user ID:", to_user);
@@ -66,9 +51,7 @@ function Profile() {
       }
     }
     
-  useEffect(() => {
-    fetchFriendList();
-  }, [false]);
+
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -97,7 +80,8 @@ function Profile() {
       <div className="bottom-side-prfl">
         <div className="left-prfl-component">
             <div className="friends-list-title">Friends List</div>
-            <div className="prfl-friend-list-container">              
+            <div className="prfl-friend-list-container">
+              {/* {console.log("friends dataaaaaaa :",friends)}   */}
               {
                 friends && friends.length > 0 ? (
                  friends.map((friend) => (
