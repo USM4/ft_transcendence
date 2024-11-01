@@ -124,7 +124,7 @@ class ExtractCodeFromIntraUrl(APIView):
 class VerifyTokenView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        print("User:", request.user)
+        # print("User:", request.user)
         if request.user.is_authenticated:
             return Response({'authenticated': True}, status=200)
         return Response({'error': 'Unauthorized'}, status=401)
@@ -168,8 +168,8 @@ class SendFriendRequest(APIView):
         # Create the friend request
         FriendShip.objects.create(from_user=from_user, to_user=to_user)
         # Check if a notification for this friend request already exists
-        if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request.").exists():
-            Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request.")
+        if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").exists():
+            Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request ")
         return Response({'success': 'friend request sent successfully'})
 
 class NotificationList(APIView):
@@ -196,8 +196,10 @@ class AcceptFriendRequest(APIView):
         except FriendShip.DoesNotExist:
             return Response({"error": "Friend request not found "}, status=404)
 
-# class FriendsList(APIView):
-#     def get(self, request):
-#         users = Client.objects.all()
-#         data = [{'id': u.id, 'username': u.username, 'email': u.email, 'avatar': u.avatar if u.avatar else '/player1.jpeg',} for u in users]
-#         return Response({"data": data})
+class FriendsList(APIView):
+    def get(self, request):
+        # print("lalalalalalalalalalalalalalalalalalalala")
+        users = Client.objects.all()
+        data = [{'id': u.id, 'username': u.username, 'email': u.email, 'avatar': u.avatar if u.avatar else '/player1.jpeg'} for u in users]
+        # print("heeeeeere is the data", data)
+        return Response({"data": data})

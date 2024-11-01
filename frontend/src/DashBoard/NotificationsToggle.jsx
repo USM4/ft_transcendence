@@ -52,8 +52,8 @@ function NotificationsToggle() {
                 {
                     Notifications.map((notification) => (
                         <div key={notification.id} className="notification" >
-                            <div style={{color: 'black'}}>{notification.message}</div>
-                            <button  onClick={() => acceptFriendRequest(notification.id)}> Accept </button>
+                            <div style={{color: 'white'}}>{notification.message}</div>
+                            <div className="notification-accept"> <button  onClick={() => acceptFriendRequest(notification.id)}> Accept </button> </div>
                         </div>
                     ))
                 }

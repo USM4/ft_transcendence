@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import DashboardNavbar from "./DashboardNavbar";
@@ -22,8 +22,25 @@ import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 
 function Profile() {
   const {user} = useContext(UserDataContext);
+  const [friends,setFriends] = useState([]);
   const navigate = useNavigate();
   const [stranger,setStranger] = useState(false)
+
+  const fetchFriendList = async () => {
+    const response = await fetch('http://localhost:8000/auth/friends/',
+    {
+        method: 'GET',
+        credentials: 'include',
+    })
+    if(response.ok){
+        const data = await response.json();
+        setFriends(data);
+        console.log(data);
+    }
+    else{
+      console.log('something went wrong');
+    }
+  }
   const sendFriendRequest = async() =>{
       const to_user = 1;
       console.log("Sending friend request to user ID:", to_user);
@@ -44,7 +61,11 @@ function Profile() {
       }
       else
         console.log('something wrong', data)
-  }
+    }
+    
+  useEffect(() => {
+    fetchFriendList();
+  }, []);
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -74,9 +95,17 @@ function Profile() {
         <div className="left-prfl-component">
             <div className="friends-list-title">Friends List</div>
             <div className="prfl-friend-list-container">
-                <ProfileFriendList/>
-                <ProfileFriendList/>
-
+               {friends?.length > 0 ? (
+                  friends.map((friend) => (
+                     <ProfileFriendList
+                        key={friend.id}
+                        username={friend.username}
+                        avatar={friend.avatar}
+                     />
+                  ))
+               ) : (
+                  <p>No friends yet</p>
+               )}
             </div>
         </div>
         <div className="right-prfl-component">

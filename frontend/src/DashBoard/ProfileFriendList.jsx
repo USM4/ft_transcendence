@@ -3,31 +3,12 @@ import SmsIcon from '@mui/icons-material/Sms';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import skull from "../../public/skull.jpeg"
 
-function ProfileFriendList() {
-    const [friend,setFriend] = useState([]);
-    const fetchFriendList = async () => {
-        const response = await fetch('http://localhost:8000/auth/friends/',
-        {
-            method: 'GET',
-            credentials: 'include',
-        })
-        if(response.ok)
-        {
-            const data = await response.json();
-            setFriend(data);
-            console.log(data);
-        }
-        else
-        {
-            console.log('something went wrong');
-        
-        }
-    }
+function ProfileFriendList(username , avatar) {
     return(
         <div className="profile-friend-item">
             <div className="profile-friend-info">
-                <img src={skull} alt=""/>
-                <p> Oussama redoine </p>
+                <img src={avatar} alt=""/>
+                <p> {username} </p>
             </div>
             <div className="dm-friend">
                 <button className="invite-btn"><SmsIcon/></button>

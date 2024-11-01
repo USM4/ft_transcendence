@@ -331,8 +331,22 @@ padding-top: 10px;
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: end;
-  
+  justify-content: space-between;
+  color: #000;
+}
+
+.notification .notification-accept{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: green;
+  color:#D4FCB5;
+  font-family: inherit;
+  border-radius: 5px solid #000;
+  height: 20px;
+  width: 60px;
+  border: none;
+  cursor: pointer;
 }
 .notification-icon{
   background-color: transparent;
@@ -348,7 +362,7 @@ padding-top: 10px;
   border: 2px solid #685E5E;
   width: 450px;
   padding: 15px;
-  background-color: #fff8e7;
+  background-color: black;
 }
 .notifications-container .notif-invitation-text{
   font-size: 18px;
@@ -359,7 +373,7 @@ padding-top: 10px;
 .notifications-container .notif-invitation-text button{
   border: none;
   background-color: transparent;
-  color: #333;
+  color: #fff;
   cursor: pointer;
 }
 
