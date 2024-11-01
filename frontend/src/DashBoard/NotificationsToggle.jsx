@@ -20,6 +20,7 @@ function NotificationsToggle() {
         }
     
     }
+    
     const acceptFriendRequest = async (requestId) =>{
         try {
             const response = await fetch('http://localhost:8000/auth/accept_friend_request/',
@@ -35,6 +36,7 @@ function NotificationsToggle() {
             {
                     setNotification((prevNotifications) =>
                     prevNotifications.filter(notification => notification.id !== requestId)
+                    
             );
                 alert('Friend Request Accepted successfully!');
             }
@@ -45,9 +47,7 @@ function NotificationsToggle() {
 
     return (
         <div className="notif-invitation-text">
-            <button onClick={handleNotification}>
-                Show Notifications
-            </button>
+            <button onClick={handleNotification}>Notifications</button>
             <div >
                 {
                     Notifications.map((notification) => (

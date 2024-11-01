@@ -111,6 +111,7 @@ class ExtractCodeFromIntraUrl(APIView):
         #ila kan bnefs l infos ghay redirectih nichan l dashboard
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
+
         response = redirect('http://localhost:5173/dashboard')
         response.set_cookie(
             'client',
@@ -186,20 +187,27 @@ class AcceptFriendRequest(APIView):
             friend_request = FriendShip.objects.get(id=request_id, status='pending')
             friend_request.status = 'accepted'
             friend_request.save()
-            
             sender = friend_request.to_user
             receiver = friend_request.from_user
             Friend.objects.create(user=sender, friend=receiver)
             Friend.objects.create(user=receiver, friend=sender)
-
+            Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
             return Response({"message": "Friend request accepted "}, status=200)
         except FriendShip.DoesNotExist:
             return Response({"error": "Friend request not found "}, status=404)
 
 class FriendsList(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
-        # print("lalalalalalalalalalalalalalalalalalalala")
-        users = Client.objects.all()
-        data = [{'id': u.id, 'username': u.username, 'email': u.email, 'avatar': u.avatar if u.avatar else '/player1.jpeg'} for u in users]
-        # print("heeeeeere is the data", data)
+        user = request.user
+        friends = Friend.objects.filter(user=user).select_related('friend')
+        data = [
+            {
+                'id': friend.friend.id,
+                'username': friend.friend.username,
+                'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg'
+            }
+            for friend in friends
+        ]
         return Response({"data": data})

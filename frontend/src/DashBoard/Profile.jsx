@@ -25,6 +25,7 @@ function Profile() {
   const [friends,setFriends] = useState([]);
   const navigate = useNavigate();
   const [stranger,setStranger] = useState(false)
+  // const [dependency,setDependency] = useState(false)
 
   const fetchFriendList = async () => {
     const response = await fetch('http://localhost:8000/auth/friends/',
@@ -33,16 +34,16 @@ function Profile() {
         credentials: 'include',
     })
     if(response.ok){
-        const data = await response.json();
-        setFriends(data);
-        console.log(data);
+        const responseData = await response.json();
+        setFriends(responseData.data);
+        console.log(responseData.data);
     }
     else{
       console.log('something went wrong');
     }
   }
   const sendFriendRequest = async() =>{
-      const to_user = 1;
+      const to_user = 2;
       console.log("Sending friend request to user ID:", to_user);
       const response = await fetch('http://localhost:8000/auth/send_friend_request/',
       {
@@ -60,12 +61,14 @@ function Profile() {
         console.log('data',data)
       }
       else
+      {
         console.log('something wrong', data)
+      }
     }
     
   useEffect(() => {
     fetchFriendList();
-  }, []);
+  }, [false]);
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -94,18 +97,19 @@ function Profile() {
       <div className="bottom-side-prfl">
         <div className="left-prfl-component">
             <div className="friends-list-title">Friends List</div>
-            <div className="prfl-friend-list-container">
-               {friends?.length > 0 ? (
-                  friends.map((friend) => (
-                     <ProfileFriendList
-                        key={friend.id}
-                        username={friend.username}
-                        avatar={friend.avatar}
-                     />
-                  ))
-               ) : (
-                  <p>No friends yet</p>
-               )}
+            <div className="prfl-friend-list-container">              
+              {
+                friends && friends.length > 0 ? (
+                 friends.map((friend) => (
+                    <ProfileFriendList
+                       key={friend.id}
+                       username={friend.username}
+                       avatar={friend.avatar}
+                    />
+                 ))
+              ) : (
+                 <p>No friends yet</p>
+              )}
             </div>
         </div>
         <div className="right-prfl-component">

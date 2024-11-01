@@ -3,7 +3,7 @@ import SmsIcon from '@mui/icons-material/Sms';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import skull from "../../public/skull.jpeg"
 
-function ProfileFriendList(username , avatar) {
+function ProfileFriendList({username , avatar}) {
     return(
         <div className="profile-friend-item">
             <div className="profile-friend-info">
