@@ -12,6 +12,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import "../App.css";
 
+
 function Dashboard(params) {
     return(    
         <div className="dashboard-components">
@@ -44,7 +45,7 @@ function Dashboard(params) {
             </div>
             </div>
             <div className="dashboard-friends">
-            <p className="dashboard-friends-title">Online Friends</p> 
+                <p className="dashboard-friends-title">Online Friends</p> 
             <div className="friends-container">
                 <DashboardFriends/>
                 <DashboardFriends/>

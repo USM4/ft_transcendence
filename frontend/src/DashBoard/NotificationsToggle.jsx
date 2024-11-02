@@ -36,7 +36,7 @@ function NotificationsToggle() {
                     setNotification((prevNotifications) =>
                     prevNotifications.filter(notification => notification.id !== requestId)
                     
-            );
+                );
                 alert('Friend Request Accepted successfully!');
             }
         } catch (error) {

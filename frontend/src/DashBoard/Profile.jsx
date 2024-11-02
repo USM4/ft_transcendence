@@ -28,7 +28,7 @@ function Profile() {
   const {friends} = useContext(FriendDataContext);
   
   const sendFriendRequest = async() =>{
-      const to_user = 2;
+      const to_user = 1;
       console.log("Sending friend request to user ID:", to_user);
       const response = await fetch('http://localhost:8000/auth/send_friend_request/',
       {
@@ -81,7 +81,7 @@ function Profile() {
         <div className="left-prfl-component">
             <div className="friends-list-title">Friends List</div>
             <div className="prfl-friend-list-container">
-              {/* {console.log("friends dataaaaaaa :",friends)}   */}
+              {console.log("friends dataaaaaaa :",friends)}
               {
                 friends && friends.length > 0 ? (
                  friends.map((friend) => (
@@ -103,22 +103,25 @@ function Profile() {
             </div>
             <div className="history-and-radar">
                 <div className="prfl-match-history"> 
-                  <div className="prfl-history-title"> Match History </div>
-                  <div className="prfl-match-history-results">
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
-                    <ProfileMatchHistory/>
+                  <div className="prfl-history-title"> 
+                      <p>Match History</p>
+                      <div className="prfl-match-history-results">
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                        <ProfileMatchHistory/>
+                      </div>
+                   </div>
                   </div>
-                </div>
                 <div className="prfl-radar">
-                  <div className="prfl-radar-title"> Skills </div>
+                  <div className="prfl-radar-title"> 
+                    Skills 
+                  </div>
                   <div className="prfl-radar-component">
                     <ProfileRadar/>
                   </div>

@@ -31,42 +31,44 @@ function DashboardNavbar() {
 
     return(
         <div className="dashboard-navbar">
-        <div className="search-btn">
-          <input className="search-input" placeholder="Search" />
-          <button className="search-icon">
-            <SearchIcon />
-          </button>
-        </div>
-        <div className="notification-and-profile">
-          <div className="notification">
-            <button onClick={()=>setShowNotification(!showNotification)} className="notification-icon">
-              <NotificationsIcon/>
-            </button>
-              {showNotification && ( <div className="notifications-container">
-                  <NotificationsToggle/>
-                </div>
-              )}
-          </div>
-          <div className="profile">
-            <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
-              <img className="profile-img" src={user?.avatar || './player1.jpeg'} alt=""/>
-            </button>
-            {profileToggle && (
-              <div className="profile-dropdown">
-                <button className="dropdown-elements" onClick={() => {
-                  navigate('profile')
-                }}>profile</button>
-                <button onClick={() => {
-                navigate('settings')
-                }} className="dropdown-elements" >settings</button>
-                
-                <button onClick={handleLogout} 
-                className="dropdown-elements" >Logout</button>
+          <div className="search-btn">
+              <div className="search-input"><input placeholder="Search" />
+                  <button className="search-icon">
+                  <SearchIcon />
+                </button>
               </div>
-              )
-            }  
           </div>
-        </div>
+          <div className="notification-and-profile">
+            <div className="notification">
+              <button onClick={()=>setShowNotification(!showNotification)} className="notification-icon">
+                <NotificationsIcon/>
+              </button>
+                  {showNotification && ( 
+                    <div className="notifications-container">
+                      <NotificationsToggle/>
+                    </div>
+                  )}
+            </div>
+            <div className="profile">
+              <button onClick={() => setprofileToggle(!profileToggle)} className="profile-btn">
+                <img className="profile-img" src={user?.avatar || './player1.jpeg'} alt=""/>
+              </button>
+              {profileToggle && (
+                <div className="profile-dropdown">
+                  <button className="dropdown-elements" onClick={() => {
+                    navigate('profile')
+                  }}>profile</button>
+                  <button onClick={() => {
+                  navigate('settings')
+                  }} className="dropdown-elements" >settings</button>
+
+                  <button onClick={handleLogout} 
+                  className="dropdown-elements" >Logout</button>
+                </div>
+                )
+              }  
+            </div>
+          </div>
         </div>
     );
 } export default DashboardNavbar;

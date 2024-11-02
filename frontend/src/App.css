@@ -292,33 +292,48 @@ body {
 
 .dashboard-navbar{
   display: flex;
-justify-content: space-between;
-align-items: center;
-height: 50px;
-padding-top: 10px;
-}
-
-.search-input{
-  display: flex;
-  justify-content: center;
-  width: 400px;
-  height: 40px;
-  padding-left: 8px;
-  background-color: #000;
-  border: none;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding-top: 10px;
 }
 
 .search-btn{
   display: flex;
   justify-content: center;
-  margin: 0 auto;
+  align-items: center;
+  margin-left: 30%;
 }
 
-.search-icon{
+.search-input{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search-input input{
+  width: 700px;
+  height: 45px;
+  padding-left: 10px;
   background-color: #000;
   border: none;
-  padding: 5px;
+  color: rgb(174, 255, 218);
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  border: 2px solid rgb(174, 255, 218);
+}
+
+.search-btn .search-icon{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 5px;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
+
 }
 
 .notification-and-profile {
@@ -615,9 +630,8 @@ padding-top: 10px;
   width: 40px;
   height: 40px;
 }
- /***************** match-history = dashboard-friends **************************/
- /***************** match-history-container = friends-container **************************/
- .dashboard-friends{
+
+.dashboard-friends{
   width: 100%;
   height: 50%;
   display: flex;
@@ -690,6 +704,7 @@ padding-top: 10px;
     width: 100%;
     flex-direction: row;
     background-color: rebeccapurple;
+    overflow: hidden;
 }
 
 .profile-component{
@@ -704,6 +719,7 @@ padding-top: 10px;
   flex-direction: column;
   background-color: #000;
   gap: 20px;
+  overflow: hidden;
 }
 
 .profile-component .top-side-prfl{
@@ -912,14 +928,18 @@ padding-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   padding: 5px;
   font-weight: bold;
   font-size: 22px;
+  overflow-y: auto;
 }
 
 .prfl-match-history .prfl-match-history-results{
   display: flex;
   flex-direction: column;
+  width: 100%;
+
   gap: 10px;
 }
 
