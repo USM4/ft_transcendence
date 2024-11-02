@@ -10,6 +10,7 @@ from authentification.views import SendFriendRequest
 from authentification.views import NotificationList
 from authentification.views import AcceptFriendRequest
 from authentification.views import FriendsList
+from authentification.views import Search
 
 urlpatterns = [
     path("signin/",SignInView.as_view(), name='signIn'),
@@ -22,4 +23,5 @@ urlpatterns = [
     path("notifications/", NotificationList.as_view(), name='notifications'),
     path("accept_friend_request/", AcceptFriendRequest.as_view(), name='accept_friend_request'),
     path("friends/", FriendsList.as_view(), name='friends'),
+    path("search/", Search.as_view(), name='search'),
 ]

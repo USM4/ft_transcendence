@@ -610,11 +610,12 @@ body {
   cursor: pointer;
   padding: 5px 7px;
 }
+
 .match-history-container .match-history-item:hover{
   background-color:#181815;
 }
 
-.match-history-item .img-user1 , 
+.match-history-item .img-user1 ,
 .match-history-item .img-user2 {
   width: 50px;
   height: 50px;
@@ -922,6 +923,7 @@ body {
   border-radius: 10px;
   border: 2px solid #D4FCB5;
   padding: 10px;
+  overflow-y: auto;
 }
 
 .prfl-match-history .prfl-history-title{
@@ -932,7 +934,6 @@ body {
   padding: 5px;
   font-weight: bold;
   font-size: 22px;
-  overflow-y: auto;
 }
 
 .prfl-match-history .prfl-match-history-results{

@@ -3,11 +3,8 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate , logout
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
-from .models import Client
-from .models import FriendShip
-from .models import Notification
-from .models import Friend
-from .serializers import ClientSignUpSerializer
+from .models import Client , Friend, FriendShip, Notification , Search
+from .serializers import ClientSignUpSerializer , SearchSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
@@ -210,3 +207,14 @@ class FriendsList(APIView):
             for friend in friends
         ]
         return Response({"data": data})
+
+class Search(APIView):
+    search = Search.objects.all()
+    print("search")
+    serializer_class = SearchSerializer
+    def get(self, request):
+        if not search:
+            return Response({'error': 'search parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+        clients = Client.objects.filter(username__icontains=search).exclude(id=request.user.id)
+        data = [{'id': c.id, 'username': c.username} for c in clients]
+        return Response(data)

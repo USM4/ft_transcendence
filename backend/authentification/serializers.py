@@ -16,3 +16,8 @@ class ClientSignUpSerializer(serializers.ModelSerializer):
             client.avatar = avatar
         client.save()
         return client
+
+class SearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ['id', 'username']
