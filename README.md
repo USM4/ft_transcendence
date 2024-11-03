@@ -110,8 +110,3 @@
 * In Django REST Framework, filter() is often used in the context of querysets to retrieve a subset of records from the database based on certain criteria. It is part of Django’s ORM   (Object-Relational Mapping).  
 
 **Create Context**
-
-
-
-number : +966 58 088 8858
-hand of success agency
