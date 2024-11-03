@@ -11,6 +11,7 @@ function DashboardNavbar() {
     const navigate = useNavigate()
     const [showNotification, setShowNotification] = useState(false)
     const [profileToggle, setprofileToggle] = useState(false)
+    
   
     const {user} = useContext(UserDataContext);
     
@@ -56,7 +57,7 @@ function DashboardNavbar() {
               {profileToggle && (
                 <div className="profile-dropdown">
                   <button className="dropdown-elements" onClick={() => {
-                    navigate('profile')
+                    navigate(`profile/${user.username}`)
                   }}>profile</button>
                   <button onClick={() => {
                   navigate('settings')

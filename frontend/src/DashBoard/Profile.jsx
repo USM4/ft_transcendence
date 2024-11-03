@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import DashboardNavbar from "./DashboardNavbar";
 import HomeIcon from "@mui/icons-material/Home";
@@ -26,6 +26,7 @@ function Profile() {
   const navigate = useNavigate();
   const [stranger,setStranger] = useState(false)
   const {friends} = useContext(FriendDataContext);
+  const userNameParam = useParams();
   
   const sendFriendRequest = async() =>{
       const to_user = 1;
@@ -50,7 +51,14 @@ function Profile() {
         console.log('something wrong', data)
       }
     }
-    
+    useEffect(() => {
+      if(userNameParam.username !== user.username)
+      {
+        // fetch the stranger user data
+        
+      }
+    }
+    ,[])
 
   return (
     <div className="profile-component">

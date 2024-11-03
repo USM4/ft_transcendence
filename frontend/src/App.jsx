@@ -36,7 +36,7 @@ function App() {
               <ProtectedRoute component={Dashboard} />
             </FriendDataProvider>} 
           />
-          <Route path='profile' element={
+          <Route path='profile/:username' element={
             <FriendDataProvider>
               <ProtectedRoute component={Profile} />
             </FriendDataProvider>} />
