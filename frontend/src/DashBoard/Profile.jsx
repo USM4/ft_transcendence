@@ -23,11 +23,12 @@ import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 
 function Profile() {
   const {user} = useContext(UserDataContext);
+  const [stranger_data , setStrangerData] = useState(null);
   const navigate = useNavigate();
   const [stranger,setStranger] = useState(false)
   const {friends} = useContext(FriendDataContext);
-  const userNameParam = useParams();
-  
+  const {username}= useParams();
+
   const sendFriendRequest = async() =>{
       const to_user = 1;
       console.log("Sending friend request to user ID:", to_user);
@@ -44,6 +45,7 @@ function Profile() {
       const data = await response.json();
       if(response.ok)
       {
+        setStrangerData(data);
         console.log('data',data)
       }
       else
@@ -51,14 +53,26 @@ function Profile() {
         console.log('something wrong', data)
       }
     }
-    useEffect(() => {
-      if(userNameParam.username !== user.username)
-      {
-        // fetch the stranger user data
-        
-      }
+   
+  useEffect(() => {
+    if (username !== user.username) {
+      const fetchStranger = async () => {
+        const response = await fetch(`http://localhost:8000/auth/dashboard/${username}/`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setStrangerData(data);
+          console.log('straaaaaaanger', data);
+          setStranger(true);
+        } else {
+          console.log('something wrong', data);
+        }
+      };
+      fetchStranger();
     }
-    ,[])
+  }, [username, user.username]);
 
   return (
     <div className="profile-component">
@@ -89,7 +103,7 @@ function Profile() {
         <div className="left-prfl-component">
             <div className="friends-list-title">Friends List</div>
             <div className="prfl-friend-list-container">
-              {console.log("friends dataaaaaaa :",friends)}
+              {/* {console.log("friends dataaaaaaa :",friends)} */}
               {
                 friends && friends.length > 0 ? (
                  friends.map((friend) => (
