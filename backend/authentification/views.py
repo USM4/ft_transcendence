@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from .models import Client , Friend, FriendShip, Notification , Search
 from .serializers import ClientSignUpSerializer , SearchSerializer
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
@@ -148,9 +149,9 @@ class DashboardView(APIView):
 class SendFriendRequest(APIView):
     def post(self, request):
         from_user = request.user
-        # print("data", request.data)
+        print("dataaaaaa :", request.data)
         to_user = request.data.get('to_user')
-        # print('to_id_user', to_user)
+        print('to_id_user', to_user)
         if not to_user:
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -210,7 +211,7 @@ class FriendsList(APIView):
 
 class Search(APIView):
     search = Search.objects.all()
-    print("search")
+    # print("search")
     serializer_class = SearchSerializer
     def get(self, request):
         if not search:
@@ -218,3 +219,16 @@ class Search(APIView):
         clients = Client.objects.filter(username__icontains=search).exclude(id=request.user.id)
         data = [{'id': c.id, 'username': c.username} for c in clients]
         return Response(data)
+
+class Profile(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            username = kwargs.get('username')
+            user = Client.objects.get(username=username)
+        except Client.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+        return Response({
+            'id': user.id,
+            'username': user.username,
+            'avatar': user.avatar if user.avatar else '/player1.jpeg',
+        })
