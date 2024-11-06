@@ -27,7 +27,6 @@ function Profile() {
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
   const { friends } = useContext(FriendDataContext);
-  // const [switchUser, setSwitchUser] = useState(user);
   const { username } = useParams();
 
   const sendFriendRequest = async (to_user) => {
@@ -66,11 +65,9 @@ function Profile() {
         const data = await response.json();
         if (response.ok) {
           setStrangerData(data);
-          // setSwitchUser(data);
           setStranger(true);
         } else {
           setStranger(false);
-          // setSwitchUser(user);
           console.log("something wrong", data);
         }
       };
@@ -112,7 +109,6 @@ function Profile() {
         <div className="left-prfl-component">
           <div className="friends-list-title">Friends List</div>
           <div className="prfl-friend-list-container">
-            {/* {console.log("friends dataaaaaaa :",friends)} */}
             {friends && friends.length > 0 ? (
               friends.map((friend) => (
                 <ProfileFriendList
