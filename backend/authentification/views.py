@@ -151,6 +151,7 @@ class SendFriendRequest(APIView):
         from_user = request.user
         print("dataaaaaa :", request.data)
         to_user = request.data.get('to_user')
+        print("from_user", from_user)
         print('to_id_user', to_user)
         if not to_user:
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)

@@ -41,12 +41,13 @@ function Profile() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ to_user }),
+        body: JSON.stringify({ to_user: to_user }),
       }
     );
     const data = await response.json();
     if (response.ok) {
-      setStrangerData(data);
+      console.log("The request has been sent", data);
+      // setStrangerData(data);
       console.log("data", data);
     } else {
       console.log("something wrong", data);
@@ -75,6 +76,7 @@ function Profile() {
       };
       fetchStranger();
     } else {
+      setStranger(false);
     }
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
