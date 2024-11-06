@@ -64,8 +64,8 @@ function Profile() {
         );
         const data = await response.json();
         if (response.ok) {
-          setStrangerData(data);
           setStranger(true);
+          setStrangerData(data);
         } else {
           setStranger(false);
           console.log("something wrong", data);
