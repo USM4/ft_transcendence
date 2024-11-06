@@ -67,7 +67,6 @@ function Profile() {
         const data = await response.json();
         if (response.ok) {
           setStrangerData(data);
-          // setSwitchUser(data);
           setStranger(true);
         } else {
           setStranger(false);
@@ -119,7 +118,6 @@ function Profile() {
         <div className="left-prfl-component">
           <div className="friends-list-title">Friends List</div>
           <div className="prfl-friend-list-container">
-            {/* {console.log("friends dataaaaaaa :",friends)} */}
             { !stranger && friends && friends.length > 0 ? (
               friends.map((friend) => (
                 <ProfileFriendList
