@@ -9,7 +9,7 @@
 
 # DRF  
 **Model (Database Layer)**
->A model in Django (or DRF) represents the structure of your data and the tables in the database. Think of a model as a rgb(0, 191, 255) print for   creating objects that are stored in a database.  
+>A model in Django (or DRF) represents the structure of your data and the tables in the database/. Think of a model as a rgb(0, 191, 255) print for   creating objects that are stored in a database.  
 >Imagine you are filling out a form for a library card. The form asks for specific details like your name, email, and address. The model defines what fields you need (e.g., name, email, address) and the types of data (e.g., text, integers, dates).
 
 **View (Logic Layer)**
@@ -109,4 +109,11 @@
 * In React, filter() is a method available on JavaScript arrays. It creates a new array with all elements that pass the test implemented by the provided function.  
 * In Django REST Framework, filter() is often used in the context of querysets to retrieve a subset of records from the database based on certain criteria. It is part of Django’s ORM   (Object-Relational Mapping).  
 
-**Create Context**
+**WebSockets**
+* 
+WebSockets are a communication protocol that enables a persistent, two-way connection between a client (like a web browser) and a server. This differs from traditional HTTP, where each request from the client to the   server initiates a new connection and the server sends back a response, closing the connection right after. WebSockets, on the other hand, keep the connection open, allowing real-time, low-latency communication between   the client and server.  
+ **Django Channels**  
+
+![alt text](1_aXz4upk63jPFzJFPeI4OPQ.webp)  
+
+
