@@ -27,11 +27,12 @@ function Profile() {
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
   const { friends } = useContext(FriendDataContext);
-  // const [switchUser, setSwitchUser] = useState(user);
   const { username } = useParams();
+  const [pending, setPending] = useState(false);
+  const isFriend = friends.some((friend) => friend.username);
 
   const sendFriendRequest = async (to_user) => {
-    console.log("Sending friend request to user ID:", username);
+    setPending(true);
     const response = await fetch(
       "http://localhost:8000/auth/send_friend_request/",
       {
@@ -70,17 +71,23 @@ function Profile() {
           setStranger(true);
         } else {
           setStranger(false);
-          // setSwitchUser(user);
           console.log("something wrong", data);
         }
       };
       fetchStranger();
     } else {
-      setStranger(false);
     }
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
-
+  const getButtonText = () => {
+    if (pending)
+      return "Pending";
+    else if (isFriend)
+      return "Remove Friend";
+    else
+      return "Add Friend";
+    
+  }
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -97,7 +104,7 @@ function Profile() {
         {stranger ? (
           <div className="add-friend-btn">
             <button onClick={() => sendFriendRequest(switchUser.id)}>
-              Add friend
+              {getButtonText()}
             </button>
           </div>
         ) : (
@@ -113,7 +120,7 @@ function Profile() {
           <div className="friends-list-title">Friends List</div>
           <div className="prfl-friend-list-container">
             {/* {console.log("friends dataaaaaaa :",friends)} */}
-            {friends && friends.length > 0 ? (
+            { !stranger && friends && friends.length > 0 ? (
               friends.map((friend) => (
                 <ProfileFriendList
                   key={friend.id}
