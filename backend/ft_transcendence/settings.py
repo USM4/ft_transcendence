@@ -40,7 +40,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
 ]
+
+ASGI_APPLICATION = 'ft_transcendence.asgi.application'
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels.layers.InMemoryChannelLayer'
+#         'CONFIG': {
+#             'hosts': [('localhost', '8000')]
+#         }
+
+#     }
+# }
 
 MIDDLEWARE = [
     'authentification.middleware.JWTAuthFromCookieMiddleware',
