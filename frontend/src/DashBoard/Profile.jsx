@@ -120,7 +120,8 @@ function Profile() {
         <div className="left-prfl-component">
           <div className="friends-list-title">Friends List</div>
           <div className="prfl-friend-list-container">
-            { !stranger && friends && friends.length > 0 ? (
+            { 
+              !stranger && friends && friends.length > 0 ? (
               friends.map((friend) => (
                 <ProfileFriendList
                   key={friend.id}

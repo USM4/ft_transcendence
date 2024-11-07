@@ -30,7 +30,7 @@ function SideBar() {
     {
       title: "Profile",
       icon: <PersonOutlineIcon />,
-      link: "/dashboard/profile",
+      link: "/dashboard/profile/:username",
     },
   ];
     const handleLogout = async () =>{

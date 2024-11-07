@@ -10,7 +10,7 @@ from authentification.views import SendFriendRequest
 from authentification.views import NotificationList
 from authentification.views import AcceptFriendRequest
 from authentification.views import FriendsList
-from authentification.views import Search
+# from authentification.views import Search
 from authentification.views import Profile
 
 urlpatterns = [

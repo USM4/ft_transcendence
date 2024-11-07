@@ -12,6 +12,8 @@ import requests
 import os
 from dotenv import load_dotenv
 from django.shortcuts import redirect
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 class SignUpView(APIView):
     def post(self, request):
@@ -169,6 +171,7 @@ class SendFriendRequest(APIView):
         # Check if a notification for this friend request already exists
         if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").exists():
             Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request ")
+            # call send_notification function and pass
         return Response({'success': 'friend request sent successfully'})
 
 class NotificationList(APIView):
@@ -177,6 +180,15 @@ class NotificationList(APIView):
         data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
         return Response(data)
 
+def send_notification(message):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'notifications',
+        {
+            'type': 'send_notification',
+            'message': message
+        }
+    )
 
 class AcceptFriendRequest(APIView):
     def post(self, request):

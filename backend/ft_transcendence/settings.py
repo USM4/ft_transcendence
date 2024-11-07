@@ -44,17 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-ASGI_APPLICATION = 'ft_transcendence.asgi.application' 
-
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer'
-#         'CONFIG': {
-#             'hosts': [('localhost', '8000')]
-#         }
-
-#     }
-# }
+ASGI_APPLICATION = 'ft_transcendence.asgi.application'
 
 MIDDLEWARE = [
     'authentification.middleware.JWTAuthFromCookieMiddleware',
@@ -146,6 +136,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [

@@ -13,7 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import "../App.css";
 
 
-function Dashboard(params) {
+function Dashboard() {
     return(
         <div className="dashboard-components">
             <div className="dashboard-stats">
