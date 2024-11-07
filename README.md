@@ -117,3 +117,12 @@ WebSockets are a communication protocol that enables a persistent, two-way conne
 ![alt text](1_aXz4upk63jPFzJFPeI4OPQ.webp)  
 
 
+**The difference Between HTTP and WebSockets**
+
+![alt text](HTTP-Connection.png)
+
+![alt text](WebSocket-Connection.png)
+
+
+
+
