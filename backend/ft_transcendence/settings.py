@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    'daphne',
     'corsheaders',
     'authentification',
     'django.contrib.admin',
@@ -40,10 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'channels',
 ]
 
-ASGI_APPLICATION = 'ft_transcendence.asgi.application'
+ASGI_APPLICATION = 'ft_transcendence.asgi.application' 
 
 # CHANNEL_LAYERS = {
 #     'default': {

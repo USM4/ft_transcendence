@@ -4,23 +4,29 @@ function NotificationsToggle() {
     const [Notifications,setNotification] = useState([])
 
     const handleNotification = async () => {
-        try {
-            const response = await fetch( 'http://localhost:8000/auth/notifications/',
-            {
-              method: 'GET',
-              credentials: 'include',
-            })
-            if(response.ok)
-            {
-                const data  = await response.json();
-                setNotification(data);
-            }
-        } catch (error) {
-            console.error('Error fetching notification:', error);
+        const url = `ws://localhost:8000/ws/notifications/`;
+        const ws = new WebSocket(url);
+        ws.onmessage = () => {
+            console.log('message');
+            console.log('connected');
         }
+        // try {
+        //     const response = await fetch( 'http://localhost:8000/auth/notifications/',
+        //     {
+        //       method: 'GET',
+        //       credentials: 'include',
+        //     })
+        //     if(response.ok)
+        //     {
+        //         const data  = await response.json();
+        //         setNotification(data);
+        //     }
+        // } catch (error) {
+        //     console.error('Error fetching notification:', error);
+        // }
     }
     
-    const acceptFriendRequest = async (requestId) =>{
+    const acceptFriendRequest = async (requestId) => {
         try {
             const response = await fetch('http://localhost:8000/auth/accept_friend_request/',
             {
@@ -43,6 +49,7 @@ function NotificationsToggle() {
 
         }
     }
+
 
     return (
         <div className="notif-invitation-text">
