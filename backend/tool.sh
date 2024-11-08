@@ -10,4 +10,6 @@ pip install python-dotenv
 python -m pip install Pillow
 pip install channels
 pip install daphne
+pip install pyotp
+
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"

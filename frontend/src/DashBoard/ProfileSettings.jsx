@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
 import GamepadIcon from "@mui/icons-material/Gamepad";
@@ -12,13 +12,36 @@ function ProfileSettings(){
     const [isTwoFactor,setisTwoFactor] = useState(false)
     const [isEnabled,setIsEnabled] = useState(false)
     const {user} = useContext(UserDataContext);
+    const [QrCodeUrl,setQrCodeUrl] = useState('./anonymous.png');
     
     const handleSwitch = () => {
         setisTwoFactor(!isTwoFactor);
     };
-    const handleEnableChange = (event) => {
-        setIsEnabled(event.target.value === 'enable');
-    };
+    const getQRCode = () => {
+        if (isEnabled) {
+            try {
+                const response = fetch('http://localhost:8000/auth/2fa/',
+                    {
+                        method: 'GET',
+                        credentials: 'include',
+                    }
+                )
+                if(response.ok)
+                {
+                    const data = response.json();
+                    print(data.qr_code);
+                    setQrCodeUrl(data.qr_code);
+                }
+            }
+            catch (error) {
+            }
+        }
+    }
+    useEffect(() => {
+        if(isEnabled)
+        console.log("--------------------->", isEnabled)
+        getQRCode();
+    }, [isEnabled]);
     return(
         <div className="settings-component">
             <div className="profile-settings">
@@ -44,18 +67,18 @@ function ProfileSettings(){
                         </p>
                     <div className="two-fa-options">
                         <input
-                            type="radio"
-                            value="enable"
-                            checked={isEnabled}
-                            onChange={handleEnableChange}
+                            type="checkbox" 
+                            checked={isEnabled || ""}
+                            onChange={()=>setIsEnabled(true)}
+                        readOnly={true}
                         />
                         Enable 2FA
                         <input 
-                            type="radio" 
-                            value="disable" 
-                            checked={!isEnabled}
-                            onChange={handleEnableChange} 
-                        />
+                            type="checkbox" 
+                            checked={!isEnabled || ""}
+                            onChange={()=>setIsEnabled(false)}
+                            readOnly={false}
+                            />
                         Disable 2FA
                         </div>
                         {isEnabled && (
@@ -66,6 +89,9 @@ function ProfileSettings(){
                                 </p>
                             </div>
                         )}
+                        <div className="qr-code-component">
+                            <img src={QrCodeUrl} alt=""/>
+                        </div>
                     </div>
                 </>
                     ) : (
@@ -90,5 +116,5 @@ function ProfileSettings(){
             </div>
         </div>
     );
-};
+}
 export default ProfileSettings;

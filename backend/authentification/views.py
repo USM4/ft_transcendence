@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
+from .otp import generate_otp
 import os
 from dotenv import load_dotenv
 from django.shortcuts import redirect
@@ -193,6 +194,7 @@ def send_notification(message):
 class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
+        generate_otp()
         try:
             friend_request = FriendShip.objects.get(id=request_id, status='pending')
             friend_request.status = 'accepted'
@@ -245,3 +247,9 @@ class Profile(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
         })
+
+class QrCode(APIView):
+    def get(self, request):
+        generate_otp(username=request.user.username)
+        response = Response({'message': 'QR code generated successfully'}, status=200)
+        response.

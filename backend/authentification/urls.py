@@ -12,6 +12,7 @@ from authentification.views import AcceptFriendRequest
 from authentification.views import FriendsList
 # from authentification.views import Search
 from authentification.views import Profile
+from authentification.views import QrCode
 
 urlpatterns = [
     path("signin/",SignInView.as_view(), name='signIn'),
@@ -26,4 +27,5 @@ urlpatterns = [
     path("friends/", FriendsList.as_view(), name='friends'),
     # path("search/", Search.as_view(), name='search'),
     path("profile/<str:username>/", Profile.as_view(), name='profile'),
+    path("2fa/", QrCode.as_view(), name='2fa'),
 ]

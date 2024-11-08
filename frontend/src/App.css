@@ -1212,3 +1212,14 @@ body {
 .two-factor-collection .enable-info p{
   color: rgb(255, 223, 128);
 }
+
+.two-factor-collection .qr-code-component{
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+  height: 70%;
+  margin: auto;
+  border-radius: 5px;
+  border: 2px solid rgb(178, 187, 240);
+  /* background-color: #bde052; */
+}

@@ -47,7 +47,6 @@ function Profile() {
     const data = await response.json();
     if (response.ok) {
       console.log("The request has been sent", data);
-      // setStrangerData(data);
       console.log("data", data);
     } else {
       console.log("something wrong", data);
@@ -81,14 +80,10 @@ function Profile() {
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
   const getButtonText = () => {
-    if (pending)
-      return "Pending";
-    else if (isFriend)
-      return "Remove Friend";
-    else
-      return "Add Friend";
-    
-  }
+    if (pending) return "Pending";
+    else if (isFriend) return "Remove Friend";
+    else return "Add Friend";
+  };
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -120,8 +115,7 @@ function Profile() {
         <div className="left-prfl-component">
           <div className="friends-list-title">Friends List</div>
           <div className="prfl-friend-list-container">
-            { 
-              !stranger && friends && friends.length > 0 ? (
+            {!stranger && friends && friends.length > 0 ? (
               friends.map((friend) => (
                 <ProfileFriendList
                   key={friend.id}

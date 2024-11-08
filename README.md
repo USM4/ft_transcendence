@@ -123,6 +123,13 @@ WebSockets are a communication protocol that enables a persistent, two-way conne
 
 ![alt text](WebSocket-Connection.png)
 
+**About the 2FA**
+
+* The TOTP algorithm requires a shared secret key between the server and the user's device (often their phone with an authenticator app like Google Authenticator or Authy). This shared secret key is a unique identifier for generating the 2FA codes.
+
+* pyotp.random_base32() creates this random secret key in base32 encoding, which is compatible with most 2FA apps.
+* The generated string looks random, e.g., JBSWY3DPEHPK3PXP.
+* This key will be stored on the server and shared with the user (usually via a QR code). Once stored, both the server and the user's authenticator app will   generate matching codes based on this key.  
 
 
 
