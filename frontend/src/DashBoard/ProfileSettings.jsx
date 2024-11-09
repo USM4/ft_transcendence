@@ -7,12 +7,13 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
+import Switch from "@mui/material/Switch";
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const { user } = useContext(UserDataContext);
-  const [QrCodeUrl, setQrCodeUrl] = useState("./anonymous.png");
+  const [QrCodeUrl, setQrCodeUrl] = useState(null);
 
   const handleSwitch = () => {
     setisTwoFactor(!isTwoFactor);
@@ -36,7 +37,10 @@ function ProfileSettings() {
     }
   };
   useEffect(() => {
-    if (isEnabled) getQRCode();
+    if (isEnabled) 
+        getQRCode();
+    else 
+        setQrCodeUrl(null)
   }, [isEnabled]);
   return (
     <div className="settings-component">
@@ -71,22 +75,16 @@ function ProfileSettings() {
                 device, in addition to your password.
               </p>
               <div className="two-fa-options">
-                <input
-                  type="checkbox"
-                  checked={isEnabled || ""}
-                  onChange={() => setIsEnabled(true)}
-                  readOnly={true}
-                />
-                Enable 2FA
-                <input
-                  type="checkbox"
-                  checked={!isEnabled || ""}
-                  onChange={() => setIsEnabled(false)}
-                  readOnly={false}
-                />
-                Disable 2FA
+                <div className="switch-toggle">
+                    <Switch
+                      checked={isEnabled}
+                      onChange={() => setIsEnabled(!isEnabled)}
+                      color="secondary"
+                    />
+                </div>
+                <div className="enable-text">Enable Two Factor Authentication</div>
               </div>
-              {isEnabled && (
+                {isEnabled && (
                 <div className="enable-info">
                   <p>
                     Please download an authentication app (like Google

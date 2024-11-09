@@ -195,7 +195,6 @@ def send_notification(message):
 class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
-        generate_otp()
         try:
             friend_request = FriendShip.objects.get(id=request_id, status='pending')
             friend_request.status = 'accepted'

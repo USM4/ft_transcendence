@@ -1205,8 +1205,17 @@ body {
 
 .two-factor-collection .two-fa-options{
   display: flex;
+  align-items: center;
   gap: 20px;
   color: rgb(255, 200, 200);
+}
+
+
+.two-factor-collection .enable-text{
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  gap: 10px;
 }
 
 .two-factor-collection .enable-info p{
