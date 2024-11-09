@@ -15,12 +15,14 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 import UserDataProvider from './Dashboard/UserDataContext.jsx'
 import FriendDataProvider from './Dashboard/FriendDataContext.jsx'
 import SocketContextProvider from './Dashboard/SocketContext.jsx';
+import { Toaster } from 'react-hot-toast';
 function App() {
   return (
     <>
     {/* <UserDataProvider> */}
         <Router>
           <SocketContextProvider >
+          <Toaster position="top-center" reverseOrder={false} />
         <Routes>
           <Route path='/' element={<><Navbar/><HomePage/></>}/>
           <Route path='/signin' element={<><Navbar/><SignIn/></>}/>

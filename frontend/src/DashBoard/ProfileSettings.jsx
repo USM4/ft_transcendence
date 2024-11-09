@@ -8,6 +8,7 @@ import ReorderIcon from "@mui/icons-material/Reorder";
 import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
 import Switch from "@mui/material/Switch";
+import toast from 'react-hot-toast';
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
@@ -29,10 +30,13 @@ function ProfileSettings() {
       });
       const data = await response.json();
       if (response.ok) {
+        toast.success(data.message);
         console.log(data);
       } else 
       {
-        console.log("error");
+        // console.log("error");
+        // <Toaster position="top-center"/>
+        toast.error(data.error);
         console.log(data);
       }
     } catch (error) {

@@ -255,7 +255,7 @@ def generate_otp(username):
     user.secret_key = secret_key
     user.save()
     print("secret ------------> ",user.secret_key)
-    url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name="otp", issuer_name="ft_transcendence")
+    url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name=user.username, issuer_name="ft_transcendence")
     qrcode_directory = "media/qr_codes/"
     if not os.path.exists(qrcode_directory):
         print("directory not found")
