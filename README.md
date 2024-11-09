@@ -132,4 +132,18 @@ WebSockets are a communication protocol that enables a persistent, two-way conne
 * This key will be stored on the server and shared with the user (usually via a QR code). Once stored, both the server and the user's authenticator app will   generate matching codes based on this key.  
 
 
+**For storing dynamically** 
+
+1. static directory:
+
+* Stores files that are part of your app itself, like JavaScript, CSS, and images used for design  (logos, icons, etc.).
+* These files don’t change per user and are typically version-controlled because they are a core part of your app.
+* Configured with STATIC_URL and STATICFILES_DIRS.  
+
+2. media directory:  
+
+* Stores user-generated or dynamic content, like profile pictures or QR codes generated for * specific users.  
+* These files change depending on user actions or content and aren’t typically tracked by   versioncontrol.
+* Configured with MEDIA_URL and MEDIA_ROOT.  
+
 

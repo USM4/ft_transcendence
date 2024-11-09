@@ -11,5 +11,6 @@ python -m pip install Pillow
 pip install channels
 pip install daphne
 pip install pyotp
+pip install qrcode
 
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"

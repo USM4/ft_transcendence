@@ -13,6 +13,8 @@ from authentification.views import FriendsList
 # from authentification.views import Search
 from authentification.views import Profile
 from authentification.views import QrCode
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path("signin/",SignInView.as_view(), name='signIn'),
@@ -25,7 +27,6 @@ urlpatterns = [
     path("notifications/", NotificationList.as_view(), name='notifications'),
     path("accept_friend_request/", AcceptFriendRequest.as_view(), name='accept_friend_request'),
     path("friends/", FriendsList.as_view(), name='friends'),
-    # path("search/", Search.as_view(), name='search'),
     path("profile/<str:username>/", Profile.as_view(), name='profile'),
     path("2fa/", QrCode.as_view(), name='2fa'),
 ]

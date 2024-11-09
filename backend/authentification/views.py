@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 from django.shortcuts import redirect
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.conf import settings
 
 class SignUpView(APIView):
     def post(self, request):
@@ -251,5 +252,9 @@ class Profile(APIView):
 class QrCode(APIView):
     def get(self, request):
         generate_otp(username=request.user.username)
-        response = Response({'message': 'QR code generated successfully'}, status=200)
-        response.
+        # define the path to the QR code in the media directory
+        qrcode_path = os.path.join(settings.MEDIA_ROOT, 'qr_codes', f'{request.user.username}.png')
+         # creating  the media URL for the frontend to access
+        qrcode_url = request.build_absolute_uri(settings.MEDIA_URL + f'qr_codes/{request.user.username}.png')
+        print('qrcode_url:', qrcode_url)
+        return Response({'qrcode': qrcode_url})
