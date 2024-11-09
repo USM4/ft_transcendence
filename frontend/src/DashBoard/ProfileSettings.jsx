@@ -14,7 +14,31 @@ function ProfileSettings() {
   const [isEnabled, setIsEnabled] = useState(false);
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
-    
+  const [code, setCode] = useState("");
+
+  const saveCode = async () => {
+    console.log("save code");
+    try {
+      const response = await fetch("http://localhost:8000/auth/activate2fa/", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data);
+      } else 
+      {
+        console.log("error");
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  } 
   const handleSwitch = () => {
     setisTwoFactor(!isTwoFactor);
   };
@@ -96,7 +120,9 @@ function ProfileSettings() {
                 <div className="two-foctor-tools">
                     <div className="confirmation-input">
                         <input type="text" maxLength={6}
-                         placeholder="Enter the code" />
+                          onChange={(e) => setCode(e.target.value)}
+                          value={code}
+                          placeholder="Enter the code" />
                     </div>
                     <div className="qr-code-component">
                       <img src={QrCodeUrl} alt="" />
@@ -122,7 +148,7 @@ function ProfileSettings() {
         )}
 
         <div className="save-settings">
-          <button>Save</button>
+          <button onClick={saveCode} >Save</button>
         </div>
       </div>
     </div>

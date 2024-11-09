@@ -9,8 +9,9 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
-from .otp import generate_otp
 import os
+import pyotp
+import qrcode
 from dotenv import load_dotenv
 from django.shortcuts import redirect
 from asgiref.sync import async_to_sync
@@ -248,6 +249,21 @@ class Profile(APIView):
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
         })
 
+def generate_otp(username):
+    secret_key = pyotp.random_base32()
+    user = Client.objects.get(username=username)
+    user.secret_key = secret_key
+    user.save()
+    print("secret ------------> ",user.secret_key)
+    url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name="otp", issuer_name="ft_transcendence")
+    qrcode_directory = "media/qr_codes/"
+    if not os.path.exists(qrcode_directory):
+        print("directory not found")
+        os.makedirs(qrcode_directory)
+    path = qrcode_directory + username + ".png"
+    qrcode.make(url).save(path)
+
+
 class QrCode(APIView):
     def get(self, request):
         generate_otp(username=request.user.username)
@@ -255,5 +271,21 @@ class QrCode(APIView):
         qrcode_path = os.path.join(settings.MEDIA_ROOT, 'qr_codes', f'{request.user.username}.png')
          # creating  the media URL for the frontend to access
         qrcode_url = request.build_absolute_uri(settings.MEDIA_URL + f'qr_codes/{request.user.username}.png')
-        print('qrcode_url:', qrcode_url)
+        # print('qrcode_url:', qrcode_url)
         return Response({'qrcode': qrcode_url})
+
+
+class Activate2FA(APIView):
+    def post(self, request):
+        otp = request.data.get('code')
+        print("otp", otp)
+        print("request.user", request.user)
+        if not otp:
+            return Response({'error': 'OTP is required'}, status=400)
+
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        request.user.is_2fa_enabled = True
+        request.user.save()
+        return Response({'message': '2FA enabled successfully'})
