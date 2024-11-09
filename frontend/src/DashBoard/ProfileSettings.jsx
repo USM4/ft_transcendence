@@ -14,7 +14,7 @@ function ProfileSettings() {
   const [isEnabled, setIsEnabled] = useState(false);
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
-
+    
   const handleSwitch = () => {
     setisTwoFactor(!isTwoFactor);
   };
@@ -30,17 +30,14 @@ function ProfileSettings() {
         console.log(data);
         console.log(data.qrcode);
         setQrCodeUrl(data.qrcode);
-      } else 
-        console.log("error");
+      } else console.log("error");
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    if (isEnabled) 
-        getQRCode();
-    else 
-        setQrCodeUrl(null)
+    if (isEnabled) getQRCode();
+    else setQrCodeUrl(null);
   }, [isEnabled]);
   return (
     <div className="settings-component">
@@ -76,15 +73,17 @@ function ProfileSettings() {
               </p>
               <div className="two-fa-options">
                 <div className="switch-toggle">
-                    <Switch
-                      checked={isEnabled}
-                      onChange={() => setIsEnabled(!isEnabled)}
-                      color="secondary"
-                    />
+                  <Switch
+                    checked={isEnabled}
+                    onChange={() => setIsEnabled(!isEnabled)}
+                    color="secondary"
+                  />
                 </div>
-                <div className="enable-text">Enable Two Factor Authentication</div>
+                <div className="enable-text">
+                  Enable Two Factor Authentication
+                </div>
               </div>
-                {isEnabled && (
+              {isEnabled && (
                 <div className="enable-info">
                   <p>
                     Please download an authentication app (like Google
@@ -93,9 +92,17 @@ function ProfileSettings() {
                   </p>
                 </div>
               )}
-              {isEnabled && <div className="qr-code-component">
-                <img src={QrCodeUrl} alt="" />
-              </div>}
+              {isEnabled && (
+                <div className="two-foctor-tools">
+                    <div className="confirmation-input">
+                        <input type="text" maxLength={6}
+                         placeholder="Enter the code" />
+                    </div>
+                    <div className="qr-code-component">
+                      <img src={QrCodeUrl} alt="" />
+                    </div>
+                </div>
+              )}
             </div>
           </>
         ) : (
