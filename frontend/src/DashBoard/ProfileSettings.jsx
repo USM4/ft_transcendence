@@ -20,31 +20,7 @@ function ProfileSettings() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [otp, setOtp] = useState("");
 
-  const checkForDesabling = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/auth/check_for_desabling/", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        JSON: JSON.stringify({'otp': otp}),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        if (response.ok) {
-          setIsEnabled(false);
-          toast.success("Two Factor Authentication is disabled successfully");
-        }
-        else
-          toast.error("Can't disable enter the code");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
   const saveCode = async () => {
-    console.log("save code");
     try {
       const response = await fetch("http://localhost:8000/auth/activate2fa/", {
         method: "POST",
@@ -52,7 +28,7 @@ function ProfileSettings() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ 'otp': code }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -91,15 +67,29 @@ function ProfileSettings() {
     }
   };
   useEffect(() => {
-    if (isEnabled) 
-    {
+    if (isEnabled)
       getQRCode();
-    }
-    else
-    {
-      checkForDesabling();
-    };
   }, [isEnabled]);
+    //   const handleDisable = async () => {
+    //     if (user.is_2fa_enabled)
+    //     {
+    //       try {
+    //         const response = await fetch("http://localhost:8000/auth/check_for_desabling/", {
+    //           method: "POST",
+    //           credentials: "include",
+    //         });
+    //         if (response.ok) {
+    //           const data = await response.json();
+    //           console.log(data);
+    //         } else console.log("error");
+    //       } catch (error) {
+    //         console.log(error);
+    //       }
+    //   }
+    // }
+    const popConfirmation = async () => {
+      setIsModalOpen(true);
+    }
   return (
     <div className="settings-component">
       <div className="profile-settings">
@@ -138,7 +128,7 @@ function ProfileSettings() {
                     <div className="switch-toggle">
                     <Switch
                       checked={isEnabled}
-                      onChange={() => setIsEnabled(checkForDesabling)}
+                        onChange={() => setIsEnabled(false)}
                       color="secondary"
                     />
                 </div>
@@ -194,12 +184,12 @@ function ProfileSettings() {
             </div>
           </>
         )}
-
         <div className="save-settings">
           <button onClick={saveCode} >Save</button>
         </div>
       </div>
     </div>
   );
+
 }
 export default ProfileSettings;

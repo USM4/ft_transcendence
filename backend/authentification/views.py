@@ -56,6 +56,10 @@ class SignInView(APIView):
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
             response = Response({"success":"Logged in successfully !"}, status=status.HTTP_200_OK)
+            if client.is_2fa_enabled:
+                response = redirect('http://localhost:5173/2fa')
+            else:
+                response = redirect('http://localhost:5173/dashboard')
             response.set_cookie(
                 'client',
                 access,
@@ -276,10 +280,9 @@ class QrCode(APIView):
         # print('qrcode_url:', qrcode_url)
         return Response({'qrcode': qrcode_url})
 
-
 class Activate2FA(APIView):
     def post(self, request):
-        otp = request.data.get('code')
+        otp = request.data.get('otp')
         print("otp", otp)
         print("request.user", request.user)
         if not otp:
@@ -295,23 +298,11 @@ class Activate2FA(APIView):
 class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
+        print("otp", otp)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
+        print("------------------>",totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
-
-class checkForDesabling(APIView):
-    def post(self, request):
-        otp = request.data.get('otp')
-        if not otp:
-            return Response({'error': 'OTP is required'}, status=400)
-        totp = pyotp.totp.TOTP(request.user.secret_key)
-        if not totp.verify(otp):
-            return Response({'error': 'Invalid OTP'}, status=400)
-        request.user.is_2fa_enabled = False
-        request.user.save()
-        response = Response({'message': '2FA disabled successfully'})
-        response.is_enabled = user.is_2fa_enabled
-        return response
