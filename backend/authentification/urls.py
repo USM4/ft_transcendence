@@ -14,6 +14,8 @@ from authentification.views import Activate2FA
 # from authentification.views import Search
 from authentification.views import Profile
 from authentification.views import QrCode
+from authentification.views import CheckOtp
+from authentification.views import checkForDesabling
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -31,4 +33,6 @@ urlpatterns = [
     path("profile/<str:username>/", Profile.as_view(), name='profile'),
     path("2fa/", QrCode.as_view(), name='2fa'),
     path("activate2fa/", Activate2FA.as_view(), name='activate2fa'),
+    path("check_otp/", CheckOtp.as_view(), name='check_otp/'),
+    path("check_for_desabling/", checkForDesabling.as_view(), name='check_for_desabling/'),
 ]

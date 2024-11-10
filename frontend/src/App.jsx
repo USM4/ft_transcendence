@@ -16,6 +16,7 @@ import UserDataProvider from './Dashboard/UserDataContext.jsx'
 import FriendDataProvider from './Dashboard/FriendDataContext.jsx'
 import SocketContextProvider from './Dashboard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
+import TwoFa from './TwoFa.jsx';
 function App() {
   return (
     <>
@@ -27,6 +28,7 @@ function App() {
           <Route path='/' element={<><Navbar/><HomePage/></>}/>
           <Route path='/signin' element={<><Navbar/><SignIn/></>}/>
           <Route path='/signup' element={<><Navbar/><SignUp/></>}/>
+          <Route path='/2fa' element={<><Navbar/><TwoFa/></>}/>
           <Route path='/features' element={<><Navbar/><Features/></>}/>
           <Route path='/howtoplay' element={<><Navbar/><HowToPlay/></>}/>
             <Route path='/dashboard' element={

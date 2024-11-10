@@ -9,14 +9,40 @@ import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
 import Switch from "@mui/material/Switch";
 import toast from 'react-hot-toast';
+import Modal from 'react-modal';
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled, setIsEnabled] = useState("");
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
   const [code, setCode] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [otp, setOtp] = useState("");
 
+  const checkForDesabling = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/auth/check_for_desabling/", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        JSON: JSON.stringify({'otp': otp}),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (response.ok) {
+          setIsEnabled(false);
+          toast.success("Two Factor Authentication is disabled successfully");
+        }
+        else
+          toast.error("Can't disable enter the code");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   const saveCode = async () => {
     console.log("save code");
     try {
@@ -31,21 +57,22 @@ function ProfileSettings() {
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
+        setIsEnabled(false);
         console.log(data);
       } else 
       {
-        // console.log("error");
-        // <Toaster position="top-center"/>
         toast.error(data.error);
         console.log(data);
       }
     } catch (error) {
       console.log(error);
     }
-  } 
+  }
+
   const handleSwitch = () => {
     setisTwoFactor(!isTwoFactor);
   };
+
   const getQRCode = async () => {
     console.log("get qr code");
     try {
@@ -64,8 +91,14 @@ function ProfileSettings() {
     }
   };
   useEffect(() => {
-    if (isEnabled) getQRCode();
-    else setQrCodeUrl(null);
+    if (isEnabled) 
+    {
+      getQRCode();
+    }
+    else
+    {
+      checkForDesabling();
+    };
   }, [isEnabled]);
   return (
     <div className="settings-component">
@@ -100,13 +133,24 @@ function ProfileSettings() {
                 device, in addition to your password.
               </p>
               <div className="two-fa-options">
-                <div className="switch-toggle">
-                  <Switch
-                    checked={isEnabled}
-                    onChange={() => setIsEnabled(!isEnabled)}
-                    color="secondary"
-                  />
+                {
+                  isEnabled ? (
+                    <div className="switch-toggle">
+                    <Switch
+                      checked={isEnabled}
+                      onChange={() => setIsEnabled(checkForDesabling)}
+                      color="secondary"
+                    />
                 </div>
+                  ) : (
+                    <div className="switch-toggle">
+                      <Switch
+                        checked={isEnabled}
+                        onChange={() => setIsEnabled(true)}
+                        color="secondary"
+                      />
+                    </div> 
+                )}
                 <div className="enable-text">
                   Enable Two Factor Authentication
                 </div>

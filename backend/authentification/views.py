@@ -102,7 +102,6 @@ class ExtractCodeFromIntraUrl(APIView):
             'Authorization': f'Bearer {access_token}'
         })
         user_data = user_info_response.json()
-
         user_email = user_data.get('email')
         user = Client.objects.filter(email=user_email).first()
         username = user_data.get('login')
@@ -114,7 +113,10 @@ class ExtractCodeFromIntraUrl(APIView):
         #ila kan bnefs l infos ghay redirectih nichan l dashboard
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
-        response = redirect('http://localhost:5173/dashboard')
+        if user.is_2fa_enabled:
+            response = redirect('http://localhost:5173/2fa')
+        else:       
+            response = redirect('http://localhost:5173/dashboard')
         response.set_cookie(
             'client',
             access,
@@ -289,3 +291,27 @@ class Activate2FA(APIView):
         request.user.is_2fa_enabled = True
         request.user.save()
         return Response({'message': '2FA enabled successfully'})
+
+class CheckOtp(APIView):
+    def post(self, request):
+        otp = request.data.get('otp')
+        if not otp:
+            return Response({'error': 'OTP is required'}, status=400)
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        return Response({'message': 'OTP verified successfully'})
+
+class checkForDesabling(APIView):
+    def post(self, request):
+        otp = request.data.get('otp')
+        if not otp:
+            return Response({'error': 'OTP is required'}, status=400)
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        request.user.is_2fa_enabled = False
+        request.user.save()
+        response = Response({'message': '2FA disabled successfully'})
+        response.is_enabled = user.is_2fa_enabled
+        return response
