@@ -9,18 +9,16 @@ import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
 import Switch from "@mui/material/Switch";
 import toast from 'react-hot-toast';
-import Modal from 'react-modal';
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
-  const [isEnabled, setIsEnabled] = useState("");
+  const [isEnabled, setIsEnabled] = useState(false);
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
-  // const [code, setOtp] = useState("");
-  const [isModalOpen, otpetIsModalOpen] = useState(false);
-  const [otp, setOtp] = useState("");
+  const [code, setCode] = useState("");
 
   const saveCode = async () => {
+    console.log("save code");
     try {
       const response = await fetch("http://localhost:8000/auth/activate2fa/", {
         method: "POST",
@@ -28,15 +26,17 @@ function ProfileSettings() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 'otp': otp }),
+        body: JSON.stringify({ 'otp': code }),
       });
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
-        setIsEnabled(false);
         console.log(data);
-      } else 
+      } 
+      else
       {
+        // console.log("error");
+        // <Toaster position="top-center"/>
         toast.error(data.error);
         console.log(data);
       }
@@ -44,11 +44,9 @@ function ProfileSettings() {
       console.log(error);
     }
   }
-
   const handleSwitch = () => {
     setisTwoFactor(!isTwoFactor);
   };
-
   const getQRCode = async () => {
     console.log("get qr code");
     try {
@@ -67,29 +65,10 @@ function ProfileSettings() {
     }
   };
   useEffect(() => {
-    if (isEnabled)
-      getQRCode();
+    if (isEnabled) getQRCode();
+    else setQrCodeUrl(null);
   }, [isEnabled]);
-    //   const handleDisable = async () => {
-    //     if (user.is_2fa_enabled)
-    //     {
-    //       try {
-    //         const response = await fetch("http://localhost:8000/auth/check_for_desabling/", {
-    //           method: "POST",
-    //           credentials: "include",
-    //         });
-    //         if (response.ok) {
-    //           const data = await response.json();
-    //           console.log(data);
-    //         } else console.log("error");
-    //       } catch (error) {
-    //         console.log(error);
-    //       }
-    //   }
-    // }
-    // const popConfirmation = async () => {
-    //   setIsModalOpen(true);
-    // }
+
   return (
     <div className="settings-component">
       <div className="profile-settings">
@@ -123,49 +102,38 @@ function ProfileSettings() {
                 device, in addition to your password.
               </p>
               <div className="two-fa-options">
-                {
-                  isEnabled ? (
-                    <div className="switch-toggle">
-                    <Switch
-                      checked={isEnabled}
-                      onChange={() => setIsEnabled(false)}
-                      color="secondary"
-                    />
+                <div className="switch-toggle">
+                  <Switch
+                    checked={isEnabled}
+                    onChange={() => setIsEnabled(!isEnabled)}
+                    color="secondary"
+                  />
                 </div>
-                  ) : (
-                    <div className="switch-toggle">
-                      <Switch
-                        checked={isEnabled}
-                        onChange={() => setIsEnabled(true)}
-                        color="secondary"
-                      />
-                    </div> 
-                )}
                 <div className="enable-text">
                   Enable Two Factor Authentication
                 </div>
               </div>
               {isEnabled && (
-                <>
-                  <div className="enable-info">
-                    <p>
-                      Please download an authentication app (like Google
-                      Authenticator) or check your SMS for codes. Make sure to
-                      keep your backup codes safe!
-                    </p>
-                  </div>
-                  <div className="two-foctor-tools">
-                      <div className="confirmation-input">
-                          <input type="text" maxLength={6}
-                            onChange={(e) => setOtp(e.target.value)}
-                            value={otp}
-                            placeholder="Enter the code" />
-                      </div>
-                      <div className="qr-code-component">
-                        <img src={QrCodeUrl} alt="" />
-                      </div>
-                  </div>
-                </>
+                <div className="enable-info">
+                  <p>
+                    Please download an authentication app (like Google
+                    Authenticator) or check your SMS for codes. Make sure to
+                    keep your backup codes safe!
+                  </p>
+                </div>
+              )}
+              {isEnabled && (
+                <div className="two-foctor-tools">
+                    <div className="confirmation-input">
+                        <input type="text" maxLength={6}
+                          onChange={(e) => setCode(e.target.value)}
+                          value={code}
+                          placeholder="Enter the code" />
+                    </div>
+                    <div className="qr-code-component">
+                      <img src={QrCodeUrl} alt="" />
+                    </div>
+                </div>
               )}
             </div>
           </>
@@ -184,6 +152,7 @@ function ProfileSettings() {
             </div>
           </>
         )}
+
         <div className="save-settings">
           <button onClick={saveCode} >Save</button>
         </div>
