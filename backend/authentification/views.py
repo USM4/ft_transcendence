@@ -260,11 +260,11 @@ def generate_otp(username):
     user = Client.objects.get(username=username)
     user.secret_key = secret_key
     user.save()
-    print("secret ------------> ",user.secret_key)
+    # print("secret ------------> ",user.secret_key)
     url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name=user.username, issuer_name="ft_transcendence")
     qrcode_directory = "media/qr_codes/"
     if not os.path.exists(qrcode_directory):
-        print("directory not found")
+        # print("directory not found")
         os.makedirs(qrcode_directory)
     path = qrcode_directory + username + ".png"
     qrcode.make(url).save(path)
@@ -287,8 +287,8 @@ class Activate2FA(APIView):
         print("request.user", request.user)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
-
         totp = pyotp.totp.TOTP(request.user.secret_key)
+
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         request.user.is_2fa_enabled = True

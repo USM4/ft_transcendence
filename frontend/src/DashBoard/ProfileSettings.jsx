@@ -16,8 +16,8 @@ function ProfileSettings() {
   const [isEnabled, setIsEnabled] = useState("");
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
-  const [code, setCode] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [code, setOtp] = useState("");
+  const [isModalOpen, otpetIsModalOpen] = useState(false);
   const [otp, setOtp] = useState("");
 
   const saveCode = async () => {
@@ -28,7 +28,7 @@ function ProfileSettings() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 'otp': code }),
+        body: JSON.stringify({ 'otp': otp }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -87,9 +87,9 @@ function ProfileSettings() {
     //       }
     //   }
     // }
-    const popConfirmation = async () => {
-      setIsModalOpen(true);
-    }
+    // const popConfirmation = async () => {
+    //   setIsModalOpen(true);
+    // }
   return (
     <div className="settings-component">
       <div className="profile-settings">
@@ -128,7 +128,7 @@ function ProfileSettings() {
                     <div className="switch-toggle">
                     <Switch
                       checked={isEnabled}
-                        onChange={() => setIsEnabled(false)}
+                      onChange={() => setIsEnabled(false)}
                       color="secondary"
                     />
                 </div>
@@ -146,26 +146,26 @@ function ProfileSettings() {
                 </div>
               </div>
               {isEnabled && (
-                <div className="enable-info">
-                  <p>
-                    Please download an authentication app (like Google
-                    Authenticator) or check your SMS for codes. Make sure to
-                    keep your backup codes safe!
-                  </p>
-                </div>
-              )}
-              {isEnabled && (
-                <div className="two-foctor-tools">
-                    <div className="confirmation-input">
-                        <input type="text" maxLength={6}
-                          onChange={(e) => setCode(e.target.value)}
-                          value={code}
-                          placeholder="Enter the code" />
-                    </div>
-                    <div className="qr-code-component">
-                      <img src={QrCodeUrl} alt="" />
-                    </div>
-                </div>
+                <>
+                  <div className="enable-info">
+                    <p>
+                      Please download an authentication app (like Google
+                      Authenticator) or check your SMS for codes. Make sure to
+                      keep your backup codes safe!
+                    </p>
+                  </div>
+                  <div className="two-foctor-tools">
+                      <div className="confirmation-input">
+                          <input type="text" maxLength={6}
+                            onChange={(e) => setOtp(e.target.value)}
+                            value={otp}
+                            placeholder="Enter the code" />
+                      </div>
+                      <div className="qr-code-component">
+                        <img src={QrCodeUrl} alt="" />
+                      </div>
+                  </div>
+                </>
               )}
             </div>
           </>
@@ -190,6 +190,5 @@ function ProfileSettings() {
       </div>
     </div>
   );
-
 }
 export default ProfileSettings;
