@@ -19,7 +19,7 @@ function SideBar() {
       title: "Chat",
       icon: <SendIcon/>,
       // chat scoope
-      link: "/dashboard",
+      link: "/chat",
     },
     {
       title: "Game",
@@ -30,7 +30,7 @@ function SideBar() {
     {
       title: "Profile",
       icon: <PersonOutlineIcon />,
-      link: "/dashboard/profile",
+      link: "/dashboard/profile/:username",
     },
   ];
     const handleLogout = async () =>{

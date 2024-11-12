@@ -9,7 +9,7 @@
 
 # DRF  
 **Model (Database Layer)**
->A model in Django (or DRF) represents the structure of your data and the tables in the database. Think of a model as a rgb(0, 191, 255) print for   creating objects that are stored in a database.  
+>A model in Django (or DRF) represents the structure of your data and the tables in the database/. Think of a model as a rgb(0, 191, 255) print for   creating objects that are stored in a database.  
 >Imagine you are filling out a form for a library card. The form asks for specific details like your name, email, and address. The model defines what fields you need (e.g., name, email, address) and the types of data (e.g., text, integers, dates).
 
 **View (Logic Layer)**
@@ -109,4 +109,41 @@
 * In React, filter() is a method available on JavaScript arrays. It creates a new array with all elements that pass the test implemented by the provided function.  
 * In Django REST Framework, filter() is often used in the context of querysets to retrieve a subset of records from the database based on certain criteria. It is part of Django’s ORM   (Object-Relational Mapping).  
 
-**Create Context**
+**WebSockets**
+* 
+WebSockets are a communication protocol that enables a persistent, two-way connection between a client (like a web browser) and a server. This differs from traditional HTTP, where each request from the client to the   server initiates a new connection and the server sends back a response, closing the connection right after. WebSockets, on the other hand, keep the connection open, allowing real-time, low-latency communication between   the client and server.  
+ **Django Channels**  
+
+![alt text](1_aXz4upk63jPFzJFPeI4OPQ.webp)  
+
+
+**The difference Between HTTP and WebSockets**
+
+![alt text](HTTP-Connection.png)
+
+![alt text](WebSocket-Connection.png)
+
+**About the 2FA**
+
+* The TOTP algorithm requires a shared secret key between the server and the user's device (often their phone with an authenticator app like Google Authenticator or Authy). This shared secret key is a unique identifier for generating the 2FA codes.
+
+* pyotp.random_base32() creates this random secret key in base32 encoding, which is compatible with most 2FA apps.
+* The generated string looks random, e.g., JBSWY3DPEHPK3PXP.
+* This key will be stored on the server and shared with the user (usually via a QR code). Once stored, both the server and the user's authenticator app will   generate matching codes based on this key.  
+
+
+**For storing dynamically** 
+
+1. static directory:
+
+* Stores files that are part of your app itself, like JavaScript, CSS, and images used for design  (logos, icons, etc.).
+* These files don’t change per user and are typically version-controlled because they are a core part of your app.
+* Configured with STATIC_URL and STATICFILES_DIRS.  
+
+2. media directory:  
+
+* Stores user-generated or dynamic content, like profile pictures or QR codes generated for * specific users.  
+* These files change depending on user actions or content and aren’t typically tracked by   versioncontrol.
+* Configured with MEDIA_URL and MEDIA_ROOT.  
+
+
