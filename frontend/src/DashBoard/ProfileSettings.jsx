@@ -15,6 +15,7 @@ function ProfileSettings() {
   const [isEnabled, setIsEnabled] = useState(false);
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
+  const [confirmation, setConfirmation] = useState(false);
   const [code, setCode] = useState("");
 
   const saveCode = async () => {
@@ -31,6 +32,7 @@ function ProfileSettings() {
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
+        setIsEnabled(false);
         console.log(data);
       } 
       else
@@ -69,6 +71,11 @@ function ProfileSettings() {
     else setQrCodeUrl(null);
   }, [isEnabled]);
 
+  const handleDisable = async () => {
+    setConfirmation(false);
+    setIsEnabled(false);
+  }
+
   return (
     <div className="settings-component">
       <div className="profile-settings">
@@ -105,7 +112,7 @@ function ProfileSettings() {
                 <div className="switch-toggle">
                   <Switch
                     checked={isEnabled}
-                    onChange={() => setIsEnabled(!isEnabled)}
+                    onChange={() => (isEnabled ? setConfirmation(true) : setIsEnabled(true))}
                     color="secondary"
                   />
                 </div>
@@ -113,22 +120,23 @@ function ProfileSettings() {
                   Enable Two Factor Authentication
                 </div>
               </div>
-              {isEnabled && (
-                <div className="enable-info">
-                  <p>
-                    Please download an authentication app (like Google
-                    Authenticator) or check your SMS for codes. Make sure to
-                    keep your backup codes safe!
-                  </p>
-                </div>
-              )}
-              {isEnabled && (
+                {isEnabled && (
+                  <div className="enable-info">
+                    <p>
+                      Please download an authentication app (like Google
+                      Authenticator) or check your SMS for codes. Make sure to
+                      keep your backup codes safe!
+                    </p>
+                  </div>
+                )}
+              { isEnabled && (
                 <div className="two-foctor-tools">
                     <div className="confirmation-input">
                         <input type="text" maxLength={6}
-                          onChange={(e) => setCode(e.target.value)}
                           value={code}
-                          placeholder="Enter the code" />
+                          placeholder="Enter the code" 
+                          onChange={(e) => setCode(e.target.value)}
+                        />
                     </div>
                     <div className="qr-code-component">
                       <img src={QrCodeUrl} alt="" />
@@ -157,6 +165,19 @@ function ProfileSettings() {
           <button onClick={saveCode} >Save</button>
         </div>
       </div>
+      {confirmation && (
+        <div className="confirmation-box">
+          <h2>Enter 2FA Code to Disable</h2>
+          <input
+            type="text"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            placeholder="Enter 2FA code"
+          />
+          <button onClick={handleDisable}>Confirm</button>
+          <button onClick={() => setConfirmation(false)}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 }
