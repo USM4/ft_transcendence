@@ -95,7 +95,6 @@ function ProfileSettings() {
       console.log(error);
     }
   };
-
   useEffect(() => {
     if (isEnabled) getQRCode();
     else setQrCodeUrl(null);
