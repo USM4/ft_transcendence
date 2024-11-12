@@ -10,40 +10,69 @@ import oredoine from "/oredoine.jpeg";
 import Switch from "@mui/material/Switch";
 import toast from 'react-hot-toast';
 
+
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
-  const [confirmation, setConfirmation] = useState(false);
+  // const [confirmation, setConfirmation] = useState(false);
   const [code, setCode] = useState("");
+  const [isEnabled, setIsEnabled] = useState(user.twoFa);
 
   const saveCode = async () => {
-    console.log("save code");
-    try {
-      const response = await fetch("http://localhost:8000/auth/activate2fa/", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 'otp': code }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        toast.success(data.message);
-        setIsEnabled(false);
-        console.log(data);
-      } 
-      else
-      {
-        // console.log("error");
-        // <Toaster position="top-center"/>
-        toast.error(data.error);
-        console.log(data);
+    if(isEnabled) {
+
+      try {
+        const response = await fetch("http://localhost:8000/auth/activate2fa/", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 'otp': code }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message);
+          setIsEnabled(false);
+        } 
+        else
+        {
+          // console.log("error");
+          // <Toaster position="top-center"/>
+          toast.error(data.error);
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        const response = await fetch("http://localhost:8000/auth/desactivate2fa/", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 'otp': code }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message);
+          setIsEnabled(false);
+          console.log(data);
+        } 
+        else
+        {
+          // console.log("error");
+          // <Toaster position="top-center"/>
+          toast.error(data.error);
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
     }
   }
   const handleSwitch = () => {
@@ -66,15 +95,11 @@ function ProfileSettings() {
       console.log(error);
     }
   };
+
   useEffect(() => {
     if (isEnabled) getQRCode();
     else setQrCodeUrl(null);
   }, [isEnabled]);
-
-  const handleDisable = async () => {
-    setConfirmation(false);
-    setIsEnabled(false);
-  }
 
   return (
     <div className="settings-component">
@@ -112,7 +137,7 @@ function ProfileSettings() {
                 <div className="switch-toggle">
                   <Switch
                     checked={isEnabled}
-                    onChange={() => (isEnabled ? setConfirmation(true) : setIsEnabled(true))}
+                    onChange={() => setIsEnabled(!isEnabled)}
                     color="secondary"
                   />
                 </div>
@@ -120,7 +145,8 @@ function ProfileSettings() {
                   Enable Two Factor Authentication
                 </div>
               </div>
-                {isEnabled && (
+                {isEnabled && !user.twoFa ? (
+                  <>
                   <div className="enable-info">
                     <p>
                       Please download an authentication app (like Google
@@ -128,9 +154,7 @@ function ProfileSettings() {
                       keep your backup codes safe!
                     </p>
                   </div>
-                )}
-              { isEnabled && (
-                <div className="two-foctor-tools">
+                  <div className="two-foctor-tools">
                     <div className="confirmation-input">
                         <input type="text" maxLength={6}
                           value={code}
@@ -142,7 +166,14 @@ function ProfileSettings() {
                       <img src={QrCodeUrl} alt="" />
                     </div>
                 </div>
-              )}
+                </>
+              ) : isEnabled && user.twoFa === true ? <div> 2fa is already enabled
+                <input placeholder="please enter the code"/>
+                <button> disable</button>
+                 </div> 
+                 : 
+                 <div> 2fa is disabled akhouty</div>
+              }
             </div>
           </>
         ) : (
@@ -165,19 +196,7 @@ function ProfileSettings() {
           <button onClick={saveCode} >Save</button>
         </div>
       </div>
-      {confirmation && (
-        <div className="confirmation-box">
-          <h2>Enter 2FA Code to Disable</h2>
-          <input
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder="Enter 2FA code"
-          />
-          <button onClick={handleDisable}>Confirm</button>
-          <button onClick={() => setConfirmation(false)}>Cancel</button>
-        </div>
-      )}
+     
     </div>
   );
 }

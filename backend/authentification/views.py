@@ -155,6 +155,8 @@ class DashboardView(APIView):
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
+            'twoFa': user.is_2fa_enabled,
+            
         })
 
 class SendFriendRequest(APIView):
@@ -249,6 +251,7 @@ class Profile(APIView):
             user = Client.objects.get(username=username)
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
+        print("useeeeeeeer", user.is_2fa_enabled)
         return Response({
             'id': user.id,
             'username': user.username,
