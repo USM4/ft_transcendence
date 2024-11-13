@@ -33,7 +33,7 @@ class RefreshTokenMiddleware(MiddlewareMixin):
                     new_access_token = response.json().get('access')
                     
                     # set the new access token in the cookies
-                    request.META['HTTP_AUTHORIZATION'] = f'Bearer {new_access_token}'                    
+                    request.META['HTTP_AUTHORIZATION'] = f'Bearer {new_access_token}'
                     # update the cookies
                     request.refresh_cookie_data = new_access_token
                 else:
