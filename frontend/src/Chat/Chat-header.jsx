@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 
 export default function Chat_header({ selected }) {
     const [menu, setMenu] = useState(false);
+    const navigate = useNavigate();
 
     function handleClick() {
         setMenu((prevState) => !prevState);
     }
 
     function handleBlockClicked() {
-        console.log("CLICKED")
+        // I STILL DON'T HAVE THE BLOCK STATUS
+        // NEED TO CHECK IF I CAN HANDLE IT WITH A REQUEST FROM THE BACK ELSE IT'S GONNA BE AN ARRAY OF NAMES BLOCKED
+
+        {/* this.blocked.push(selected.name)*/}
     }
     function handleProfileClicked() {
-        console.log("CLIC")
+        navigate(`/dashboard/profile/${selected.name}`);
     }
     function handleGameClicked() {
-        console.log("C")
+        {/* MUST HANDLE THE GAME INVITATION  BUTTON */}
     }
 
     return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 
 
 export default function Chat_input() {
@@ -11,16 +11,17 @@ export default function Chat_input() {
 
     return (
         <div className="chat-input">
-            <div className="text-areas-input">
-                <input
+
+            <div className="text-area">
+                <textarea className="text-areas-input"
                     placeholder="Type a message..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
             </div>
-            {/* <div className="text-area">
-                 {/* <button onClick={handleSubmit} type="submit">Send</button> */}
-            {/* </div> */}
+            <div className="button-area">
+                <button onClick={handleSubmit} type="submit"><SendRoundedIcon /></button>
+            </div>
         </div>
     );
 }
