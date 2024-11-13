@@ -18,6 +18,11 @@ from authentification.views import CheckOtp
 # from authentification.views import checkForDesabling
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenVerifyView
+)
+
 
 urlpatterns = [
     path("signin/",SignInView.as_view(), name='signIn'),
@@ -34,5 +39,8 @@ urlpatterns = [
     path("2fa/", QrCode.as_view(), name='2fa'),
     path("activate2fa/", Activate2FA.as_view(), name='activate2fa'),
     path("check_otp/", CheckOtp.as_view(), name='check_otp/'),
+    path("refresh/", TokenRefreshView.as_view(), name='token_refresh'),
+    path("verify/", TokenVerifyView.as_view(), name='token_verify'),
+
     # path("check_for_desabling/", checkForDesabling.as_view(), name='check_for_desabling/'),
 ]
