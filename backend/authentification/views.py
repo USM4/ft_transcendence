@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate , logout
 from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from .models import Client , Friend, FriendShip, Notification , Search
 from .serializers import ClientSignUpSerializer , SearchSerializer
@@ -92,7 +93,6 @@ class ExtractCodeFromIntraUrl(APIView):
             'code': code,
             'redirect_uri': redirect_uri
         }
-
         headers = {'Content-Type': 'application/json'}
         # nsefto request l intra w n extractiw l user info b dak l access token li ayjina
         response = requests.post(token_url,json=json_data, headers=headers)
@@ -100,6 +100,10 @@ class ExtractCodeFromIntraUrl(APIView):
             return Response({'error':  "exchanging token problem with intra"}, status=400)
         data = response.json()
         access_token = data.get('access_token')
+        expires_in = data.get('expires_in')
+        expiration_time = datetime.now() + timedelta(seconds=expires_in)
+        refresh_token_value = data.get('refresh_token')
+        print("refresh_token_value", refresh_token_value)
         # nakhod l user info bl  access token li jebt mn 3end intra
         user_url_intra = 'https://api.intra.42.fr/v2/me'
         user_info_response = requests.get(user_url_intra, headers={
@@ -115,8 +119,27 @@ class ExtractCodeFromIntraUrl(APIView):
             user = Client(email=user_email, username=username, avatar=avatar)
             user.save()
         #ila kan bnefs l infos ghay redirectih nichan l dashboard
+        print("expiration time",expiration_time)
+        # refresh = RefreshToken.for_user(user)
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
+        if datetime.now() >= expiration_time:
+            print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+            # Exchange the refresh token to get a new access token from 42's API
+            refresh_data = {
+                'grant_type': 'refresh_token',
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'refresh_token': refresh_token_value
+            }
+            refresh_response = requests.post(token_url, json=refresh_data, headers=headers)
+            
+            if refresh_response.status_code == 200:
+                new_data = refresh_response.json()
+                access_token = new_data.get('access_token')
+                expiration_time = datetime.now() + timedelta(seconds=new_data.get('expires_in'))
+            else:
+                return Response({'error': "Failed to refresh the token with intra"}, status=400)
         if user.is_2fa_enabled:
             response = redirect('http://localhost:5173/2fa')
         else:       

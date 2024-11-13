@@ -35,9 +35,7 @@ function SignIn() {
         });
         const val = await response.json();
         if (response.ok)
-        {
             navigate('/dashboard');
-        }
         else 
         {
             const errors = Object.values(val);
