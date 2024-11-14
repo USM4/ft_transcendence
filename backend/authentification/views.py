@@ -316,3 +316,17 @@ class CheckOtp(APIView):
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
+
+class Disable2FA(APIView):
+    def post(self, request):
+        otp = request.data.get('otp')
+        print("desaaaaaaaaable", otp)
+        if not otp:
+            return Response({'error': 'OTP is required for desabling'}, status=400)
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        request.user.is_2fa_enabled = False
+        request.user.secret_key = None
+        request.user.save()
+        return Response({'message': '2FA disabled successfully'})

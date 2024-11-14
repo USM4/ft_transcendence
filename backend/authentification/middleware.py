@@ -28,10 +28,8 @@ class RefreshTokenMiddleware(MiddlewareMixin):
                 refresh_data = {'refresh': refresh_token}
                 # get a new access token from the refresh token
                 response = requests.post(refresh_url, json=refresh_data, headers=headers)
-
                 if response.status_code == 200:
                     new_access_token = response.json().get('access')
-                    
                     # set the new access token in the cookies
                     request.META['HTTP_AUTHORIZATION'] = f'Bearer {new_access_token}'
                     # update the cookies

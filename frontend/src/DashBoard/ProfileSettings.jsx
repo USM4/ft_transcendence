@@ -8,73 +8,46 @@ import ReorderIcon from "@mui/icons-material/Reorder";
 import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
 import Switch from "@mui/material/Switch";
-import toast from 'react-hot-toast';
-
+import toast from "react-hot-toast";
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
-  // const [confirmation, setConfirmation] = useState(false);
   const [code, setCode] = useState("");
   const [isEnabled, setIsEnabled] = useState(user.twoFa);
 
   const saveCode = async () => {
-    if(isEnabled) {
-
-      try {
-        const response = await fetch("http://localhost:8000/auth/activate2fa/", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ 'otp': code }),
-        });
-        const data = await response.json();
-        if (response.ok) {
-          toast.success(data.message);
-          setIsEnabled(false);
-        } 
-        else
-        {
-          // console.log("error");
-          // <Toaster position="top-center"/>
-          toast.error(data.error);
-          console.log(data);
-        }
-      } catch (error) {
-        console.log(error);
+    const endpoint = isEnabled
+      ? "http://localhost:8000/auth/activate2fa/"
+      : "http://localhost:8000/auth/desactivate2fa/";
+    try {
+      console.log(
+        // "---------------------------------------------> isEnabled ",
+        isEnabled
+      );
+      // console.log("---------------------------------------------> ", code);
+      const response = await fetch(`${endpoint}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ otp: code }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(data.message);
+        setIsEnabled(false);
+      } else {
+        toast.error(data.error);
+        console.log(data);
       }
-    } else {
-      try {
-        const response = await fetch("http://localhost:8000/auth/desactivate2fa/", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ 'otp': code }),
-        });
-        const data = await response.json();
-        if (response.ok) {
-          toast.success(data.message);
-          setIsEnabled(false);
-          console.log(data);
-        } 
-        else
-        {
-          // console.log("error");
-          // <Toaster position="top-center"/>
-          toast.error(data.error);
-          console.log(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
+  
   const handleSwitch = () => {
     setisTwoFactor(!isTwoFactor);
   };
@@ -144,8 +117,8 @@ function ProfileSettings() {
                   Enable Two Factor Authentication
                 </div>
               </div>
-                {isEnabled && !user.twoFa ? (
-                  <>
+              {isEnabled && user.twoFa ? (
+                <>
                   <div className="enable-info">
                     <p>
                       Please download an authentication app (like Google
@@ -155,24 +128,35 @@ function ProfileSettings() {
                   </div>
                   <div className="two-foctor-tools">
                     <div className="confirmation-input">
-                        <input type="text" maxLength={6}
-                          value={code}
-                          placeholder="Enter the code" 
-                          onChange={(e) => setCode(e.target.value)}
-                        />
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={code}
+                        placeholder="Enter the code"
+                        onChange={(e) => setCode(e.target.value)}
+                      />
                     </div>
                     <div className="qr-code-component">
                       <img src={QrCodeUrl} alt="" />
                     </div>
-                </div>
+                  </div>
                 </>
-              ) : isEnabled && user.twoFa === true ? <div> 2fa is already enabled
-                <input placeholder="please enter the code"/>
-                <button> disable</button>
-                 </div> 
-                 : 
-                 <div> 2fa is disabled akhouty</div>
-              }
+              ) : !isEnabled && user.twoFa ? (
+                <div>
+                  {" "}
+                  ENTER THE CODE TO DISABLE 2FA
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={code}
+                    placeholder="Enter the code"
+                    onChange={(e) => setCode(e.target.value)}
+                  />{" "}
+                  <button onClick={saveCode}> disable</button>
+                </div>
+              ) : (
+                <div>2FA IS DISABLED</div>
+              )}
             </div>
           </>
         ) : (
@@ -186,16 +170,15 @@ function ProfileSettings() {
             </div>
             <div className="update-nickname">
               <p>Update Nickname : </p>
-              <input type="text" />
+              <input type="text" placeholder="Enter your new nickname" />
             </div>
           </>
         )}
 
         <div className="save-settings">
-          <button onClick={saveCode} >Save</button>
+          <button onClick={saveCode}>Save</button>
         </div>
       </div>
-     
     </div>
   );
 }
