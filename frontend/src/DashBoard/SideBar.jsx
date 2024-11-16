@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../App.css";
 import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
@@ -6,8 +6,10 @@ import GamepadIcon from "@mui/icons-material/Gamepad";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ReorderIcon from "@mui/icons-material/Reorder";
+import TextsmsIcon from '@mui/icons-material/Textsms';
 import { useNavigate } from "react-router-dom";
-function SideBar() {
+
+function SideBar({username}) {
   const navigate = useNavigate();
   const SideBarData = [
     {
@@ -17,7 +19,7 @@ function SideBar() {
     },
     {
       title: "Chat",
-      icon: <SendIcon/>,
+      icon: <TextsmsIcon/>,
       // chat scoope
       link: "/chat",
     },
@@ -30,7 +32,7 @@ function SideBar() {
     {
       title: "Profile",
       icon: <PersonOutlineIcon />,
-      link: "/dashboard/profile/:username",
+      link: `/dashboard/profile/${username}`,
     },
   ];
     const handleLogout = async () =>{

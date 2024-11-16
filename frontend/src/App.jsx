@@ -55,7 +55,7 @@ function App() {
               </UserDataProvider>
             }>
             <Route path='' element={
-              <FriendDataProvider>
+              <FriendDataProvider> 
                 <ProtectedRoute component={Chat} />
               </FriendDataProvider>
             }/>
