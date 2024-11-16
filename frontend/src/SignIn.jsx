@@ -9,7 +9,7 @@ function SignIn() {
     const [password, setPassword] = useState('')
     const [errorMessages, setErrorMessages] = useState([]);
     const [successMessages, setSuccessMessages] = useState([]);
-    const navigate = useNavigate();
+    const navigate = useNavigate();     
 
     const handle42Intra = () =>{
         const client_id=import.meta.env.VITE_CLIENT_ID;
