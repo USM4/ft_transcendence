@@ -53,17 +53,20 @@ class SignInView(APIView):
         else:
             username = parse_login
         client = authenticate(username=username, password=password)
-        if client :
+        if client:
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            response = Response({"success":"Logged in successfully !"}, status=status.HTTP_200_OK)
-            if client.is_2fa_enabled:
-                response = redirect('http://localhost:5173/2fa')
-            else:
-                response = redirect('http://localhost:5173/dashboard')
+            response = Response({'success': 'Logged in successfully'}, status=status.HTTP_200_OK)
             response.set_cookie(
                 'client',
                 access,
+                httponly=True,
+                samesite='None',
+                secure=True,
+            )
+            response.set_cookie(
+                'refresh',
+                str(refresh),
                 httponly=True,
                 samesite='None',
                 secure=True,
@@ -154,7 +157,8 @@ class LogoutView(APIView):
 
 class DashboardView(APIView):
     def get(self, request):
-        user  = request.user
+        user = request.user
+        print("user", user)
         if user is None:
             return Response({'error': 'Unauthorized'}, status=401)
         return Response({
@@ -163,7 +167,6 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'twoFa': user.is_2fa_enabled,
-            
         })
 
 class SendFriendRequest(APIView):

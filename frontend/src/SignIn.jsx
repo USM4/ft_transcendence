@@ -24,24 +24,31 @@ function SignIn() {
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-        const response = await fetch('http://localhost:8000/auth/signin/',
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({login, password}),
-            credentials: 'include',
-        });
-        const val = await response.json();
-        if (response.ok)
-            navigate('/dashboard');
-        else 
-        {
-            const errors = Object.values(val);
-            setErrorMessages(errors);
+        try {
+            const response = await fetch('http://localhost:8000/auth/signin/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    login,
+                    password,
+                }),
+            });
+            const data = await response.json();
+            if (data.errors) {
+                setErrorMessages(data.errors);
+            } else {
+                setSuccessMessages(["Successfully logged in!"]);
+                navigate('/dashboard');
+            }
+        }
+        catch (error) {
+            console.error('Error:');
+            setErrorMessages(["An error occurred. Please try again."]);
         }
     };
+
     return (
         <div className="signForm">
             <h2 className="signinhead">Sign In</h2>
