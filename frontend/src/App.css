@@ -1435,11 +1435,10 @@ body {
 /* Chat area */
 .chat-area {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   height: 95%;
   border: 2px solid rgb(174, 255, 218);
   border-radius: 5px;
-
   overflow-y: auto;
 
 }
