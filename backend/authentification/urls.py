@@ -25,8 +25,8 @@ from rest_framework_simplejwt.views import (
 
 
 urlpatterns = [
-    path("signin/",SignInView.as_view(), name='signIn'),
     path("signup/",SignUpView.as_view(), name='signUp'),
+    path("signin/",SignInView.as_view(), name='signin'),
     path('42school/login/callback/', ExtractCodeFromIntraUrl.as_view(), name='intra_callback'),
     path("verify_token/", VerifyTokenView.as_view(), name='verify_token'),
     path("logout/", LogoutView.as_view(), name='logout'),

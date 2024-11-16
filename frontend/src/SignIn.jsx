@@ -23,24 +23,22 @@ function SignIn() {
         e.preventDefault();
         setErrorMessages([]);
         setSuccessMessages([]);
-        e.preventDefault();
         try {
             const response = await fetch('http://localhost:8000/auth/signin/', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                        'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    login,
-                    password,
-                }),
+                body: JSON.stringify({login, password}),
+                credentials: 'include',
             });
             const data = await response.json();
             if (data.errors) {
                 setErrorMessages(data.errors);
             } else {
-                setSuccessMessages(["Successfully logged in!"]);
-                navigate('/dashboard');
+                console.log(data)
+                setSuccessMessages(data);
+                navigate(data.redirect_url);
             }
         }
         catch (error) {

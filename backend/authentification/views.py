@@ -56,7 +56,9 @@ class SignInView(APIView):
         if client:
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            response = Response({'success': 'Logged in successfully'}, status=status.HTTP_200_OK)
+            redirect_url = client.is_2fa_enabled and '/2fa' or '/dashboard'
+            response = Response({'success': 'Logged in successfully', 'redirect_url': redirect_url}, status=status.HTTP_200_OK)
+            # print(f"Setting cookies with access token: {access}")
             response.set_cookie(
                 'client',
                 access,
@@ -153,12 +155,12 @@ class LogoutView(APIView):
     def post(self, request):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
+        response.delete_cookie('refresh')
         return response
 
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
-        print("user", user)
         if user is None:
             return Response({'error': 'Unauthorized'}, status=401)
         return Response({
@@ -323,7 +325,6 @@ class CheckOtp(APIView):
 class Disable2FA(APIView):
     def post(self, request):
         otp = request.data.get('otp')
-        print("desaaaaaaaaable", otp)
         if not otp:
             return Response({'error': 'OTP is required for desabling'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)

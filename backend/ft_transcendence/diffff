@@ -1,0 +1,41 @@
+20,21d19
+< # STATIC_URL = '/static/'
+< # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+23,25c21,22
+< # Media settings for dynamically generated files like QR codes
+< MEDIA_URL = '/media/'
+< MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+---
+> # Quick-start development settings - unsuitable for production
+> # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+38d34
+<     'rest_framework',
+40,41d35
+<     'channels',
+<     'daphne',
+51,52d44
+< ASGI_APPLICATION = 'ft_transcendence.asgi.application'
+< 
+56d47
+<     'authentification.middleware.RefreshTokenMiddleware',
+105d95
+<         'rest_framework.renderers.BrowsableAPIRenderer',
+108,109d97
+< if os.getenv('DJANGO_ENV') == 'development':
+<     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
+148,154d135
+< CHANNEL_LAYERS = {
+<     "default": {
+<         "BACKEND": "channels.layers.InMemoryChannelLayer"
+<     }
+< }
+< 
+< 
+177,178d157
+< MEDIA_URL = '/media/'
+< 
+189c168
+< CSRF_COOKIE_SAMESITE = None 
+\ No newline at end of file
+---
+> CSRF_COOKIE_SAMESITE = None 

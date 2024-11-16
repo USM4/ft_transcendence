@@ -17,12 +17,9 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Media settings for dynamically generated files like QR codes
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-w@)mu=t95zxg_&mu1l13+4d$rd9$4g0i65^1y8b&woqlvlk7st'
@@ -35,10 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'rest_framework',
     'corsheaders',
-    'channels',
-    'daphne',
     'authentification',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,12 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-ASGI_APPLICATION = 'ft_transcendence.asgi.application'
-
 MIDDLEWARE = [
     'authentification.middleware.JWTAuthFromCookieMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'authentification.middleware.RefreshTokenMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -102,14 +93,11 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
-if os.getenv('DJANGO_ENV') == 'development':
-    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
     'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
@@ -145,13 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
-}
-
-
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
@@ -173,8 +154,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
-MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
