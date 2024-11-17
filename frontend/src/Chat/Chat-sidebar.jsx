@@ -17,14 +17,18 @@ export default function Chat_sidebar({ friends }) {
     <>
       <li key={index} className="user" onClick={() => handleClick(friend)}>
         <div className="avatar">
-          <img src={friend.avatar} alt={`${friend.avatar}'s avatar`} />
           {/* I NEED THE ONLINE STATUS TO CHECK WICH ONE TO DISPLAY */}
           {/* ONLINE         
-            <Badge variant="dot"
-            color="success" showZero badgeContent="" overlap="circular"></Badge>  */}
-          {/* OFFLINE */}
           <Badge variant="dot"
-            color="error" showZero badgeContent="" overlap="circular"></Badge>
+          color="success" showZero badgeContent="" overlap="circular"></Badge>  */}
+          {/* OFFLINE */}
+          <Badge
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            variant="dot"
+            color="error"
+            overlap="circular">
+                  <img src={friend.avatar} alt={`${friend.avatar}'s avatar`} />
+          </Badge>
         </div>
         <div className="details">
           <p className="name">{friend.name}</p>

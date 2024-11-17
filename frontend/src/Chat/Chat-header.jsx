@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge } from '@mui/material';
+import { Avatar, Badge } from '@mui/material';
 
 
 export default function Chat_header({ selected }) {
@@ -28,9 +28,16 @@ export default function Chat_header({ selected }) {
         <div className="chat-header">
             <div className="header-wraper">
                 <div className="avatar-header">
-                    <img src={selected.avatar} alt={`${selected.name}'s avatar`} />
-                    <Badge variant="dot"
-                        color="error" showZero badgeContent="" overlap="circular"></Badge>
+                    <Badge 
+                        variant="dot"
+
+                        color="error"
+                        anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
+                        overlap="circular"
+                        >
+                    <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.name}'s avatar`} />
+
+                        </Badge>
                 </div>
                 <div className="header-name">
                     <h2 >{selected.name}</h2>
