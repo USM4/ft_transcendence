@@ -15,7 +15,7 @@ function ProfileSettings() {
   const { user } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
   const [code, setCode] = useState("");
-  const [isEnabled, setIsEnabled] = useState(user.twoFa);
+  const [isEnabled, setIsEnabled] = useState(user?.twoFa);
 
   const saveCode = async () => {
     const endpoint = isEnabled
@@ -23,7 +23,6 @@ function ProfileSettings() {
       : "http://localhost:8000/auth/desactivate2fa/";
     try {
       console.log(
-        // "---------------------------------------------> isEnabled ",
         isEnabled
       );
       // console.log("---------------------------------------------> ", code);
@@ -52,7 +51,7 @@ function ProfileSettings() {
     setisTwoFactor(!isTwoFactor);
   };
   const getQRCode = async () => {
-    console.log("get qr code");
+    // console.log("get qr code");
     try {
       const response = await fetch("http://localhost:8000/auth/2fa/", {
         method: "GET",
@@ -69,7 +68,8 @@ function ProfileSettings() {
     }
   };
   useEffect(() => {
-    if (isEnabled) getQRCode();
+    console.log("use effect", user?.twoFa);
+    if (isEnabled && !user?.twoFa) getQRCode();
     else setQrCodeUrl(null);
   }, [isEnabled]);
 
@@ -117,7 +117,7 @@ function ProfileSettings() {
                   Enable Two Factor Authentication
                 </div>
               </div>
-              {isEnabled && user.twoFa ? (
+              {isEnabled && !user.twoFa ? (
                 <>
                   <div className="enable-info">
                     <p>
@@ -141,21 +141,25 @@ function ProfileSettings() {
                     </div>
                   </div>
                 </>
-              ) : !isEnabled && user.twoFa ? (
-                <div>
-                  {" "}
-                  ENTER THE CODE TO DISABLE 2FA
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={code}
-                    placeholder="Enter the code"
-                    onChange={(e) => setCode(e.target.value)}
-                  />{" "}
-                  <button onClick={saveCode}> disable</button>
-                </div>
+              ) : isEnabled && user.twoFa ? (
+                <div>2FA IS ENABLED</div>
               ) : (
-                <div>2FA IS DISABLED</div>
+                user.twoFa ? (
+                <div>
+                ENTER THE CODE TO DISABLE 2FA
+                <input
+                  className="confirmation-input"
+                  type="text"
+                  maxLength={6}
+                  value={code}
+                  placeholder="Enter the code"
+                  onChange={(e) => setCode(e.target.value)}
+                />
+                <button onClick={saveCode}> disable</button>
+              </div>
+                ) : (
+                  <div>2FA IS DISABLED</div>
+                )
               )}
             </div>
           </>

@@ -327,6 +327,7 @@ class Disable2FA(APIView):
         otp = request.data.get('otp')
         if not otp:
             return Response({'error': 'OTP is required for desabling'}, status=400)
+        print("request.user.secret_key",request.user.secret_key)
         totp = pyotp.totp.TOTP(request.user.secret_key)
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
