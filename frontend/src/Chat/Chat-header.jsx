@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '@mui/material';
+
 
 export default function Chat_header({ selected }) {
     const [menu, setMenu] = useState(false);
@@ -13,13 +15,13 @@ export default function Chat_header({ selected }) {
         // I STILL DON'T HAVE THE BLOCK STATUS
         // NEED TO CHECK IF I CAN HANDLE IT WITH A REQUEST FROM THE BACK ELSE IT'S GONNA BE AN ARRAY OF NAMES BLOCKED
 
-        {/* this.blocked.push(selected.name)*/}
+        {/* this.blocked.push(selected.name)*/ }
     }
     function handleProfileClicked() {
         navigate(`/dashboard/profile/${selected.name}`);
     }
     function handleGameClicked() {
-        {/* MUST HANDLE THE GAME INVITATION  BUTTON */}
+        {/* MUST HANDLE THE GAME INVITATION  BUTTON */ }
     }
 
     return (
@@ -27,6 +29,8 @@ export default function Chat_header({ selected }) {
             <div className="header-wraper">
                 <div className="avatar-header">
                     <img src={selected.avatar} alt={`${selected.name}'s avatar`} />
+                    <Badge variant="dot"
+                        color="error" showZero badgeContent="" overlap="circular"></Badge>
                 </div>
                 <div className="header-name">
                     <h2 >{selected.name}</h2>
