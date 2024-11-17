@@ -1444,9 +1444,8 @@ body {
 }
 .default{
   margin: auto;
-  padding: 20px 20px;
-  border: 1px solid rgb(174, 255, 218);
-  border-radius: 10px;
+  opacity: 0.3;
+
 }
 
 .message-wrap {

@@ -3,6 +3,7 @@ import Chat_header from './Chat-header.jsx';
 import Chat_area from './Chat-area.jsx';
 import Chat_input from './Chat-input.jsx';
 import '../App.css'
+import ChatIcon from '@mui/icons-material/Chat';
 
 export default function Chat_sidebar({ friends }) {
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -36,7 +37,7 @@ export default function Chat_sidebar({ friends }) {
       </div>
 
       {!selectedFriend && <div className="default">
-        Choose A Friend To Talk To...
+        <ChatIcon style={{fontSize: 200}}/>
       </div>}
 
       {selectedFriend && (
