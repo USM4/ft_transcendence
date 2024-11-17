@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "./SocketContext.jsx";
 
-function NotificationsToggle() {
+function NotificationsToggle({displayNotification}) {
   const [notifications, setNotification] = useState([]);
+  const [showNotification, setShowNotification] = useState(false);
   const { socket } = useContext(SocketContext);
+  const [notif, setNotif] = useState(false);
 
   const handleNotification = async () => {
     try {
@@ -17,9 +19,11 @@ function NotificationsToggle() {
       if (response.ok) {
         const data = await response.json();
         setNotification(data);
+        setNotif(true);
       }
     } catch (error) {
       console.error("Error fetching notification:", error);
+      setNotif(false);
     }
   };
 
@@ -34,8 +38,10 @@ function NotificationsToggle() {
           notification,
         ]);
       };
+      setNotif(true);
     } else {
       console.error("Socket connection not available");
+      setNotif(false);
     }
   }, [socket]);
 
@@ -66,7 +72,8 @@ function NotificationsToggle() {
 
   useEffect(() => {
     handleNotification();
-  }, []);
+    console.log("Notification:", notif);
+  }, [notif]);
   return (
     <div className="notif-invitation-text">
       <div>

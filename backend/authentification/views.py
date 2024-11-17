@@ -22,6 +22,8 @@ from django.conf import settings
 class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"error": "Invalid data format "}, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')

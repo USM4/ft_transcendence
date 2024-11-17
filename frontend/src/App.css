@@ -885,7 +885,7 @@ body {
 
 .bottom-side-prfl .right-prfl-component{
   display: flex;
-  width: 65%;
+  width: 100%;
   flex-direction: column;
   gap: 10px;
 }
