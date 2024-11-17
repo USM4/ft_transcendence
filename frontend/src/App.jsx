@@ -18,6 +18,8 @@ import FriendDataProvider from './Dashboard/FriendDataContext.jsx'
 import SocketContextProvider from './DashBoard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
+import NotFound from './NotFound.jsx';
+
 function App() {
   return (
     <>
@@ -60,6 +62,7 @@ function App() {
               </FriendDataProvider>
             }/>
             </Route>
+            <Route path='*' element={<NotFound/>}/>
         </Routes>
           </SocketContextProvider>
       </Router>

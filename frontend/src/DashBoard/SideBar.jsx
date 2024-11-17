@@ -7,7 +7,7 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ReorderIcon from "@mui/icons-material/Reorder";
 import { useNavigate } from "react-router-dom";
-function SideBar() {
+function SideBar({username}) {
   const navigate = useNavigate();
   const SideBarData = [
     {
@@ -30,7 +30,7 @@ function SideBar() {
     {
       title: "Profile",
       icon: <PersonOutlineIcon />,
-      link: "/dashboard/profile/:username",
+      link: `/dashboard/profile/${username}`,
     },
   ];
     const handleLogout = async () =>{

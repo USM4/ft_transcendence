@@ -23,7 +23,6 @@ function ProfileSettings() {
       : "http://localhost:8000/auth/desactivate2fa/";
     try {
       console.log(
-        // "---------------------------------------------> isEnabled ",
         isEnabled
       );
       // console.log("---------------------------------------------> ", code);
@@ -52,7 +51,7 @@ function ProfileSettings() {
     setisTwoFactor(!isTwoFactor);
   };
   const getQRCode = async () => {
-    console.log("get qr code");
+    // console.log("get qr code");
     try {
       const response = await fetch("http://localhost:8000/auth/2fa/", {
         method: "GET",
@@ -117,7 +116,7 @@ function ProfileSettings() {
                   Enable Two Factor Authentication
                 </div>
               </div>
-              {isEnabled && user.twoFa ? (
+              {isEnabled && !user.twoFa ? (
                 <>
                   <div className="enable-info">
                     <p>
@@ -141,17 +140,17 @@ function ProfileSettings() {
                     </div>
                   </div>
                 </>
-              ) : !isEnabled && user.twoFa ? (
+              ) : isEnabled && user.twoFa ? (
                 <div>
-                  {" "}
                   ENTER THE CODE TO DISABLE 2FA
                   <input
+                    className="confirmation-input"
                     type="text"
                     maxLength={6}
                     value={code}
                     placeholder="Enter the code"
                     onChange={(e) => setCode(e.target.value)}
-                  />{" "}
+                  />    
                   <button onClick={saveCode}> disable</button>
                 </div>
               ) : (
