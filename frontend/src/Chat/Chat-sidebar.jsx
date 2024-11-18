@@ -5,8 +5,13 @@ import Chat_input from './Chat-input.jsx';
 import '../App.css'
 import ChatIcon from '@mui/icons-material/Chat';
 import { Badge } from '@mui/material';
+import { useContext } from 'react';
+import {FriendDataContext} from '../DashBoard/FriendDataContext.jsx'
 
-export default function Chat_sidebar({ friends }) {
+
+export default function Chat_sidebar() {
+  const {friends} = useContext(FriendDataContext)
+    
   const [selectedFriend, setSelectedFriend] = useState(null);
 
   function handleClick(friend) {
@@ -27,11 +32,11 @@ export default function Chat_sidebar({ friends }) {
             variant="dot"
             color="success"
             overlap="circular">
-                  <img src={friend.avatar} alt={`${friend.avatar}'s avatar`} />
+                  <img src={friend.avatar} alt={`${friend.username}'s avatar`} />
           </Badge>
         </div>
         <div className="details">
-          <p className="name">{friend.name}</p>
+          <p className="name">{friend.username}</p>
           <p className="lastmsg">{friend.lastMessage}</p>
         </div>
       </li>

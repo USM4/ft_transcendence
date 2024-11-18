@@ -1341,6 +1341,7 @@ body {
 .user-list {
   display: flex;
   flex-direction: column;
+  width: 100%;
   list-style: none;
   overflow-y: auto;
   gap: 20px;

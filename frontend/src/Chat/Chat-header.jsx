@@ -18,7 +18,7 @@ export default function Chat_header({ selected }) {
         {/* this.blocked.push(selected.name)*/ }
     }
     function handleProfileClicked() {
-        navigate(`/dashboard/profile/${selected.name}`);
+        navigate(`/dashboard/profile/${selected.username}`);
     }
     function handleGameClicked() {
         {/* MUST HANDLE THE GAME INVITATION  BUTTON */ }
@@ -34,12 +34,12 @@ export default function Chat_header({ selected }) {
                         anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
                         overlap="circular"
                         >
-                    <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.name}'s avatar`} />
+                    <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.username}'s avatar`} />
 
                         </Badge>
                 </div>
                 <div className="header-name">
-                    <h2 >{selected.name}</h2>
+                    <h2 >{selected.username}</h2>
                 </div>
             </div>
 

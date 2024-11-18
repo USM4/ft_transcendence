@@ -32,7 +32,7 @@ function ProfileFriendList({ username, avatar }) {
         );
     };
     return (
-        <div className="profile-friend-item" onClick={() => navigate(`/dashboard/profile/${username}`)}>
+        <div className="profile-friend-item" >
             <div className="profile-friend-info">
                 <img src={avatar} alt="" />
                 <p> {username} </p>
