@@ -22,6 +22,8 @@ from django.conf import settings
 class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"error": "Invalid data format "}, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')
@@ -327,6 +329,7 @@ class Disable2FA(APIView):
         otp = request.data.get('otp')
         if not otp:
             return Response({'error': 'OTP is required for desabling'}, status=400)
+        print("request.user.secret_key",request.user.secret_key)
         totp = pyotp.totp.TOTP(request.user.secret_key)
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)

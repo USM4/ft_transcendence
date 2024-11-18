@@ -8,7 +8,6 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ReorderIcon from "@mui/icons-material/Reorder";
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import { useNavigate } from "react-router-dom";
-
 function SideBar({username}) {
   const navigate = useNavigate();
   const SideBarData = [

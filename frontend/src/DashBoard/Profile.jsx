@@ -112,22 +112,28 @@ function Profile() {
         )}
       </div>
       <div className="bottom-side-prfl">
-        <div className="left-prfl-component">
-          <div className="friends-list-title">Friends List</div>
-          <div className="prfl-friend-list-container">
-            {!stranger && friends && friends.length > 0 ? (
-              friends.map((friend) => (
-                <ProfileFriendList
-                  key={friend.id}
-                  username={friend.username}
-                  avatar={friend.avatar}
-                />
-              ))
-            ) : (
-              <p>No friends yet</p>
-            )}
-          </div>
-        </div>
+        {
+          !stranger ? (
+              <div className="left-prfl-component">
+                <div className="friends-list-title">Friends List</div>
+                <div className="prfl-friend-list-container">
+                  {!stranger && friends && friends.length > 0 ? (
+                    friends.map((friend) => (
+                      <ProfileFriendList
+                        key={friend.id}
+                        username={friend.username}
+                        avatar={friend.avatar}
+                      />
+                    ))
+                  ) : (
+                    <p>No friends yet</p>
+                  )}
+                </div>
+              </div>
+          ) : (
+            <></>
+          )
+        }
         <div className="right-prfl-component">
           <div className="prfl-chart">
             <div className="prfl-chart-title"> Statistics </div>
