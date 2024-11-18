@@ -25,7 +25,7 @@ function SideBar() {
       title: "Game",
       icon: <GamepadIcon />,
       // Game scoope
-      link: "/dashboard",
+      link: "/game",
     },
     {
       title: "Profile",

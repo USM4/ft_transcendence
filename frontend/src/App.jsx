@@ -18,6 +18,7 @@ import FriendDataProvider from './Dashboard/FriendDataContext.jsx'
 import SocketContextProvider from './DashBoard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
+import Game from './Game/Game.jsx';
 function App() {
   return (
     <>
@@ -60,11 +61,21 @@ function App() {
               </FriendDataProvider>
             }/>
             </Route>
+            <Route path='/game' element={
+              <UserDataProvider>
+                <ProtectedRoute component={NavbarSideBar} />
+              </UserDataProvider>
+            }>
+            <Route path='' element={
+              <FriendDataProvider>
+                <ProtectedRoute component={Game} />
+              </FriendDataProvider>
+            }/>
+            </Route>
         </Routes>
           </SocketContextProvider>
       </Router>
     {/* </UserDataProvider> */}
-      
     </>
   )
 }
