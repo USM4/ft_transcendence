@@ -9,7 +9,7 @@ function SignIn() {
     const [password, setPassword] = useState('')
     const [errorMessages, setErrorMessages] = useState([]);
     const [successMessages, setSuccessMessages] = useState([]);
-    const navigate = useNavigate();
+    const navigate = useNavigate();     
 
     const handle42Intra = () =>{
         const client_id=import.meta.env.VITE_CLIENT_ID;
@@ -23,27 +23,30 @@ function SignIn() {
         e.preventDefault();
         setErrorMessages([]);
         setSuccessMessages([]);
-        e.preventDefault();
-        const response = await fetch('http://localhost:8000/auth/signin/',
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({login, password}),
-            credentials: 'include',
-        });
-        const val = await response.json();
-        if (response.ok)
-        {
-            navigate('/dashboard');
+        try {
+            const response = await fetch('http://localhost:8000/auth/signin/', {
+                method: 'POST',
+                headers: {
+                        'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({login, password}),
+                credentials: 'include',
+            });
+            const data = await response.json();
+            if (data.errors) {
+                setErrorMessages(data.errors);
+            } else {
+                console.log(data)
+                setSuccessMessages(data);
+                navigate(data.redirect_url);
+            }
         }
-        else 
-        {
-            const errors = Object.values(val);
-            setErrorMessages(errors);
+        catch (error) {
+            console.error('Error:');
+            setErrorMessages(["An error occurred. Please try again."]);
         }
     };
+
     return (
         <div className="signForm">
             <h2 className="signinhead">Sign In</h2>

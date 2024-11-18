@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate , logout
 from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from .models import Client , Friend, FriendShip, Notification , Search
 from .serializers import ClientSignUpSerializer , SearchSerializer
@@ -52,17 +53,22 @@ class SignInView(APIView):
         else:
             username = parse_login
         client = authenticate(username=username, password=password)
-        if client :
+        if client:
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            response = Response({"success":"Logged in successfully !"}, status=status.HTTP_200_OK)
-            if client.is_2fa_enabled:
-                response = redirect('http://localhost:5173/2fa')
-            else:
-                response = redirect('http://localhost:5173/dashboard')
+            redirect_url = client.is_2fa_enabled and '/2fa' or '/dashboard'
+            response = Response({'success': 'Logged in successfully', 'redirect_url': redirect_url}, status=status.HTTP_200_OK)
+            # print(f"Setting cookies with access token: {access}")
             response.set_cookie(
                 'client',
                 access,
+                httponly=True,
+                samesite='None',
+                secure=True,
+            )
+            response.set_cookie(
+                'refresh',
+                str(refresh),
                 httponly=True,
                 samesite='None',
                 secure=True,
@@ -92,7 +98,6 @@ class ExtractCodeFromIntraUrl(APIView):
             'code': code,
             'redirect_uri': redirect_uri
         }
-
         headers = {'Content-Type': 'application/json'}
         # nsefto request l intra w n extractiw l user info b dak l access token li ayjina
         response = requests.post(token_url,json=json_data, headers=headers)
@@ -128,6 +133,13 @@ class ExtractCodeFromIntraUrl(APIView):
             samesite='None',
             secure=True,
         )
+        response.set_cookie(
+            'refresh',
+            str(refresh),
+            httponly=True,
+            samesite='None',
+            secure=True,
+        )
         return response
 
 class VerifyTokenView(APIView):
@@ -143,11 +155,12 @@ class LogoutView(APIView):
     def post(self, request):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
+        response.delete_cookie('refresh')
         return response
 
 class DashboardView(APIView):
     def get(self, request):
-        user  = request.user
+        user = request.user
         if user is None:
             return Response({'error': 'Unauthorized'}, status=401)
         return Response({
@@ -156,7 +169,6 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'twoFa': user.is_2fa_enabled,
-            
         })
 
 class SendFriendRequest(APIView):
@@ -309,3 +321,16 @@ class CheckOtp(APIView):
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
+
+class Disable2FA(APIView):
+    def post(self, request):
+        otp = request.data.get('otp')
+        if not otp:
+            return Response({'error': 'OTP is required for desabling'}, status=400)
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        request.user.is_2fa_enabled = False
+        request.user.secret_key = None
+        request.user.save()
+        return Response({'message': '2FA disabled successfully'})

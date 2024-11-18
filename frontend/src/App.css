@@ -48,8 +48,6 @@ body {
   flex-direction: column;
   min-width: 80px;
   height: 100%;
-  border-radius: 7px;
-  border: 1px solid rgb(174, 255, 218);
   padding: 20px;
   /* border-right: 1px solid #D4FCB5; */
   background-color: #000;
