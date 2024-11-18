@@ -18,7 +18,7 @@ function NavbarSideBar() {
   const {user} = useContext(UserDataContext);
   return (
     <div className="dashboard-container">
-      <SideBar username={user.username} />
+      <SideBar username={user?.username} />
       <div className="main-dashbord-content">
         <DashboardNavbar/>
         <Outlet/>

@@ -25,7 +25,7 @@ export default function Chat_sidebar({ friends }) {
           <Badge
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             variant="dot"
-            color="error"
+            color="success"
             overlap="circular">
                   <img src={friend.avatar} alt={`${friend.avatar}'s avatar`} />
           </Badge>

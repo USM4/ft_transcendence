@@ -29,8 +29,7 @@ export default function Chat_header({ selected }) {
             <div className="header-wraper">
                 <div className="avatar-header">
                     <Badge 
-                        variant="dot"
-
+                        badgeContent=""
                         color="error"
                         anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
                         overlap="circular"
