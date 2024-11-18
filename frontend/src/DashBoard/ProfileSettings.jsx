@@ -17,15 +17,16 @@ function ProfileSettings() {
   const [code, setCode] = useState("");
   const [isEnabled, setIsEnabled] = useState(user?.twoFa);
 
-  const saveCode = async () => {
+  const saveCode = async (e) => {
+    e.preventDefault();
     const endpoint = isEnabled
-      ? "http://localhost:8000/auth/activate2fa/"
-      : "http://localhost:8000/auth/desactivate2fa/";
+    ? "http://localhost:8000/auth/activate2fa/"
+    : "http://localhost:8000/auth/desactivate2fa/";
     try {
+      console.log("save code", code);
       console.log(
         isEnabled
       );
-      // console.log("---------------------------------------------> ", code);
       const response = await fetch(`${endpoint}`, {
         method: "POST",
         credentials: "include",
@@ -145,17 +146,18 @@ function ProfileSettings() {
                 <div>2FA IS ENABLED</div>
               ) : (
                 user.twoFa ? (
-                <div>
-                ENTER THE CODE TO DISABLE 2FA
-                <input
-                  className="confirmation-input"
-                  type="text"
-                  maxLength={6}
-                  value={code}
-                  placeholder="Enter the code"
-                  onChange={(e) => setCode(e.target.value)}
-                />
-                <button onClick={saveCode}> disable</button>
+                <div className="disable-component">
+                    <p>ENTER THE CODE TO DISABLE 2FA</p>
+                  <div className="desable-input">
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={code}
+                      placeholder="Enter the code"
+                      onChange={(e) => setCode(e.target.value)}
+                    />
+                    <div className="disable-btn"><button onClick={saveCode}> disable </button></div>
+                  </div>
               </div>
                 ) : (
                   <div>2FA IS DISABLED</div>
@@ -178,7 +180,6 @@ function ProfileSettings() {
             </div>
           </>
         )}
-
         <div className="save-settings">
           <button onClick={saveCode}>Save</button>
         </div>
