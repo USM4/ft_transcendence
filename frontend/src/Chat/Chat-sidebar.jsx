@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Chat_header from './Chat-header.jsx';
 import Chat_area from './Chat-area.jsx';
 import Chat_input from './Chat-input.jsx';
@@ -6,21 +6,27 @@ import '../App.css'
 import ChatIcon from '@mui/icons-material/Chat';
 import { Badge } from '@mui/material';
 import { useContext } from 'react';
+import { useLocation } from 'react-router-dom';
 import {FriendDataContext} from '../DashBoard/FriendDataContext.jsx'
 
 
 export default function Chat_sidebar() {
   const {friends} = useContext(FriendDataContext)
-    
+  const location = useLocation();
   const [selectedFriend, setSelectedFriend] = useState(null);
+
+  useEffect(() => {
+    if (location.state && location.state.friend) {
+      setSelectedFriend(location.state.friend);
+    }
+    console.log(location);
+  }, [location]);
 
   function handleClick(friend) {
     setSelectedFriend(friend);
   }
-
-  const friendsList = friends.map((friend, index) => (
-    <>
-      <li key={index} className="user" onClick={() => handleClick(friend)}>
+  const friendsList = friends.map((friend) => (
+      <li key={friend.id} className="user" onClick={() => handleClick(friend)}>
         <div className="avatar">
           {/* I NEED THE ONLINE STATUS TO CHECK WICH ONE TO DISPLAY */}
           {/* ONLINE         
@@ -40,7 +46,6 @@ export default function Chat_sidebar() {
           <p className="lastmsg">{friend.lastMessage}</p>
         </div>
       </li>
-    </>
   ));
 
 

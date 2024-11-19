@@ -4,7 +4,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
 import GamepadIcon from "@mui/icons-material/Gamepad";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import PersonIcon from '@mui/icons-material/Person';
 import ReorderIcon from "@mui/icons-material/Reorder";
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import { useNavigate } from "react-router-dom";
@@ -30,7 +30,7 @@ function SideBar({username}) {
     },
     {
       title: "Profile",
-      icon: <PersonOutlineIcon />,
+      icon: <PersonIcon />,
       link: `/dashboard/profile/${username}`,
     },
   ];
