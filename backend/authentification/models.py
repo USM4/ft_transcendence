@@ -8,6 +8,7 @@ class Client(AbstractUser):
     password = models.CharField(max_length=255)
     is_2fa_enabled = models.BooleanField(default=False)
     secret_key = models.CharField(max_length=32, blank=True, null=True)
+    is_online = models.BooleanField(default=True)
     # def __str__(self):
     #     return self.username
 

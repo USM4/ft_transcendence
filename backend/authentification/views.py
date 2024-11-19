@@ -171,6 +171,7 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'twoFa': user.is_2fa_enabled,
+            'is_online': user.is_online
         })
 
 class SendFriendRequest(APIView):

@@ -1,6 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from django.contrib.auth import get_user_model
 
 class NotificationsConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -23,6 +24,5 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
     
     async def send_notification(self, event):
         notification_data = ["data"]
-        message = text_data_json['message']
+        message = text_data_json['message']  
         self.send(text_data=json.dumps({'message': notification_data}))
-
