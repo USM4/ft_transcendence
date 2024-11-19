@@ -1,42 +1,37 @@
 import React from "react";
 import { useContext, createContext, useState, useEffect} from 'react';
 import { useLocation } from "react-router-dom";
+import useWebSocket from 'react-use-websocket';
 
-export const SocketContext = createContext();
-function SocketContextProvider ({ children }) {
-    const [socket, setSocket] = useState(null)
+const SocketContext = createContext();
+export default function SocketContextProvider ({ children }) {
     const location = useLocation();
-    const pathname = location.pathname;
+    // const pathname = location.pathname;
 
-    useEffect(() => {
-        const establishConnection =  () => {
-        const ws = new WebSocket('ws://localhost:8000/ws/notifications/');
-        ws.onopen = () => {
-            console.log("WebSocket connection established.");
-            setSocket(ws);
-        };
-    
-        ws.onmessage = (event) => {
-            const notification = JSON.parse(event.data);
-        };
-        
-        ws.onerror = (error) => {
-            setSocket(null);
-            console.error("WebSocket error:", error);
-        };
-    
-        ws.onclose = () => {
-            setSocket(null);
-            console.log("WebSocket connection closed.");
-        };
-    }
-    if(pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/features' && pathname !== '/howtoplay')
-        establishConnection();
-    }, []);
+    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://localhost:8000/ws/notifications/', {
+        onOpen: () => console.log('opened'),
+        onClose: () => console.log('closed'),
+        onMessage: (event) => console.log('message:', event.data),  
+        onError: (event) => console.log('error:', event),
+        shouldReconnect: (closeEvent) => true,
+        reconnectInterval: 3000,
+        reconnectAttempts: 10,
+
+    });
+    // useEffect(() => {
+
+    // if(pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/features' && pathname !== '/howtoplay')
+    //     establishConnection();
+    // }, [pathname]);
+
+   
     return(
-        <SocketContext.Provider value={{ socket }}>
-        {children}
-      </SocketContext.Provider>
+        <SocketContext.Provider value={{sendMessage, lastMessage, readyState}}>
+            {children}
+        </SocketContext.Provider>
     );    
 };
-export default SocketContextProvider;
+
+export const useWebSocketContext = () => {
+    return useContext(SocketContext);
+};

@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { SocketContext } from "./SocketContext.jsx";
+import { useWebSocketContext } from "./SocketContext.jsx";
 
 function NotificationsToggle({displayNotification}) {
   const [notifications, setNotification] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
-  const { socket } = useContext(SocketContext);
+  const { sendMessage, lastMessage, readyState } = useWebSocketContext();
   const [notif, setNotif] = useState(false);
 
   const handleNotification = async () => {
@@ -28,10 +28,10 @@ function NotificationsToggle({displayNotification}) {
   };
 
   useEffect(() => {
-    if (socket) {
-      socket.onmessage = (event) => {
-        console.log("Notification received:", event.data);
-        const notification = JSON.parse(event.data);
+    if (readyState === 1) {
+      if (lastMessage !== null) {
+        console.log("Notification received:", lastMessage.data);
+        const notification = JSON.parse(lastMessage.data);
         console.log("Notification:", notification);
         setNotification((prevNotifications) => [
           ...prevNotifications,
@@ -43,7 +43,7 @@ function NotificationsToggle({displayNotification}) {
       console.error("Socket connection not available");
       setNotif(false);
     }
-  }, [socket]);
+  }, [lastMessage]);
 
   const acceptFriendRequest = async (requestId) => {
     try {
@@ -70,10 +70,10 @@ function NotificationsToggle({displayNotification}) {
     }
   };
 
-  useEffect(() => {
-    handleNotification();
-    console.log("Notification:", notif);
-  }, [notif]);
+  // useEffect(() => {
+  //   handleNotification();
+  //   console.log("Notification:", notif);
+  // }, [notif]);
   return (
     <div className="notif-invitation-text">
       <div>
