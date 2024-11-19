@@ -250,7 +250,6 @@ class FriendsList(APIView):
 
 class Search(APIView):
     search = Search.objects.all()
-    # print("search")
     serializer_class = SearchSerializer
     def get(self, request):
         if not search:

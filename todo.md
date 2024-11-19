@@ -1,4 +1,6 @@
-> should add the online status  ( ... )
+> search bar
+
+> should add the online status 
 
 > update the user infos
 

@@ -14,8 +14,6 @@ export default function SocketContextProvider ({ children }) {
         onMessage: (event) => console.log('message:', event.data),  
         onError: (event) => console.log('error:', event),
         shouldReconnect: (closeEvent) => true,
-        reconnectInterval: 3000,
-        reconnectAttempts: 10,
 
     });
     // useEffect(() => {
