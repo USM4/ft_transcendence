@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useWebSocketContext } from "./SocketContext.jsx";
+import { SocketContext } from "./SocketContext.jsx";
 
 function NotificationsToggle({displayNotification}) {
   const [notifications, setNotification] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
-  const { sendMessage, lastMessage, readyState } = useWebSocketContext();
+  const {socket} = useContext(SocketContext);
   const [notif, setNotif] = useState(false);
 
   // const handleNotification = async () => {
@@ -28,19 +28,20 @@ function NotificationsToggle({displayNotification}) {
   // };
 
   useEffect(() => {
-    if (lastMessage !== null) {
+    if (socket.readyState === WebSocket.OPEN) {
         try {
-            const notification = JSON.parse(lastMessage.data);
-            console.log("Notification received:", notification);
-            setNotification((prevNotifications) => [
-                ...prevNotifications,
-                notification,
-            ]);
+            console.log("Socket is open");
+            // const notification = JSON.parse(socket.data);
+            // console.log("Notification received:", notification);
+            // setNotification((prevNotifications) => [
+            //     ...prevNotifications,
+            //     notification,
+            // ]);
         } catch (error) {
             console.error("Error parsing notification:", error);
         }
     }
-}, [lastMessage]);
+}, [socket]);
 
   const acceptFriendRequest = async (requestId) => {
     try {
