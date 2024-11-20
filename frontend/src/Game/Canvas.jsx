@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import '../App.css'
 
 const Canvas = ({ draw, width, height }) => {
   const canvasRef = useRef(null);
@@ -10,7 +11,7 @@ const Canvas = ({ draw, width, height }) => {
   }, [draw]);
 
   return (
-    <canvas ref={canvasRef} width={width} height={height} />
+      <canvas ref={canvasRef} width={width} height={height} />
   );
 };
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Canvas from './Canvas';
 import Ball from './Ball';
 import Racket from './Racket';
-// import 'App.css';
+import '../App.css';
 
 const Game = () => {
   const [isAIEnabled, setIsAIEnabled] = useState(true);
@@ -122,9 +122,9 @@ const Game = () => {
       {!isAIEnabled && (
         <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
       )}
-      <button onClick={() => setIsAIEnabled(!isAIEnabled)}>
+      {/* <button onClick={() => setIsAIEnabled(!isAIEnabled)}>
         {isAIEnabled ? 'Play with Friend' : 'Play with AI'}
-      </button>
+      </button> */}
     </div>
   );
 };
