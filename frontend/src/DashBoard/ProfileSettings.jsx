@@ -7,18 +7,23 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
+
 import Switch from "@mui/material/Switch";
 import toast from "react-hot-toast";
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
-  const { user } = useContext(UserDataContext);
+  const { user, updateUser} = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
   const [code, setCode] = useState("");
   const [isEnabled, setIsEnabled] = useState(user?.twoFa);
   const [avatar, setAvatar] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
+  const formData = new FormData();
+  formData.append('avatar', avatar);
+  formData.append('address', address);
+  formData.append('phone', phone);
 
   const saveCode = async (e) => {
     e.preventDefault();
@@ -55,19 +60,23 @@ function ProfileSettings() {
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({"avatar": avatar , "address": address, "phone": phone}),
+        body: formData,
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        console.log("updated data",data.user);
+        updateUser(data.user);
+        toast.success(data.message);
       } else console.log("error");
     } catch (error) {
       console.log(error);
     }
   };
+
+  // useEffect(() => {
+  //   updateInfos();
+  // }, []);
+
 
   const getQRCode = async () => {
     // console.log("get qr code");
@@ -96,8 +105,8 @@ function ProfileSettings() {
     <div className="settings-component">
       <div className="profile-settings">
         <div className="settings-user-image">
-          <img src={user?.avatar || player} alt="" />
-          <p> {user.username} </p>
+          <img src={user?.avatar || "/skull.jpeg"} alt="" />
+          <p> {user?.username} </p>
         </div>
         <div className="settings-options">
           <div className="settings-title"> Settings </div>
@@ -109,7 +118,9 @@ function ProfileSettings() {
               <button>Edit Profile Informations</button>
             </div>
             <div className="two-fa-settings" onClick={() => setisTwoFactor(true)}>
-              <button> Two Factor Settings </button>
+              <button> 
+                Two Factor Settings
+              </button>
             </div>
           </div>
         </div>
@@ -192,8 +203,8 @@ function ProfileSettings() {
               <p> Update Avatar : </p>
               <div className="custom-file-upload">
                 <input type="file" accept="image/*" 
-                  value={avatar}
-                  onChange={(e) => setAvatar(e.target.value)}
+                  // value={avatar}
+                  onChange={(e) => setAvatar(e.target.files[0])} // Using files[0] to get the selected file
                 />
               </div>
             </div>

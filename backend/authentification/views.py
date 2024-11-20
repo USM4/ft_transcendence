@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 import os
+from pathlib import Path
+
 import pyotp
 import qrcode
 from dotenv import load_dotenv
@@ -320,7 +322,7 @@ class CheckOtp(APIView):
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        print("------------------>",totp.verify(otp))
+        # print("------------------>",totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
@@ -345,13 +347,27 @@ class UpdateUserInfos(APIView):
         avatar = request.data.get('avatar')
         address = request.data.get('address')
         phone = request.data.get('phone')
-        if avatar:
-            image_name = os.path.basename(avatar)
-            print("avatar", image_name)
-            user.avatar = image_name
+        # new_image = request.FILES.get('avatar')
+        avatar_file = request.FILES.get('avatar')
+        if avatar_file:
+            file_name = Path(avatar_file.name).name
+            print("avatar_file name -----> ", file_name)
+            user.avatar = "/" + avatar_file.name
+        else:
+            print("No avatar file uploaded.")
+        # Update other fields if provided
         if address:
             user.address = address
         if phone:
             user.phone = phone
         user.save()
-        return Response({'message': 'User infos updated successfully'})
+        user = Client.objects.get(id=user.id)  
+        return Response(
+            {
+                'message': 'User infos updated successfully',
+                'user': {
+                    'id': user.id,
+                    'email': user.email,
+                    'username': user.username,
+                    'avatar': user.avatar if user.avatar else None,
+            },})
