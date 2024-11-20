@@ -7,43 +7,40 @@ function NotificationsToggle({displayNotification}) {
   const { sendMessage, lastMessage, readyState } = useWebSocketContext();
   const [notif, setNotif] = useState(false);
 
-  const handleNotification = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:8000/auth/notifications/",
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setNotification(data);
-        setNotif(true);
-      }
-    } catch (error) {
-      console.error("Error fetching notification:", error);
-      setNotif(false);
-    }
-  };
+  // const handleNotification = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       "http://localhost:8000/auth/notifications/",
+  //       {
+  //         method: "GET",
+  //         credentials: "include",
+  //       }
+  //     );
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setNotification(data);
+  //       setNotif(true);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching notification:", error);
+  //     setNotif(false);
+  //   }
+  // };
 
   useEffect(() => {
-    if (readyState === 1) {
-      if (lastMessage !== null) {
-        console.log("Notification received:", lastMessage.data);
-        const notification = JSON.parse(lastMessage.data);
-        console.log("Notification:", notification);
-        setNotification((prevNotifications) => [
-          ...prevNotifications,
-          notification,
-        ]);
-      };
-      setNotif(true);
-    } else {
-      console.error("Socket connection not available");
-      setNotif(false);
+    if (lastMessage !== null) {
+        try {
+            const notification = JSON.parse(lastMessage.data);
+            console.log("Notification received:", notification);
+            setNotification((prevNotifications) => [
+                ...prevNotifications,
+                notification,
+            ]);
+        } catch (error) {
+            console.error("Error parsing notification:", error);
+        }
     }
-  }, [lastMessage]);
+}, [lastMessage]);
 
   const acceptFriendRequest = async (requestId) => {
     try {
@@ -76,6 +73,9 @@ function NotificationsToggle({displayNotification}) {
   // }, [notif]);
   return (
     <div className="notif-invitation-text">
+      {
+        console.log("Current notifications:", notifications)
+      }
       <div>
         {notifications.length === 0 ? (
           <div style={{ color: "white" }}> No Notifications </div>
@@ -96,5 +96,5 @@ function NotificationsToggle({displayNotification}) {
       </div>
     </div>
   );
-}
+};
 export default NotificationsToggle;

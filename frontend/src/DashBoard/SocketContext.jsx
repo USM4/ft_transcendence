@@ -11,7 +11,7 @@ export default function SocketContextProvider ({ children }) {
     const { sendMessage, lastMessage, readyState } = useWebSocket('ws://localhost:8000/ws/notifications/', {
         onOpen: () => console.log('opened'),
         onClose: () => console.log('closed'),
-        onMessage: (event) => console.log('message:', event.data),  
+        onMessage: (event) => console.log('message:', event.data),
         onError: (event) => console.log('error:', event),
         shouldReconnect: (closeEvent) => true,
 

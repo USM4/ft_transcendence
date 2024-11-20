@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   BrowserRouter,
   Outlet,
@@ -17,10 +17,13 @@ import "../App.css";
 function DashboardNavbar() {
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
-  const [profileToggle, setprofileToggle] = useState(false);
+  const [profileToggle, setProfileToggle] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const { user } = useContext(UserDataContext);
   const [search, setSearch] = useState("");
+  const dropdownRef = useRef(null);
+  const [searchToggle, setSearchToggle] = useState(false);
+
 
   const handleSearch = async (e) => {
     setSearch(e.target.value);
@@ -28,19 +31,21 @@ function DashboardNavbar() {
       setSearchResults([]);
       return;
     }
-
+    
     try {
       const response = await fetch(`http://localhost:8000/auth/search/${e.target.value}`);
       const results = await response.json();
       setSearchResults(results);
+      setSearchToggle(true);
     } catch (error) {
+      setSearchResults(null);
+      setSearchToggle(false);
       console.error('Error fetching search results:', error);
     }
   };
 
   const handleLogout = async () => {
     try {
-      alert("are you sure");
       const response = await fetch("http://localhost:8000/auth/logout/", {
         method: "POST",
         credentials: "include",
@@ -50,6 +55,19 @@ function DashboardNavbar() {
       console.error("Error logging out :", error);
     }
   };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setProfileToggle(false);
+        setSearchToggle(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="dashboard-navbar">
@@ -62,27 +80,26 @@ function DashboardNavbar() {
           <button className="search-icon">
             <SearchIcon />
           </button>
-          {searchResults.length > 0 && (
-            <div className="search-results">
-              {searchResults.map((result) => (
-                <div>
-                  <Link
-                    key={result.id}
-                    to={`/dashboard/profile/${result.username}`}
-                    className="search-result"
-                  >
-                    <img
-                      className="search-result-img"
-                      src={result.avatar}
-                      alt=""
-                    />
-                    <p className="search-result-username" key={result.id}>{result.username}</p>
-                  </Link>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+            {searchToggle && searchResults.length > 0 && (
+              <div className="search-results" ref={dropdownRef}>
+                {searchResults.map((result) => (
+                  <div key={result.id}>
+                    <Link
+                      to={`/dashboard/profile/${result.username}`}
+                      className="search-result"
+                    >
+                      <img
+                        className="search-result-img"
+                        src={result.avatar}
+                        alt=""
+                      />
+                      <p className="search-result-username" key={result.id}>{result.username}</p>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
       </div>
       <div className="notification-and-profile">
         <div className="notification">
@@ -100,7 +117,7 @@ function DashboardNavbar() {
         </div>
         <div className="profile">
           <button
-            onClick={() => setprofileToggle(!profileToggle)}
+            onClick={() => setProfileToggle(!profileToggle)}
             className="profile-btn"
           >
             <img
@@ -110,7 +127,7 @@ function DashboardNavbar() {
             />
           </button>
           {profileToggle && (
-            <div className="profile-dropdown">
+            <div className="profile-dropdown" ref={dropdownRef}>
               <button
                 className="dropdown-elements"
                 onClick={() => {
