@@ -1,4 +1,4 @@
-> search bar
+> still click out of the search bar event listener
 
 > should add the online status 
 

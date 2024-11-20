@@ -200,20 +200,19 @@ class SendFriendRequest(APIView):
             # call send_notification function and pass
         return Response({'success': 'friend request sent successfully'})
 
-class NotificationList(APIView):
-    def get(self, request):
-        notifications = Notification.objects.filter(user=request.user, is_read=False)
-        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
-        return Response(data)
+# class NotificationList(APIView):
+#     def get(self, request):
+#         notifications = Notification.objects.filter(user=request.user, is_read=False)
+#         data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
+#         return Response(data)
 
 def send_notification(message):
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        'notifications',
-        {
-            'type': 'send_notification',
-            'message': message
-        }
+    sync_to_sync(channel_layer.group_send)(
+       'notifications',
+       {
+           'type': 'send_notification',
+           'message': message
+       }
     )
 
 class AcceptFriendRequest(APIView):
@@ -247,11 +246,6 @@ class FriendsList(APIView):
             for friend in friends
         ]
         return Response({"data": data})
-
-# class Search(APIView):
-#     def get(self, request):
-#         # search = Search.objects.all()
-#         print("--------------------->"
 
 class Search(APIView):
     def get(self, request, query):
@@ -344,3 +338,20 @@ class Disable2FA(APIView):
         request.user.secret_key = None
         request.user.save()
         return Response({'message': '2FA disabled successfully'})
+
+class UpdateUserInfos(APIView):
+    def post(self, request):
+        user = request.user
+        avatar = request.data.get('avatar')
+        address = request.data.get('address')
+        phone = request.data.get('phone')
+        if avatar:
+            image_name = os.path.basename(avatar)
+            print("avatar", image_name)
+            user.avatar = image_name
+        if address:
+            user.address = address
+        if phone:
+            user.phone = phone
+        user.save()
+        return Response({'message': 'User infos updated successfully'})

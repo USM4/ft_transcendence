@@ -16,6 +16,9 @@ function ProfileSettings() {
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
   const [code, setCode] = useState("");
   const [isEnabled, setIsEnabled] = useState(user?.twoFa);
+  const [avatar, setAvatar] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
 
   const saveCode = async (e) => {
     e.preventDefault();
@@ -47,10 +50,25 @@ function ProfileSettings() {
       console.log(error);
     }
   };
-  
-  const handleSwitch = () => {
-    setisTwoFactor(!isTwoFactor);
+  const updateInfos = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/auth/update_infos/", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({"avatar": avatar , "address": address, "phone": phone}),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+      } else console.log("error");
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   const getQRCode = async () => {
     // console.log("get qr code");
     try {
@@ -82,20 +100,23 @@ function ProfileSettings() {
           <p> {user.username} </p>
         </div>
         <div className="settings-options">
-          <div
-            className="general-profile-settings"
-            onClick={() => setisTwoFactor(false)}
-          >
-            <button>General settings</button>
-          </div>
-          <div className="two-fa-settings" onClick={() => setisTwoFactor(true)}>
-            <button> Two Factor Settings </button>
+          <div className="settings-title"> Settings </div>
+          <div className="edit-and-twofa">
+            <div
+              className="general-profile-settings"
+              onClick={() => setisTwoFactor(false)}
+            >
+              <button>Edit Profile Informations</button>
+            </div>
+            <div className="two-fa-settings" onClick={() => setisTwoFactor(true)}>
+              <button> Two Factor Settings </button>
+            </div>
           </div>
         </div>
       </div>
       <div className="profile-edit-settings">
         <div className="profile-edit-settings-title">
-          {isTwoFactor ? "Two Factor Settings" : "General Settings"}
+          {isTwoFactor ? "Two Factor Settings" : "Edit Profile Informations"}
         </div>
         {isTwoFactor ? (
           <>
@@ -169,19 +190,37 @@ function ProfileSettings() {
           <>
             <div className="update-avatar">
               <p> Update Avatar : </p>
-              {/* onChange={handleFileChange} */}
               <div className="custom-file-upload">
-                <input type="file" accept="image/*" />
+                <input type="file" accept="image/*" 
+                  value={avatar}
+                  onChange={(e) => setAvatar(e.target.value)}
+                />
               </div>
             </div>
             <div className="update-nickname">
-              <p>Update Nickname : </p>
-              <input type="text" placeholder="Enter your new nickname" />
+              <p>Update Address : </p>
+              <input 
+                type="text"
+                placeholder="Enter your new address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}              
+              />
+            </div>
+            <div className="update-nickname">
+              <p>Update Phone number : </p>
+              <input 
+                type="text" 
+                placeholder="Enter your new phone" 
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
             </div>
           </>
         )}
         <div className="save-settings">
-          <button onClick={saveCode}>Save</button>
+          <button onClick={() => isTwoFactor ? saveCode() : updateInfos()}
+
+          >Save</button>
         </div>
       </div>
     </div>
