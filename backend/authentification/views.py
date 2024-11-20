@@ -248,14 +248,22 @@ class FriendsList(APIView):
         ]
         return Response({"data": data})
 
+# class Search(APIView):
+#     def get(self, request):
+#         # search = Search.objects.all()
+#         print("--------------------->"
+
 class Search(APIView):
-    search = Search.objects.all()
-    serializer_class = SearchSerializer
-    def get(self, request):
-        if not search:
-            return Response({'error': 'search parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
-        clients = Client.objects.filter(username__icontains=search).exclude(id=request.user.id)
-        data = [{'id': c.id, 'username': c.username} for c in clients]
+    def get(self, request, query):
+        clients = Client.objects.filter(username__icontains=query).exclude(id=request.user.id)
+        data = [
+            {
+                'id': c.id,
+                'username': c.username,
+                'avatar': c.avatar if c.avatar else '/player1.jpeg'
+            }
+            for c in clients
+        ]
         return Response(data)
 
 class Profile(APIView):
@@ -265,7 +273,6 @@ class Profile(APIView):
             user = Client.objects.get(username=username)
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
-        print("useeeeeeeer", user.is_2fa_enabled)
         return Response({
             'id': user.id,
             'username': user.username,

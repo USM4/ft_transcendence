@@ -11,7 +11,7 @@ from authentification.views import NotificationList
 from authentification.views import AcceptFriendRequest
 from authentification.views import FriendsList
 from authentification.views import Activate2FA
-# from authentification.views import Search
+from authentification.views import Search
 from authentification.views import Profile
 from authentification.views import QrCode
 from authentification.views import CheckOtp
@@ -42,6 +42,5 @@ urlpatterns = [
     path("refresh/", TokenRefreshView.as_view(), name='token_refresh'),
     path("verify/", TokenVerifyView.as_view(), name='token_verify'),
     path("desactivate2fa/", Disable2FA.as_view(), name='desactivate2fa'),
-
-    # path("check_for_desabling/", checkForDesabling.as_view(), name='check_for_desabling/'),
+    path("search/<str:query>", Search.as_view(), name='search'),
 ]

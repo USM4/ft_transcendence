@@ -18,8 +18,25 @@ function DashboardNavbar() {
   const navigate = useNavigate();
   const [showNotification, setShowNotification] = useState(false);
   const [profileToggle, setprofileToggle] = useState(false);
-
+  const [searchResults, setSearchResults] = useState([]);
   const { user } = useContext(UserDataContext);
+  const [search, setSearch] = useState("");
+
+  const handleSearch = async (e) => {
+    setSearch(e.target.value);
+    if (e.target.value.trim() === '') {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8000/auth/search/${e.target.value}`);
+      const results = await response.json();
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -38,10 +55,33 @@ function DashboardNavbar() {
     <div className="dashboard-navbar">
       <div className="search-btn">
         <div className="search-input">
-          <input placeholder="Search" />
+          <input placeholder="Search"
+            value={search}
+            onChange={handleSearch}
+          />
           <button className="search-icon">
             <SearchIcon />
           </button>
+          {searchResults.length > 0 && (
+            <div className="search-results">
+              {searchResults.map((result) => (
+                <div>
+                  <Link
+                    key={result.id}
+                    to={`/dashboard/profile/${result.username}`}
+                    className="search-result"
+                  >
+                    <img
+                      className="search-result-img"
+                      src={result.avatar}
+                      alt=""
+                    />
+                    <p className="search-result-username" key={result.id}>{result.username}</p>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className="notification-and-profile">

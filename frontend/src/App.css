@@ -1598,3 +1598,46 @@ body {
   border: 2px solid rgb(238, 172, 93);
 }
 
+.search-results {
+  position: absolute;
+  top: 50px;
+  width: 700px;
+  background-color: #000;
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+  flex-direction: column;
+  max-height: 300px;
+
+  border: 2px solid rgb(174, 255, 218);
+  border-radius: 10px;
+  overflow-y: auto;
+}
+
+.search-result {
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  text-decoration: none;
+  color: rgb(174, 255, 218);
+  border-radius: 10px;
+}
+.search-result:hover {
+  background-color:  rgb(174, 255, 218);
+  border: 1px solid #000;
+  color: #000;
+}
+
+.search-result-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  border: 2px solid rgb(174, 255, 218);
+}
+
+.search-result-username {
+  font-size: 16px;
+}
