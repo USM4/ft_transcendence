@@ -6,7 +6,7 @@ export default function Chat_input() {
     const [message, setMessage] = useState();
 
     function handleSubmit() {
-
+        
     }
 
     return (
