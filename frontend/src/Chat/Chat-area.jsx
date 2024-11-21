@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 
 export default function Chat_area({ selected }) {
+  
+  const [message, setMessage] = useState(null);
 
-  const socket = 
+  useEffect(() => {
+      const socket = new WebSocket(`ws://localhost:8000/ws/chat/`)
+      socket.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          setMessage((prevMeassage) => [...prevMeassage, data]);
+        }
+    }
+  )
+
 
   return (
 
