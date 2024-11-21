@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 import os
+from pathlib import Path
+
 import pyotp
 import qrcode
 from dotenv import load_dotenv
@@ -171,6 +173,7 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'twoFa': user.is_2fa_enabled,
+            'is_online': user.is_online
         })
 
 class SendFriendRequest(APIView):
@@ -205,16 +208,6 @@ class NotificationList(APIView):
         data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
         return Response(data)
 
-def send_notification(message):
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        'notifications',
-        {
-            'type': 'send_notification',
-            'message': message
-        }
-    )
-
 class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
@@ -248,14 +241,16 @@ class FriendsList(APIView):
         return Response({"data": data})
 
 class Search(APIView):
-    search = Search.objects.all()
-    # print("search")
-    serializer_class = SearchSerializer
-    def get(self, request):
-        if not search:
-            return Response({'error': 'search parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
-        clients = Client.objects.filter(username__icontains=search).exclude(id=request.user.id)
-        data = [{'id': c.id, 'username': c.username} for c in clients]
+    def get(self, request, query):
+        clients = Client.objects.filter(username__icontains=query).exclude(id=request.user.id)
+        data = [
+            {
+                'id': c.id,
+                'username': c.username,
+                'avatar': c.avatar if c.avatar else '/player1.jpeg'
+            }
+            for c in clients
+        ]
         return Response(data)
 
 class Profile(APIView):
@@ -265,7 +260,6 @@ class Profile(APIView):
             user = Client.objects.get(username=username)
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
-        print("useeeeeeeer", user.is_2fa_enabled)
         return Response({
             'id': user.id,
             'username': user.username,
@@ -319,7 +313,7 @@ class CheckOtp(APIView):
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        print("------------------>",totp.verify(otp))
+        # print("------------------>",totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
@@ -337,3 +331,34 @@ class Disable2FA(APIView):
         request.user.secret_key = None
         request.user.save()
         return Response({'message': '2FA disabled successfully'})
+
+class UpdateUserInfos(APIView):
+    def post(self, request):
+        user = request.user
+        avatar = request.data.get('avatar')
+        address = request.data.get('address')
+        phone = request.data.get('phone')
+        # new_image = request.FILES.get('avatar')
+        avatar_file = request.FILES.get('avatar')
+        if avatar_file:
+            file_name = Path(avatar_file.name).name
+            print("avatar_file name -----> ", file_name)
+            user.avatar = "/" + avatar_file.name
+        else:
+            print("No avatar file uploaded.")
+        # Update other fields if provided
+        if address:
+            user.address = address
+        if phone:
+            user.phone = phone
+        user.save()
+        user = Client.objects.get(id=user.id)  
+        return Response(
+            {
+                'message': 'User infos updated successfully',
+                'user': {
+                    'id': user.id,
+                    'email': user.email,
+                    'username': user.username,
+                    'avatar': user.avatar if user.avatar else None,
+            },})

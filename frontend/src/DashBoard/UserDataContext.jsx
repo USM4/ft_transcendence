@@ -23,10 +23,12 @@ function UserDataProvider({ children }) {
     };
     getData();
   }, []);
-  // if(user === null)
-  //   return <div> fetching user data .. </div>
+  
+    const updateUser = (updatedUser) => {
+      setUser(updatedUser);
+  };
   return (
-    <UserDataContext.Provider value={{ user, setUser }}>
+    <UserDataContext.Provider value={{ user, updateUser}}>
       {children}
     </UserDataContext.Provider>
   );
