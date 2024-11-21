@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "./SocketContext.jsx";
 
-function NotificationsToggle({displayNotification}) {
+function NotificationsToggle({ displayNotification }) {
   const [notifications, setNotification] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
-  const {socket} = useContext(SocketContext);
+  const { socket } = useContext(SocketContext);
   const [notif, setNotif] = useState(false);
 
   const handleNotification = async () => {
@@ -27,50 +27,33 @@ function NotificationsToggle({displayNotification}) {
     }
   };
 
-//   useEffect(() => {
-//     if (socket.readyState === WebSocket.OPEN) {
-//         try {
-//             console.log("Socket is open");
-//             const notification = JSON.parse(socket.data);
-//             console.log("Notification received:", notification);
-//             setNotification((prevNotifications) => [
-//                 ...prevNotifications,
-//                 notification,
-//             ]);
-//         } catch (error) {
-//             console.error("Error parsing notification:", error);
-//         }
-//     }
-// }, [socket]);
-useEffect(() => {
-  // Ensure the socket is open and ready to receive messages
-  if (socket && socket.readyState === WebSocket.OPEN) {
+  useEffect(() => {
+    // Ensure the socket is open and ready to receive messages
+    if (socket && socket.readyState === WebSocket.OPEN) {
       // Define the onmessage handler inside the useEffect hook to listen for incoming messages
       socket.onmessage = (event) => {
-          try {
-            let data = JSON.parse(event.data)
-            let type = data.type
-            let message = data.message
-              // const notification = JSON.parse(event.data);
-              // console.log("Notification received:", notification);
-              // setNotification((prevNotifications) => [
-              //     ...prevNotifications,
-              //     notification,
-              // ]);
-              if (type === "receive_notification") {
-                setNotification((prevNotifications) => [
-                  ...prevNotifications,
-                  message.from_user,
-              ]);
-              }
-          } catch (error) {
-              console.error("Error parsing notification:", error);
+        try {
+          let data = JSON.parse(event.data);
+          let type = data.type;
+          let message = data.message;
+          const notification = JSON.parse(event.data);
+          console.log("Notification received:", notification);
+          setNotification((prevNotifications) => [
+            ...prevNotifications,
+            notification,
+          ]);
+          if (type === "receive_notification") {
+            setNotification((prevNotifications) => [
+              ...prevNotifications,
+              message.from_user,
+            ]);
           }
+        } catch (error) {
+          console.error("Error parsing notification:", error);
+        }
       };
-  }
-}, [socket]);  // Dependency array ensures this effect runs when the socket changes
-
-
+    }
+  }, [socket]);
 
   const acceptFriendRequest = async (requestId) => {
     try {
@@ -101,18 +84,20 @@ useEffect(() => {
     handleNotification();
     console.log("Notification:", notif);
   }, [notif]);
+
   return (
     <div className="notif-invitation-text">
-      {
-        console.log("Current notifications:", notifications)
-      }
+      {console.log("Current notifications:", notifications)}
       <div>
         {notifications.length === 0 ? (
           <div style={{ color: "white" }}> No Notifications </div>
         ) : (
           notifications.map((notification) => (
             <div key={notification.id} className="notification">
-              <div style={{ color: "white" }}>{notification.user_from} send a friend request{notification.message}</div>
+              <div style={{ color: "white" }}>
+                {notification.user_from} sent a friend request{" "}
+                {notification.message}
+              </div>
               <div className="notification-accept">
                 <button onClick={() => acceptFriendRequest(notification.id)}>
                   Accept
@@ -124,5 +109,5 @@ useEffect(() => {
       </div>
     </div>
   );
-};
+}
 export default NotificationsToggle;

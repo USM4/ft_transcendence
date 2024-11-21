@@ -18,8 +18,6 @@ async def send_friend_request(self, data):
 		}
 	)
 
-
-
 user = get_user_model()
 class NotificationsConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
