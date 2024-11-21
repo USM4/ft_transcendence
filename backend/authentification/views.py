@@ -202,20 +202,11 @@ class SendFriendRequest(APIView):
             # call send_notification function and pass
         return Response({'success': 'friend request sent successfully'})
 
-# class NotificationList(APIView):
-#     def get(self, request):
-#         notifications = Notification.objects.filter(user=request.user, is_read=False)
-#         data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
-#         return Response(data)
-
-def send_notification(message):
-    sync_to_sync(channel_layer.group_send)(
-       'notifications',
-       {
-           'type': 'send_notification',
-           'message': message
-       }
-    )
+class NotificationList(APIView):
+    def get(self, request):
+        notifications = Notification.objects.filter(user=request.user, is_read=False)
+        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
+        return Response(data)
 
 class AcceptFriendRequest(APIView):
     def post(self, request):

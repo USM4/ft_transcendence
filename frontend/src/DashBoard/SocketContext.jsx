@@ -17,10 +17,10 @@ function SocketContextProvider ({ children }) {
             setSocket(ws);
         };
     
-        ws.onmessage = (event) => {
-            const notification = JSON.parse(event.data);
-            console.log(notification);
-        };
+        // ws.onmessage = (event) => {
+        //     const notification = JSON.parse(event.data);
+        //     console.log(notification);
+        // };
         
         ws.onerror = (error) => {
             setSocket(null);

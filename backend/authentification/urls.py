@@ -7,7 +7,7 @@ from authentification.views import VerifyTokenView
 from authentification.views import LogoutView
 from authentification.views import DashboardView
 from authentification.views import SendFriendRequest
-# from authentification.views import NotificationList
+from authentification.views import NotificationList
 from authentification.views import AcceptFriendRequest
 from authentification.views import FriendsList
 from authentification.views import Activate2FA
@@ -33,7 +33,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name='logout'),
     path("dashboard/", DashboardView.as_view(), name='dashboard'),
     path("send_friend_request/", SendFriendRequest.as_view(), name='send_friend_request'),
-    # path("notifications/", NotificationList.as_view(), name='notifications'),
+    path("notifications/", NotificationList.as_view(), name='notifications'),
     path("accept_friend_request/", AcceptFriendRequest.as_view(), name='accept_friend_request'),
     path("friends/", FriendsList.as_view(), name='friends'),
     path("profile/<str:username>/", Profile.as_view(), name='profile'),
