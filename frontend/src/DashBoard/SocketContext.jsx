@@ -11,17 +11,12 @@ function SocketContextProvider ({ children }) {
     useEffect(() => {
         const establishConnection =  () => {
         const ws = new WebSocket('ws://localhost:8000/ws/notifications/');
-    
+
         ws.onopen = () => {
             console.log("WebSocket connection established.");
             setSocket(ws);
         };
-    
-        // ws.onmessage = (event) => {
-        //     const notification = JSON.parse(event.data);
-        //     console.log(notification);
-        // };
-        
+
         ws.onerror = (error) => {
             setSocket(null);
             console.error("WebSocket error:", error);

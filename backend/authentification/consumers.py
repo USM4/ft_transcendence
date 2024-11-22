@@ -22,6 +22,7 @@ user = get_user_model()
 class NotificationsConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		if user is not None:
+			printf('User is not None', user)
 			await self.accept()
 			self.group_name = 'notifications'
 			await self.channel_layer.group_add(self.group_name, self.channel_name)
