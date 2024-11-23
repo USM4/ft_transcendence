@@ -13,19 +13,24 @@ from django.core.asgi import get_asgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ft_transcendence.settings')
 django_asgi_app = get_asgi_application()
 
-
+from channels.security.websocket import AllowedHostsOriginValidator
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import authentification.routing
 import chat.routing
+from chat.middleware import QueryAuthMiddleware
 
  
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            authentification.routing.websocket_urlpatterns 
-            + chat.routing.websocket_urlpatterns
+    "websocket": AllowedHostsOriginValidator(
+        AuthMiddlewareStack(
+            QueryAuthMiddleware(
+                URLRouter(
+                    authentification.routing.websocket_urlpatterns 
+                    + chat.routing.websocket_urlpatterns
+                )
+            )
         )
     ), 
 })

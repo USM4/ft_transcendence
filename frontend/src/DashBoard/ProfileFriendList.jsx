@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 
 
 
-function ProfileFriendList({ username, avatar }) {
+function ProfileFriendList({ username, avatar,id }) {
     const navigate = useNavigate();
-    const friend = {username: username, avatar: avatar };
+    const friend = {id: id,username: username, avatar: avatar };
 
     function handleSms() {
         navigate(`/chat`, { state: { friend } })

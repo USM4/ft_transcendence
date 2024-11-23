@@ -3,7 +3,7 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { UserDataContext } from '../DashBoard/UserDataContext';
 import { ChatSocketContext } from './Chat.jsx'
 
-export default function Chat_input() {
+export default function Chat_input({ selected }) {
     const [message, setMessage] = useState();
     const { user } = useContext(UserDataContext)
     const socket = useContext(ChatSocketContext);
@@ -12,10 +12,9 @@ export default function Chat_input() {
     function handleSubmit() {
         {
             message && (socket.send(
-
                 JSON.stringify({
                     message: message,
-                    username: user.username,
+                    receiver: selected.id,
                     time: new Date().toLocaleTimeString(),
                 }
                 )

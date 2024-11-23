@@ -133,6 +133,7 @@ function Profile() {
                     friends.map((friend) => (
                       <ProfileFriendList
                         key={friend.id}
+                        id={friend.id}
                         username={friend.username}
                         avatar={friend.avatar}
                       />
