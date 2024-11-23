@@ -19,7 +19,6 @@ export default function Chat_sidebar() {
     if (location.state && location.state.friend) {
       setSelectedFriend(location.state.friend);
     }
-    console.log(location);
   }, [location]);
 
   function handleClick(friend) {
@@ -28,11 +27,6 @@ export default function Chat_sidebar() {
   const friendsList = friends.map((friend) => (
       <li key={friend.id} className="user" onClick={() => handleClick(friend)}>
         <div className="avatar">
-          {/* I NEED THE ONLINE STATUS TO CHECK WICH ONE TO DISPLAY */}
-          {/* ONLINE         
-          <Badge variant="dot"
-          color="success" showZero badgeContent="" overlap="circular"></Badge>  */}
-          {/* OFFLINE */}
           <Badge
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             variant="dot"

@@ -1,32 +1,36 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
+import {ChatSocketContext} from './Chat.jsx'
 
 export default function Chat_area({ selected }) {
-  
-  const [message, setMessage] = useState(null);
+
+  const [message, setMessage] = useState([]);
+  const socket = useContext(ChatSocketContext);
 
   useEffect(() => {
-      const socket = new WebSocket(`ws://localhost:8000/ws/chat/`)
-      socket.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          setMessage((prevMeassage) => [...prevMeassage, data]);
-        }
+    // if (!socket) return;
+    socket.onmessage = (event) => {
+      console.log(socket)
+      const data = JSON.parse(event.data);
+      setMessage((prevMeassage) => [...prevMeassage, data]);
     }
+  }, [socket]
   )
+
+  const message_history = message.map((msg, index) => (
+    <div key={index}>
+      {msg.username == selected.username
+        ? (<div className="message-received">{msg.message}</div>)
+        : (<div className="message"><p className="message-sent">{msg.message}</p></div>)
+      }
+    </div>
+  ))
 
 
   return (
 
     <div className="chat-area">
       <div className="message-wrap">
-        <div className="message-received">
-          Hello! How are you doing today?
-        </div>
-
-        <div className="message">
-          <p className="message-sent">I'm doing well, thanks! What about you?I'm doing well, thanks!I'm doing well, thanks! What about you?</p>
-        </div>
-       
+        {message_history}
       </div>
     </div>
   );
