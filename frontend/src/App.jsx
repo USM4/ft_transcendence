@@ -18,7 +18,7 @@ import FriendDataProvider from './Dashboard/FriendDataContext.jsx'
 import SocketContextProvider from './DashBoard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
-import Game from './Game/Game.jsx';
+import Game from './Game/AppGame.jsx';
 function App() {
   return (
     <>

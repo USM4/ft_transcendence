@@ -122,16 +122,14 @@ const Game = () => {
       {!isAIEnabled && (
         <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
       )}
-      {/* <button onClick={() => setIsAIEnabled(!isAIEnabled)}>
+      <button onClick={() => setIsAIEnabled(!isAIEnabled)}>
         {isAIEnabled ? 'Play with Friend' : 'Play with AI'}
-      </button> */}
+      </button>
     </div>
   );
 };
 
 export default Game;
-
-
 
 
 
