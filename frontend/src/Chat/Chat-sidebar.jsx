@@ -16,20 +16,20 @@ export default function Chat_sidebar() {
   const location = useLocation();
   const socket = useContext(ChatSocketContext);
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const [clicked, setClicked] = useState(false);
+  const [clicked, setClicked] = useState(null);
 
   useEffect(() => {
     if (location.state && location.state.friend) {
       setSelectedFriend(location.state.friend);
       socket.send(JSON.stringify({message: null, receiver: location.state.friend.id}))
-      setClicked(true)
+      setClicked(location.state.friend.id)
     }
   }, [location]);
   
   function handleClick(friend) {
     setSelectedFriend(friend);
-
-    {!clicked && (socket.send(JSON.stringify({message: null, receiver: friend.id})), setClicked(true))}
+    
+    {clicked != friend.id && (socket.send(JSON.stringify({message: null, receiver: friend.id})), setClicked(friend.id))}
   }
   const friendsList = friends.map((friend) => (
       <li key={friend.id} className="user" onClick={() => handleClick(friend)}>

@@ -29,15 +29,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room_receive = f'room_{receiver}'
 
         if not receiver:
-            return 
+            return
 
         chat_room = await self.get_or_create_room(self.sender.id, receiver)
-
         # Send chat history (if not done before) when the receiver is first known
-        if not self.messages:
+        
+        if not self.messages or self.messages['group_id'] != chat_room:
+            if self.messages:
+                self.messages.clear()
             self.messages = await self.get_messages(chat_room)
-            messages_data = await self.convert_messages_to_dict(self.messages)
-            for msg in self.messages:
+            messages_data = await self.convert_messages_to_dict(self.messages["messages"])
+            for msg in self.messages["messages"]:
                 if not msg.message:
                     continue
                 await self.send(text_data=json.dumps({
@@ -91,7 +93,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_messages(self, chatroom_id):
         # Fetch all messages for the specified chat room
-        return list(Messages.objects.filter(chat_group_id=chatroom_id).order_by('timestamp'))
+        return {
+            "messages": list(Messages.objects.filter(chat_group_id=chatroom_id).order_by('timestamp')),
+            "group_id": chatroom_id
+        }
+
 
     @database_sync_to_async
     def convert_messages_to_dict(self, messages):
@@ -99,6 +105,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'message': msg.message,
                 'receiver': msg.receiver,
+                "sender": self.sender.id,
             }
             for msg in messages
         ]
