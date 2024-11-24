@@ -28,33 +28,53 @@ function NotificationsToggle({ displayNotification }) {
   };
 
   useEffect(() => {
-    // Ensure the socket is open and ready to receive messages
+    if (socket)
+      console.log("reaady state ----------> ", socket.readyState);
+    else
+      console.log("socket is null");
+  }, [socket]);
+
+  // useEffect(() => {
+  //   // Ensure the socket is open and ready to receive messages
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     // Define the onmessage handler inside the useEffect hook to listen for incoming messages
+  //     socket.onmessage = (event) => {
+  //       try {
+  //         const data = JSON.parse(event.data);
+  //         const type = data.type;
+  //         const message = data.message;
+  //         console.log("Notification received:", data);
+  //         setNotification((prevNotifications) => [
+  //           ...prevNotifications,
+  //           message,
+  //         ]);
+  //         console.log("Notification:", message.from_user);
+  //       } catch (error) {
+  //         console.error("Error parsing notification:", error);
+  //       }
+  //     };
+  //   }
+  // }, [socket]);
+
+  useEffect(() => {
     if (socket && socket.readyState === WebSocket.OPEN) {
-      // Define the onmessage handler inside the useEffect hook to listen for incoming messages
       socket.onmessage = (event) => {
         try {
-          let data = JSON.parse(event.data);
-          let type = data.type;
-          let message = data.message;
-          const notification = JSON.parse(event.data);
-          console.log("Notification received:", notification);
-          setNotification((prevNotifications) => [
-            ...prevNotifications,
-            notification,
-          ]);
-          if (type === "receive_notification") {
+          const data = JSON.parse(event.data);
+          console.log("Notification received:", data);
+          if (data.type === 'receive_notification'){
             setNotification((prevNotifications) => [
               ...prevNotifications,
-              message.from_user,
+              data.message,
             ]);
           }
         } catch (error) {
-          console.error("Error parsing notification:", error);
+          console.error('Error parsing notification:', error);
         }
       };
     }
   }, [socket]);
-
+  
   const acceptFriendRequest = async (requestId) => {
     try {
       const response = await fetch(
@@ -89,11 +109,12 @@ function NotificationsToggle({ displayNotification }) {
     <div className="notif-invitation-text">
       {console.log("Current notifications:", notifications)}
       <div>
+        {console.log("length ..................... :", notifications.length)}
         {notifications.length === 0 ? (
           <div style={{ color: "white" }}> No Notifications </div>
         ) : (
           notifications.map((notification) => (
-            <div key={notification.id} className="notification">
+            <div key={notification.id} className="notification">        
               <div style={{ color: "white" }}>
                 {notification.user_from} sent a friend request{" "}
                 {notification.message}

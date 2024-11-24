@@ -32,38 +32,42 @@ function Profile() {
   const [pending, setPending] = useState(false);
   const isFriend = friends.some((friend) => friend.username);
 
-  // const sendFriendRequest = async (to_user) => {
-  //   setPending(true);
-  //   const response = await fetch(
-  //     "http://localhost:8000/auth/send_friend_request/",
-  //     {
-  //       method: "POST",
-  //       credentials: "include",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ to_user: to_user }),
-  //     }
-  //   );
-  //   const data = await response.json();
-  //   if (response.ok) {
-  //     console.log("The request has been sent", data);
-  //     console.log("data", data);
-  //   } else {
-  //     console.log("something wrong", data);
-  //   }
-  // };
   const sendFriendRequest = async (to_user) => {
     setPending(true);
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({
-        type: "friend_request",
-        to_user: to_user,
-        from_user: user.id,
-      }));
+    const response = await fetch(
+      "http://localhost:8000/auth/send_friend_request/",
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ to_user: to_user }),
+      }
+    );
+    const data = await response.json();
+    if (response.ok) {
+      console.log("The request has been sent", data);
+      console.log("data", data);
+    } else {
+      console.log("something wrong", data);
     }
   };
 
+  // const sendFriendRequest = async (to_user) => {
+  //   setPending(true);
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     socket.send(JSON.stringify({
+  //       type: "friend_request",
+  //       to_user: to_user,
+  //       from_user: user.id,
+  //     }
+  //   ));
+  //   }
+  //   else {
+  //     console.error('WebSocket not connected');
+  //   }
+  // };
 
   useEffect(() => {
     if (username !== user.username) {
@@ -100,7 +104,6 @@ function Profile() {
     <div className="profile-component">
       <div className="top-side-prfl">
         <div className="profile-img-name">
-          {console.log("user dataaaaaaa :", switchUser)}
           <img src={switchUser?.avatar || player} alt="" />
           <div className="profile-infos">
             <div className="profile-name"> {switchUser.username}</div>

@@ -13,7 +13,7 @@ function SocketContextProvider ({ children }) {
         const ws = new WebSocket('ws://localhost:8000/ws/notifications/');
 
         ws.onopen = () => {
-            console.log("WebSocket connection established.");
+            console.log("WebSocket connection establishe");
             setSocket(ws);
         };
 

@@ -3,6 +3,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 import requests
 from django.conf import settings
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
 
 class JWTAuthFromCookieMiddleware(MiddlewareMixin):
     def process_request(self, request):

@@ -26,7 +26,7 @@ function SideBar({username}) {
       title: "Game",
       icon: <GamepadIcon />,
       // Game scoope
-      link: "/dashboard",
+      link: "/tournament/options",
     },
     {
       title: "Profile",
