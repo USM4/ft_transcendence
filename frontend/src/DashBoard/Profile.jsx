@@ -53,6 +53,16 @@ function Profile() {
       console.log("something wrong", data);
     }
   };
+  // const sendFriendRequest = async (to_user) => {
+  //   setPending(true);
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     socket.send(JSON.stringify({
+  //       type: "friend_request",
+  //       to_user: to_user,
+  //       from_user: user.id,
+  //     }));
+  //   }
+  // };
 
   // const sendFriendRequest = async (to_user) => {
   //   setPending(true);
@@ -136,6 +146,7 @@ function Profile() {
                     friends.map((friend) => (
                       <ProfileFriendList
                         key={friend.id}
+                        id={friend.id}
                         username={friend.username}
                         avatar={friend.avatar}
                       />

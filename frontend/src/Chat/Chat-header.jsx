@@ -30,7 +30,7 @@ export default function Chat_header({ selected }) {
                 <div className="avatar-header">
                     <Badge 
                         badgeContent=""
-                        color="error"
+                        color="success"
                         anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
                         overlap="circular"
                         >

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Chat_header from './Chat-header.jsx';
 import Chat_area from './Chat-area.jsx';
 import Chat_input from './Chat-input.jsx';
@@ -6,27 +6,34 @@ import '../App.css'
 import ChatIcon from '@mui/icons-material/Chat';
 import { Badge } from '@mui/material';
 import { useContext } from 'react';
+import { json, useLocation } from 'react-router-dom';
 import {FriendDataContext} from '../DashBoard/FriendDataContext.jsx'
+import { ChatSocketContext } from './Chat.jsx'
 
 
 export default function Chat_sidebar() {
   const {friends} = useContext(FriendDataContext)
-    
+  const location = useLocation();
+  const socket = useContext(ChatSocketContext);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [clicked, setClicked] = useState(false);
 
+  useEffect(() => {
+    if (location.state && location.state.friend) {
+      setSelectedFriend(location.state.friend);
+      socket.send(JSON.stringify({message: null, receiver: location.state.friend.id}))
+      setClicked(true)
+    }
+  }, [location]);
+  
   function handleClick(friend) {
     setSelectedFriend(friend);
-  }
 
-  const friendsList = friends.map((friend, index) => (
-    <>
-      <li key={index} className="user" onClick={() => handleClick(friend)}>
+    {!clicked && (socket.send(JSON.stringify({message: null, receiver: friend.id})), setClicked(true))}
+  }
+  const friendsList = friends.map((friend) => (
+      <li key={friend.id} className="user" onClick={() => handleClick(friend)}>
         <div className="avatar">
-          {/* I NEED THE ONLINE STATUS TO CHECK WICH ONE TO DISPLAY */}
-          {/* ONLINE         
-          <Badge variant="dot"
-          color="success" showZero badgeContent="" overlap="circular"></Badge>  */}
-          {/* OFFLINE */}
           <Badge
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             variant="dot"
@@ -40,7 +47,6 @@ export default function Chat_sidebar() {
           <p className="lastmsg">{friend.lastMessage}</p>
         </div>
       </li>
-    </>
   ));
 
 
@@ -61,7 +67,7 @@ export default function Chat_sidebar() {
 
           <Chat_header selected={selectedFriend}></Chat_header>
           <Chat_area selected={selectedFriend}></Chat_area>
-          <Chat_input></Chat_input>
+          <Chat_input selected={selectedFriend}></Chat_input>
         </div>
       )}
     </div>
