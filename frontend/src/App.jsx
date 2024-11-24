@@ -19,7 +19,7 @@ import SocketContextProvider from './DashBoard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
 import NotFound from './NotFound.jsx';
-import Tournament from './Tournament/Tournamentt.jsx';
+import Tournament from './Tournament/Tournament.jsx';
 import OptionsPage from './Tournament/OptionsPage.jsx';
 import TournamentRegistration from './Tournament/TournamentRegistration.jsx';
 
@@ -80,6 +80,16 @@ function App() {
                   <ProtectedRoute component={OptionsPage} />
                 </FriendDataProvider>
               } />
+              <Route path="play-tournament" element={
+                <UserDataProvider>
+                  <ProtectedRoute component={Tournament} />
+                </UserDataProvider>
+              } />
+              <Route path="tournament-registration" element={
+                <UserDataProvider>
+                  <ProtectedRoute component={TournamentRegistration} />
+                </UserDataProvider>
+              } />
               
               {/* Play vs Bot */}
               {/* <Route path="play-vs-bot" element={
@@ -96,18 +106,8 @@ function App() {
               } /> */}
               
               {/* Play Tournament */}
-              <Route path="play-tournament" element={
-                <UserDataProvider>
-                  <ProtectedRoute component={Tournament} />
-                </UserDataProvider>
-              } />
-              <Route path="tournament-registration" element={
-                <UserDataProvider>
-                  <ProtectedRoute component={TournamentRegistration} />
-                </UserDataProvider>
-              } />
             </Route>
-            <Route path="*" element={<NotFound />} />
+            {/* <Route path="*" element={<NotFound />} /> */}
           </Routes>
         </SocketContextProvider>
       </Router>

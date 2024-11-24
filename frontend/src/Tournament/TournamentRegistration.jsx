@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 const TournamentRegistration = () => {
   const [tournamentName, setTournamentName] = useState("");
   const [tournamentType, setTournamentType] = useState("");
@@ -8,18 +11,16 @@ const TournamentRegistration = () => {
   const [isTeam, setIsTeam] = useState(false);
   const [numPlayers, setNumPlayers] = useState(2);
   const [friendInvites, setFriendInvites] = useState(false);
+  const navigate = useNavigate();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", {
-      tournamentName,
-      tournamentType,
-      playerName,
-      teamName,
-      isTeam,
-      numPlayers,
-      friendInvites,
-    });
+    if (tournamentName && playerName) {
+        navigate('/tournament/options/play-tournament');
+        toast.success("Tournament Registered Successfully!");
+    } else {
+        console.log("Invalid form data");
+        }
   };
 
   const handleCancel = () => {
@@ -30,13 +31,24 @@ const TournamentRegistration = () => {
     setIsTeam(false);
     setNumPlayers(2);
     setFriendInvites(false);
+    navigate('/tournament/options');
   };
 
   return (
     <div className="tournament-registration-component">
       <div className="tournament-registration">
-        <div className="return-icon"><button><ArrowBackIcon fontSize="large"/></button></div>
-        <div className="Ping-Pong Tournament Registration"> Ping-Pong Tournament Registration </div>
+        <div className="return-icon">
+          <button
+            onClick={() => {
+              navigate("/tournament/options");
+            }}
+          >
+            <ArrowBackIcon fontSize="large" />
+          </button>
+        </div>
+        <div className="Ping-Pong Tournament Registration">
+          Ping-Pong Tournament Registration
+        </div>
         <form onSubmit={handleFormSubmit}>
           <div className="form-group">
             <label>Tournament Name:</label>
