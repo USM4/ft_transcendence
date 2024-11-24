@@ -45,6 +45,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({
                     'message': msg.message,
                     'receiver': msg.receiver,
+                    "sender": self.sender.id,
                 }))
     
         # Save the message to the database
@@ -55,18 +56,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "type": "sendMessage",
                 "message": message,
                 "receiver": receiver,
+                "sender": self.sender.id,
             })
-
         await self.channel_layer.group_send(
             room_receive, {
                 "type": "sendMessage",
                 "message": message,
                 "receiver": receiver,
+                "sender": self.sender.id,
             })
 
     async def sendMessage(self, event):
         message = event["message"]
         receiver = event["receiver"]
+        sender = event["sender"]
         if not message:
             return
         await self.send(
@@ -74,6 +77,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     "message": message,
                     "receiver": receiver,
+                    "sender": sender,
                 }
                 )
             )
@@ -84,7 +88,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         ids = sorted([sender_id,receiver_id])
         sender = Client.objects.get(id=ids[0])
         receiver = Client.objects.get(id=ids[1])
-        chat_room, created = Room_Name.objects.get_or_create(
+        chat_room = Room_Name.objects.get(
             sender=sender,
             receiver=receiver
         )
@@ -105,7 +109,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'message': msg.message,
                 'receiver': msg.receiver,
-                "sender": self.sender.id,
             }
             for msg in messages
         ]

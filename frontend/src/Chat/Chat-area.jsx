@@ -8,13 +8,14 @@ export default function Chat_area({ selected }) {
   const socket = useContext(ChatSocketContext);
 
   useEffect(() => {
-    let messageHistory = [];
     setMessage([])
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      messageHistory.push(data);
-      setMessage([...messageHistory]);
+      if (data.receiver == selected.id || data.sender == data.receiver)
+        setMessage((prevMessages) => [...prevMessages, data]);
+      console.log(data, selected.id)
+      console.log(message)
     };
   }, [socket, selected]
   )
