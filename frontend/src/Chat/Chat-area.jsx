@@ -12,14 +12,15 @@ export default function Chat_area({ selected }) {
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.receiver == selected.id || data.sender == data.receiver)
+      console.log("DATA:",data)
+      console.log("SELECTED:",selected.id)
+      if (data.receiver == selected.id || data.sender == data.receiver || data.sender == selected.id)
         setMessage((prevMessages) => [...prevMessages, data]);
-      console.log(data, selected.id)
-      console.log(message)
     };
   }, [socket, selected]
-  )
+)
 
+  console.log(message)
   const message_history = message.map((msg, index) => (
     <div key={index}>
       {msg.receiver != selected.id
