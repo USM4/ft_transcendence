@@ -31,10 +31,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not receiver:
             return
 
-        chat_room = await self.get_or_create_room(self.sender.id, receiver)
         # Send chat history (if not done before) when the receiver is first known
-        
+
         if not self.messages or self.messages['group_id'] != chat_room:
+            chat_room = await self.get_room(self.sender.id, receiver,message)
             if self.messages:
                 self.messages.clear()
             self.messages = await self.get_messages(chat_room)
@@ -47,7 +47,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'receiver': msg.receiver,
                     "sender": self.sender.id,
                 }))
-    
+
         # Save the message to the database
         await self.save_message(message, chat_room, receiver)
 
@@ -66,6 +66,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "sender": self.sender.id,
             })
 
+
+
     async def sendMessage(self, event):
         message = event["message"]
         receiver = event["receiver"]
@@ -83,14 +85,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     @database_sync_to_async
-    def get_or_create_room(self, sender_id, receiver_id):
+    def get_room(self, sender_id, receiver_id, message):
         # Ensure a unique chat room exists between the sender and receiver
         ids = sorted([sender_id,receiver_id])
         sender = Client.objects.get(id=ids[0])
         receiver = Client.objects.get(id=ids[1])
+        if not message:
+            message=''
         chat_room = Room_Name.objects.get(
             sender=sender,
-            receiver=receiver
+            receiver=receiver,
+            last_msg=message,
         )
         return chat_room
 
@@ -121,5 +126,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         Messages.objects.create(
             chat_group=chatroom_id,
             receiver=receiver,
-            message=message
+            message=message,
         )

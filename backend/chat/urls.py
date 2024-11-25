@@ -2,6 +2,5 @@
 from django.urls import path, include
 
 urlpatterns = [
-    # path("/chat", ChatView.as_view(), name='chat'),
-    
+    # path("", ChatView.as_view(), name='chat'),
 ]

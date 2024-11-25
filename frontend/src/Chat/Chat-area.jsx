@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ChatSocketContext } from './Chat.jsx'
-import { UserDataContext } from "../DashBoard/UserDataContext.jsx";
 
 export default function Chat_area({ selected }) {
 
@@ -12,8 +11,6 @@ export default function Chat_area({ selected }) {
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("DATA:",data)
-      console.log("SELECTED:",selected.id)
       if (data.receiver == selected.id || data.sender == data.receiver || data.sender == selected.id)
         setMessage((prevMessages) => [...prevMessages, data]);
     };
