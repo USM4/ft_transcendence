@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ChatSocketContext } from './Chat.jsx'
 
+
 export default function Chat_area({ selected }) {
 
   const [message, setMessage] = useState([]);
@@ -11,11 +12,12 @@ export default function Chat_area({ selected }) {
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("DATA:", data)
+      console.log("SELECTED:", selected.id)
       if (data.receiver == selected.id || data.sender == data.receiver || data.sender == selected.id)
         setMessage((prevMessages) => [...prevMessages, data]);
     };
-  }, [socket, selected]
-)
+  }, [socket, selected])
 
   console.log(message)
   const message_history = message.map((msg, index) => (

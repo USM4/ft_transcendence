@@ -30,42 +30,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if not receiver:
             return
+        try:
+            chat_room = await self.get_or_create_room(self.sender.id, receiver)
+            # Send chat history (if not done before) when the receiver is first known
 
-        # Send chat history (if not done before) when the receiver is first known
+            if not self.messages or self.messages['group_id'] != chat_room:
+                if self.messages:
+                    self.messages.clear()
+                self.messages = await self.get_messages(chat_room)
+                messages_data = await self.convert_messages_to_dict(self.messages["messages"])
+                for msg in self.messages["messages"]:
+                    if not msg.message:
+                        continue
+                    await self.send(text_data=json.dumps({
+                        'message': msg.message,
+                        'receiver': msg.receiver,
+                        "sender": self.sender.id,
+                    }))
 
-        if not self.messages or self.messages['group_id'] != chat_room:
-            chat_room = await self.get_room(self.sender.id, receiver,message)
-            if self.messages:
-                self.messages.clear()
-            self.messages = await self.get_messages(chat_room)
-            messages_data = await self.convert_messages_to_dict(self.messages["messages"])
-            for msg in self.messages["messages"]:
-                if not msg.message:
-                    continue
-                await self.send(text_data=json.dumps({
-                    'message': msg.message,
-                    'receiver': msg.receiver,
+            # Save the message to the database
+            await self.save_message(message, chat_room, receiver)
+
+            await self.channel_layer.group_send(
+                self.room_name, {
+                    "type": "sendMessage",
+                    "message": message,
+                    "receiver": receiver,
                     "sender": self.sender.id,
-                }))
-
-        # Save the message to the database
-        await self.save_message(message, chat_room, receiver)
-
-        await self.channel_layer.group_send(
-            self.room_name, {
-                "type": "sendMessage",
-                "message": message,
-                "receiver": receiver,
-                "sender": self.sender.id,
-            })
-        await self.channel_layer.group_send(
-            room_receive, {
-                "type": "sendMessage",
-                "message": message,
-                "receiver": receiver,
-                "sender": self.sender.id,
-            })
-
+                })
+            await self.channel_layer.group_send(
+                room_receive, {
+                    "type": "sendMessage",
+                    "message": message,
+                    "receiver": receiver,
+                    "sender": self.sender.id,
+                })
+        except Exception as e:
+            print("An error occurred: ", str(e))
 
 
     async def sendMessage(self, event):
@@ -85,19 +86,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     @database_sync_to_async
-    def get_room(self, sender_id, receiver_id, message):
+    def get_or_create_room(self, sender_id, receiver_id):
         # Ensure a unique chat room exists between the sender and receiver
         ids = sorted([sender_id,receiver_id])
         sender = Client.objects.get(id=ids[0])
         receiver = Client.objects.get(id=ids[1])
-        if not message:
-            message=''
-        chat_room = Room_Name.objects.get(
-            sender=sender,
-            receiver=receiver,
-            last_msg=message,
-        )
-        return chat_room
+        try:
+            chat_room = Room_Name.objects.get(
+                sender=sender,
+                receiver=receiver
+            )
+            return chat_room
+        except:
+            chat_room = Room_Name.objects.create(
+                sender=sender,
+                receiver=receiver
+            )
+            return chat_room
+            
 
     @database_sync_to_async
     def get_messages(self, chatroom_id):
@@ -126,5 +132,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         Messages.objects.create(
             chat_group=chatroom_id,
             receiver=receiver,
-            message=message,
+            message=message
         )
