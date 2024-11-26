@@ -16,17 +16,7 @@ export default function Chat_sidebar() {
   const location = useLocation();
   const socket = useContext(ChatSocketContext);
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const [lastMessage, setLastMessage] = useState(null);
   const [clicked, setClicked] = useState(null);
-
-
-
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (selectedFriend)
-      console.log(data)
-      setLastMessage(data.message);
-  };
 
   useEffect(() => {
     if (location.state && location.state.friend) {
@@ -41,7 +31,6 @@ export default function Chat_sidebar() {
     
     {clicked != friend.id && (socket.send(JSON.stringify({message: null, receiver: friend.id})), setClicked(friend.id))}
   }
-
   const friendsList = friends.map((friend) => (
       <li key={friend.id} className="user" onClick={() => handleClick(friend)}>
         <div className="avatar">
@@ -55,7 +44,7 @@ export default function Chat_sidebar() {
         </div>
         <div className="details">
           <p className="name">{friend.username}</p>
-          <p className="lastmsg">{lastMessage}</p>
+          <p className="lastmsg">{friend.lastMessage}</p>
         </div>
       </li>
   ));

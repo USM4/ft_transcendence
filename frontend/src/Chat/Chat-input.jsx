@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import { UserDataContext } from '../DashBoard/UserDataContext';
 import { ChatSocketContext } from './Chat.jsx'
 
 export default function Chat_input({ selected }) {
     const [message, setMessage] = useState();
-    const { user } = useContext(UserDataContext)
     const socket = useContext(ChatSocketContext);
 
 
