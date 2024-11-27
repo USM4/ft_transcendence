@@ -28,6 +28,5 @@ export default function Chat() {
         </ChatSocketContext.Provider>)
       }
     </>
-
   );
 }
