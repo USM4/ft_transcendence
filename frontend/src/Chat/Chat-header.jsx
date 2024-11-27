@@ -28,15 +28,7 @@ export default function Chat_header({ selected }) {
         <div className="chat-header">
             <div className="header-wraper">
                 <div className="avatar-header">
-                    <Badge 
-                        badgeContent=""
-                        color="success"
-                        anchorOrigin={{ vertical: "bottom", horizontal: "right"}}
-                        overlap="circular"
-                        >
                     <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.username}'s avatar`} />
-
-                        </Badge>
                 </div>
                 <div className="header-name">
                     <h2 >{selected.username}</h2>
@@ -48,7 +40,7 @@ export default function Chat_header({ selected }) {
                 <ul onClick={handleClick} >
                     <h1>...</h1>
                     {menu &&
-                        <div className="menu-list">
+                        <div className="menu-list block-box">
                             <li className="menu-content" onClick={handleBlockClicked}>
                                 <h2>⊘ BLOCK</h2>
                             </li>

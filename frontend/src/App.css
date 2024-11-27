@@ -1373,6 +1373,11 @@ body {
   overflow-y: auto;
   gap: 20px;
   padding: 5px;
+  scrollbar-width: none;
+  
+}
+.user-list::-webkit-scrollbar {
+  display: none;
 }
 
 .user {
@@ -1381,6 +1386,12 @@ body {
   padding: 15px;
   cursor: pointer;
   gap: 5px;
+}
+.user p {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
 }
 
 .user:hover {
@@ -1401,11 +1412,9 @@ body {
   overflow: hidden;
 }
 
-.details {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-}
+/* .details {
+
+} */
 
 .name {
   font-weight: bold;
@@ -1414,18 +1423,8 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  height: 50%;
+  height: 100%;
 }
-
-.lastmsg {
-  padding-left: 5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 50%;
-  
-}
-
 
 
 /* Main chat area */
@@ -1498,7 +1497,12 @@ body {
   border: 1px solid rgb(174, 255, 218);
   border-radius: 5px;
   right: 18%;
+  backdrop-filter: blur(10px);
+  background: black;
+  z-index: 10;
 }
+
+
 
 .menu-content:hover{
   background-color: #d7dbe1;  
@@ -1511,8 +1515,12 @@ body {
   height: 95%;
   border: 2px solid rgb(174, 255, 218);
   border-radius: 5px;
+  scrollbar-width: none;
   overflow-y: auto;
-
+  
+}
+.chat-area::-webkit-scrollbar {
+  display: none;
 }
 .default{
   margin: auto;
@@ -1536,7 +1544,7 @@ body {
   width: 100%;
 }
 
-.message-received {
+.message-sent {
   display: flex;
   flex-direction: column;
   border: 1px solid rgb(174, 255, 218);
@@ -1549,7 +1557,7 @@ body {
   
 }
 
-.message-sent {
+.message-received {
   display: flex;
   flex-direction: column;
   color: white;
