@@ -14,3 +14,5 @@
 
 > Chat: must retrieve online status
 
+> still must work on the friend request send and remove
+
