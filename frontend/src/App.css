@@ -1719,6 +1719,11 @@ body {
   border: 2px solid #FFD700;
   padding: 20px;
 }
+.options-component .option:hover{
+  transform: scale(1.01);
+  border: 2px solid #FF4500;
+  box-shadow: 0 4px 15px rgb(255, 69, 0, 0.9);
+}
 
 .options-component .options button{
   font-size: 30px;
@@ -1732,8 +1737,11 @@ body {
   cursor: pointer;
 }
 .options-component .options button:hover{
-  background-color: #FF4500;
-  color: #000;
+  /* background-color: #FF4500; */
+  /* border: 2px solid #FF4500; */
+  text-shadow: 0 0 10px rgb(255, 69, 0, 0.7);
+
+  /* color: #000; */
 
 }
 .tournament-registration-component {
@@ -1783,6 +1791,7 @@ body {
 }
 
 .tournament-registration-component .tournament-registration .return-icon button :hover{
+  border-radius: 5px;
   background-color: #d4af37;
   width: 65px;
   height: 55px;
