@@ -9,7 +9,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.sender = self.scope.get('user')
         self.room_name = f'room_{self.sender.id}'
-        
 
         await self.channel_layer.group_add(self.room_name,self.channel_name)
 
@@ -34,10 +33,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             chat_room = await self.get_or_create_room(self.sender.id, receiver)
             # Send chat history (if not done before) when the receiver is first known
 
-            if not self.messages or self.messages['group_id'] != chat_room:
+            if not self.messages or self.messages['group_id'] != chat_room.id:
                 if self.messages:
                     self.messages.clear()
-                self.messages = await self.get_messages(chat_room)
+                self.messages = await self.get_messages(chat_room.id)
                 messages_data = await self.convert_messages_to_dict(self.messages["messages"])
                 for msg in self.messages["messages"]:
                     if not msg.message:
@@ -94,13 +93,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             chat_room = Room_Name.objects.get(
                 sender=sender,
-                receiver=receiver
+                receiver=receiver,
             )
             return chat_room
         except:
             chat_room = Room_Name.objects.create(
                 sender=sender,
-                receiver=receiver
+                receiver=receiver,
             )
             return chat_room
             
@@ -108,6 +107,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_messages(self, chatroom_id):
         # Fetch all messages for the specified chat room
+        messages = list(Messages.objects.filter(chat_group_id=chatroom_id).order_by('timestamp'))
         return {
             "messages": list(Messages.objects.filter(chat_group_id=chatroom_id).order_by('timestamp')),
             "group_id": chatroom_id
@@ -125,12 +125,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
         ]
 
     @database_sync_to_async
-    def save_message(self, message, chatroom_id, receiver):
+    def save_message(self, message, chat_room, receiver):
         # Save the message to the database
         if not message:
             return
         Messages.objects.create(
-            chat_group=chatroom_id,
+            chat_group=chat_room,
             receiver=receiver,
             message=message
         )
+        

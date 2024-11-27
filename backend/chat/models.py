@@ -7,7 +7,7 @@ class Room_Name(models.Model):
     last_msg = models.TextField()
 
     def __str__(self):
-        return f"{self.id}"
+        return f"Room_Name {self.id}"
 
 class Messages(models.Model):
     chat_group =  models.ForeignKey(Room_Name, on_delete=models.CASCADE, related_name='chat_group')
