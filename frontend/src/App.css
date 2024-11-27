@@ -1772,7 +1772,7 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 10px;
-  border: 3px solid #FF4500;
+  border: 3px solid #FFAA39;
   gap: 20px;
   padding: 40px;
 }
@@ -1811,7 +1811,7 @@ body {
 }
 
 .registration-title .return-icon button :hover{
-  background-color: #FF4500;
+  background-color: #FFAA39;
   width: 65px;
   height: 55px;
 }
@@ -1827,7 +1827,7 @@ body {
 .tournament-registration-component .title-trnmt p{
   font-size: 32px;
   font-weight: bold;
-  color: #FF4500;
+  color: #FFAA39;
   text-transform: uppercase;
 }
 
@@ -1849,13 +1849,13 @@ body {
   width: 40%;
   padding: 40px;
   border-radius: 10px;
-  border: 2px solid #FF4500;
+  border: 2px solid #FFAA39;
 }
 
 .tournament-rules h3 {
   font-size: 24px;
   font-weight: bold;
-  color: red;
+  color: #d4af37;
   margin-bottom: 20px;
 }
 
@@ -1952,7 +1952,7 @@ body {
   height: auto;
   gap: 20px;
   border-radius: 10px;
-  border: 2px solid #FF4500 ;
+  border: 2px solid #FFAA39 ;
   /* background-color: red; */
 }
 
@@ -1962,7 +1962,7 @@ body {
   align-items: center;
   font-size: 25px;
   font-weight: bold;
-  color: #FF4500;
+  color: #d4af37;
   padding: 20px;
 }
 
@@ -1975,7 +1975,7 @@ body {
   width: 100%;
   height: 10%;
   border-radius: 10px;
-  color: #FF4500;
+  /* color: FFAA39; */
 }
 .tournament-players .player h3{
   font-size: 20px;
@@ -1992,12 +1992,12 @@ body {
   height: 30px;
   border: none;
   outline: none;
-  border-bottom: 2px solid #FF4500;
+  border-bottom: 2px solid #39FFF9;
   background-color: #000;
   font-size: 20px;
   font-family: inherit;
   padding: 3px;
-  color: #FF4500;
+  color: #39FFF9;
 }
 
 .tournament-players .player button{
