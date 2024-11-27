@@ -1,7 +1,7 @@
 import React from "react";
 import oredoine from "/oredoine.jpeg";
 import hamster from "/hamster.png";
-
+import DefaultAvatar from "/tournavatar.svg";
 const TournamentHearchy = () => {
   return (
     <svg
@@ -12,11 +12,8 @@ const TournamentHearchy = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <pattern id="image1" width="40" height="40">
-          <image href="/oredoine.jpeg" x="0" y="0" width="40" height="40" />
-        </pattern>
-        <pattern id="image2" width="40" height="40">
-          <image href="path/to/image2.jpg" x="0" y="0" width="40" height="40" />
+        <pattern id="image1" width="32" height="32">
+          <image href='/pensioner.png' x="4" y="4" width="32" height="32" />
         </pattern>
     </defs>
       <rect
@@ -110,6 +107,16 @@ const TournamentHearchy = () => {
         transform="matrix(-1 0 0 1 866 183)"
         stroke="#FFD700"
       />
+      <text
+        x="793"
+        y="215"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="end"
+        font-family="IBM Plex Mono"
+      >
+      Player 1
+      </text>
       <rect
         x="-0.5"
         y="0.5"
@@ -250,9 +257,9 @@ const TournamentHearchy = () => {
         transform="matrix(-1 0 0 1 940 210)"
         stroke="#FFD700"
       />
-      <circle cx="25" cy="27" r="18.5" stroke="#FFD700" fill="url(/hamster.png)" />
-
-      <foreignObject
+      <circle cx="25" cy="27" r="18.5" stroke="#FFD700" fill="url(#image1)" />
+      
+      {/* <foreignObject
         x="6.5"
         y="8.5"
         width="37"
@@ -278,16 +285,15 @@ const TournamentHearchy = () => {
             }}
           />
         </div>
-      </foreignObject>
+      </foreignObject> */}
       <circle
         cx="19"
         cy="19"
         r="18.5"
         transform="matrix(-1 0 0 1 1345 8)"
         stroke="#FFD700"
-        fill="url(/hamster.png)"
-      />
-      <circle cx="267" cy="164" r="18.5" stroke="#FFD700" fill="url(/hamster.png)" />
+        fill="url(#image1)"     />
+      <circle cx="267" cy="164" r="18.5" stroke="#FFD700" fill="url(#image1)" />
       {/* <foreignObject
         x="6.5"
         y="8.5"
@@ -298,7 +304,7 @@ const TournamentHearchy = () => {
         <div
           xmlns="http://www.w3.org/1999/xhtml"
           style={{
-            width: "100%",
+            width: "100%",;
             height: "100%",
             borderRadius: "50%",
             overflow: "hidden",
