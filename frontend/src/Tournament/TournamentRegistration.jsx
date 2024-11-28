@@ -23,7 +23,8 @@ const TournamentRegistration = () => {
         toast.error("Invalid names! Names must be unique.");
         return;
       }
-      navigate("/tournament/options/play-tournament");
+      console.log(players[0].name)
+      navigate("/tournament/options/play-tournament", { state: players });
   };
   return (
     <div className="tournament-registration-component">
