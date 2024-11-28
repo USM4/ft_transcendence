@@ -1,11 +1,13 @@
+// import React, { useEffect, useState } from "react";
 import React, { useState, useEffect, useCallback } from 'react';
 import Canvas from './Canvas';
 import Ball from './Ball';
 import Racket from './Racket';
-import '../App.css';
+import { webSocketService } from "../services/WebSocketService";
+import GameCanvas from "./GameCanvas";
 
-const Game = () => {
-  const [isAIEnabled, setIsAIEnabled] = useState(true);
+const PongGame = ({ isAIEnabled }) => {
+  // const [isAIEnabled, setIsAIEnabled] = useState(true);
   const [ball, setBall] = useState({
     x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#cd202c'
   });
@@ -122,17 +124,11 @@ const Game = () => {
       {!isAIEnabled && (
         <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
       )}
-      <button onClick={() => setIsAIEnabled(!isAIEnabled)}>
+      {/* <button onClick={() => setIsAIEnabled(!isAIEnabled)}>
         {isAIEnabled ? 'Play with Friend' : 'Play with AI'}
-      </button>
+      </button> */}
     </div>
   );
 };
 
-export default Game;
-
-
-
-
-
-
+export default PongGame;

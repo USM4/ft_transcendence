@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
+    'game',
     'daphne',
     'corsheaders',
     'authentification',

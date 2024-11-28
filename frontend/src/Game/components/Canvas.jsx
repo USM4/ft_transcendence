@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import '../App.css'
+// import '../App.css'
 
 const Canvas = ({ draw, width, height }) => {
   const canvasRef = useRef(null);
@@ -16,4 +16,3 @@ const Canvas = ({ draw, width, height }) => {
 };
 
 export default Canvas;
-

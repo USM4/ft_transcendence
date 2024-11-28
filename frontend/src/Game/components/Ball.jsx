@@ -9,5 +9,3 @@ const Ball = ({ x, y, radius, color, updatePosition, draw }) => {
   return null;
 }; 
 export default Ball;
-
-
