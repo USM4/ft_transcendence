@@ -18,6 +18,11 @@ const TournamentRegistration = () => {
         toast.error("All players must have valid names!");
         return;
       }
+      const uniqueNames = new Set(players.map(player => player.name));
+      if (uniqueNames.size !== players.length) {
+        toast.error("Invalid names! Names must be unique.");
+        return;
+      }
       navigate("/tournament/options/play-tournament");
   };
   return (

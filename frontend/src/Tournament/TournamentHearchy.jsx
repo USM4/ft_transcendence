@@ -24,6 +24,16 @@ const TournamentHearchy = () => {
         rx="14.5"
         stroke="#FFD700"
       />
+      <text
+        x="558"
+        y="215"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="start"
+        font-family="IBM Plex Mono"
+      >
+        Player 4
+      </text>
       <rect
         x="0.5"
         y="0.5"
@@ -32,6 +42,18 @@ const TournamentHearchy = () => {
         rx="14.5"
         stroke="#FFD700"
       />
+      <text
+        x="1270"
+        y="400"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        oussama
+      </text>
+
+
       <rect
         x="0.5"
         y="94.5"
@@ -40,6 +62,17 @@ const TournamentHearchy = () => {
         rx="14.5"
         stroke="#FFD700"
       />
+      <text
+        x="1270"
+        y="305"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        redoine
+      </text>
+
       <line x1="148" y1="26.5" x2="169" y2="26.5" stroke="#FFD700" />
       <line x1="148" y1="120.5" x2="169" y2="120.5" stroke="#FFD700" />
       <line x1="169.5" y1="26" x2="169.5" y2="121" stroke="#FFD700" />
@@ -51,6 +84,17 @@ const TournamentHearchy = () => {
         rx="14.5"
         stroke="#FFD700"
       />
+      <text
+        x="77"
+        y="305"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+        >
+          yahia
+      </text>
+
       <rect
         x="0.5"
         y="367.5"
@@ -59,6 +103,16 @@ const TournamentHearchy = () => {
         rx="14.5"
         stroke="#FFD700"
       />
+      <text
+        x="77"
+        y="400"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        balalal
+      </text>
       <line x1="148" y1="300.5" x2="169" y2="300.5" stroke="#FFD700" />
       <line x1="148" y1="394.5" x2="169" y2="394.5" stroke="#FFD700" />
       <line x1="169.5" y1="300" x2="169.5" y2="395" stroke="#FFD700" />
@@ -70,6 +124,16 @@ const TournamentHearchy = () => {
         rx="14.5"
         stroke="#FFD700"
       />
+      <text
+        x="316"
+        y="168"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        3babo
+      </text>
       <rect
         x="242.5"
         y="230.5"
@@ -78,6 +142,16 @@ const TournamentHearchy = () => {
         rx="14.5"
         stroke="#FFD700"
       />
+      <text
+        x="316"
+        y="262"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        3babo2
+      </text>
       <line x1="390" y1="163.5" x2="411" y2="163.5" stroke="#FFD700" />
       <line x1="390" y1="257.5" x2="411" y2="257.5" stroke="#FFD700" />
       <line x1="411.5" y1="163" x2="411.5" y2="258" stroke="#FFD700" />
@@ -219,13 +293,6 @@ const TournamentHearchy = () => {
         y1="-0.5"
         x2="21"
         y2="-0.5"
-        transform="matrix(-1 0 0 1 1203 301)"
-        stroke="#FFD700"
-      />
-      <line
-        y1="-0.5"
-        x2="21"
-        y2="-0.5"
         transform="matrix(-1 0 0 1 1203 395)"
         stroke="#FFD700"
       />
@@ -245,6 +312,16 @@ const TournamentHearchy = () => {
         transform="matrix(-1 0 0 1 1108 136)"
         stroke="#FFD700"
       />
+        <text
+        x="1020"
+        y="262"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        3babo2
+      </text>
       <rect
         x="-0.5"
         y="0.5"
@@ -252,6 +329,23 @@ const TournamentHearchy = () => {
         height="54"
         rx="14.5"
         transform="matrix(-1 0 0 1 1108 230)"
+        stroke="#FFD700"
+      />
+      <text
+      x="1020"
+      y="167"
+      fill="#FFD700"
+      font-size="12"
+      text-anchor="middle"
+      font-family="IBM Plex Mono"
+    >
+      3babo2
+    </text>
+      <line
+        y1="-0.5"
+        x2="21"
+        y2="-0.5"
+        transform="matrix(-1 0 0 1 1203 301)"
         stroke="#FFD700"
       />
       <line

@@ -1373,6 +1373,11 @@ body {
   overflow-y: auto;
   gap: 20px;
   padding: 5px;
+  scrollbar-width: none;
+  
+}
+.user-list::-webkit-scrollbar {
+  display: none;
 }
 
 .user {
@@ -1381,6 +1386,12 @@ body {
   padding: 15px;
   cursor: pointer;
   gap: 5px;
+}
+.user p {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
 }
 
 .user:hover {
@@ -1401,11 +1412,9 @@ body {
   overflow: hidden;
 }
 
-.details {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-}
+/* .details {
+
+} */
 
 .name {
   font-weight: bold;
@@ -1414,18 +1423,8 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  height: 50%;
+  height: 100%;
 }
-
-.lastmsg {
-  padding-left: 5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 50%;
-  
-}
-
 
 
 /* Main chat area */
@@ -1499,7 +1498,12 @@ body {
   border: 1px solid rgb(174, 255, 218);
   border-radius: 5px;
   right: 18%;
+  backdrop-filter: blur(10px);
+  background: black;
+  z-index: 10;
 }
+
+
 
 .menu-content:hover{
   background-color: #d7dbe1;  
@@ -1512,8 +1516,12 @@ body {
   height: 95%;
   border: 2px solid rgb(174, 255, 218);
   border-radius: 5px;
+  scrollbar-width: none;
   overflow-y: auto;
-
+  
+}
+.chat-area::-webkit-scrollbar {
+  display: none;
 }
 .default{
   margin: auto;
@@ -1528,17 +1536,16 @@ body {
   justify-content: end;
   gap: 20px;
   padding: 10px 5px;
-  
 }
 
-.message{
+.message {
   display: flex;
   flex-direction: row;
   justify-content: end;
   width: 100%;
 }
 
-.message-received {
+.message-sent {
   display: flex;
   flex-direction: column;
   border: 1px solid rgb(174, 255, 218);
@@ -1546,10 +1553,12 @@ body {
   padding: 15px;
   border-radius: 0px 30px 30px 30px;
   color: white;
+  word-wrap: break-word;
+  word-break: break-all;
   
 }
 
-.message-sent {
+.message-received {
   display: flex;
   flex-direction: column;
   color: white;
@@ -1557,7 +1566,9 @@ body {
   width: 50%;
   padding: 15px;
   border-radius:  30px 0px 30px 30px;
-  justify-content: end;
+  word-wrap: break-word;
+  word-break: break-all;
+  /* justify-content: end; */
 }
 
 
@@ -1761,7 +1772,7 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 10px;
-  border: 3px solid #FF4500;
+  border: 3px solid #FFAA39;
   gap: 20px;
   padding: 40px;
 }
@@ -1799,7 +1810,7 @@ body {
 }
 
 .return-icon button :hover{
-  background-color: #FF4500;
+  background-color: #FFAA39;
   width: 65px;
   height: 55px;
   border-radius: 5px;
@@ -1816,7 +1827,7 @@ body {
 .tournament-registration-component .title-trnmt p{
   font-size: 32px;
   font-weight: bold;
-  color: #FF4500;
+  color: #FFAA39;
   text-transform: uppercase;
 }
 
@@ -1828,7 +1839,7 @@ body {
   width: 40%;
   padding: 40px;
   border-radius: 10px;
-  border: 2px solid #32CD32;
+  border: 2px solid #FFAA39;
 }
 
 
@@ -1836,7 +1847,7 @@ body {
 .tournament-rules h3 {
   font-size: 30px;
   font-weight: bold;
-  color: red;
+  color: #d4af37;
   margin-bottom: 20px;
 }
 
@@ -1962,7 +1973,7 @@ body {
   height: auto;
   gap: 20px;
   border-radius: 10px;
-  border: 2px solid #32CD32 ;
+  border: 2px solid #FFAA39 ;
   /* background-color: red; */
 }
 
@@ -1972,7 +1983,7 @@ body {
   align-items: center;
   font-size: 25px;
   font-weight: bold;
-  color: #32CD32;
+  color: #d4af37;
   padding: 20px;
 }
 
@@ -1985,7 +1996,7 @@ body {
   width: 100%;
   height: 10%;
   border-radius: 10px;
-  color: #FFD700;
+  /* color: FFAA39; */
 }
 .tournament-players .player h3{
   font-size: 20px;
@@ -2002,12 +2013,12 @@ body {
   height: 30px;
   border: none;
   outline: none;
-  border-bottom: 2px solid #32CD32;
+  border-bottom: 2px solid #39FFF9;
   background-color: #000;
   font-size: 20px;
   font-family: inherit;
   padding: 3px;
-  color: #FF4500;
+  color: #39FFF9;
 }
 
 .tournament-players .player button{
