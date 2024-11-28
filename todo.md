@@ -10,4 +10,9 @@
 
 > start the tournament
 
-> Chat: msg must be received displayed for only the convesation not the user
+> Chat: must add block condition to test chat better
+
+> Chat: must retrieve online status
+
+> still must work on the friend request send and remove
+
