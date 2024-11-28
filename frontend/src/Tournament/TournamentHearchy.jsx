@@ -13,9 +13,9 @@ const TournamentHearchy = () => {
     >
       <defs>
         <pattern id="image1" width="32" height="32">
-          <image href='/pensioner.png' x="4" y="4" width="32" height="32" />
+          <image href="/pensioner.png" x="4" y="4" width="32" height="32" />
         </pattern>
-    </defs>
+      </defs>
       <rect
         x="484.5"
         y="183.5"
@@ -23,7 +23,7 @@ const TournamentHearchy = () => {
         height="54"
         rx="14.5"
         stroke="#FFD700"
-        />
+      />
       <rect
         x="0.5"
         y="0.5"
@@ -115,7 +115,7 @@ const TournamentHearchy = () => {
         text-anchor="end"
         font-family="IBM Plex Mono"
       >
-      Player 1
+        Player 1
       </text>
       <rect
         x="-0.5"
@@ -126,6 +126,16 @@ const TournamentHearchy = () => {
         transform="matrix(-1 0 0 1 1350 0)"
         stroke="#FFD700"
       />
+      <text
+        x="77"
+        y="32"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        Player 2
+      </text>
       <rect
         x="-0.5"
         y="0.5"
@@ -135,6 +145,16 @@ const TournamentHearchy = () => {
         transform="matrix(-1 0 0 1 1350 94)"
         stroke="#FFD700"
       />
+      <text
+        x="1268"
+        y="126"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        Player 3
+      </text>
       <line
         y1="-0.5"
         x2="21"
@@ -165,6 +185,17 @@ const TournamentHearchy = () => {
         transform="matrix(-1 0 0 1 1350 273)"
         stroke="#FFD700"
       />
+      <text
+        x="77"
+        y="126"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        Player 3
+      </text>
+
       <rect
         x="-0.5"
         y="0.5"
@@ -174,6 +205,16 @@ const TournamentHearchy = () => {
         transform="matrix(-1 0 0 1 1350 367)"
         stroke="#FFD700"
       />
+      <text
+        x="1273"
+        y="28"
+        fill="#FFD700"
+        font-size="12"
+        text-anchor="middle"
+        font-family="IBM Plex Mono"
+      >
+        Player 5
+      </text>
       <line
         y1="-0.5"
         x2="21"
@@ -258,7 +299,7 @@ const TournamentHearchy = () => {
         stroke="#FFD700"
       />
       <circle cx="25" cy="27" r="18.5" stroke="#FFD700" fill="url(#image1)" />
-      
+
       {/* <foreignObject
         x="6.5"
         y="8.5"
@@ -292,7 +333,8 @@ const TournamentHearchy = () => {
         r="18.5"
         transform="matrix(-1 0 0 1 1345 8)"
         stroke="#FFD700"
-        fill="url(#image1)"     />
+        fill="url(#image1)"
+      />
       <circle cx="267" cy="164" r="18.5" stroke="#FFD700" fill="url(#image1)" />
       {/* <foreignObject
         x="6.5"
@@ -322,7 +364,6 @@ const TournamentHearchy = () => {
         </div>
       </foreignObject> */}
       <circle
-
         cx="19"
         cy="19"
         r="18.5"
@@ -333,7 +374,6 @@ const TournamentHearchy = () => {
       <circle cx="267" cy="258" r="18.5" stroke="#FFD700" fill="url(#image1)" />
 
       <circle
-
         cx="19"
         cy="19"
         r="18.5"
@@ -344,7 +384,6 @@ const TournamentHearchy = () => {
       <circle cx="511" cy="210" r="18.5" stroke="#FFD700" fill="url(#image1)" />
 
       <circle
-
         cx="19"
         cy="19"
         r="18.5"
@@ -355,7 +394,6 @@ const TournamentHearchy = () => {
       <circle cx="25" cy="121" r="18.5" stroke="#FFD700" fill="url(#image1)" />
 
       <circle
-
         cx="19"
         cy="19"
         r="18.5"
@@ -366,7 +404,6 @@ const TournamentHearchy = () => {
       <circle cx="25" cy="300" r="18.5" stroke="#FFD700" fill="url(#image1)" />
 
       <circle
-
         cx="19"
         cy="19"
         r="18.5"
@@ -377,7 +414,6 @@ const TournamentHearchy = () => {
       <circle cx="25" cy="395" r="18.5" stroke="#FFD700" fill="url(#image1)" />
 
       <circle
-
         cx="19"
         cy="19"
         r="18.5"
