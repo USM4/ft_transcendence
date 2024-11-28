@@ -2027,3 +2027,10 @@ body {
   color: #FFD700;
   cursor: pointer;
 }
+
+.tournament {
+  display: flex;
+  flex-direction: column;
+  gap: 200px;
+  
+}
