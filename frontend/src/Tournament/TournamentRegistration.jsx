@@ -9,6 +9,17 @@ const TournamentRegistration = () => {
 
   const navigate = useNavigate();
 
+  const [players, setPlayers] = useState([]);
+
+  const handleNext = () => {
+      // checking if all players have valid names
+      const invalidPlayers = players.filter(player => !player.name.trim());
+      if (invalidPlayers.length > 0) {
+        toast.error("All players must have valid names!");
+        return;
+      }
+      navigate("/tournament/options/play-tournament");
+  };
   return (
     <div className="tournament-registration-component">
       <div className="Ping-Pong Tournament Registration">
@@ -21,13 +32,12 @@ const TournamentRegistration = () => {
           </div>
           <div className="title-trnmt">
             <p>Ping-Pong Tournament Registration </p>
-            
           </div>
         </div>
         <div className="tournament-players-components">
-          <RenderPlayers/>
+          <RenderPlayers onPlayersChange={setPlayers}/>
             <div className="tournament-rules">
-                <WarningAmberIcon />
+                <WarningAmberIcon fontSize="large" style={{color: 'yellow'}}/>
                 <h3>Tournament Rules:</h3>
                 <ul>
                   <li>Players must be available at match time.</li>
@@ -36,9 +46,7 @@ const TournamentRegistration = () => {
                 </ul>
                 <div className="next-to-trnmt">
                   <button
-                    onClick={() => {
-                      navigate("/tournament/options/play-tournament");
-                    }}
+                    onClick={handleNext}
                   >
                     Next
                   </button>

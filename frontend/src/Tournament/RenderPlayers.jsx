@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 
-const RenderPlayers = () => {
+const RenderPlayers = ( {onPlayersChange}) => {
   const [isEditing, setIsEditing] = useState(null);
   const [players, setPlayers] = useState([
     { name: "Player_1" },
@@ -20,6 +20,13 @@ const RenderPlayers = () => {
     updatedPlayers[index].name = newName;
     setPlayers(updatedPlayers);
   };
+
+  useEffect(() => {
+    if (onPlayersChange) {
+      onPlayersChange(players);
+    }
+  }
+  , [players, onPlayersChange]);
 
   return (
     <div className="tournament-players">

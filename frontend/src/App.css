@@ -1775,17 +1775,16 @@ body {
   /* background-color: red; */
 }
 
-.registration-title .return-icon{
+.return-icon{
   display: flex;
   flex-direction: column;
   width: 30%;
-  /* background-color: green; */
   display: flex;
   cursor: pointer;
 
 }
 
-.registration-title .return-icon button{
+.return-icon button{
   background-color: #FFD700;
   border: none;
   border-radius: 5px;
@@ -1799,10 +1798,11 @@ body {
   color:#000
 }
 
-.registration-title .return-icon button :hover{
+.return-icon button :hover{
   background-color: #FF4500;
   width: 65px;
   height: 55px;
+  border-radius: 5px;
 }
 
 
@@ -1820,16 +1820,6 @@ body {
   text-transform: uppercase;
 }
 
-/* .tournament-rules {
-  background-color: #000;
-  border-radius: 5px;
-  border: 2px solid #FF4500;
-  padding: 20px;
-  margin-top: 30px;
-  color: #fff;
-  text-align: left;
-} */
-
 .tournament-players-components .tournament-rules {
   display: flex;
   flex-direction: column;
@@ -1838,32 +1828,63 @@ body {
   width: 40%;
   padding: 40px;
   border-radius: 10px;
-  border: 2px solid #FF4500;
+  border: 2px solid #32CD32;
 }
 
+
+
 .tournament-rules h3 {
-  font-size: 24px;
+  font-size: 30px;
   font-weight: bold;
   color: red;
   margin-bottom: 20px;
 }
 
 .tournament-rules ul {
-  color: #d4af37;
+  color: #FFD700;
   list-style: none;
 }
 
 .tournament-rules li {
-  font-size: 16px;
+  font-size: 18px;
   margin-bottom: 20px;
   
 }
 
 .tournament-rules li:before {
   content: "•";
-  color: #d4af37;
+  color: #FFD700;
   margin-right: 10px;
 }
+
+
+.tournament-rules .next-to-trnmt{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 20%;
+}
+
+.tournament-rules .next-to-trnmt button{
+  color: #000;
+  border: none;
+  width: 150px;
+  height: 50px;
+  border-radius: 5px;
+  font-weight: bold;
+  font: inherit;
+  font-size: 22px;
+  background-color: #FF4500;
+  transition: background-color 0.4s ease;
+  cursor: pointer;
+}
+
+.tournament-rules .next-to-trnmt button:hover {
+  background-color: #FFD700;
+} 
+
+
 
 .tournament-component{
   width: 80%;
@@ -1941,7 +1962,7 @@ body {
   height: auto;
   gap: 20px;
   border-radius: 10px;
-  border: 2px solid #FF4500 ;
+  border: 2px solid #32CD32 ;
   /* background-color: red; */
 }
 
@@ -1951,7 +1972,7 @@ body {
   align-items: center;
   font-size: 25px;
   font-weight: bold;
-  color: #FF4500;
+  color: #32CD32;
   padding: 20px;
 }
 
@@ -1964,12 +1985,12 @@ body {
   width: 100%;
   height: 10%;
   border-radius: 10px;
-  color: #FF4500;
+  color: #FFD700;
 }
 .tournament-players .player h3{
   font-size: 20px;
   font-weight: bold;
-  color: #e9da86;
+  color: #32CD32;
 }
 .tournament-players .player span{
   font-size: 18px;
@@ -1981,7 +2002,7 @@ body {
   height: 30px;
   border: none;
   outline: none;
-  border-bottom: 2px solid #FF4500;
+  border-bottom: 2px solid #32CD32;
   background-color: #000;
   font-size: 20px;
   font-family: inherit;

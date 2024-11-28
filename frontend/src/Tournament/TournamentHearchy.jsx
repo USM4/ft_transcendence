@@ -23,7 +23,7 @@ const TournamentHearchy = () => {
         height="54"
         rx="14.5"
         stroke="#FFD700"
-      />
+        />
       <rect
         x="0.5"
         y="0.5"
