@@ -21,11 +21,11 @@ class FriendShip(models.Model):
 
     PENDING = 'pending'
     ACCEPTED = 'accepted'
-    DECLINED = 'declined'
+    DENY = 'deny'
     STATUS_CHOICES = [
         (PENDING , 'Pending'),
         (ACCEPTED , 'Accepted'),
-        (DECLINED , 'Declined'),
+        (DENY , 'Deny'),
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
 

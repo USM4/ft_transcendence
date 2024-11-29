@@ -107,7 +107,7 @@ function App() {
               
               {/* Play Tournament */}
             </Route>
-            {/* <Route path="*" element={<NotFound />} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </SocketContextProvider>
       </Router>
