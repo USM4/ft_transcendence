@@ -10,7 +10,7 @@ const Tournament = () => {
     <div className="tournament-component">
       <div className="return-icon">
         <button
-          onClick={() => { navigate("/tournament/options"); }}>
+          onClick={() => { navigate("/tournament/options/tournament-registration"); }}>
           <ArrowBackIcon fontSize="large" />
         </button>
       </div>
