@@ -590,7 +590,8 @@ const TournamentHearchy = () => {
 			<div className="start-tournament" style={winner ? { filter: 'blur(10px)' } : {}}>
 				<button
 					onClick={handlClick}
-					disabled={winner}
+					disabled={winner > 0}
+					style={ {cursor: winner ? 'not-allowed' : 'pointer', backgroundColor: winner ? 'grey' : ''}}
 				> 
 				<p> Start The Party 🔥 </p> 
 				</button>
