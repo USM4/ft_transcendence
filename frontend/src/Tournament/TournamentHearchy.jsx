@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const TournamentHearchy = () => {
 	const location = useLocation()
+	const navigate = useNavigate()
 
 	const players = {
 		Player1: location.state[0].name,
@@ -16,25 +18,58 @@ const TournamentHearchy = () => {
 		Player8: location.state[7].name,
 	}
 	const [semi_players, setSemi_Players] = useState({
-		Player1: location.state[0].name,
-		Player2: location.state[1].name,
-		Player3: location.state[4].name,
-		Player4: location.state[5].name,
+		Player1: "",
+		Player2: "",
+		Player3: "",
+		Player4: "",
 	})
 	const [final_players, setFinal_Players] = useState({
-		Player1: location.state[0].name,
-		Player2: location.state[4].name,
+		Player1: "",
+		Player2: "",
 	})
+	const [winner, setWinner] = useState("")
 
+	const startgame = (player1, player2) => {
+		const participants = [player1, player2]
+		const winner = participants[Math.floor(Math.random() * participants.length)]
+		return winner
+	}
+
+	const handlClick = () => {
+		const semiResults = {
+			Player1: startgame(players.Player1, players.Player2),
+			Player2: startgame(players.Player3, players.Player4),
+			Player3: startgame(players.Player5, players.Player6),
+			Player4: startgame(players.Player7, players.Player8),
+		};
+		setSemi_Players(semiResults);
+	};
+	useEffect(() => {
+		if (semi_players.Player1 && semi_players.Player2 && semi_players.Player3 && semi_players.Player4) {
+			const finalResults = {
+				Player1: startgame(semi_players.Player1, semi_players.Player2),
+				Player2: startgame(semi_players.Player3, semi_players.Player4),
+			};
+			setFinal_Players(finalResults);
+		}
+	}, [semi_players]);
+	useEffect(() => {
+		if (final_players.Player1 && final_players.Player2) {
+			const matchWinner = startgame(final_players.Player1, final_players.Player2);
+			setWinner(matchWinner);
+		}
+	}, [final_players]);
+	const resetTournament = () => {
+		navigate("/tournament/options/tournament-registration");
+	};
 
 	return (
 		<div className="tournament">
 			<svg
-				width="4000"
-				height="700"
+				className="tournament-svg"
 				viewBox="0 0 1351 422"
-				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
+				style={winner ? { filter: 'blur(10px)' } : {}}
 			>
 				<defs>
 					<pattern id="image1" width="32" height="32">
@@ -54,9 +89,9 @@ const TournamentHearchy = () => {
 					x="77"
 					y="32"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{players.Player1}
 				</text>
@@ -72,11 +107,11 @@ const TournamentHearchy = () => {
 					x="77"
 					y="126"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
-					{players.Player3}
+					{players.Player2}
 				</text>
 				<rect
 					x="0.5"
@@ -90,11 +125,11 @@ const TournamentHearchy = () => {
 					x="77"
 					y="305"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
-					{players.Player2}
+					{players.Player3}
 				</text>
 				<rect
 					x="0.5"
@@ -108,9 +143,9 @@ const TournamentHearchy = () => {
 					x="77"
 					y="400"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{players.Player4}
 				</text>
@@ -134,9 +169,9 @@ const TournamentHearchy = () => {
 					x="1273"
 					y="28"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{players.Player5}
 				</text>
@@ -153,11 +188,11 @@ const TournamentHearchy = () => {
 					x="1268"
 					y="126"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
-					{players.Player7}
+					{players.Player6}
 				</text>
 				<rect
 					x="-0.5"
@@ -172,11 +207,11 @@ const TournamentHearchy = () => {
 					x="1270"
 					y="400"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
-					{players.Player6}
+					{players.Player7}
 				</text>
 				<rect
 					x="-0.5"
@@ -191,9 +226,9 @@ const TournamentHearchy = () => {
 					x="1270"
 					y="305"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{players.Player8}
 				</text>
@@ -215,9 +250,9 @@ const TournamentHearchy = () => {
 					x="316"
 					y="168"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{semi_players.Player1}
 				</text>
@@ -233,9 +268,9 @@ const TournamentHearchy = () => {
 					x="316"
 					y="262"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{semi_players.Player2}
 				</text>
@@ -253,9 +288,9 @@ const TournamentHearchy = () => {
 					x="1020"
 					y="262"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{semi_players.Player4}
 				</text>
@@ -272,9 +307,9 @@ const TournamentHearchy = () => {
 					x="1020"
 					y="167"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="middle"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="middle"
+					fontFamily="IBM Plex Mono"
 				>
 					{semi_players.Player3}
 				</text>
@@ -311,9 +346,9 @@ const TournamentHearchy = () => {
 					x="558"
 					y="215"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="start"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="start"
+					fontFamily="IBM Plex Mono"
 				>
 					{final_players.Player1}
 				</text>
@@ -330,9 +365,9 @@ const TournamentHearchy = () => {
 					x="793"
 					y="215"
 					fill="#FFD700"
-					font-size="12"
-					text-anchor="end"
-					font-family="IBM Plex Mono"
+					fontSize="12"
+					textAnchor="end"
+					fontFamily="IBM Plex Mono"
 				>
 					{final_players.Player2}
 				</text>
@@ -552,9 +587,20 @@ const TournamentHearchy = () => {
 					fill="url(#image1)"
 				/>
 			</svg>
-			<div className="start-tournament">
-				<button > <p> Start The Party 🔥 </p> </button>
+			<div className="start-tournament" style={winner ? { filter: 'blur(10px)' } : {}}>
+				<button
+					onClick={handlClick}
+					disabled={winner}
+				> 
+				<p> Start The Party 🔥 </p> 
+				</button>
 			</div>
+			{winner && (
+				<div className="winner-display">
+					<h2>🏆 The Winner is {winner} 🎉</h2>
+					<button onClick={resetTournament}>Reset Tournament</button>
+				</div>
+			)}
 		</div>
 	);
 };
