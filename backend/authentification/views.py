@@ -200,7 +200,7 @@ class SendFriendRequest(APIView):
         if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").exists():
             Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request ")
             # call send_notification function and pass
-        return Response({'success': 'friend request sent successfully'})
+        return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
     def get(self, request):
@@ -226,7 +226,6 @@ class AcceptFriendRequest(APIView):
 
 class FriendsList(APIView):
     permission_classes = [IsAuthenticated]
-    
     def get(self, request):
         user = request.user
         friends = Friend.objects.filter(user=user).select_related('friend')
@@ -258,12 +257,20 @@ class Profile(APIView):
         try:
             username = kwargs.get('username')
             user = Client.objects.get(username=username)
+            me = request.user
+            friendship = FriendShip.objects.filter(from_user=me, to_user=user).first()
+            if friendship is None:
+                friendship_status = 'not_friend'
+            else:
+                friendship_status = friendship.status
+            print("friendship_status---------------------------->", friendship_status)
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
         return Response({
             'id': user.id,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
+            'friendship_status': friendship_status,
         })
 
 def generate_otp(username):

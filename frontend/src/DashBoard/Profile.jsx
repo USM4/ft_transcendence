@@ -21,6 +21,7 @@ import { FriendDataContext } from "./FriendDataContext.jsx";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 import { SocketContext } from "./SocketContext.jsx";
+import toast from "react-hot-toast";
 function Profile() {
   const {socket} = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
@@ -29,11 +30,7 @@ function Profile() {
   const [stranger, setStranger] = useState(false);
   const { friends } = useContext(FriendDataContext);
   const { username } = useParams();
-  const [pending, setPending] = useState(false);
-  const isFriend = friends.some((friend) => friend.username);
-
   const sendFriendRequest = async (to_user) => {
-    setPending(true);
     const response = await fetch(
       "http://localhost:8000/auth/send_friend_request/",
       {
@@ -47,42 +44,18 @@ function Profile() {
     );
     const data = await response.json();
     if (response.ok) {
-      console.log("The request has been sent", data);
-      console.log("data", data);
-    } else {
-      console.log("something wrong", data);
-    }
-  };
-  // const sendFriendRequest = async (to_user) => {
-  //   setPending(true);
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.send(JSON.stringify({
-  //       type: "friend_request",
-  //       to_user: to_user,
-  //       from_user: user.id,
-  //     }));
-  //   }
-  // };
-
-  // const sendFriendRequest = async (to_user) => {
-  //   setPending(true);
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.send(JSON.stringify({
-  //       type: "friend_request",
-  //       to_user: to_user,
-  //       from_user: user.id,
-  //     }
-  //   ));
-  //   }
-  //   else {
-  //     console.error('WebSocket not connected');
-  //   }
-  // };
-
-  useEffect(() => {
-    if (username !== user.username) {
-      console.log("straaaaaaanger", stranger_data);
-      const fetchStranger = async () => {
+      toast.success(data.message);
+      setStrangerData((prevData) => ({
+        ...prevData,
+        friendship_status: 'pending',
+      }));
+    } else
+        toast.error(data.error);
+};
+useEffect(() => {
+  if (username !== user.username) {
+    console.log("first render data ", stranger_data);
+    const fetchStranger = async () => {
         const response = await fetch(
           `http://localhost:8000/auth/profile/${username}/`,
           {
@@ -94,20 +67,24 @@ function Profile() {
         if (response.ok) {
           setStranger(true);
           setStrangerData(data);
+          console.log("stranger-------->", data);
         } else {
           setStranger(false);
-          console.log("something wrong", data);
+          navigate("/dashboard");
+          toast.error("User not found");
+          return;
         }
       };
       fetchStranger();
+      getButtonText();
     } else {
       setStranger(false);
     }
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
   const getButtonText = () => {
-    if (pending) return "Pending";
-    else if (isFriend) return "Remove Friend";
+    if (switchUser.friendship_status === 'pending') return "Pending";
+    else if (switchUser.friendship_status === 'accepted') return "Remove Friend";
     else return "Add Friend";
   };
   return (
@@ -124,9 +101,9 @@ function Profile() {
         </div>
         {stranger ? (
           <div className="add-friend-btn">
-            <button onClick={() => sendFriendRequest(switchUser.id)}>
-              {getButtonText()}
-            </button>
+              <button onClick={() => sendFriendRequest(switchUser.id)}>
+                {getButtonText()}
+              </button>
           </div>
         ) : (
           <div className="profile-settings-icon">

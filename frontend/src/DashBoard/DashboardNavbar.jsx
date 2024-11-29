@@ -131,7 +131,7 @@ function DashboardNavbar() {
               <button
                 className="dropdown-elements"
                 onClick={() => {
-                  navigate(`profile/${user.username}`);
+                  navigate(`/dashboard/profile/${user.username}`);
                 }}
               >
                 profile
