@@ -15,15 +15,20 @@ const TournamentRegistration = () => {
       // checking if all players have valid names
       const invalidPlayers = players.filter(player => !player.name.trim());
       if (invalidPlayers.length > 0) {
-        toast.error("All players must have valid names!");
+        toast.error("Players name mustn't be empty!");
+        return;
+      }
+      const longname = players.filter(player => player.name.length > 9);
+      if (longname.length > 0) {
+        longname.filter(name => toast.error(`Player name must be only 9 caractere: ${name.name}!`));
         return;
       }
       const uniqueNames = new Set(players.map(player => player.name));
       if (uniqueNames.size !== players.length) {
-        toast.error("Invalid names! Names must be unique.");
+        toast.error("Invalid names! Names must be unique!");
         return;
       }
-      navigate("/tournament/options/play-tournament");
+      navigate("/tournament/options/play-tournament", { state: players });
   };
   return (
     <div className="tournament-registration-component">
