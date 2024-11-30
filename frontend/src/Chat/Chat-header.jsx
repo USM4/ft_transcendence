@@ -12,16 +12,15 @@ export default function Chat_header({ selected }) {
     }
 
     function handleBlockClicked() {
-        // I STILL DON'T HAVE THE BLOCK STATUS
-        // NEED TO CHECK IF I CAN HANDLE IT WITH A REQUEST FROM THE BACK ELSE IT'S GONNA BE AN ARRAY OF NAMES BLOCKED
-
-        {/* this.blocked.push(selected.name)*/ }
+        // MUST HANDLE THE BLOCK BUTTON
+        // selected.is_blocked = !selected.is_blocked;
     }
     function handleProfileClicked() {
         navigate(`/dashboard/profile/${selected.username}`);
     }
     function handleGameClicked() {
         {/* MUST HANDLE THE GAME INVITATION  BUTTON */ }
+        console.log('Game Invite Button Clicked');
     }
 
     return (
@@ -42,13 +41,13 @@ export default function Chat_header({ selected }) {
                     {menu &&
                         <div className="menu-list block-box">
                             <li className="menu-content" onClick={handleBlockClicked}>
-                                <h2>⊘ BLOCK</h2>
+                                {selected.is_blocked ? <h2>⊘ UNBLOCK</h2> : <h2>⊘ BLOCK</h2>}
                             </li>
                             <li className="menu-content" onClick={handleProfileClicked}>
                                 <h2>👤 PROFILE</h2>
 
                             </li>
-                            <li className="menu-content" onClick={handleGameClicked}>
+                            <li className="menu-content" onClick={!selected.is_blocked ? () => handleGameClicked(selected) : null}>
                                 <h2>🕹️ GAMEINVITE</h2>
 
                             </li>

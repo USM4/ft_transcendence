@@ -24,17 +24,16 @@ export default function Chat_input({ selected }) {
     return (
         <div className="chat-input">
 
-            <div className="text-area">
-                <textarea className="text-areas-input"
-                    placeholder="Type a message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+            {!selected.is_blocked ?
+                (<><div className="text-area">
+                    <textarea className="text-areas-input"
+                        placeholder="Type a message..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
 
-                />
-            </div>
-            <div className="button-area">
-                <button onClick={() => handleSubmit()} type="submit"><SendRoundedIcon /></button>
-            </div>
+                    /></div>
+                    <div className="button-area"><button onClick={() => handleSubmit()} type="submit"><SendRoundedIcon /></button></div></>)
+                : null}
         </div>
     );
 }
