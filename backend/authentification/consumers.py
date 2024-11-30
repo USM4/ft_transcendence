@@ -39,8 +39,6 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
 			await send_friend_request(self, data)
 	
 
-
-
 	async def send_notification(self, event):
 		notification_data = event['message']
 		await self.send(text_data=json.dumps({'message': notification_data}))

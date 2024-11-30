@@ -260,10 +260,10 @@ class Profile(APIView):
             me = request.user
             friendship_status = 'accepted'
             is_friend = Friend.objects.filter(Q(user=me, friend=user) & Q(user=me, friend=user)).exists()
-            if(is_friend):
+            if not (is_friend):
                 friendship = FriendShip.objects.filter(from_user=me, to_user=user).first().status
-            print("is_friend---------------------------->", is_friend)
-            print("friendship---------------------------->", friendship)
+            # print("is_friend---------------------------->", is_friend)
+            # print("friendship---------------------------->", friendship)
             # if friendship is None:
             #     friendship_status = 'not_friend'
             # else:
