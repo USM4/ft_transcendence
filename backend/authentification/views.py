@@ -12,7 +12,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 import os
 from pathlib import Path
-
+from django.db.models import Q
 import pyotp
 import qrcode
 from dotenv import load_dotenv
@@ -78,7 +78,7 @@ class SignInView(APIView):
                 secure=True,
             )
             return response
-        return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ExtractCodeFromIntraUrl(APIView):
     def get(self, request):
@@ -258,12 +258,17 @@ class Profile(APIView):
             username = kwargs.get('username')
             user = Client.objects.get(username=username)
             me = request.user
-            friendship = FriendShip.objects.filter(from_user=me, to_user=user).first()
-            if friendship is None:
-                friendship_status = 'not_friend'
-            else:
-                friendship_status = friendship.status
-            print("friendship_status---------------------------->", friendship_status)
+            friendship_status = 'accepted'
+            is_friend = Friend.objects.filter(Q(user=me, friend=user) & Q(user=me, friend=user)).exists()
+            if(is_friend):
+                friendship = FriendShip.objects.filter(from_user=me, to_user=user).first().status
+            print("is_friend---------------------------->", is_friend)
+            print("friendship---------------------------->", friendship)
+            # if friendship is None:
+            #     friendship_status = 'not_friend'
+            # else:
+            #     friendship_status = friendship.status
+            # print("friendship_status---------------------------->", friendship_status)
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
         return Response({

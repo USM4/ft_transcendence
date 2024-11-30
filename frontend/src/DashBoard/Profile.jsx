@@ -54,7 +54,6 @@ function Profile() {
 };
 useEffect(() => {
   if (username !== user.username) {
-    console.log("first render data ", stranger_data);
     const fetchStranger = async () => {
         const response = await fetch(
           `http://localhost:8000/auth/profile/${username}/`,
@@ -76,13 +75,13 @@ useEffect(() => {
         }
       };
       fetchStranger();
-      getButtonText();
     } else {
       setStranger(false);
     }
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
   const getButtonText = () => {
+    console.log("switchUser.friendship_status--->", switchUser.friendship_status);
     if (switchUser.friendship_status === 'pending') return "Pending";
     else if (switchUser.friendship_status === 'accepted') return "Remove Friend";
     else return "Add Friend";
