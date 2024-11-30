@@ -233,7 +233,8 @@ class FriendsList(APIView):
             {
                 'id': friend.friend.id,
                 'username': friend.friend.username,
-                'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg'
+                'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg',
+                'is_blocked': friend.is_blocked,
             }
             for friend in friends
         ]

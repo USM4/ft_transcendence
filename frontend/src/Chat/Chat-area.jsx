@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ChatSocketContext } from './Chat.jsx'
+import BlockIcon from '@mui/icons-material/Block';
 
 
 export default function Chat_area({ selected }) {
@@ -15,6 +16,7 @@ export default function Chat_area({ selected }) {
       if (data.receiver == selected.id || data.sender == data.receiver || data.sender == selected.id)
         setMessage((prevMessages) => [...prevMessages, data]);
     };
+
   }, [socket, selected])
 
 
@@ -30,9 +32,9 @@ export default function Chat_area({ selected }) {
 
   return (
     <div className="chat-area">
-      <div className="message-wrap">
-        {message_history}
-      </div>
+      
+        {!selected.is_blocked ? <div className="message-wrap">{message_history}</div> : <div className="blocked">THIS USER IS BLOCKED <BlockIcon fontSize='large' /></div>}
+      
     </div>
   );
 }
