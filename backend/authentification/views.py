@@ -255,6 +255,7 @@ class Search(APIView):
 class Profile(APIView):
     def get(self, request, *args, **kwargs):
         try:
+            print("kwargs", kwargs)
             username = kwargs.get('username')
             user = Client.objects.get(username=username)
             me = request.user
