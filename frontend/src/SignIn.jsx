@@ -3,6 +3,7 @@ import { Link, redirect } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 import "./App.css"
+import toast from "react-hot-toast";
 
 function SignIn() {
     const [login, setLogin] = useState('')
@@ -33,8 +34,8 @@ function SignIn() {
                 credentials: 'include',
             });
             const data = await response.json();
-            if (data.errors) {
-                setErrorMessages(data.errors);
+            if (data.error) {
+                toast.error(data.error);
             } else {
                 console.log(data)
                 setSuccessMessages(data);
