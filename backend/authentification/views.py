@@ -195,11 +195,16 @@ class SendFriendRequest(APIView):
             return Response({'error': 'request already sent'}, status=400)
 
         # Create the friend request
-        FriendShip.objects.create(from_user=from_user, to_user=to_user)
+        if not FriendShip.objects.filter(from_user=to_user, to_user=from_user).exists():
+            FriendShip.objects.create(from_user=from_user, to_user=to_user)
+        else:
+            FriendShip.objects.filter(from_user=to_user, to_user=from_user).update(status='pending')
+
         # Check if a notification for this friend request already exists
         if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").exists():
             Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request ")
-            # call send_notification function and pass
+        else:
+            Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").update(is_read=False)
         return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
@@ -212,9 +217,13 @@ class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
         try:
-            friend_request = FriendShip.objects.get(id=request_id, status='pending')
+            user_id = Notification.objects.get(id=request_id).user.id
+            print("user_id--------------->", user_id)
+            friend_request = FriendShip.objects.get(to_user=user_id, status='pending')
+            print("accepeted friend request", friend_request)
             friend_request.status = 'accepted'
             friend_request.save()
+            print("friend_request.status", friend_request.status)
             sender = friend_request.to_user
             receiver = friend_request.from_user
             Friend.objects.create(user=sender, friend=receiver)
@@ -255,21 +264,24 @@ class Search(APIView):
 class Profile(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            print("kwargs", kwargs)
+            # print("kwargs", kwargs)
             username = kwargs.get('username')
             user = Client.objects.get(username=username)
             me = request.user
-            friendship_status = 'accepted'
-            is_friend = Friend.objects.filter(Q(user=me, friend=user) & Q(user=me, friend=user)).exists()
-            if not (is_friend):
-                friendship = FriendShip.objects.filter(from_user=me, to_user=user).first().status
+            friendship_status = ''
+            is_friend = Friend.objects.filter(Q(user=me, friend=user) | Q(user=me, friend=user)).exists()
             # print("is_friend---------------------------->", is_friend)
-            # print("friendship---------------------------->", friendship)
-            # if friendship is None:
-            #     friendship_status = 'not_friend'
-            # else:
-            #     friendship_status = friendship.status
-            # print("friendship_status---------------------------->", friendship_status)
+            if is_friend:
+                friendship_status = 'friends'
+            else:
+                # the friendship object between the two users
+                friendship = FriendShip.objects.filter(from_user=me, to_user=user).first()
+                # check if the friendship is None before accessing  status
+                if friendship is None:
+                    friendship_status = 'not_friend'
+                else:
+                    friendship_status = 'pending' if friendship.status == 'pending' else 'not_friend'
+                    
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
         return Response({
@@ -278,6 +290,26 @@ class Profile(APIView):
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'friendship_status': friendship_status,
         })
+
+class RemoveFriend(APIView):
+    def post(self, request):
+        friend_id = request.data.get('friend_id')
+        try:
+            friendship = FriendShip.objects.filter(
+                        Q(from_user=request.user, to_user=friend_id) 
+                        | Q(from_user=friend_id, to_user=request.user)).first()
+            if friendship:
+                friendship.delete()
+            else:
+                return Response({'error': 'Friendship not found'}, status=404)
+            
+            # remove the friend from the friends list
+            Friend.objects.filter(user=request.user, friend=friend_id).delete()
+            Friend.objects.filter(user=friend_id, friend=request.user).delete()
+            return Response({'message': 'Friend removed successfully'}, status=200)
+
+        except Friend.DoesNotExist:
+            return Response({'error': 'Friend not found'}, status=404)
 
 def generate_otp(username):
     secret_key = pyotp.random_base32()
