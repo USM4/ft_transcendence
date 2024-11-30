@@ -73,9 +73,6 @@ function ProfileSettings() {
     }
   };
 
-  // useEffect(() => {
-  //   updateInfos();
-  // }, []);
 
 
   const getQRCode = async () => {
