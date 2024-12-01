@@ -18,9 +18,11 @@ export default function Chat_area({ selected }) {
         if (data.message)
           setMessage((prevMessages) => [...prevMessages, data]);
     };
-
+    return () => {
+      socket.onmessage = null;
+    };
   }, [socket, selected])
-  console.log(message)
+  console.log(selected.is_blocked)
 
 
   const message_history = message.map((msg, index) => (
