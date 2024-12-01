@@ -32,7 +32,7 @@ export default function Chat_sidebar() {
 		if (selectedFriend && selectedFriend.id != friend.id)
 			setSelectedFriend(friend);
 		console.log(friend)
-		{ clicked != friend.id && (socket.send(JSON.stringify({ type:'message', message: null, receiver: friend.id, flag: friend.is_blocked, })), setClicked(friend.id)) }
+		{ clicked != friend.id && (socket.send(JSON.stringify({ type:'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
 	}
 
 	const friendsList = friends.map((friend) => (

@@ -10,14 +10,13 @@ export default function Chat_area({ selected }) {
 
   useEffect(() => {
     setMessage([])
-    
+
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.receiver == selected.id || data.sender == data.receiver || data.sender == selected.id)
+        console.log("message received")
         if (data.message)
           setMessage((prevMessages) => [...prevMessages, data]);
-        else
-          setMessage([])
     };
 
   }, [socket, selected])
