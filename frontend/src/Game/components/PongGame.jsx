@@ -5,15 +5,15 @@ import Racket from './Racket';
 
 const PongGame = ({ isAIEnabled }) => {
   const [ball, setBall] = useState({
-    x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#cd202c'
+    x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff'
   });
 
   const [leftRacket, setLeftRacket] = useState({
-    x: 40, y: 200, width: 10, height: 100, color: '#33332D', velocity: 20,
+    x: 40, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
   });
 
   const [rightRacket, setRightRacket] = useState({
-    x: 950, y: 200, width: 10, height: 100, color: '#33332D', velocity: 20,
+    x: 950, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
   });
 
   const [keysPressed, setKeysPressed] = useState({
@@ -146,7 +146,7 @@ const PongGame = ({ isAIEnabled }) => {
   const draw = useCallback(
     (context) => {
       context.clearRect(0, 0, 1000, 500);
-      context.fillStyle = '#f1e1e9';
+      context.fillStyle = '#326da4';
       context.fillRect(0, 0, 1000, 500);
 
       context.beginPath();
@@ -164,13 +164,17 @@ const PongGame = ({ isAIEnabled }) => {
   );
 
   return (
+
     <div className='Game-render'>
+      
       <Canvas draw={draw} width={1000} height={500} />
       <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
       <Racket x={leftRacket.x} y={leftRacket.y} width={leftRacket.width} height={leftRacket.height} color={leftRacket.color} upKey="w" downKey="s" onMove={moveLeftRacket} />
       {!isAIEnabled && (
         <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
       )}
+      <h1>click on (W to go up and S to go down)</h1>
+      <h1>click on (L to go up and L to go down)</h1>
     </div>
   );
 };

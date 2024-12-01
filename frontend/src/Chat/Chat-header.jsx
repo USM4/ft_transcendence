@@ -50,7 +50,6 @@ export default function Chat_header({ selected }) {
                             </li>
                             <li className="menu-content" onClick={handleGameClicked}>
                                 <h2>🕹️ GAMEINVITE</h2>
-
                             </li>
                         </div>}
                 </ul>
