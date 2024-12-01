@@ -23,12 +23,6 @@ export default function Chat_input({ selected }) {
             setMessage('');
         }
     }
-    useEffect(() => {
-        socket.onmessage = () => {
-            setBlocked(selected.is_blocked);
-            console.log(selected.is_blocked)
-        }
-    }, [socket])
 
 
     return (

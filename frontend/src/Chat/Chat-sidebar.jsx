@@ -31,7 +31,6 @@ export default function Chat_sidebar() {
 			setSelectedFriend(friend);
 		if (selectedFriend && selectedFriend.id != friend.id)
 			setSelectedFriend(friend);
-		console.log(friend)
 		{ clicked != friend.id && (socket.send(JSON.stringify({ type:'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
 	}
 
