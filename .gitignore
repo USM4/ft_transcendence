@@ -32,8 +32,8 @@ env
 /build/
 /dist/
 /*.egg-info/
-env/
 MANIFEST
 coverage.*
 db.sqlite3
 db.sqlite3
+media/

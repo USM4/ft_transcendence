@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth import authenticate , logout
 from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from .models import Client , Friend, FriendShip, Notification , Search
 from .serializers import ClientSignUpSerializer , SearchSerializer
@@ -10,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 import os
+from pathlib import Path
+
 import pyotp
 import qrcode
 from dotenv import load_dotenv
@@ -21,6 +24,8 @@ from django.conf import settings
 class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"error": "Invalid data format "}, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')
@@ -52,17 +57,22 @@ class SignInView(APIView):
         else:
             username = parse_login
         client = authenticate(username=username, password=password)
-        if client :
+        if client:
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            response = Response({"success":"Logged in successfully !"}, status=status.HTTP_200_OK)
-            if client.is_2fa_enabled:
-                response = redirect('http://localhost:5173/2fa')
-            else:
-                response = redirect('http://localhost:5173/dashboard')
+            redirect_url = client.is_2fa_enabled and '/2fa' or '/dashboard'
+            response = Response({'success': 'Logged in successfully', 'redirect_url': redirect_url}, status=status.HTTP_200_OK)
+            # print(f"Setting cookies with access token: {access}")
             response.set_cookie(
                 'client',
                 access,
+                httponly=True,
+                samesite='None',
+                secure=True,
+            )
+            response.set_cookie(
+                'refresh',
+                str(refresh),
                 httponly=True,
                 samesite='None',
                 secure=True,
@@ -92,7 +102,6 @@ class ExtractCodeFromIntraUrl(APIView):
             'code': code,
             'redirect_uri': redirect_uri
         }
-
         headers = {'Content-Type': 'application/json'}
         # nsefto request l intra w n extractiw l user info b dak l access token li ayjina
         response = requests.post(token_url,json=json_data, headers=headers)
@@ -128,6 +137,13 @@ class ExtractCodeFromIntraUrl(APIView):
             samesite='None',
             secure=True,
         )
+        response.set_cookie(
+            'refresh',
+            str(refresh),
+            httponly=True,
+            samesite='None',
+            secure=True,
+        )
         return response
 
 class VerifyTokenView(APIView):
@@ -143,11 +159,12 @@ class LogoutView(APIView):
     def post(self, request):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
+        response.delete_cookie('refresh')
         return response
 
 class DashboardView(APIView):
     def get(self, request):
-        user  = request.user
+        user = request.user
         if user is None:
             return Response({'error': 'Unauthorized'}, status=401)
         return Response({
@@ -156,7 +173,7 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'twoFa': user.is_2fa_enabled,
-            
+            'is_online': user.is_online
         })
 
 class SendFriendRequest(APIView):
@@ -191,16 +208,6 @@ class NotificationList(APIView):
         data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
         return Response(data)
 
-def send_notification(message):
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        'notifications',
-        {
-            'type': 'send_notification',
-            'message': message
-        }
-    )
-
 class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
@@ -234,14 +241,16 @@ class FriendsList(APIView):
         return Response({"data": data})
 
 class Search(APIView):
-    search = Search.objects.all()
-    # print("search")
-    serializer_class = SearchSerializer
-    def get(self, request):
-        if not search:
-            return Response({'error': 'search parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
-        clients = Client.objects.filter(username__icontains=search).exclude(id=request.user.id)
-        data = [{'id': c.id, 'username': c.username} for c in clients]
+    def get(self, request, query):
+        clients = Client.objects.filter(username__icontains=query).exclude(id=request.user.id)
+        data = [
+            {
+                'id': c.id,
+                'username': c.username,
+                'avatar': c.avatar if c.avatar else '/player1.jpeg'
+            }
+            for c in clients
+        ]
         return Response(data)
 
 class Profile(APIView):
@@ -251,7 +260,6 @@ class Profile(APIView):
             user = Client.objects.get(username=username)
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
-        print("useeeeeeeer", user.is_2fa_enabled)
         return Response({
             'id': user.id,
             'username': user.username,
@@ -305,7 +313,52 @@ class CheckOtp(APIView):
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        print("------------------>",totp.verify(otp))
+        # print("------------------>",totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
+
+class Disable2FA(APIView):
+    def post(self, request):
+        otp = request.data.get('otp')
+        if not otp:
+            return Response({'error': 'OTP is required for desabling'}, status=400)
+        print("request.user.secret_key",request.user.secret_key)
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        request.user.is_2fa_enabled = False
+        request.user.secret_key = None
+        request.user.save()
+        return Response({'message': '2FA disabled successfully'})
+
+class UpdateUserInfos(APIView):
+    def post(self, request):
+        user = request.user
+        avatar = request.data.get('avatar')
+        address = request.data.get('address')
+        phone = request.data.get('phone')
+        # new_image = request.FILES.get('avatar')
+        avatar_file = request.FILES.get('avatar')
+        if avatar_file:
+            file_name = Path(avatar_file.name).name
+            print("avatar_file name -----> ", file_name)
+            user.avatar = "/" + avatar_file.name
+        else:
+            print("No avatar file uploaded.")
+        # Update other fields if provided
+        if address:
+            user.address = address
+        if phone:
+            user.phone = phone
+        user.save()
+        user = Client.objects.get(id=user.id)  
+        return Response(
+            {
+                'message': 'User infos updated successfully',
+                'user': {
+                    'id': user.id,
+                    'email': user.email,
+                    'username': user.username,
+                    'avatar': user.avatar if user.avatar else None,
+            },})

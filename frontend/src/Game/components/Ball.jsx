@@ -7,5 +7,6 @@ const Ball = ({ x, y, radius, color, updatePosition, draw }) => {
   }, [updatePosition]);
 
   return null;
-}; 
+};
+
 export default Ball;

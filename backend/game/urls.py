@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.urls import path
 from django.views.generic import TemplateView
+from game.views import Test
 
 # from . import views
 
@@ -28,7 +29,8 @@ from django.views.generic import TemplateView
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='index.html')),
+    # path('', TemplateView.as_view(template_name='index.html')),
+    path("omar/", Test.as_view() , name='omar'),
 ]
 
 
