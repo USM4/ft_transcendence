@@ -2132,3 +2132,33 @@ body {
   margin: 0 auto;
   padding: 10px;
 }
+
+.player-profiles {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  background-color: #000000;
+}
+
+.player-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.player-name {
+  margin: 5px 0 0;
+  font-size: 14px;
+}
+
+.player-score {
+  margin: 2px 0 0;
+  font-size: 12px;
+}

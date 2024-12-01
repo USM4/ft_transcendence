@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Canvas from './Canvas';
 import Ball from './Ball';
 import Racket from './Racket';
 
 const PongGame = ({ isAIEnabled }) => {
+  const navigate = useNavigate();
   const [ball, setBall] = useState({
     x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff'
   });
@@ -23,6 +25,17 @@ const PongGame = ({ isAIEnabled }) => {
     l: false,
   });
 
+  const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
+  const [winner, setWinner] = useState(null);
+
+  const resetGame = () => {
+    setBall({ x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff' });
+    setLeftRacket((prev) => ({ ...prev, y: 200 }));
+    setRightRacket((prev) => ({ ...prev, y: 200 }));
+    setScores({ leftPlayer: 0, rightPlayer: 0 });
+    setWinner(null);
+  };
+
   const moveAIRacket = () => {
     setRightRacket((prev) => {
       const direction = ball.y > prev.y + prev.height / 2 ? 1 : -1;
@@ -32,62 +45,71 @@ const PongGame = ({ isAIEnabled }) => {
     });
   };
 
-  const resetPositions = () => {
-    setBall((prev) => ({
-      ...prev,
-      x: 500,
-      y: 250,
-      velocityX: prev.velocityX * -1,
-      velocityY: 3
-    }));
-    setLeftRacket((prev) => ({ ...prev, y: 200 }));
-    setRightRacket((prev) => ({ ...prev, y: 200 }));
-  };
-
-  useEffect(() => {
-    if (isAIEnabled) {
-      const aiInterval = setInterval(moveAIRacket, 16);
-      return () => clearInterval(aiInterval);
-    }
-  }, [isAIEnabled, ball.y]);
-
   const updateBallPosition = useCallback(() => {
     setBall((prevBall) => {
       let { x, y, velocityX, velocityY } = prevBall;
-
+  
+      // Mise à jour de la position de la balle
       x += velocityX;
       y += velocityY;
-
+  
+      // Vérification des collisions avec le haut et le bas
       if (y - ball.radius <= 0 || y + ball.radius >= 500) {
         velocityY = -velocityY;
       }
-
+  
+      // Vérification de la collision avec la raquette gauche
       if (
         x - ball.radius <= leftRacket.x + leftRacket.width &&
         y >= leftRacket.y &&
         y <= leftRacket.y + leftRacket.height
       ) {
-        velocityX = Math.abs(velocityX);
+        velocityX = Math.abs(velocityX);  // Reflet de la balle vers la droite
         x = leftRacket.x + leftRacket.width + ball.radius;
       }
-
+  
+      // Vérification de la collision avec la raquette droite
       if (
         x + ball.radius >= rightRacket.x &&
         y >= rightRacket.y &&
         y <= rightRacket.y + rightRacket.height
       ) {
-        velocityX = -Math.abs(velocityX);
+        velocityX = -Math.abs(velocityX);  // Reflet de la balle vers la gauche
         x = rightRacket.x - ball.radius;
       }
-    
-      if (x - ball.radius <= 0 || x + ball.radius >= 1000) {
-        resetPositions();
-        return prevBall;
+  
+      // Condition pour marquer un but
+      let updatedScores = { ...scores };
+      if (x - ball.radius <= 0) {
+        updatedScores.rightPlayer += 1;
+      } else if (x + ball.radius >= 1000) {
+        updatedScores.leftPlayer += 1;
       }
-    
+
+      // Vérification du score
+      if (updatedScores.leftPlayer === 5) {
+        setWinner('Player 1');
+      } else if (updatedScores.rightPlayer === 5) {
+        setWinner('Player 2');
+      }
+
+      // Mise à jour des scores
+      setScores(updatedScores);
+
+      // Réinitialisation de la balle à la position de départ après un score
+      if (x - ball.radius <= 0 || x + ball.radius >= 1000) {
+        return {
+          ...prevBall,
+          x: 500,
+          y: 250,
+          velocityX: (updatedScores.leftPlayer === 5 ? -1 : 1) * 4, // La balle revient de l'autre côté
+          velocityY: 4,
+        };
+      }
+
       return { ...prevBall, x, y, velocityX, velocityY };
     });
-  }, [leftRacket, rightRacket]);
+  }, [leftRacket, rightRacket, scores]);
 
   const moveLeftRacket = (direction) => {
     setLeftRacket((prev) => {
@@ -104,6 +126,16 @@ const PongGame = ({ isAIEnabled }) => {
       return { ...prev, y: newY };
     });
   };
+
+  if (winner) {
+    return (
+      <div className="winner-screen">
+        <h1>{winner} Wins!</h1>
+        <button onClick={() => navigate("/game")}>Go to Home</button>
+        <button onClick={resetGame}>Play Again</button>
+      </div>
+    );
+  }
 
   const handleKeyDown = (e) => {
     setKeysPressed((prev) => {
@@ -164,17 +196,19 @@ const PongGame = ({ isAIEnabled }) => {
   );
 
   return (
-
     <div className='Game-render'>
-      
+      <div className="player-profiles">
+        <div>
+          <h3>Player 1</h3>
+          <p>Score: {scores.leftPlayer}</p>
+        </div>
+        <div>
+          <h3>{isAIEnabled ? 'AI' : 'Player 2'}</h3>
+          <p>Score: {scores.rightPlayer}</p>
+        </div>
+      </div>
       <Canvas draw={draw} width={1000} height={500} />
       <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
-      <Racket x={leftRacket.x} y={leftRacket.y} width={leftRacket.width} height={leftRacket.height} color={leftRacket.color} upKey="w" downKey="s" onMove={moveLeftRacket} />
-      {!isAIEnabled && (
-        <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
-      )}
-      <h1>click on (W to go up and S to go down)</h1>
-      <h1>click on (L to go up and L to go down)</h1>
     </div>
   );
 };
