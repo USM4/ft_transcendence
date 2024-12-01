@@ -3,50 +3,36 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 
-
-async def send_friend_request(self, data):
-	to_user = data['to_user']
-	from_user = data['from_user']
-	group_name = 'notifications'
-	await self.channel_layer.group_send(
-		group_name,
-		{
-			'type': 'receive_notification',
-			'message':{
-				'from_user': from_user,
-			}
-		}
-	)
-
-user = get_user_model()
-class NotificationsConsumer(AsyncWebsocketConsumer):
+class OnlineStatusConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		if user is not None:
-			print('User is not None', user)
-			await self.accept()
-			self.group_name = 'notifications'
-			await self.channel_layer.group_add(self.group_name, self.channel_name)
-	
+		self.user = self.scope['user']
+		self.room_group_name = f'online_status_{self.user.id}'
+		await self.channel_layer.group_add(
+			self.room_group_name,
+			self.channel_name
+		)
+		await self.accept()
+		await self.update_user_status(self.user, True)
+
 	async def disconnect(self, close_code):
+		await self.update_user_status(self.user, False)
 		await self.channel_layer.group_discard(
-			self.group_name,
-			self.channel_name,
+			self.room_group_name,
+			self.channel_name
 		)
 
-	async def receive(self, text_data):
-		data = json.loads(text_data)
-		if data['type'] == 'friend_request':
-			await send_friend_request(self, data)
-	
+	async def update_user_status(self, user, is_online):
+		print("------------------->", user)
+		print("------------------->", is_online)
+		await database_sync_to_async(
+			user.__class__.objects.filter(id=user.id).update
+		)(is_online=is_online)
 
-	async def send_notification(self, event):
-		notification_data = event['message']
-		await self.send(text_data=json.dumps({'message': notification_data}))
+	async def user_status(self, event):
+		user = event['user']
+		status = event['status']
 
-
-	
-	async def receive_notification(self, event):
 		await self.send(text_data=json.dumps({
-			'type' : 'receive_notification',
-			'message' : event['message']
+			'user': user,
+			'status': status
 		}))
