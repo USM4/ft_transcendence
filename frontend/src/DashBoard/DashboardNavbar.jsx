@@ -46,7 +46,6 @@ function DashboardNavbar() {
   };
 
   const handleLogout = async () => {
-    try {
       Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this !?",
@@ -58,15 +57,20 @@ function DashboardNavbar() {
         cancelButtonColor: '#dc3545',
         background: '#000',
         color: '#fff',
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          console.log('Confirmed!');
+          try {
+            const response = await fetch("http://localhost:8000/auth/logout/", {
+              method: "POST",
+              credentials: "include",
+            });
+            if (response.ok) navigate("/signin");
+          } catch (error) {
+            console.error("Error logging out :", error);
+          }
         }
       });
-    } catch (error) {
-      console.error("Error logging out :", error);
-    }
-  };
+    } 
 
 
   useEffect(() => {
@@ -150,7 +154,6 @@ function DashboardNavbar() {
               >
                 profile
               </button>
-              {/* <Link to='/dashboard/settings' >settings</Link> */}
               <button
                 onClick={() => {
                   navigate("/dashboard/settings");
@@ -169,5 +172,5 @@ function DashboardNavbar() {
       </div>
     </div>
   );
-}
+};
 export default DashboardNavbar;
