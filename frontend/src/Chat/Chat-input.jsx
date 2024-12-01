@@ -11,9 +11,11 @@ export default function Chat_input({ selected }) {
         {
             message && (socket.send(
                 JSON.stringify({
+                    type: 'message',
                     message: message,
                     receiver: selected.id,
                     time: new Date().toLocaleTimeString(),
+                    flag: selected.is_blocked,
                 }
                 )
             ))

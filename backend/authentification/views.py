@@ -244,6 +244,7 @@ class FriendsList(APIView):
                 'username': friend.friend.username,
                 'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg',
                 'is_blocked': friend.is_blocked,
+                'is_online': friend.friend.is_online
             }
             for friend in friends
         ]
@@ -290,6 +291,7 @@ class Profile(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'friendship_status': friendship_status,
+            'is_online': user.is_online,
         })
 
 class RemoveFriend(APIView):
