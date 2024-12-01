@@ -23,11 +23,9 @@ function FriendDataProvider ({ children }) {
   }
     useEffect(() => {
       fetchFriendList();
-    // should a dependency be added here to re-fetch the friend list when a new friend is added
-    }, [false]);
-
+    }, []);
   return (
-    <FriendDataContext.Provider value={{ friends, setFriends }}>
+    <FriendDataContext.Provider value={{ friends, setFriends, fetchFriendList}}>
       {children}
     </FriendDataContext.Provider>
   );

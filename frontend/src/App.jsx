@@ -41,7 +41,9 @@ function App() {
             {/* Protected Routes */}
             <Route path="/dashboard" element={
               <UserDataProvider>
-                <ProtectedRoute component={NavbarSideBar} />
+                <FriendDataProvider>
+                  <ProtectedRoute component={NavbarSideBar} />
+                </FriendDataProvider>
               </UserDataProvider>
             }>
               <Route path="" element={
@@ -59,7 +61,9 @@ function App() {
 
             <Route path="/Chat" element={
               <UserDataProvider>
-                <ProtectedRoute component={NavbarSideBar} />
+                <FriendDataProvider>
+                  <ProtectedRoute component={NavbarSideBar} />
+                </FriendDataProvider>
               </UserDataProvider>
             }>
               <Route path="" element={

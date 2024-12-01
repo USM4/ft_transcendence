@@ -27,54 +27,6 @@ function NotificationsToggle({ displayNotification }) {
       setNotif(false);
     }
   };
-
-  // useEffect(() => {
-  //   if (socket)
-  //     console.log("reaady state ----------> ", socket.readyState);
-  //   else
-  //     console.log("socket is null");
-  // }, [socket]);
-
-  // useEffect(() => {
-  //   // Ensure the socket is open and ready to receive messages
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     // Define the onmessage handler inside the useEffect hook to listen for incoming messages
-  //     socket.onmessage = (event) => {
-  //       try {
-  //         const data = JSON.parse(event.data);
-  //         const type = data.type;
-  //         const message = data.message;
-  //         console.log("Notification received:", data);
-  //         setNotification((prevNotifications) => [
-  //           ...prevNotifications,
-  //           message,
-  //         ]);
-  //         console.log("Notification:", message.from_user);
-  //       } catch (error) {
-  //         console.error("Error parsing notification:", error);
-  //       }
-  //     };
-  //   }
-  // }, [socket]);
-
-  // useEffect(() => {
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.onmessage = (event) => {
-  //       try {
-  //         const data = JSON.parse(event.data);
-  //         console.log("Notification received:", data);
-  //         if (data.type === 'receive_notification'){
-  //           setNotification((prevNotifications) => [
-  //             ...prevNotifications,
-  //             data.message,
-  //           ]);
-  //         }
-  //       } catch (error) {
-  //         console.error('Error parsing notification:', error);
-  //       }
-  //     };
-  //   }
-  // }, [socket]);
   
   const acceptFriendRequest = async (requestId) => {
     try {
@@ -98,7 +50,7 @@ function NotificationsToggle({ displayNotification }) {
         Swal.fire({
           position: "top-end",
           icon: "success",
-          title: "Your are now friends",
+          title: "You are friends now !",
           showConfirmButton: false,
           timer: 1500,
           background: '#000',

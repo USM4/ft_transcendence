@@ -8,5 +8,8 @@
   font-weight: 400;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #33332D;
+  background-image: url('/b.png');
+  background-size: cover;
+  background-position: 50% 40%;
+  /* background-color: #33332D; */
 }
