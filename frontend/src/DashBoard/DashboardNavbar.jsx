@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
+import { FriendDataContext } from "./FriendDataContext.jsx";
 import {
   BrowserRouter,
   Outlet,

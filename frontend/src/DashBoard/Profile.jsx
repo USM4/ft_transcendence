@@ -23,13 +23,14 @@ import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 import { SocketContext } from "./SocketContext.jsx";
 import toast from "react-hot-toast";
 function Profile() {
-  // const {socket} = useContext(SocketContext);
+
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
   const { friends } = useContext(FriendDataContext);
   const { username } = useParams();
+
   const sendFriendRequest = async (to_user) => {
     const response = await fetch(
       "http://localhost:8000/auth/send_friend_request/",
@@ -51,6 +52,7 @@ function Profile() {
       }));
     } else toast.error(data.error);
   };
+
   const getButtonText = () => {
     if (switchUser.friendship_status === "pending") return "Pending";
     else if (switchUser.friendship_status === "friends") return "Remove Friend";
@@ -59,34 +61,37 @@ function Profile() {
 
   const removeFriend = async (to_user) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You want to remove friend !?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, proceed!",
-      confirmButtonColor: '#28a745',
+      confirmButtonColor: "#28a745",
       cancelButtonText: "No, cancel",
-      cancelButtonColor: '#dc3545',
-      background: '#000',
-      color: '#fff',
+      cancelButtonColor: "#dc3545",
+      background: "#000",
+      color: "#fff",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const response = await fetch("http://localhost:8000/auth/remove_friend/", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ friend_id: to_user }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        toast.success(data.message);
-        setStrangerData((prevData) => ({
-          ...prevData,
-          friendship_status: "not_friend",
-        }));
-      } else toast.error(data.error);
+        const response = await fetch(
+          "http://localhost:8000/auth/remove_friend/",
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ friend_id: to_user }),
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message);
+          setStrangerData((prevData) => ({
+            ...prevData,
+            friendship_status: "not_friend",
+          }));
+        } else toast.error(data.error);
       }
     });
   };
@@ -120,8 +125,8 @@ function Profile() {
           return;
         }
       };
-      fetchStranger();
       getButtonText();
+      fetchStranger();
     } else {
       setStranger(false);
     }
