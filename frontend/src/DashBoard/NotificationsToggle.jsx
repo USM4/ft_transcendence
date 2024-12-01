@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "./SocketContext.jsx";
 
-function NotificationsToggle() {
+function NotificationsToggle({ displayNotification }) {
   const [notifications, setNotification] = useState([]);
+  const [showNotification, setShowNotification] = useState(false);
   const { socket } = useContext(SocketContext);
+  const [notif, setNotif] = useState(false);
 
   const handleNotification = async () => {
     try {
@@ -17,28 +19,62 @@ function NotificationsToggle() {
       if (response.ok) {
         const data = await response.json();
         setNotification(data);
+        setNotif(true);
       }
     } catch (error) {
       console.error("Error fetching notification:", error);
+      setNotif(false);
     }
   };
 
   useEffect(() => {
-    if (socket) {
-      socket.onmessage = (event) => {
-        console.log("Notification received:", event.data);
-        const notification = JSON.parse(event.data);
-        console.log("Notification:", notification);
-        setNotification((prevNotifications) => [
-          ...prevNotifications,
-          notification,
-        ]);
-      };
-    } else {
-      console.error("Socket connection not available");
-    }
+    if (socket)
+      console.log("reaady state ----------> ", socket.readyState);
+    else
+      console.log("socket is null");
   }, [socket]);
 
+  // useEffect(() => {
+  //   // Ensure the socket is open and ready to receive messages
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     // Define the onmessage handler inside the useEffect hook to listen for incoming messages
+  //     socket.onmessage = (event) => {
+  //       try {
+  //         const data = JSON.parse(event.data);
+  //         const type = data.type;
+  //         const message = data.message;
+  //         console.log("Notification received:", data);
+  //         setNotification((prevNotifications) => [
+  //           ...prevNotifications,
+  //           message,
+  //         ]);
+  //         console.log("Notification:", message.from_user);
+  //       } catch (error) {
+  //         console.error("Error parsing notification:", error);
+  //       }
+  //     };
+  //   }
+  // }, [socket]);
+
+  useEffect(() => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log("Notification received:", data);
+          if (data.type === 'receive_notification'){
+            setNotification((prevNotifications) => [
+              ...prevNotifications,
+              data.message,
+            ]);
+          }
+        } catch (error) {
+          console.error('Error parsing notification:', error);
+        }
+      };
+    }
+  }, [socket]);
+  
   const acceptFriendRequest = async (requestId) => {
     try {
       const response = await fetch(
@@ -66,22 +102,27 @@ function NotificationsToggle() {
 
   useEffect(() => {
     handleNotification();
-  }, []);
+    console.log("Notification:", notif);
+  }, [notif]);
+
   return (
     <div className="notif-invitation-text">
+      {console.log("Current notifications:", notifications)}
       <div>
+        {console.log("length ..................... :", notifications.length)}
         {notifications.length === 0 ? (
           <div style={{ color: "white" }}> No Notifications </div>
         ) : (
           notifications.map((notification) => (
-            <div key={notification.id} className="notification">
-              <div style={{ color: "white" }}>{notification.message}</div>
+            <div key={notification.id} className="notification">        
+              <div style={{ color: "white" }}>
+                {notification.user_from} sent a friend request{" "}
+                {notification.message}
+              </div>
               <div className="notification-accept">
-                {" "}
                 <button onClick={() => acceptFriendRequest(notification.id)}>
-                  {" "}
-                  Accept{" "}
-                </button>{" "}
+                  Accept
+                </button>
               </div>
             </div>
           ))

@@ -1,23 +1,26 @@
-// import React, { useEffect, useState } from "react";
 import React, { useState, useEffect, useCallback } from 'react';
 import Canvas from './Canvas';
 import Ball from './Ball';
 import Racket from './Racket';
-import { webSocketService } from "../services/WebSocketService";
-import GameCanvas from "./GameCanvas";
 
 const PongGame = ({ isAIEnabled }) => {
-  // const [isAIEnabled, setIsAIEnabled] = useState(true);
   const [ball, setBall] = useState({
     x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#cd202c'
   });
 
   const [leftRacket, setLeftRacket] = useState({
-    x: 40, y: 200, width: 10, height: 100, color: '#33332D', velocity: 5,
+    x: 40, y: 200, width: 10, height: 100, color: '#33332D', velocity: 20,
   });
 
   const [rightRacket, setRightRacket] = useState({
-    x: 950, y: 200, width: 10, height: 100, color: '#33332D', velocity: 5,
+    x: 950, y: 200, width: 10, height: 100, color: '#33332D', velocity: 20,
+  });
+
+  const [keysPressed, setKeysPressed] = useState({
+    w: false,
+    s: false,
+    o: false,
+    l: false,
   });
 
   const moveAIRacket = () => {
@@ -51,31 +54,37 @@ const PongGame = ({ isAIEnabled }) => {
   const updateBallPosition = useCallback(() => {
     setBall((prevBall) => {
       let { x, y, velocityX, velocityY } = prevBall;
+
       x += velocityX;
       y += velocityY;
 
-      if (y <= 0 || y >= 500) velocityY = -velocityY;
-
-      if (x < 0 || x > 1000) {
-        resetPositions();
-        return prevBall;
+      if (y - ball.radius <= 0 || y + ball.radius >= 500) {
+        velocityY = -velocityY;
       }
 
       if (
-        x <= leftRacket.x + leftRacket.width &&
+        x - ball.radius <= leftRacket.x + leftRacket.width &&
         y >= leftRacket.y &&
         y <= leftRacket.y + leftRacket.height
       ) {
-        velocityX = -velocityX;
+        velocityX = Math.abs(velocityX);
+        x = leftRacket.x + leftRacket.width + ball.radius;
       }
+
       if (
-        x >= rightRacket.x - rightRacket.width &&
+        x + ball.radius >= rightRacket.x &&
         y >= rightRacket.y &&
         y <= rightRacket.y + rightRacket.height
       ) {
-        velocityX = -velocityX;
+        velocityX = -Math.abs(velocityX);
+        x = rightRacket.x - ball.radius;
       }
-
+    
+      if (x - ball.radius <= 0 || x + ball.radius >= 1000) {
+        resetPositions();
+        return prevBall;
+      }
+    
       return { ...prevBall, x, y, velocityX, velocityY };
     });
   }, [leftRacket, rightRacket]);
@@ -94,7 +103,45 @@ const PongGame = ({ isAIEnabled }) => {
       newY = Math.max(0, Math.min(newY, 500 - prev.height));
       return { ...prev, y: newY };
     });
-  }
+  };
+
+  const handleKeyDown = (e) => {
+    setKeysPressed((prev) => {
+      const updatedKeys = { ...prev, [e.key]: true };
+
+      if (updatedKeys.w) {
+        moveLeftRacket(-1);
+      }
+      if (updatedKeys.s) {
+        moveLeftRacket(1);
+      }
+
+      if (updatedKeys.o) {
+        moveRightRacket(-1);
+      }
+      if (updatedKeys.l) {
+        moveRightRacket(1);
+      }
+
+      return updatedKeys;
+    });
+  };
+
+  const handleKeyUp = (e) => {
+    setKeysPressed((prev) => {
+      const updatedKeys = { ...prev, [e.key]: false };
+      return updatedKeys;
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   const draw = useCallback(
     (context) => {
@@ -117,18 +164,16 @@ const PongGame = ({ isAIEnabled }) => {
   );
 
   return (
-    <div>
+    <div className='Game-render'>
       <Canvas draw={draw} width={1000} height={500} />
       <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
       <Racket x={leftRacket.x} y={leftRacket.y} width={leftRacket.width} height={leftRacket.height} color={leftRacket.color} upKey="w" downKey="s" onMove={moveLeftRacket} />
       {!isAIEnabled && (
         <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
       )}
-      {/* <button onClick={() => setIsAIEnabled(!isAIEnabled)}>
-        {isAIEnabled ? 'Play with Friend' : 'Play with AI'}
-      </button> */}
     </div>
   );
 };
 
 export default PongGame;
+

@@ -48,8 +48,6 @@ body {
   flex-direction: column;
   min-width: 80px;
   height: 100%;
-  border-radius: 7px;
-  border: 1px solid rgb(174, 255, 218);
   padding: 20px;
   /* border-right: 1px solid #D4FCB5; */
   background-color: #000;
@@ -326,7 +324,7 @@ body {
   font-size: 16px;
   font-family: inherit;
   outline: none;
-  border: 2px solid rgb(174, 255, 218);
+  /* border: 2px solid rgb(174, 255, 218); */
 }
 
 .search-btn .search-icon{
@@ -887,7 +885,7 @@ body {
 
 .bottom-side-prfl .right-prfl-component{
   display: flex;
-  width: 65%;
+  width: 100%;
   flex-direction: column;
   gap: 10px;
 }
@@ -1082,10 +1080,28 @@ body {
   border: 3px solid rgb(178, 187, 240);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: space-around; */
   align-items: center;
   gap: 40px;
   margin: auto;
+}
+.settings-options .settings-title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40%;
+  font-size: 28px;
+  flex-direction: column;
+  gap: 20px;
+} 
+.settings-options .edit-and-twofa{
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  /* width: 100%; */
+  height: 40%;
+  gap: 30px;
+
 }
 
 .settings-options .general-profile-settings button, .two-fa-settings button{
@@ -1164,6 +1180,15 @@ body {
   font-family: inherit;
   padding: 3px;
   color: rgb(178, 187, 240);
+}
+
+.settings-title {
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: rgb(112, 128, 229);
 }
 
 .profile-edit-settings .save-settings{
@@ -1258,7 +1283,53 @@ body {
   height: 100%;
   border-radius: 5px;
 }
+
 .two-foctor-tools .confirmation-input input{
+  width: 50%;
+  height: 50px;
+  border: none;
+  outline: none;
+  /* border-bottom: 2px solid rgb(178, 187, 240); */
+  /* background-color: gb(255, 223, 128); */
+  font-size: 20px;
+  font-family: inherit;
+  padding: 10px;
+  color:rgb(255, 223, 128);
+}
+
+.disable-component{
+  display: flex;
+  width: 50%;
+  height: 50%;
+  margin: auto;
+  flex-direction: column;
+  border-radius: 10px;
+  border: 2px solid rgb(178, 187, 240);
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.desable-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.disable-btn button{
+  color:rgb(255, 223, 128);
+  background-color: #121212;
+  height: 50px;
+  border: none;
+  font-size: 20px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 10px 20px;
+  /* border-radius: 5px; */
+}
+
+.desable-input input{
   width: 50%;
   height: 50px;
   border: none;
@@ -1285,15 +1356,76 @@ body {
 
 /* Sidebar */
 .chat-sidebar {
-  /* position: relative; */
   width: 30%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   border: 2px solid rgb(174, 255, 218);
   border-radius: 5px;
 
 
 }
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  list-style: none;
+  overflow-y: auto;
+  gap: 20px;
+  padding: 5px;
+  scrollbar-width: none;
+  
+}
+.user-list::-webkit-scrollbar {
+  display: none;
+}
+
+.user {
+  display: flex;
+  flex-direction: row;
+  padding: 15px;
+  cursor: pointer;
+  gap: 5px;
+}
+.user p {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.user:hover {
+  border: 1px solid rgb(190, 251, 223);
+}
+
+.avatar {
+  display: flex;
+  flex-direction: column;
+  width: 60px;
+  height: 60px;
+}
+.avatar img{
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+/* .details {
+
+} */
+
+.name {
+  font-weight: bold;
+  color: rgb(238, 172, 93);
+  padding-left: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 100%;
+}
+
 
 /* Main chat area */
 .chat-main {
@@ -1316,110 +1448,6 @@ body {
   padding: 10px 10px;
 }
 
-/* Chat area */
-.chat-area {
-  display: flex;
-  flex-direction: column;
-  height: 80%;
-  border: 2px solid rgb(174, 255, 218);
-  border-radius: 5px;
-}
-
-/* Input area */
-.chat-input {
-  display: flex;
-  flex-direction: column;
-  /* border-top: 1px solid #6c7711; */
-  border: 2px solid rgb(174, 255, 218);
-  border-radius: 5px;
-  height: 10%;
-  /* align-items: center; */
-
-}
-
-.chat-input button {
-  position: absolute;
-  margin-left: 5px;
-  bottom: 20px;
-  padding: 20px 40px;
-  border: none;
-  background-color: #007bff;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.user-list {
-  display: flex;
-  flex-direction: column;
-  list-style: none;
-  overflow-y: auto;
-  gap: 20px;
-  padding: 5px;
-}
-
-.user {
-  display: flex;
-  flex-direction: row;
-  padding: 15px;
-  cursor: pointer;
-  gap: 5px;
-}
-
-.user:hover {
-  border: 1px solid rgb(190, 251, 223);
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-}
-.avatar img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.online::after {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #4caf50;
-}
-
-.offline {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #f44336;
-}
-
-.details {
-  display: flex;
-  flex-direction: column;
-  width: 90%;
-}
-
-.name {
-  font-weight: bold;
-  color: rgb(238, 172, 93);
-  padding-left: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.lastmsg {
-  padding-left: 5px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-}
-
 .header-name {
   display: flex;
   color: rgb(238, 172, 93);
@@ -1428,7 +1456,7 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   align-items: center;
-
+  
 }
 
 .header-wraper{
@@ -1446,31 +1474,586 @@ body {
 
 .avatar-header {
   display: flex;
+  flex-direction: column;
+  width: 80px;
+  height: 80px;
+  
+}
 
+.avatar-header img{
   width: 80px;
   height: 80px;
   border-radius: 50%;
   overflow: hidden;
-
-}
-.avatar-header img{
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
+
 .menu-list{
-  opacity: 0.8;
+  opacity: 0.9;
   position: absolute;
   list-style: none;
   width: 250px;
-  border: 1px solid rgb(238, 172, 93);
+  color: rgb(238, 172, 93);
+  border: 1px solid rgb(174, 255, 218);
   border-radius: 5px;
   right: 18%;
+  backdrop-filter: blur(10px);
+  background: black;
+  z-index: 10;
 }
+
+
 
 .menu-content:hover{
   background-color: #d7dbe1;  
 }
 
+/* Chat area */
+.chat-area {
+  display: flex;
+  flex-direction: column-reverse;
+  height: 95%;
+  border: 2px solid rgb(174, 255, 218);
+  border-radius: 5px;
+  scrollbar-width: none;
+  overflow-y: auto;
+  
+}
+.chat-area::-webkit-scrollbar {
+  display: none;
+}
+.default{
+  margin: auto;
+  opacity: 0.3;
 
+}
+
+.message-wrap {
+  display: flex;
+  margin-top: auto;
+  flex-direction: column;
+  justify-content: end;
+  gap: 20px;
+  padding: 10px 5px;
+}
+
+.message {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  width: 100%;
+}
+
+.message-sent {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(174, 255, 218);
+  width: 50%;
+  padding: 15px;
+  border-radius: 0px 30px 30px 30px;
+  color: white;
+  word-wrap: break-word;
+  word-break: break-all;
+  
+}
+
+.message-received {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  border: 1px solid rgb(238, 172, 93);
+  width: 50%;
+  padding: 15px;
+  border-radius:  30px 0px 30px 30px;
+  word-wrap: break-word;
+  word-break: break-all;
+  /* justify-content: end; */
+}
+
+
+/* Input area */
+.chat-input {
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  height: 10%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 10px;
+}
+
+.text-area{
+  display: flex;
+  width: 92%;
+}
+
+.text-areas-input{
+  display: flex;
+  height: 75px;
+  width: 100%;
+  background-color: transparent;
+  resize: none;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid rgb(174, 255, 218);
+  justify-content: center;
+  outline: none;
+  transition: border-color 0.2s;
+  font-size: 15px;
+}
+.text-areas-input:focus{
+  border: 2px solid rgb(238, 172, 93);
+}
+.text-areas-input::placeholder{
+  color: #ffffff;
+  opacity: 1;
+
+}
+
+.button-area{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  width: 7%;
+}
+
+.chat-input button {
+
+  height: 70px;
+  width: 80%;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  border: 2px solid rgb(174, 255, 218);
+}
+.chat-input button:hover {
+  border: 2px solid rgb(238, 172, 93);
+}
+.chat-input button:focus {
+  border: 2px solid rgb(238, 172, 93);
+}
+
+.search-results {
+  position: absolute;
+  top: 50px;
+  width: 700px;
+  background-color: #000;
+  display: flex;
+  padding: 10px;
+  gap: 10px;
+  flex-direction: column;
+  max-height: 300px;
+
+  border: 2px solid rgb(174, 255, 218);
+  border-radius: 10px;
+  overflow-y: auto;
+}
+
+.search-result {
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  text-decoration: none;
+  color: rgb(174, 255, 218);
+  border-radius: 10px;
+}
+.search-result:hover {
+  background-color:  rgb(174, 255, 218);
+  border: 1px solid #000;
+  color: #000;
+}
+
+.search-result-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  border: 2px solid rgb(174, 255, 218);
+}
+
+.search-result-username {
+  font-size: 16px;
+}
+
+.options-component{
+  width: 80%;
+  height: 90%;
+  margin: auto;
+  border-radius: 10px;
+  border: 2px solid #FFD700;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 40px;
+  gap: 20px;
+}
+
+.options-component .tournament-welcoming{
+  display: flex;
+  height: 30%;
+  width: 100%;
+  /* background-color: red; */
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  gap: 30px;
+}
+
+.options-component .tournament-welcoming p{
+  /* background: linear-gradient(90deg, rgb(174, 255, 218), #FFD700); */
+  font-size: 30px;
+  font-weight: bold;
+  color: #FF4500;
+}
+
+.options-component .options{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  height: 40%;
+}
+
+ .options-component .option{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  height: 100%;
+  border-radius: 10px;
+  border: 2px solid #FFD700;
+  padding: 20px;
+}
+
+.options-component .option:hover{
+  transform: scale(1.01);
+  border: 2px solid #FF4500;
+  box-shadow: 0 4px 15px rgb(255, 69, 0, 0.9);
+}
+
+.options-component .options button{
+  font-size: 30px;
+  font-weight: bold;
+  font-family: inherit;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+  color: #FFD700;
+  cursor: pointer;
+}
+.options-component .options button:hover{
+  text-shadow: 0 0 10px rgb(255, 69, 0, 0.7);
+}
+.tournament-registration-component {
+  display: flex;
+  width: 80%;
+  height: 90%;
+  margin: auto;
+  border-radius: 10px;
+  border: 2px solid #FFD700;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 40px;
+  gap: 20px;
+}
+
+.Ping-Pong.Tournament.Registration {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 3px solid #FFAA39;
+  gap: 20px;
+  padding: 40px;
+}
+
+.registration-title {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 10%;
+  padding: 40px;
+  /* background-color: red; */
+}
+
+.return-icon{
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  display: flex;
+  cursor: pointer;
+
+}
+
+.return-icon button{
+  background-color: #FFD700;
+  border: none;
+  border-radius: 5px;
+  font-size: 30px;
+  width: 65px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color:#000
+}
+
+.return-icon button :hover{
+  background-color: #FFAA39;
+  width: 65px;
+  height: 55px;
+  border-radius: 5px;
+}
+
+
+.tournament-registration-component .title-trnmt {
+  display: flex;
+  width: 60%;
+  flex-direction: column;
+  
+}
+
+.tournament-registration-component .title-trnmt p{
+  font-size: 32px;
+  font-weight: bold;
+  color: #FFAA39;
+  text-transform: uppercase;
+}
+
+.tournament-players-components .tournament-rules {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+  padding: 40px;
+  border-radius: 10px;
+  border: 2px solid #FFAA39;
+}
+
+
+
+.tournament-rules h3 {
+  font-size: 30px;
+  font-weight: bold;
+  color: #d4af37;
+  margin-bottom: 20px;
+}
+
+.tournament-rules ul {
+  color: #FFD700;
+  list-style: none;
+}
+
+.tournament-rules li {
+  font-size: 18px;
+  margin-bottom: 20px;
+  
+}
+
+.tournament-rules li:before {
+  content: "•";
+  color: #FFD700;
+  margin-right: 10px;
+}
+
+
+.tournament-rules .next-to-trnmt{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 20%;
+}
+
+.tournament-rules .next-to-trnmt button{
+  color: #000;
+  border: none;
+  width: 150px;
+  height: 50px;
+  border-radius: 5px;
+  font-weight: bold;
+  font: inherit;
+  font-size: 22px;
+  background-color: #FF4500;
+  transition: background-color 0.4s ease;
+  cursor: pointer;
+}
+
+.tournament-rules .next-to-trnmt button:hover {
+  background-color: #FFD700;
+} 
+
+
+
+.tournament-component{
+  width: 80%;
+  height: 90%;
+  margin: auto;
+  border-radius: 10px;
+  border: 2px solid #FFD700;
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 40px;
+  gap: 20px;
+}
+
+.tournament-component .tournament-header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* width: 100%; */
+  height: 100%;
+  /* background-color: red; */
+  gap: 20px;
+}
+.tournament-component .Tournament-Title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.tournament-component .start-tournament{
+  display: flex ;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 20%;
+}
+
+.start-tournament button{
+  color: #000;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  font: inherit;
+  cursor: pointer;
+  background-color: #b78c2d;
+  transition: background-color 0.3s ease;
+}
+.start-tournament button p{
+  font-size: 20px;
+}
+
+.start-tournament button:hover {
+  background-color: #d4af37;
+}
+
+
+/*************************************************************/
+
+.Ping-Pong.Tournament.Registration .tournament-players-components{
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  gap: 20px;
+}
+.tournament-players-components .tournament-players{
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  height: auto;
+  gap: 20px;
+  border-radius: 10px;
+  border: 2px solid #FFAA39 ;
+  /* background-color: red; */
+}
+
+.tournament-players p{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
+  font-weight: bold;
+  color: #d4af37;
+  padding: 20px;
+}
+
+
+.tournament-players .player{
+  display: flex;
+  justify-content: space-between;
+  /* align-items: center; */
+  padding: 20px 30px;
+  width: 100%;
+  height: 10%;
+  border-radius: 10px;
+  /* color: FFAA39; */
+}
+.tournament-players .player h3{
+  font-size: 20px;
+  font-weight: bold;
+  color: #32CD32;
+}
+.tournament-players .player span{
+  font-size: 18px;
+  font-weight: bold;
+  /* color: #; */
+}
+.tournament-players .player input{
+  width: 300px;
+  height: 30px;
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #39FFF9;
+  background-color: #000;
+  font-size: 20px;
+  font-family: inherit;
+  padding: 3px;
+  color: #39FFF9;
+}
+
+.tournament-players .player button{
+  border : none;
+  background-color: transparent;
+  color: #FFD700;
+  cursor: pointer;
+}
+
+.Game-main-Page button {
+  border: 3px solid #FFAA39;
+  color: #FFD700;
+  cursor: pointer;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: inherit;
+  background-color: transparent;
+  width: 30%;
+  height: 100%;
+  margin: auto;
+  border-radius: 5px;
+  padding: 15px 30px;
+  margin: 10px;
+} */
+
+.Game-main-Page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  text-align: center;
+}
+
+.Game-main-Page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}

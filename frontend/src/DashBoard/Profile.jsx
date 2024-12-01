@@ -20,8 +20,9 @@ import { UserDataContext } from "./UserDataContext.jsx";
 import { FriendDataContext } from "./FriendDataContext.jsx";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
-
+import { SocketContext } from "./SocketContext.jsx";
 function Profile() {
+  const {socket} = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
   const navigate = useNavigate();
@@ -52,6 +53,31 @@ function Profile() {
       console.log("something wrong", data);
     }
   };
+  // const sendFriendRequest = async (to_user) => {
+  //   setPending(true);
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     socket.send(JSON.stringify({
+  //       type: "friend_request",
+  //       to_user: to_user,
+  //       from_user: user.id,
+  //     }));
+  //   }
+  // };
+
+  // const sendFriendRequest = async (to_user) => {
+  //   setPending(true);
+  //   if (socket && socket.readyState === WebSocket.OPEN) {
+  //     socket.send(JSON.stringify({
+  //       type: "friend_request",
+  //       to_user: to_user,
+  //       from_user: user.id,
+  //     }
+  //   ));
+  //   }
+  //   else {
+  //     console.error('WebSocket not connected');
+  //   }
+  // };
 
   useEffect(() => {
     if (username !== user.username) {
@@ -88,7 +114,6 @@ function Profile() {
     <div className="profile-component">
       <div className="top-side-prfl">
         <div className="profile-img-name">
-          {console.log("user dataaaaaaa :", switchUser)}
           <img src={switchUser?.avatar || player} alt="" />
           <div className="profile-infos">
             <div className="profile-name"> {switchUser.username}</div>
@@ -112,22 +137,29 @@ function Profile() {
         )}
       </div>
       <div className="bottom-side-prfl">
-        <div className="left-prfl-component">
-          <div className="friends-list-title">Friends List</div>
-          <div className="prfl-friend-list-container">
-            {!stranger && friends && friends.length > 0 ? (
-              friends.map((friend) => (
-                <ProfileFriendList
-                  key={friend.id}
-                  username={friend.username}
-                  avatar={friend.avatar}
-                />
-              ))
-            ) : (
-              <p>No friends yet</p>
-            )}
-          </div>
-        </div>
+        {
+          !stranger ? (
+              <div className="left-prfl-component">
+                <div className="friends-list-title">Friends List</div>
+                <div className="prfl-friend-list-container">
+                  {!stranger && friends && friends.length > 0 ? (
+                    friends.map((friend) => (
+                      <ProfileFriendList
+                        key={friend.id}
+                        id={friend.id}
+                        username={friend.username}
+                        avatar={friend.avatar}
+                      />
+                    ))
+                  ) : (
+                    <p>No friends yet</p>
+                  )}
+                </div>
+              </div>
+          ) : (
+            <></>
+          )
+        }
         <div className="right-prfl-component">
           <div className="prfl-chart">
             <div className="prfl-chart-title"> Statistics </div>

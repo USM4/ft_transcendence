@@ -1,31 +1,37 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Avatar, Badge } from '@mui/material';
 
 
 export default function Chat_header({ selected }) {
     const [menu, setMenu] = useState(false);
+    const navigate = useNavigate();
 
     function handleClick() {
         setMenu((prevState) => !prevState);
     }
 
     function handleBlockClicked() {
-        console.log("CLICKED")
+        // I STILL DON'T HAVE THE BLOCK STATUS
+        // NEED TO CHECK IF I CAN HANDLE IT WITH A REQUEST FROM THE BACK ELSE IT'S GONNA BE AN ARRAY OF NAMES BLOCKED
+
+        {/* this.blocked.push(selected.name)*/ }
     }
     function handleProfileClicked() {
-        console.log("CLIC")
+        navigate(`/dashboard/profile/${selected.username}`);
     }
     function handleGameClicked() {
-        console.log("C")
+        {/* MUST HANDLE THE GAME INVITATION  BUTTON */ }
     }
 
     return (
         <div className="chat-header">
             <div className="header-wraper">
                 <div className="avatar-header">
-                    <img src={selected.avatar} alt={`${selected.name}'s avatar`} />
+                    <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.username}'s avatar`} />
                 </div>
                 <div className="header-name">
-                    <h2 >{selected.name}</h2>
+                    <h2 >{selected.username}</h2>
                 </div>
             </div>
 
@@ -34,7 +40,7 @@ export default function Chat_header({ selected }) {
                 <ul onClick={handleClick} >
                     <h1>...</h1>
                     {menu &&
-                        <div className="menu-list">
+                        <div className="menu-list block-box">
                             <li className="menu-content" onClick={handleBlockClicked}>
                                 <h2>⊘ BLOCK</h2>
                             </li>

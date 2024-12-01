@@ -35,11 +35,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
-    'game',
-    'daphne',
+    'chat',
+    'rest_framework',
     'corsheaders',
+    'channels',
+    'daphne',
     'authentification',
+    'game',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,6 +55,7 @@ ASGI_APPLICATION = 'ft_transcendence.asgi.application'
 MIDDLEWARE = [
     'authentification.middleware.JWTAuthFromCookieMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'authentification.middleware.RefreshTokenMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -101,11 +104,14 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
+if os.getenv('DJANGO_ENV') == 'development':
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
     'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production

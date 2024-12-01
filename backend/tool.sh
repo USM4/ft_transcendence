@@ -12,5 +12,6 @@ pip install channels
 pip install daphne
 pip install pyotp
 pip install qrcode
+pip install PyJWT
 
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"

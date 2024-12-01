@@ -7,6 +7,13 @@ class ClientSignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = ['username', 'email' , 'password', 'avatar']
+        # extra_kwargs = {
+        #     'password': {'write_only': True},
+        #     'username': {'required': True,
+        #         'min_length': 9,
+        #         'max_length': 20,
+        #     },
+        # }
 
     def create(self, validated_data):
         client = Client(username=validated_data['username'], email=validated_data['email'])
