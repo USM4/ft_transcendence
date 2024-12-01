@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SocketContext } from "./SocketContext.jsx";
+import Swal from "sweetalert2";
 
 function NotificationsToggle({ displayNotification }) {
   const [notifications, setNotification] = useState([]);
@@ -94,6 +95,15 @@ function NotificationsToggle({ displayNotification }) {
             (notification) => notification.id !== requestId
           )
         );
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your are now friends",
+          showConfirmButton: false,
+          timer: 1500,
+          background: '#000',
+          color: '#fff',
+        });
       }
     } catch (error) {
       console.error("Error accepting friend request:", error);

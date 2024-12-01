@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import Swal from "sweetalert2";
 import DashboardNavbar from "./DashboardNavbar";
 import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
@@ -58,22 +58,37 @@ function Profile() {
   };
 
   const removeFriend = async (to_user) => {
-    const response = await fetch("http://localhost:8000/auth/remove_friend/", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ friend_id: to_user }),
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to remove friend !?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: "Yes, proceed!",
+      confirmButtonColor: '#28a745',
+      cancelButtonText: "No, cancel",
+      cancelButtonColor: '#dc3545',
+      background: '#000',
+      color: '#fff',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await fetch("http://localhost:8000/auth/remove_friend/", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ friend_id: to_user }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(data.message);
+        setStrangerData((prevData) => ({
+          ...prevData,
+          friendship_status: "not_friend",
+        }));
+      } else toast.error(data.error);
+      }
     });
-    const data = await response.json();
-    if (response.ok) {
-      toast.success(data.message);
-      setStrangerData((prevData) => ({
-        ...prevData,
-        friendship_status: "not_friend",
-      }));
-    } else toast.error(data.error);
   };
   const handleFriendShip = async () => {
     if (switchUser.friendship_status === "friends")
