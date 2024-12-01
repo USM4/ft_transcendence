@@ -1,19 +1,63 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Badge } from '@mui/material';
-
+import Swal from 'sweetalert2';
+import { ChatSocketContext } from './Chat.jsx'
+import { useContext } from 'react';
+import { Badge } from '@mui/material';
 
 export default function Chat_header({ selected }) {
     const [menu, setMenu] = useState(false);
     const navigate = useNavigate();
+    const socket = useContext(ChatSocketContext);
 
     function handleClick() {
         setMenu((prevState) => !prevState);
     }
 
+    function handleBlock() {
+        console.log('Block Clicked');
+        selected.is_blocked = !selected.is_blocked;
+        socket.send(
+            JSON.stringify({
+                type: 'block',
+                flag: selected.is_blocked,
+                receiver: selected.id,
+                message: null,
+            })
+        )
+
+    }
+
+
     function handleBlockClicked() {
-        // MUST HANDLE THE BLOCK BUTTON
-        // selected.is_blocked = !selected.is_blocked;
+        try {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this !?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Yes, proceed!",
+                confirmButtonColor: '#28a745',
+                cancelButtonText: "No, cancel",
+                cancelButtonColor: '#dc3545',
+                background: '#000',
+                color: '#fff',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    handleBlock();
+                    Swal.fire({
+                        title: selected.is_blocked ? 'Blocked!' : 'Unblocked!',
+                        text: selected.is_blocked ? 'This user has been blocked successfully' : 'This user has been unblocked successfully',
+                        icon: 'success',
+                        background: '#000',
+                        color: '#fff',
+                    })
+                }
+            })
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
     function handleProfileClicked() {
         navigate(`/dashboard/profile/${selected.username}`);
@@ -27,7 +71,18 @@ export default function Chat_header({ selected }) {
         <div className="chat-header">
             <div className="header-wraper">
                 <div className="avatar-header">
-                    <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.username}'s avatar`} />
+                    <Badge
+                        color={!selected.is_online ? "error" : "success"}
+                        variant="dot"
+                        overlap="circular"
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                    >
+                        <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.username}'s avatar`} />
+                    </Badge>
+
                 </div>
                 <div className="header-name">
                     <h2 >{selected.username}</h2>

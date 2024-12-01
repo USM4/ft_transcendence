@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Messages,Room_Name
 from channels.db import database_sync_to_async
-from authentification.models import Client
+from authentification.models import Client,Friend
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -23,49 +23,64 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
+        rq_type = text_data_json["type"]
+        flag = text_data_json["flag"]
         message = text_data_json["message"]
         receiver = text_data_json["receiver"]
         room_receive = f'room_{receiver}'
 
         if not receiver:
             return
-        try:
-            chat_room = await self.get_or_create_room(self.sender.id, receiver)
-            # Send chat history (if not done before) when the receiver is first known
+        if rq_type == "message":
+            try:
+                chat_room = await self.get_or_create_room(self.sender.id, receiver)
+                # Send chat history (if not done before) when the receiver is first known
 
-            if not self.messages or self.messages['group_id'] != chat_room.id:
-                if self.messages:
-                    self.messages.clear()
-                self.messages = await self.get_messages(chat_room.id)
-                messages_data = await self.convert_messages_to_dict(self.messages["messages"])
-                for msg in self.messages["messages"]:
-                    if not msg.message:
-                        continue
-                    await self.send(text_data=json.dumps({
-                        'message': msg.message,
-                        'receiver': msg.receiver,
+                if not self.messages or self.messages['group_id'] != chat_room.id:
+                    if self.messages:
+                        self.messages.clear()
+                    self.messages = await self.get_messages(chat_room.id)
+                    messages_data = await self.convert_messages_to_dict(self.messages["messages"])
+                    for msg in self.messages["messages"]:
+                        if not msg.message:
+                            continue
+                        await self.send(text_data=json.dumps({
+                            'message': msg.message,
+                            'receiver': msg.receiver,
+                            "sender": self.sender.id,
+                        }))
+
+                # Save the message to the database
+                await self.save_message(message, chat_room, receiver)
+
+                await self.channel_layer.group_send(
+                    self.room_name, {
+                        "type": "sendMessage",
+                        "message": message,
+                        "receiver": receiver,
                         "sender": self.sender.id,
-                    }))
-
-            # Save the message to the database
-            await self.save_message(message, chat_room, receiver)
-
-            await self.channel_layer.group_send(
-                self.room_name, {
-                    "type": "sendMessage",
-                    "message": message,
+                    })
+                await self.channel_layer.group_send(
+                    room_receive, {
+                        "type": "sendMessage",
+                        "message": message,
+                        "receiver": receiver,
+                        "sender": self.sender.id,
+                    })
+            except Exception as e:
+                print("An error occurred: ", str(e))
+        elif rq_type == "block":
+            try:
+                await self.block_friend(flag,receiver)
+                print("Blocked")
+                await self.send(text_data=json.dumps({
+                    "message": None,
                     "receiver": receiver,
                     "sender": self.sender.id,
-                })
-            await self.channel_layer.group_send(
-                room_receive, {
-                    "type": "sendMessage",
-                    "message": message,
-                    "receiver": receiver,
-                    "sender": self.sender.id,
-                })
-        except Exception as e:
-            print("An error occurred: ", str(e))
+                }))
+            except Exception as e:
+                print("An error occurred: ", str(e))
+
 
 
     async def sendMessage(self, event):
@@ -83,6 +98,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
                 )
             )
+
+    @database_sync_to_async
+    def block_friend(self, flag, receiver):
+        friend = Friend.objects.get(user=self.sender,friend_id=receiver)
+        friend.is_blocked = flag
+        friend.save()
+        return 
 
     @database_sync_to_async
     def get_or_create_room(self, sender_id, receiver_id):

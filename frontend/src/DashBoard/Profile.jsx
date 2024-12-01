@@ -112,6 +112,7 @@ function Profile() {
     }
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
+  console.log("switchUser", switchUser.is_online);
   return (
     <div className="profile-component">
       <div className="top-side-prfl">

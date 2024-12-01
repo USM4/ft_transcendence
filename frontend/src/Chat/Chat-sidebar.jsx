@@ -30,14 +30,25 @@ export default function Chat_sidebar() {
 		if (!selectedFriend)
 			setSelectedFriend(friend);
 		if (selectedFriend && selectedFriend.id != friend.id)
-			setSelectedFriend(friend);		
-		{ clicked != friend.id && (socket.send(JSON.stringify({ message: null, receiver: friend.id })), setClicked(friend.id)) }
+			setSelectedFriend(friend);
+		console.log(friend)
+		{ clicked != friend.id && (socket.send(JSON.stringify({ type:'message', message: null, receiver: friend.id, flag: friend.is_blocked, })), setClicked(friend.id)) }
 	}
 
 	const friendsList = friends.map((friend) => (
 		<li key={friend.id} className="user" onClick={() => handleClick(friend)}>
 			<div className="avatar">
+			<Badge
+                        color={!friend.is_online ? "error" : "success"}
+                        variant="dot"
+                        overlap="circular"
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                    >
 					<img src={friend.avatar} alt={`${friend.username}'s avatar`} />
+				</Badge>
 			</div>
 			<div className="details">
 				<p className="name">{friend.username}</p>
