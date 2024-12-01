@@ -3,8 +3,9 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { ChatSocketContext } from './Chat.jsx'
 
 export default function Chat_input({ selected }) {
-    const [message, setMessage] = useState();
+    const [message, setMessage] = useState('');
     const socket = useContext(ChatSocketContext);
+    const [blocked, setBlocked] = useState(selected.is_blocked);
 
 
     function handleSubmit() {
@@ -15,18 +16,25 @@ export default function Chat_input({ selected }) {
                     message: message,
                     receiver: selected.id,
                     time: new Date().toLocaleTimeString(),
-                    flag: selected.is_blocked,
+                    flag: null,
                 }
                 )
             ))
             setMessage('');
         }
     }
+    useEffect(() => {
+        socket.onmessage = () => {
+            setBlocked(selected.is_blocked);
+            console.log(selected.is_blocked)
+        }
+    }, [socket])
+
 
     return (
         <div className="chat-input">
 
-            {!selected.is_blocked ?
+            {!blocked ?
                 (<><div className="text-area">
                     <textarea className="text-areas-input"
                         placeholder="Type a message..."

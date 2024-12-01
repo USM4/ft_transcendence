@@ -34,21 +34,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if rq_type == "message":
             try:
                 chat_room = await self.get_or_create_room(self.sender.id, receiver)
-                # Send chat history (if not done before) when the receiver is first known
-
-                if not self.messages or self.messages['group_id'] != chat_room.id:
-                    if self.messages:
-                        self.messages.clear()
-                    self.messages = await self.get_messages(chat_room.id)
-                    messages_data = await self.convert_messages_to_dict(self.messages["messages"])
-                    for msg in self.messages["messages"]:
-                        if not msg.message:
-                            continue
-                        await self.send(text_data=json.dumps({
-                            'message': msg.message,
-                            'receiver': msg.receiver,
-                            "sender": self.sender.id,
-                        }))
 
                 # Save the message to the database
                 await self.save_message(message, chat_room, receiver)
@@ -67,6 +52,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "receiver": receiver,
                         "sender": self.sender.id,
                     })
+            except Exception as e:
+                print("An error occurred: ", str(e))
+        elif rq_type == "history":
+            try:
+                chat_room = await self.get_or_create_room(self.sender.id, receiver)
+
+                if not self.messages or self.messages['group_id'] != chat_room.id:
+                        if self.messages:
+                            self.messages.clear()
+                        self.messages = await self.get_messages(chat_room.id)
+                        messages_data = await self.convert_messages_to_dict(self.messages["messages"])
+                        for msg in self.messages["messages"]:
+                            if not msg.message:
+                                continue
+                            await self.send(text_data=json.dumps({
+                                'message': msg.message,
+                                'receiver': msg.receiver,
+                                "sender": self.sender.id,
+                            }))
             except Exception as e:
                 print("An error occurred: ", str(e))
         elif rq_type == "block":
