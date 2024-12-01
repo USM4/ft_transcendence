@@ -57,6 +57,7 @@ function ProfileSettings() {
   };
   const updateInfos = async () => {
     try {
+      // console.log("----------------->", formData.get('avatar'));
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",

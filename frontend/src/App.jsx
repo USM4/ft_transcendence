@@ -7,7 +7,7 @@ import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
 import NavbarSideBar from './DashBoard/NavBarSideBar.jsx'
 import Dashboard from './DashBoard/Dashboard.jsx';
-import Profile from './Dashboard/Profile.jsx'
+import Profile from './DashBoard/Profile.jsx'
 import ProfileSettings from'./DashBoard/ProfileSettings.jsx';
 import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
@@ -27,7 +27,7 @@ function App() {
   return (
     <>
       <Router>
-        <SocketContextProvider>
+        {/* <SocketContextProvider> */}
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             {/* Public Routes */}
@@ -109,7 +109,7 @@ function App() {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </SocketContextProvider>
+        {/* </SocketContextProvider> */}
       </Router>
     </>
   );
