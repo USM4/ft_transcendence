@@ -2162,3 +2162,61 @@ body {
   margin: 2px 0 0;
   font-size: 12px;
 }
+
+.win-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.player-profiles {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player-profiles > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45%;
+  text-align: center;
+}
+
+.player-profiles img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid #007bff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player-profiles h3 {
+  font-size: 18px;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+.player-profiles p {
+  font-size: 16px;
+  color: #040502;
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
