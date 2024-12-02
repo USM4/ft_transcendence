@@ -2,7 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Canvas from './Canvas';
 import Ball from './Ball';
-import Racket from './Racket';
+import player1Image from '../img/player1.jpeg';
+// import WinPage from './WinPage';
+import player2Image from '../img/player2.jpeg';
+
+
+
 
 const PongGame = ({ isAIEnabled }) => {
   const navigate = useNavigate();
@@ -48,37 +53,32 @@ const PongGame = ({ isAIEnabled }) => {
   const updateBallPosition = useCallback(() => {
     setBall((prevBall) => {
       let { x, y, velocityX, velocityY } = prevBall;
-  
-      // Mise à jour de la position de la balle
+
       x += velocityX;
       y += velocityY;
-  
-      // Vérification des collisions avec le haut et le bas
+
       if (y - ball.radius <= 0 || y + ball.radius >= 500) {
         velocityY = -velocityY;
       }
-  
-      // Vérification de la collision avec la raquette gauche
+
       if (
         x - ball.radius <= leftRacket.x + leftRacket.width &&
         y >= leftRacket.y &&
         y <= leftRacket.y + leftRacket.height
       ) {
-        velocityX = Math.abs(velocityX);  // Reflet de la balle vers la droite
+        velocityX = Math.abs(velocityX);
         x = leftRacket.x + leftRacket.width + ball.radius;
       }
   
-      // Vérification de la collision avec la raquette droite
       if (
         x + ball.radius >= rightRacket.x &&
         y >= rightRacket.y &&
         y <= rightRacket.y + rightRacket.height
       ) {
-        velocityX = -Math.abs(velocityX);  // Reflet de la balle vers la gauche
+        velocityX = -Math.abs(velocityX);
         x = rightRacket.x - ball.radius;
       }
-  
-      // Condition pour marquer un but
+
       let updatedScores = { ...scores };
       if (x - ball.radius <= 0) {
         updatedScores.rightPlayer += 1;
@@ -86,23 +86,20 @@ const PongGame = ({ isAIEnabled }) => {
         updatedScores.leftPlayer += 1;
       }
 
-      // Vérification du score
       if (updatedScores.leftPlayer === 5) {
         setWinner('Player 1');
       } else if (updatedScores.rightPlayer === 5) {
         setWinner('Player 2');
       }
 
-      // Mise à jour des scores
       setScores(updatedScores);
 
-      // Réinitialisation de la balle à la position de départ après un score
       if (x - ball.radius <= 0 || x + ball.radius >= 1000) {
         return {
           ...prevBall,
           x: 500,
           y: 250,
-          velocityX: (updatedScores.leftPlayer === 5 ? -1 : 1) * 4, // La balle revient de l'autre côté
+          velocityX: (updatedScores.leftPlayer === 5 ? -1 : 1) * 4,
           velocityY: 4,
         };
       }
@@ -110,6 +107,10 @@ const PongGame = ({ isAIEnabled }) => {
       return { ...prevBall, x, y, velocityX, velocityY };
     });
   }, [leftRacket, rightRacket, scores]);
+
+  // if (winner) {
+  //   return <WinPage winner={winner} resetGame={resetGame} />;
+  // }
 
   const moveLeftRacket = (direction) => {
     setLeftRacket((prev) => {
@@ -126,16 +127,6 @@ const PongGame = ({ isAIEnabled }) => {
       return { ...prev, y: newY };
     });
   };
-
-  if (winner) {
-    return (
-      <div className="winner-screen">
-        <h1>{winner} Wins!</h1>
-        <button onClick={() => navigate("/game")}>Go to Home</button>
-        <button onClick={resetGame}>Play Again</button>
-      </div>
-    );
-  }
 
   const handleKeyDown = (e) => {
     setKeysPressed((prev) => {
@@ -191,6 +182,7 @@ const PongGame = ({ isAIEnabled }) => {
 
       context.fillStyle = rightRacket.color;
       context.fillRect(rightRacket.x, rightRacket.y, rightRacket.width, rightRacket.height);
+      if (winner) return;
     },
     [ball, leftRacket, rightRacket]
   );
@@ -199,19 +191,24 @@ const PongGame = ({ isAIEnabled }) => {
     <div className='Game-render'>
       <div className="player-profiles">
         <div>
+        <img src={player1Image}></img>
           <h3>Player 1</h3>
           <p>Score: {scores.leftPlayer}</p>
         </div>
         <div>
+          <img src={player2Image}></img>
           <h3>{isAIEnabled ? 'AI' : 'Player 2'}</h3>
           <p>Score: {scores.rightPlayer}</p>
         </div>
       </div>
       <Canvas draw={draw} width={1000} height={500} />
       <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
+      <h3>Click W to go up and S to go down</h3>
+      <h3>Click O to go up and L to go down</h3>
     </div>
   );
 };
 
 export default PongGame;
+
 
