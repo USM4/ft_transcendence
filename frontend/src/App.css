@@ -2235,3 +2235,117 @@ body {
   margin: 2px 0 0;
   font-size: 12px;
 }
+
+.win-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.player-profiles {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player-profiles > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45%;
+  text-align: center;
+}
+
+.player-profiles img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid #007bff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.player-profiles h3 {
+  font-size: 18px;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+.player-profiles p {
+  font-size: 16px;
+  color: #040502;
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.win-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; */
+  background-color: #000;
+  text-align: center;
+}
+
+.win-page h1 {
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.win-page button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: transparent;
+  color: #FFAA39;
+  border: 3px solid #FFAA39;
+  border-color: #FFAA39;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.win-page button:hover {
+  background-color: #FFAA39;
+  color: #33332D;
+  transform: scale(1.1);
+}
+
+.Game-render h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-top: 15px;
+  text-align: center;
+  background-color: #000000;
+  padding: 10px;
+  border-radius: 5px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.Game-render .key-img {
+  width: 24px;
+  height: 24px;
+  margin: 0 8px;
+}
