@@ -44,6 +44,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "message": message,
                         "receiver": receiver,
                         "sender": self.sender.id,
+                        "chat_room": chat_room.id,
                     })
                 await self.channel_layer.group_send(
                     room_receive, {
@@ -51,6 +52,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "message": message,
                         "receiver": receiver,
                         "sender": self.sender.id,
+                        "chat_room": chat_room.id,
                     })
             except Exception as e:
                 print("An error occurred: ", str(e))
@@ -67,20 +69,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             if not msg.message:
                                 continue
                             await self.send(text_data=json.dumps({
+                                'message_id': msg.id,
                                 'message': msg.message,
                                 'receiver': msg.receiver,
                                 "sender": self.sender.id,
+                                "chat_room": chat_room.id,
                             }))
             except Exception as e:
                 print("An error occurred: ", str(e))
         elif rq_type == "block":
             try:
+                chat_room = await self.get_or_create_room(self.sender.id, receiver)
                 await self.block_friend(flag,receiver)
-                print("Blocked")
+                print(flag)
                 await self.send(text_data=json.dumps({
                     "message": None,
                     "receiver": receiver,
                     "sender": self.sender.id,
+                    "chat_room": chat_room.id,
                 }))
             except Exception as e:
                 print("An error occurred: ", str(e))
@@ -91,14 +97,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = event["message"]
         receiver = event["receiver"]
         sender = event["sender"]
+        chat_room = event["chat_room"]
         if not message:
             return
+        message_id = await self.get_messages(chat_room)
+        messages_data = await self.convert_messages_to_dict(message_id["messages"])
         await self.send(
             text_data=json.dumps(
                 {
+                    "message_id": message_id["messages"][-1].id,
                     "message": message,
                     "receiver": receiver,
                     "sender": sender,
+                    "chat_room": chat_room,
                 }
                 )
             )

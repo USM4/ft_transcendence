@@ -10,6 +10,9 @@ export default function Chat_input({ selected }) {
 
     function handleSubmit() {
         {
+            if (blocked) {
+                return;
+            }
             message && (socket.send(
                 JSON.stringify({
                     type: 'message',
@@ -23,6 +26,11 @@ export default function Chat_input({ selected }) {
             setMessage('');
         }
     }
+    useEffect(() => {  
+        setBlocked(selected.is_blocked)
+    }, [selected.is_blocked])
+    console.log(selected)
+    console.log(blocked)
 
 
     return (
