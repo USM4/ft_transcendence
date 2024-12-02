@@ -2101,3 +2101,137 @@ body {
     opacity: 1;
   }
 }
+/****************************************************************************************************/
+
+/* .Game-main-Page button {
+  border: 3px solid #FFAA39;
+  color: #ffd700;
+  cursor: pointer;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: inherit;
+  background-color: transparent;
+  width: 30%;
+  height: 100%;
+  margin: auto;
+  border-radius: 5px;
+  padding: 15px 30px;
+  margin: 10px;
+} */
+
+/* .Game-main-Page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  text-align: center;
+}
+
+.Game-main-Page h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.Game-render {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}  */
+
+.Game-main-Page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  text-align: center;
+  background-image: url('Game/img/d95ded2ac516e5076ff61ff0dccf4bb0.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  color: #fff;
+  padding: 20px;
+}
+
+.Game-main-Page h1 {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.Game-main-Page button {
+  border: 3px solid #FFAA39;
+  color: #ffd700;
+  cursor: pointer;
+  font-size: 25px;
+  font-weight: bold;
+  font-family: inherit;
+  background-color: transparent;
+  width: 30%;
+  height: 50px;
+  margin: 10px;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.Game-main-Page button:hover {
+  background-color: #FFAA39;
+  color: #33332D;
+  transform: scale(1.1);
+}
+
+.Game-render {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  height: 90%;
+  justify-content: center;
+  background-color: #000000;
+  border: 5px solid #0af3c8;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.Game-render > * {
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.player-profiles {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  background-color: #000000;
+}
+
+.player-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.player-name {
+  margin: 5px 0 0;
+  font-size: 14px;
+}
+
+.player-score {
+  margin: 2px 0 0;
+  font-size: 12px;
+}

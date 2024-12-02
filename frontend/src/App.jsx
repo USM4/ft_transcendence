@@ -22,6 +22,8 @@ import NotFound from './NotFound.jsx';
 import Tournament from './Tournament/Tournament.jsx';
 import OptionsPage from './Tournament/OptionsPage.jsx';
 import TournamentRegistration from './Tournament/TournamentRegistration.jsx';
+import PongGame from './Game/AppGame.jsx';
+import AppGame from './Game/AppGame.jsx';
 
 function App() {
   return (
@@ -94,7 +96,17 @@ function App() {
                   <ProtectedRoute component={TournamentRegistration} />
                 </UserDataProvider>
               } />
-              
+               <Route path='game/*' element={
+              <UserDataProvider>
+                <ProtectedRoute component={AppGame} />
+              </UserDataProvider>
+            }>
+            <Route path='' element={
+              <FriendDataProvider>
+                <ProtectedRoute component={AppGame} />
+              </FriendDataProvider>
+            }/>
+            </Route>
               {/* Play vs Bot */}
               {/* <Route path="play-vs-bot" element={
                 <UserDataProvider>

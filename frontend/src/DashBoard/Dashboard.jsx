@@ -55,6 +55,7 @@ function Dashboard() {
                     </div>
                 </div>
             </div>
+            <img src='/player.png'/>
         </div>
     )
 }
