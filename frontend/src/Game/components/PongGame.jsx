@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Canvas from './Canvas';
 import Ball from './Ball';
+import WinPage from './WinPage';
 import player1Image from '../img/player1.jpeg';
-// import WinPage from './WinPage';
 import player2Image from '../img/player2.jpeg';
 
 
@@ -108,10 +108,6 @@ const PongGame = ({ isAIEnabled }) => {
     });
   }, [leftRacket, rightRacket, scores]);
 
-  // if (winner) {
-  //   return <WinPage winner={winner} resetGame={resetGame} />;
-  // }
-
   const moveLeftRacket = (direction) => {
     setLeftRacket((prev) => {
       let newY = prev.y + direction * prev.velocity;
@@ -187,6 +183,10 @@ const PongGame = ({ isAIEnabled }) => {
     [ball, leftRacket, rightRacket]
   );
 
+  if (winner) {
+    return <WinPage winner={winner} resetGame={resetGame} />;
+  }
+
   return (
     <div className='Game-render'>
       <div className="player-profiles">
@@ -203,8 +203,16 @@ const PongGame = ({ isAIEnabled }) => {
       </div>
       <Canvas draw={draw} width={1000} height={500} />
       <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
-      <h3>Click W to go up and S to go down</h3>
-      <h3>Click O to go up and L to go down</h3>
+      <h3>
+        {/* <img src='../img/W-key.png' alt="W key" className="key-img" />  */}
+        {/* <img src='../img/S-key.png' alt="S key" className="key-img" />  */}
+        Click W to go up and S to go down
+      </h3>
+      <h3>
+        {/* <img src='../img/O-key.png' alt="O key" className="key-img" />  */}
+        {/* <img src='../img/L-key.png' alt="L key" className="key-img" />  */}
+        Click O to go up and L to go down
+      </h3>
     </div>
   );
 };
