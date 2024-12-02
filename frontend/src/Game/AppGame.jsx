@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import PongGame from "./components/PongGame";
 import Matchmaking from "./components/Matchmaking";
+import WinPage from "./components/WinPage";
 
 function AppGame() {
   return (
