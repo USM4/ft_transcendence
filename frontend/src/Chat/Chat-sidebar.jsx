@@ -12,11 +12,48 @@ import { ChatSocketContext } from './Chat.jsx'
 
 
 export default function Chat_sidebar() {
+	const [message, setMessage] = useState({});
+	const [chatroom, setChatroom] = useState();
 	const { friends } = useContext(FriendDataContext)
 	const location = useLocation();
 	const socket = useContext(ChatSocketContext);
 	const [selectedFriend, setSelectedFriend] = useState(null);
 	const [clicked, setClicked] = useState(null);
+
+	useEffect(() => {
+		socket.onmessage = (event) => {
+		  const data = JSON.parse(event.data);
+		  const { chat_room, message, message_id } = data;
+	
+		  setChatroom(chat_room);
+		  if (message){
+	
+			setMessage((prevMessage) => {
+			  const chatMessage = prevMessage[chat_room] || [];
+			  const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
+			  
+			  
+			  if(!messageExists) {
+				return {
+				  ...prevMessage,
+				  [chat_room]: [...chatMessage, data],
+				};
+			  }
+			  return prevMessage;
+			});
+		  }
+		  else{
+			setMessage((prevMessage) => {
+			  const chatMessage = prevMessage[chat_room] || [];
+			  return {
+				...prevMessage,
+				[chat_room]: chatMessage,
+			  };
+			});
+		  }
+		};
+	  }, [socket])
+	  const chatroomMessages = message[chatroom] || [];
 
 	useEffect(() => {
 		if (location.state && location.state.friend) {
@@ -72,7 +109,7 @@ export default function Chat_sidebar() {
 				<div className="chat-main">
 
 					<Chat_header selected={selectedFriend}></Chat_header>
-					<Chat_area selected={selectedFriend}></Chat_area>
+					<Chat_area selected={selectedFriend} chatroomMessages={chatroomMessages}></Chat_area>
 					<Chat_input selected={selectedFriend}></Chat_input>
 				</div>
 			)}
