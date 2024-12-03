@@ -2270,9 +2270,3 @@ body {
   width: 90%;
   max-width: 500px;
 }
-
-.Game-render .key-img {
-  width: 24px;
-  height: 24px;
-  margin: 0 8px;
-}

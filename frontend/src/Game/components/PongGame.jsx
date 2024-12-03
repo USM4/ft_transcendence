@@ -203,16 +203,22 @@ const PongGame = ({ isAIEnabled }) => {
       </div>
       <Canvas draw={draw} width={1000} height={500} />
       <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
+      <Racket x={leftRacket.x} y={leftRacket.y} width={leftRacket.width} height={leftRacket.height} color={leftRacket.color} upKey="w" downKey="s" onMove={moveLeftRacket} />
+      {!isAIEnabled && (
+        <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
+      )}
       <h3>
         {/* <img src='../img/W-key.png' alt="W key" className="key-img" />  */}
         {/* <img src='../img/S-key.png' alt="S key" className="key-img" />  */}
         Click W to go up and S to go down
       </h3>
-      <h3>
-        {/* <img src='../img/O-key.png' alt="O key" className="key-img" />  */}
-        {/* <img src='../img/L-key.png' alt="L key" className="key-img" />  */}
-        Click O to go up and L to go down
-      </h3>
+      {!isAIEnabled && (
+        <h3>
+          {/* <img src='../img/O-key.png' alt="O key" className="key-img" />  */}
+          {/* <img src='../img/L-key.png' alt="L key" className="key-img" />  */}
+          Click O to go up and L to go down
+        </h3>
+      )}
     </div>
   );
 };
