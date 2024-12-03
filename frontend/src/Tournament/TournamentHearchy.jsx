@@ -7,8 +7,9 @@ const TournamentHearchy = () => {
 	const location = useLocation()
 	const navigate = useNavigate()
 	const [winner, setWinner] = useState("");
-	const [ongoing, setOngoing] = useState({ Player1: "qw", Player2: "qw" });
+	const [ongoing, setOngoing] = useState({ Player1: "", Player2: "" });
 	
+	console.log("LOCATION", location)
 	const players = {
 		matche1: {
 			Player1: location.state[0].name,
@@ -32,72 +33,59 @@ const TournamentHearchy = () => {
 	}
 	const [semi_players, setSemi_Players] = useState({
 		matche1: {
-			Player1: "",
-			Player2: "",
+			Player1: null,
+			Player2: null,
 		},
 		matche2: {
-			Player1: "",
-			Player2: "",
+			Player1: null,
+			Player2: null,
 		},
 	})
 	const [final_players, setFinal_Players] = useState({
 		matche: {
-			Player1: "",
-			Player2: "",
+			Player1: null,
+			Player2: null,
 		},
 	})
 
-	console.log("ONGOING", ongoing);
-	console.log("SEMI_PLAYERS", semi_players);
-	console.log("FINAL_PLAYERS", final_players);
-	const startgame = (matche) => {
-		return new Promise((resolve) => {
-			const participants = [matche.Player1, matche.Player2]
-			setOngoing(matche);
-			setTimeout(() => {
-				matche.Player1 = participants[Math.floor(Math.random() * participants.length)]
-				resolve(matche.Player1)
-			}, 2000)
-		})
-	}
-
-	const handlClick = async () => {
-		const semiResults = {
-			matche1:{
-				Player1: await startgame(players.matche1),
-				Player2: await startgame(players.matche2),
-			},
-			matche2:{
-				Player1: await startgame(players.matche3),
-				Player2: await startgame(players.matche4),
-			},
-		};
-		setSemi_Players(semiResults);
+	const handlClick = () => {
+				
+		// const semiResults = {
+		// 	matche1:{
+		// 		Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche1 }),
+		// 		Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche2 }),
+		// 	},
+		// 	matche2:{
+		// 		Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche3 }),
+		// 		Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche4 }),
+		// 	},
+		// };
+		// setSemi_Players(semiResults);
 	};
-	useEffect(() => {
-		const play_final = async () => {
-			if (semi_players.matche1 && semi_players.matche2) {
-				const finalResults = {
-					matche:
-					{
-						Player1: await startgame(semi_players.matche1),
-						Player2: await startgame(semi_players.matche2),
-					} 
-				};
-				setFinal_Players(finalResults);
-			}
-		}
-		play_final();
-	}, [semi_players]);
-	useEffect(() => {
-		const get_winner = async () => {
-			if (final_players.matche) {
-				const matchWinner = await startgame(final_players.matche);
-				setWinner(matchWinner);
-			}
-		}
-		get_winner();
-	}, [final_players]);
+	// useEffect(() => {
+	// const play_final = async () => {
+	// 		if (semi_players.matche1 && semi_players.matche2) {
+	// 			const finalResults = {
+	// 				matche:
+	// 				{
+	// 					Player1: await startgame(semi_players.matche1),
+	// 					Player2: await startgame(semi_players.matche2),
+	// 				} 
+	// 			};
+	// 			setFinal_Players(finalResults);
+	// 		}
+	// 	}
+	// 	play_final();
+	// }, [semi_players]);
+	// useEffect(() => {
+	// 	const get_winner = async () => {
+	// 		if (final_players.matche) {
+	// 			const matchWinner = await startgame(final_players.matche);
+	// 			setWinner(matchWinner);
+	// 		}
+	// 	}
+	// 	get_winner();
+	// }, [final_players]);
 	const resetTournament = () => {
 		navigate("/tournament/options/tournament-registration");
 	};
@@ -283,7 +271,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(ongoing.Player1 == semi_players.matche1.Player1 && ongoing.Player2 == semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(semi_players && ongoing.Player1 == semi_players.matche1.Player1 && ongoing.Player2 == semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="320"
@@ -301,7 +289,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(ongoing.Player1 == semi_players.matche1.Player1 && ongoing.Player2 == semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(semi_players && ongoing.Player1 == semi_players.matche1.Player1 && ongoing.Player2 == semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="320"
@@ -321,7 +309,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1108 230)"
-					stroke={(ongoing.Player1 == semi_players.matche2.Player1 && ongoing.Player2 == semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(semi_players && ongoing.Player1 == semi_players.matche2.Player1 && ongoing.Player2 == semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1020"
@@ -340,7 +328,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1108 136)"
-					stroke={(ongoing.Player1 == semi_players.matche2.Player1 && ongoing.Player2 == semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(semi_players && ongoing.Player1 == semi_players.matche2.Player1 && ongoing.Player2 == semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1020"
@@ -379,7 +367,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(ongoing.Player1 == final_players.matche.Player1 && ongoing.Player2 == final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(final_players && ongoing.Player1 == final_players.matche.Player1 && ongoing.Player2 == final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="558"
@@ -398,7 +386,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 866 183)"
-					stroke={(ongoing.Player1 == final_players.matche.Player1 && ongoing.Player2 == final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(final_players && ongoing.Player1 == final_players.matche.Player1 && ongoing.Player2 == final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="793"
