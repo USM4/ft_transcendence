@@ -55,7 +55,7 @@ function DashboardNavbar() {
         confirmButtonText: "Yes, proceed!",
         confirmButtonColor: '#28a745',
         cancelButtonText: "No, cancel",
-        cancelButtonColor: '#dc3545',
+        cancelButtonColor: 'red',
         background: '#000',
         color: '#fff',
       }).then(async (result) => {
@@ -129,7 +129,7 @@ function DashboardNavbar() {
             <NotificationsIcon />
           </button>
           {showNotification && (
-            <div className="notifications-container">
+            <div className="notifications-container" ref={dropdownRef}>
               <NotificationsToggle displayNotification={showNotification} />
             </div>
           )}

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import CheckIcon from '@mui/icons-material/Check';
 import { SocketContext } from "./SocketContext.jsx";
 import Swal from "sweetalert2";
 
@@ -70,20 +71,20 @@ function NotificationsToggle({ displayNotification }) {
   return (
     <div className="notif-invitation-text">
       {console.log("Current notifications:", notifications)}
-      <div>
+      <div className="notifications-compo">
         {console.log("length ..................... :", notifications.length)}
         {notifications.length === 0 ? (
           <div style={{ color: "white" }}> No Notifications </div>
         ) : (
           notifications.map((notification) => (
             <div key={notification.id} className="notification">        
-              <div style={{ color: "white" }}>
+              <div style={{ color: "white" }} className="user-and-msg-invitation">
                 {notification.user_from}
                 {notification.message}
               </div>
               <div className="notification-accept">
                 <button onClick={() => acceptFriendRequest(notification.id)}>
-                  Accept
+                  <CheckIcon style={{color: 'green'}}/>
                 </button>
               </div>
             </div>

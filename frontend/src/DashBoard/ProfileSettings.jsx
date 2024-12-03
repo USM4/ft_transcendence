@@ -190,7 +190,7 @@ function ProfileSettings() {
                   </div>
               </div>
                 ) : (
-                  <div>2FA IS DISABLED</div>
+                  <></>
                 )
               )}
             </div>
