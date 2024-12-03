@@ -2,9 +2,17 @@ import React, { useEffect } from 'react';
 
 const Ball = ({ x, y, radius, color, updatePosition, draw }) => {
   useEffect(() => {
-    const animation = setInterval(() => updatePosition(), 16);
-    return () => clearInterval(animation);
+    let animationFrameId;
+
+    const animate = () => {
+      updatePosition();
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
   }, [updatePosition]);
+
 
   return null;
 };

@@ -22,7 +22,7 @@ import NotFound from './NotFound.jsx';
 import Tournament from './Tournament/Tournament.jsx';
 import OptionsPage from './Tournament/OptionsPage.jsx';
 import TournamentRegistration from './Tournament/TournamentRegistration.jsx';
-import PongGame from './Game/AppGame.jsx';
+import PongGame from './Tournament/TournametGame/PongGame.jsx';
 import AppGame from './Game/AppGame.jsx';
 
 function App() {
