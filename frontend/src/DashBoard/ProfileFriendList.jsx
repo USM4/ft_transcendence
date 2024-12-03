@@ -15,11 +15,14 @@ function ProfileFriendList({ username, avatar,id }) {
     };
     return (
         <div className="profile-friend-item" >
-            <div className="profile-friend-info">
-                <img src={avatar} alt="" />
-                <p> {username} </p>
+            <div className="profile-friend-info" >
+                {console.log("---------------> ",friend)}
+                <button className="friendlist-profile-nav" onClick={() => navigate(`/dashboard/profile/${friend.username}`)}>
+                    <img src={avatar} alt="" />
+                    <p> {username} </p>
+                </button>
             </div>
-            <div className="dm-friend">
+            <div className="dm-friend">               
                 <button onClick={handleSms} className="invite-btn"><SmsIcon /></button>
                 <button className="invite-btn"><SportsKabaddiIcon /></button>
             </div>

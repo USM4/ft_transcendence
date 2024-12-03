@@ -336,7 +336,7 @@ body {
   background-color: transparent;
   border: none;
   cursor: pointer;
-
+  
 }
 
 .notification-and-profile {
@@ -344,52 +344,107 @@ body {
   align-items: center;
   gap:50px;
 }
+.notification-icon{
+  border: none;
+  background-color: transparent;
+}
 
-.notification{
+.notifications-compo {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  gap: 10px;
+  cursor: pointer;
+  overflow-y: auto;
+}
+
+.notifications-compo:hover {
+  transition: background-color 0.3s ease;
+}
+
+.notification {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #000;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.notification .notification-accept{
+.notification:hover {
+  transform: translateX(5px);
+}
+.swal2-popup {
+  border: 2px solid red;
+  border-radius: 10px;
+}
+
+.user-and-msg-invitation {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.notification-accept {
+  display: flex;
   justify-content: center;
-  background-color: green;
-  color:#D4FCB5;
-  font-family: inherit;
-  border-radius: 5px solid #000;
-  height: 20px;
-  width: 60px;
+  align-items: center;
+  background-color: #000;
+  border-radius: 50%;
+  border: 1px solid green;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.notification-accept button {
+  background: transparent;
   border: none;
+  padding: 0;
   cursor: pointer;
 }
-.notification-icon{
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
+
+.notification-accept:hover {
+  background-color: #333;
+  transform: scale(1.1);
+}
+
+.notification-accept:focus {
+  outline: 2px solid #81c784;
+  outline-offset: 2px;
+}
+
+.notifications-compo .no-notifications {
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+  font-weight: 500;
 }
 
 .notifications-container{
   position: absolute;
-  top: 30px;
-  right: 10px;
+  top: 35px;
+  right: 20px;
   border-radius: 5px;
-  border: 2px solid #685E5E;
+  border: 2px solid green;
   width: 450px;
-  padding: 15px;
+  padding: 10px;
   background-color: black;
 }
 .notifications-container .notif-invitation-text{
   font-size: 18px;
-  padding-bottom: 10px;
-  /* border-bottom: 1px solid #ddd; */
   margin-bottom: 10px;
 }
 .notifications-container .notif-invitation-text button{
-  border: none;
   background-color: transparent;
   color: #fff;
   cursor: pointer;
@@ -431,15 +486,13 @@ body {
   height: 100%;
   border: none;
   background-color: #fff8e7;
-  color: #333;
+  color: green;
   border-bottom: 1px solid #ddd;
   cursor: pointer;
 }
 .profile-dropdown .dropdown-elements:hover{
   background-color: #ddd;
 }
-/* background-color: transparent; */
-
 .dashboard-components{
   display: flex;
   flex-direction: row;
@@ -448,7 +501,6 @@ body {
   margin: 0 auto;
   gap:10px;
   overflow: hidden;
-  /* border: 1px solid red; */
 }
 
 .dashboard-components .dashboard-stats{
@@ -847,10 +899,25 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 60px;
+  width: 100%;
 }
-.profile-friend-item .profile-friend-info p{
-  font-size: 18px;
+.profile-friend-item .friendlist-profile-nav
+{
+  display: flex;
+  background-color: #007bff;
+  align-items: center;
+  gap: 80px;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  cursor: pointer;
+}
+
+.profile-friend-item .friendlist-profile-nav p{
+  font-style: inherit;
+  font-size: 20px;
+  font-weight: bold;
+  color: #D4FCB5;
 }
 
 .profile-friend-item .dm-friend{

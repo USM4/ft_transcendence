@@ -29,7 +29,8 @@ function App() {
   return (
     <>
       <Router>
-        {/* <SocketContextProvider> */}
+      <UserDataProvider>
+        <SocketContextProvider>
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             {/* Public Routes */}
@@ -125,7 +126,8 @@ function App() {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        {/* </SocketContextProvider> */}
+        </SocketContextProvider>
+        </UserDataProvider>
       </Router>
     </>
   );
