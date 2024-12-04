@@ -90,6 +90,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }))
             except Exception as e:
                 print("An error occurred: ", str(e))
+        elif rq_type == "online":
+            try:
+                await self.get_online_friends()
+                await self.send(text_data=json.dumps({
+                    "message": None,
+                    "receiver": receiver,
+                    "sender": self.sender.id,
+                    "chat_room": chat_room.id,
+                }))
+            except Exception as e:
+                print("An error occurred: ", str(e))
 
 
 
@@ -115,9 +126,29 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     @database_sync_to_async
+    def get_online_friends(self):
+        friends = Friend.objects.filter(user=self.sender)
+        online_friends = []
+        for friend in friends:
+            if friend.friend.is_online:
+                online_friends.append(friend.friend.id)
+        return online_friends
+
+    @database_sync_to_async
     def block_friend(self, flag, receiver):
         friend = Friend.objects.get(user=self.sender,friend_id=receiver)
         friend.is_blocked = flag
+        if (flag == False):
+            friend.blocker = None
+        else:
+            friend.blocker = self.sender
+        friend.save()
+        friend = Friend.objects.get(user=receiver,friend_id=self.sender)
+        friend.is_blocked = flag
+        if (flag == False):
+            friend.blocker = None
+        else:
+            friend.blocker = self.sender
         friend.save()
         return 
 

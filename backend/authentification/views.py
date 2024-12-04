@@ -226,8 +226,8 @@ class AcceptFriendRequest(APIView):
             print("friend_request.status", friend_request.status)
             sender = friend_request.to_user
             receiver = friend_request.from_user
-            Friend.objects.create(user=sender, friend=receiver)
-            Friend.objects.create(user=receiver, friend=sender)
+            Friend.objects.create(user=sender, friend=receiver,blocker=None)
+            Friend.objects.create(user=receiver, friend=sender,blocker=None)
             Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
             return Response({"message": "Friend request accepted "}, status=200)
         except FriendShip.DoesNotExist:
@@ -244,7 +244,8 @@ class FriendsList(APIView):
                 'username': friend.friend.username,
                 'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg',
                 'is_blocked': friend.is_blocked,
-                'is_online': friend.friend.is_online
+                'is_online': friend.friend.is_online,
+                'blocker': friend.blocker.username if friend.blocker else None
             }
             for friend in friends
         ]
