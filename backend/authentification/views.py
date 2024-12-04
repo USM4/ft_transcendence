@@ -218,12 +218,12 @@ class AcceptFriendRequest(APIView):
         request_id = request.data.get('request_id')
         try:
             user_id = Notification.objects.get(id=request_id).user.id
-            print("user_id--------------->", user_id)
+            # print("user_id--------------->", user_id)
             friend_request = FriendShip.objects.get(to_user=user_id, status='pending')
-            print("accepeted friend request", friend_request)
+            # print("accepeted friend request", friend_request)
             friend_request.status = 'accepted'
             friend_request.save()
-            print("friend_request.status", friend_request.status)
+            # print("friend_request.status", friend_request.status)
             sender = friend_request.to_user
             receiver = friend_request.from_user
             Friend.objects.create(user=sender, friend=receiver,blocker=None)
