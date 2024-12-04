@@ -60,7 +60,11 @@ export default function Chat_sidebar() {
 			handleClick(location.state.friend)
 		}
 	}, [location]);
-	
+
+	// useEffect(() => {
+	// 	socket.send(JSON.stringify({ type: 'online', message: null, receiver: null, flag: null, }))
+	// 	console.log('Online message sent')
+	// })
 	
 	function handleClick(friend) {
 		if (!selectedFriend)
@@ -69,8 +73,7 @@ export default function Chat_sidebar() {
 			setSelectedFriend(friend);
 		{ clicked != friend.id && (socket.send(JSON.stringify({ type:'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
 	}
-	
-	console.log(selectedFriend)
+
 	const friendsList = friends.map((friend) => (
 		<li key={friend.id} className="user" onClick={() => handleClick(friend)}>
 			<div className="avatar">

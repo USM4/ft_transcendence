@@ -10,7 +10,7 @@ class Client(AbstractUser):
     password = models.CharField(max_length=255)
     is_2fa_enabled = models.BooleanField(default=False)
     secret_key = models.CharField(max_length=32, blank=True, null=True)
-    is_online = models.BooleanField(default=True)
+    is_online = models.BooleanField(default=False)
     # def __str__(self):
     #     return self.username
 
@@ -33,6 +33,7 @@ class Friend(models.Model):
     user = models.ForeignKey(Client, related_name="friends" ,on_delete=models.CASCADE)
     friend = models.ForeignKey(Client,related_name="friends_with" ,on_delete=models.CASCADE)
     is_blocked = models.BooleanField(default=False)
+    blocker = models.ForeignKey(Client, related_name='blocker', on_delete=models.CASCADE, blank=True, null=True)
 
 
 class Notification(models.Model):

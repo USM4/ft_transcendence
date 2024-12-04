@@ -66,6 +66,7 @@ export default function Chat_header({ selected }) {
         {/* MUST HANDLE THE GAME INVITATION  BUTTON */ }
         console.log('Game Invite Button Clicked');
     }
+    // console.log(selected);
 
     return (
         <div className="chat-header">
@@ -96,14 +97,14 @@ export default function Chat_header({ selected }) {
                     {menu &&
                         <div className="menu-list block-box">
                             <li className="menu-content" onClick={handleBlockClicked}>
-                                {selected.is_blocked ? <h2>⊘ UNBLOCK</h2> : <h2>⊘ BLOCK</h2>}
+                                {selected.blocker !== selected.username ? (selected.is_blocked ? <h2>⊘ UNBLOCK</h2> : <h2>⊘ BLOCK</h2>) : null}
                             </li>
                             <li className="menu-content" onClick={handleProfileClicked}>
                                 <h2>👤 PROFILE</h2>
 
                             </li>
                             <li className="menu-content" onClick={!selected.is_blocked ? () => handleGameClicked(selected) : null}>
-                                <h2>🕹️ GAMEINVITE</h2>
+                                {selected.blocker != selected.username ? (!selected.is_blocked ? <h2>🕹️ GAMEINVITE</h2> : null) : null}
                             </li>
                         </div>}
                 </ul>
