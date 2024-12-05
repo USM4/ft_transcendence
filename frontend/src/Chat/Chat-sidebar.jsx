@@ -25,6 +25,7 @@ export default function Chat_sidebar() {
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			const { chat_room, message, message_id } = data;
+			console.log(data);
 
 
 			if (chat_room)
@@ -54,6 +55,18 @@ export default function Chat_sidebar() {
 					};
 				});
 			}
+			// else if (data.type === 'block') {
+			// 	friends.map((friend) => {
+			// 		if (friend.id == data.friend_id) {
+			// 			friend.is_blocked = data.flag;
+			// 		}
+			// 		setFriendsList((prevFriends) => {
+			// 			return prevFriends.map((friend) =>
+			// 				friend.id === data.id ? { ...friend, ...data } : friend
+			// 			);
+			// 		});
+			// 	});
+			// }
 			else {
 				friends.map((friend) => {
 					if (friend.id == data.friend_id) {
@@ -72,7 +85,8 @@ export default function Chat_sidebar() {
 
 	useEffect(() => {
 		if (location.state && location.state.friend) {
-			handleClick(location.state.friend)
+			const friende = friends.find((friend) => friend.id === location.state.friend.id);
+			handleClick(friende)
 		}
 	}, [location]);
 
@@ -90,7 +104,7 @@ export default function Chat_sidebar() {
 
 		fetchStatuses();
 
-		const interval = setInterval(fetchStatuses, 5000);
+		const interval = setInterval(fetchStatuses, 10000);
 
 		return () => clearInterval(interval);
 	}, [socket]);
