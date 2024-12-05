@@ -73,7 +73,11 @@ export default function Chat_header({ selected }) {
             <div className="header-wraper">
                 <div className="avatar-header">
                     <Badge
-                        color={!selected.is_online ? "error" : "success"}
+					sx={{
+						'& .MuiBadge-dot': {
+							backgroundColor: selected.is_online ? '#00ff00' : '#ff0000',
+						},
+					}}
                         variant="dot"
                         overlap="circular"
                         anchorOrigin={{

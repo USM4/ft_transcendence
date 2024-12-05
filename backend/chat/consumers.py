@@ -29,6 +29,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         receiver = text_data_json["receiver"]
         room_receive = f'room_{receiver}'
 
+        if rq_type == "online":
+            try:
+                friend = await self.get_online_friends()
+                for friend in friend:
+                    await self.send(text_data=json.dumps({
+                        "type": "online",
+                        "online": friend.is_online,
+                        "friend_id": friend.id,
+                        "message": None,
+                    }))
+            except Exception as e:
+                print("An error occurred: ", str(e))
+
         if not receiver:
             return
         if rq_type == "message":
@@ -81,18 +94,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             try:
                 chat_room = await self.get_or_create_room(self.sender.id, receiver)
                 await self.block_friend(flag,receiver)
-                print(flag)
-                await self.send(text_data=json.dumps({
-                    "message": None,
-                    "receiver": receiver,
-                    "sender": self.sender.id,
-                    "chat_room": chat_room.id,
-                }))
-            except Exception as e:
-                print("An error occurred: ", str(e))
-        elif rq_type == "online":
-            try:
-                await self.get_online_friends()
                 await self.send(text_data=json.dumps({
                     "message": None,
                     "receiver": receiver,
@@ -127,11 +128,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_online_friends(self):
-        friends = Friend.objects.filter(user=self.sender)
+        friends = list(Friend.objects.filter(user=self.sender))
         online_friends = []
         for friend in friends:
-            if friend.friend.is_online:
-                online_friends.append(friend.friend.id)
+            online_friends.append(friend.friend)
         return online_friends
 
     @database_sync_to_async

@@ -19,41 +19,56 @@ export default function Chat_sidebar() {
 	const socket = useContext(ChatSocketContext);
 	const [selectedFriend, setSelectedFriend] = useState(null);
 	const [clicked, setClicked] = useState(null);
+	const [friendsList, setFriendsList] = useState([]);
 
 	useEffect(() => {
 		socket.onmessage = (event) => {
-		  const data = JSON.parse(event.data);
-		  const { chat_room, message, message_id } = data;
-	
-		  setChatroom(chat_room);
-		  if (message){
-	
-			setMessage((prevMessage) => {
-			  const chatMessage = prevMessage[chat_room] || [];
-			  const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
-			  
-			  
-			  if(!messageExists) {
-				return {
-				  ...prevMessage,
-				  [chat_room]: [...chatMessage, data],
-				};
-			  }
-			  return prevMessage;
-			});
-		  }
-		  else{
-			setMessage((prevMessage) => {
-			  const chatMessage = prevMessage[chat_room] || [];
-			  return {
-				...prevMessage,
-				[chat_room]: chatMessage,
-			  };
-			});
-		  }
+			const data = JSON.parse(event.data);
+			const { chat_room, message, message_id } = data;
+
+
+			if (chat_room)
+				setChatroom(chat_room);
+			if (message) {
+
+				setMessage((prevMessage) => {
+					const chatMessage = prevMessage[chat_room] || [];
+					const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
+
+
+					if (!messageExists) {
+						return {
+							...prevMessage,
+							[chat_room]: [...chatMessage, data],
+						};
+					}
+					return prevMessage;
+				});
+			}
+			else if (data.type !== 'online') {
+				setMessage((prevMessage) => {
+					const chatMessage = prevMessage[chat_room] || [];
+					return {
+						...prevMessage,
+						[chat_room]: chatMessage,
+					};
+				});
+			}
+			else {
+				friends.map((friend) => {
+					if (friend.id == data.friend_id) {
+						friend.is_online = data.online;
+					}
+					setFriendsList((prevFriends) => {
+						return prevFriends.map((friend) =>
+							friend.id === data.id ? { ...friend, ...data } : friend
+						);
+					});
+				})
+			}
 		};
-	  }, [socket])
-	  const chatroomMessages = message[chatroom] || [];
+	}, [socket])
+	const chatroomMessages = message[chatroom] || [];
 
 	useEffect(() => {
 		if (location.state && location.state.friend) {
@@ -61,39 +76,50 @@ export default function Chat_sidebar() {
 		}
 	}, [location]);
 
-	// useEffect(() => {
-	// 	socket.send(JSON.stringify({ type: 'online', message: null, receiver: null, flag: null, }))
-	// 	console.log('Online message sent')
-	// })
-	
 	function handleClick(friend) {
 		if (!selectedFriend)
 			setSelectedFriend(friend);
 		if (selectedFriend && selectedFriend.id != friend.id)
 			setSelectedFriend(friend);
-		{ clicked != friend.id && (socket.send(JSON.stringify({ type:'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
+		{ clicked != friend.id && (socket.send(JSON.stringify({ type: 'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
 	}
+	useEffect(() => {
+		const fetchStatuses = async () => {
+			socket.send(JSON.stringify({ type: 'online', message: null, receiver: null, flag: null, }));
+		};
 
-	const friendsList = friends.map((friend) => (
-		<li key={friend.id} className="user" onClick={() => handleClick(friend)}>
-			<div className="avatar">
-			<Badge
-                        color={!friend.is_online ? "error" : "success"}
-                        variant="dot"
-                        overlap="circular"
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                    >
-					<img src={friend.avatar} alt={`${friend.username}'s avatar`} />
-				</Badge>
-			</div>
-			<div className="details">
-				<p className="name">{friend.username}</p>
-			</div>
-		</li>
-	));
+		fetchStatuses();
+
+		const interval = setInterval(fetchStatuses, 5000);
+
+		return () => clearInterval(interval);
+	}, [socket]);
+	useEffect(() => {
+		setFriendsList(friends.map((friend) => (
+			<li key={friend.id} className="user" onClick={() => handleClick(friend)}>
+				<div className="avatar">
+					<Badge
+						sx={{
+							'& .MuiBadge-dot': {
+								backgroundColor: friend.is_online ? '#00ff00' : '#ff0000',
+							},
+						}}
+						variant="dot"
+						overlap="circular"
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'right',
+						}}
+					>
+						<img src={friend.avatar} alt={`${friend.username}'s avatar`} />
+					</Badge>
+				</div>
+				<div className="details">
+					<p className="name">{friend.username}</p>
+				</div>
+			</li>
+		)));
+	}, [friends]);
 
 
 	return (
