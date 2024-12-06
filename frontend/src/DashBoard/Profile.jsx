@@ -24,12 +24,24 @@ import { SocketContext } from "./SocketContext.jsx";
 import toast from "react-hot-toast";
 function Profile() {
 
+  const {socket} = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
-  const { friends } = useContext(FriendDataContext);
+  const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
+
+  useEffect(() => {
+    if(socket === null) return;
+    socket.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      console.log("data", data);
+      if (data.type === "friend_request_accepted") {
+        setFriends((prevFriends) => [...prevFriends, data.friend]);
+      }
+    }
+  }, [socket]);
 
   const sendFriendRequest = async (to_user) => {
     const response = await fetch(
