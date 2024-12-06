@@ -33,10 +33,10 @@ function SocketContextProvider ({ children }) {
     if(pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/features' && pathname !== '/howtoplay' && !socket && user){
         establishConnection();
     }
-    else if(socket !== null){
-        socket.close();
-        setSocket(null);
-    }
+    // else if(socket !== null){
+    //     socket.close();
+    //     setSocket(null);
+    // }
     }, [pathname, user]);
     return(
         <SocketContext.Provider value={{ socket}}>

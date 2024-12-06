@@ -238,37 +238,39 @@ class AcceptFriendRequest(APIView):
             receiver_channel_name = user_channel_name.get(receiver.id)
             #send a notification to the sender
             #hada hwa li sift l add friend request
-            for channel in receiver_channel_name:
-                async_to_sync(channel_layer.send)(
-                    channel,
-                    {
-                        'type': 'friend_request_accepted',
-                        'friend': {
-                            'id': sender.id,
-                            'username': sender.username,
-                            'avatar': sender.avatar if sender.avatar else '/player1.jpeg',
-                            # 'is_blocked': sender.is_blocked,
-                            'is_blocked': False,
-                            'is_online': sender.is_online
-                        },
-                    }
-                )
-            # send a notification to the receiver
-            for channel in sender_channel_name:
-                async_to_sync(channel_layer.send)(
-                    channel,
-                    {
-                        'type': 'friend_request_accepted',
-                        'friend': {
-                            'id': receiver.id,
-                            'username': receiver.username,
-                            'avatar': receiver.avatar if receiver.avatar else '/player1.jpeg',
-                            # 'is_blocked': receiver.is_blocked,
-                            'is_blocked': False,
-                            'is_online': receiver.is_online
-                        },
-                    }
-                )
+            if receiver_channel_name:
+                for channel in receiver_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_request_accepted',
+                            'friend': {
+                                'id': sender.id,
+                                'username': sender.username,
+                                'avatar': sender.avatar if sender.avatar else '/player1.jpeg',
+                                # 'is_blocked': sender.is_blocked,
+                                'is_blocked': False,
+                                'is_online': sender.is_online
+                            },
+                        }
+                    )
+                # send a notification to the receiver
+            if sender_channel_name:
+                for channel in sender_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_request_accepted',
+                            'friend': {
+                                'id': receiver.id,
+                                'username': receiver.username,
+                                'avatar': receiver.avatar if receiver.avatar else '/player1.jpeg',
+                                # 'is_blocked': receiver.is_blocked,
+                                'is_blocked': False,
+                                'is_online': receiver.is_online
+                            },
+                        }
+                    )
 
 
             return Response({"message": "Friend request accepted "}, status=200)
