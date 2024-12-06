@@ -62,10 +62,8 @@ export default function Chat_sidebar() {
 				});
 				setFriendsList([...friendsRef.current]);
 			}
-			if (data.type === 'block') {
-				console.log(data);
+			else if (data.type === 'block') {
 
-				// Update friendsRef directly
 				const updatedFriends = friendsRef.current.map((friend) => {
 					if (friend.id === data.blocked || friend.username === data.blocker) {
 						return {
@@ -80,13 +78,11 @@ export default function Chat_sidebar() {
 				friendsRef.current = updatedFriends;
 				setFriendsList(updatedFriends);
 
-				// Update selected friend if affected
 				const currentSelected = selectedFriendRef.current;
 				if (
 					currentSelected &&
 					(currentSelected.id === data.blocked || currentSelected.username === data.blocker)
 				) {
-					console.log("ana henaaaaaaaaa");
 					const updatedSelectedFriend = updatedFriends.find(
 						(friend) => friend.id === currentSelected.id
 					);
@@ -124,7 +120,6 @@ export default function Chat_sidebar() {
 			if (updatedFriend) {
 				setSelectedFriend(updatedFriend);
 			}
-			console.log("Selected1: ", selectedFriend);
 		}
 	}, [friendsList]);
 
@@ -135,7 +130,18 @@ export default function Chat_sidebar() {
 			setSelectedFriend(friend);
 		{ clicked != friend.id && (socket.send(JSON.stringify({ type: 'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
 	}
+	
+	useEffect(() => {
+		const fetchStatuses = async () => {
+			socket.send(JSON.stringify({ type: 'online', message: null, receiver: null, flag: null, }));
+		};
 
+		fetchStatuses();
+
+		const interval = setInterval(fetchStatuses, 10000);
+
+		return () => clearInterval(interval);
+	}, [socket]);
 
 	return (
 		<div className="chat-wrapper">
