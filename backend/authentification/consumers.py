@@ -47,3 +47,8 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 			'user': user,
 			'status': status
 		}))
+	async def friend_request_accepted(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'friend_request_accepted',
+			'friend' : event['friend']
+		}))

@@ -20,6 +20,7 @@ from django.shortcuts import redirect
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
+from .consumers import user_channel_name
 
 class SignUpView(APIView):
     def post(self, request):
@@ -229,6 +230,49 @@ class AcceptFriendRequest(APIView):
             Friend.objects.create(user=sender, friend=receiver,blocker=None)
             Friend.objects.create(user=receiver, friend=sender,blocker=None)
             Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+
+            #get the channel layer
+            channel_layer = get_channel_layer()
+            #get the channel name of the sender and receiver from the user_channel_name dictionary
+            sender_channel_name = user_channel_name.get(sender.id)
+            receiver_channel_name = user_channel_name.get(receiver.id)
+            #send a notification to the sender
+            #hada hwa li sift l add friend request
+            if receiver_channel_name:
+                for channel in receiver_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_request_accepted',
+                            'friend': {
+                                'id': sender.id,
+                                'username': sender.username,
+                                'avatar': sender.avatar if sender.avatar else '/player1.jpeg',
+                                # 'is_blocked': sender.is_blocked,
+                                'is_blocked': False,
+                                'is_online': sender.is_online
+                            },
+                        }
+                    )
+                # send a notification to the receiver
+            if sender_channel_name:
+                for channel in sender_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_request_accepted',
+                            'friend': {
+                                'id': receiver.id,
+                                'username': receiver.username,
+                                'avatar': receiver.avatar if receiver.avatar else '/player1.jpeg',
+                                # 'is_blocked': receiver.is_blocked,
+                                'is_blocked': False,
+                                'is_online': receiver.is_online
+                            },
+                        }
+                    )
+
+
             return Response({"message": "Friend request accepted "}, status=200)
         except FriendShip.DoesNotExist:
             return Response({"error": "Friend request not found "}, status=404)
