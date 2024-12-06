@@ -23,10 +23,10 @@ const ProtectedRoute = ({ component: Component }) => {
       };
       verifyToken();
     }, []);
-    
-  if (isAuthenticated === null)
-    return <div>Loading...</div>;
 
+  if (isAuthenticated === null)
+    return <>Loading ... </>;
+  
   if (!isAuthenticated)
     return <Navigate to="/signin" />;
 

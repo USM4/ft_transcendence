@@ -32,6 +32,12 @@ function Profile() {
   const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
 
+  console.log("----------------------SALAAAAMO3ALIKOM----------------------------")
+  // console.log("HADA RAH L USR", user.username);
+  // if (!user) {
+  //   return <div>Loading...</div>;
+  // }
+console.log("USER IS:", user)
   useEffect(() => {
     if(socket === null) return;
     socket.onmessage = (e) => {

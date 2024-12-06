@@ -19,7 +19,7 @@ function ProfileFriendList({ username, avatar,id }) {
                 {console.log("---------------> ",friend)}
                 <button className="friendlist-profile-nav" onClick={() => navigate(`/dashboard/profile/${friend.username}`)}>
                     <img src={avatar} alt="" />
-                    <p> {username} </p>
+                    <p style={{fontFamily : 'inherit'}}> {username} </p>
                 </button>
             </div>
             <div className="dm-friend">               

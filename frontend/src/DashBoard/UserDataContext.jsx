@@ -1,9 +1,11 @@
 import React from "react";
 import { useContext, createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const UserDataContext = createContext();
 function UserDataProvider({ children }) {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const getData = async () => {
       try {
@@ -11,12 +13,14 @@ function UserDataProvider({ children }) {
           method: "GET",
           credentials: "include",
         });
+        console.log("response", response)
         if (response.ok) {
           const data = await response.json();
           setUser(data);
+          // navigate('dashboard')
         }
         else
-        console.error('error getting data ');
+          navigate('signin/')
       } catch (error) {
         console.error('error getting data :', error);
       }
@@ -27,6 +31,7 @@ function UserDataProvider({ children }) {
     const updateUser = (updatedUser) => {
       setUser(updatedUser);
   };
+  console.log("USER CONTEXT PROVDER:", user)
   return (
     <UserDataContext.Provider value={{ user, updateUser}}>
       {children}
