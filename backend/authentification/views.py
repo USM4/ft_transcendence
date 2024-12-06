@@ -22,6 +22,7 @@ from channels.layers import get_channel_layer
 from django.conf import settings
 from .consumers import user_channel_name
 
+#comment
 class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
