@@ -52,3 +52,9 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 			'type': 'friend_request_accepted',
 			'friend' : event['friend']
 		}))
+
+	async def friend_removed_you(self, event):
+		await self.send(text_data=json.dumps({
+			'type': 'friend_removed_you',
+			'friend' : event['friend']
+		}))

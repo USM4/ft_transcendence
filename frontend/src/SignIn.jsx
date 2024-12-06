@@ -37,7 +37,7 @@ function SignIn() {
             if (data.error) {
                 toast.error(data.error);
             } else {
-                console.log(data)
+                // console.log(data)
                 setSuccessMessages(data);
                 navigate(data.redirect_url);
             }

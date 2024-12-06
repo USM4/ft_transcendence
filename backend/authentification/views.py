@@ -150,7 +150,6 @@ class ExtractCodeFromIntraUrl(APIView):
 class VerifyTokenView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        # print("User:", request.user)
         if request.user.is_authenticated:
             return Response({'authenticated': True}, status=200)
         return Response({'error': 'Unauthorized'}, status=401)
@@ -166,7 +165,7 @@ class LogoutView(APIView):
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
-        if user is None:
+        if not user.is_authenticated:
             return Response({'error': 'Unauthorized'}, status=401)
         return Response({
             'id': user.id,
@@ -353,6 +352,19 @@ class RemoveFriend(APIView):
             # remove the friend from the friends list
             Friend.objects.filter(user=request.user, friend=friend_id).delete()
             Friend.objects.filter(user=friend_id, friend=request.user).delete()
+            friend_channel_name = user_channel_name.get(friend_id)
+            channel_layer = get_channel_layer()
+            if friend_channel_name:
+                for channel in friend_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_removed_you',
+                            'friend': {
+                                'id': request.user.id,
+                            },
+                        }
+                    )
             return Response({'message': 'Friend removed successfully'}, status=200)
 
         except Friend.DoesNotExist:

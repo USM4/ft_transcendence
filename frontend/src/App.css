@@ -50,7 +50,7 @@ body {
   height: 100%;
   padding: 20px;
   /* border-right: 1px solid #D4FCB5; */
-  background-color: #000;
+  background: #000;
   position: relative;
 }
 
@@ -121,7 +121,7 @@ body {
   margin: 0 auto;
   max-width: 500px;
   margin-top: 300px;
-  background-color: #181815;
+  background-color: #000;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -678,9 +678,6 @@ body {
   border: 2px solid rgb(174, 255, 218);
 }
 
-.match-history-item .match-history-score{
-  
-}
 
 .match-history-item  img{
   width: 40px;
