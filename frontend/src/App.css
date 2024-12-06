@@ -901,10 +901,10 @@ body {
   align-items: center;
   width: 100%;
 }
+
 .profile-friend-item .friendlist-profile-nav
 {
   display: flex;
-  background-color: #007bff;
   align-items: center;
   gap: 80px;
   border: none;
@@ -914,9 +914,9 @@ body {
 }
 
 .profile-friend-item .friendlist-profile-nav p{
-  font-style: inherit;
   font-size: 20px;
-  font-weight: bold;
+  /* font-weight: bold; */
+  font-style: inherit;
   color: #D4FCB5;
 }
 
