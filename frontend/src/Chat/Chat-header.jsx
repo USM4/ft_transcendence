@@ -15,7 +15,6 @@ export default function Chat_header({ selected }) {
     }
 
     function handleBlock() {
-        console.log('Block Clicked');
         selected.is_blocked = !selected.is_blocked;
         socket.send(
             JSON.stringify({
@@ -63,10 +62,8 @@ export default function Chat_header({ selected }) {
         navigate(`/dashboard/profile/${selected.username}`);
     }
     function handleGameClicked() {
-        {/* MUST HANDLE THE GAME INVITATION  BUTTON */ }
         console.log('Game Invite Button Clicked');
     }
-    // console.log(selected);
 
     return (
         <div className="chat-header">

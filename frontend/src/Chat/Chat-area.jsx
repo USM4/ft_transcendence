@@ -15,6 +15,7 @@ export default function Chat_area({ selected,chatroomMessages }) {
       }
     </div>
   ))
+  // console.log(selected);
 
   return (
     <div className="chat-area">
