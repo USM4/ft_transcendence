@@ -29,25 +29,52 @@ function Profile() {
   const [stranger_data, setStrangerData] = useState(null);
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
-  const { friends, setFriends } = useContext(FriendDataContext);
+  const { friends, setFriends} = useContext(FriendDataContext);
   const { username } = useParams();
 
-  console.log("----------------------SALAAAAMO3ALIKOM----------------------------")
+  // console.log("----------------------SALAAAAMO3ALIKOM----------------------------")
   // console.log("HADA RAH L USR", user.username);
-  // if (!user) {
-  //   return <div>Loading...</div>;
-  // }
-console.log("USER IS:", user)
+  // console.log("USER IS:", user)
+  // useEffect(() => {
+  //   if(socket === null) return;
+  //   socket.onmessage = (e) => {
+  //     const data = JSON.parse(e.data);
+  //     console.log("data", data);
+  //     if (data.type === "friend_request_accepted") {
+  //       setFriends((prevFriends) => [...prevFriends, data.friend]);
+  //     } else if (data.type === "friend_removed_you") {
+  //       setFriends((prevFriends   ) =>
+  //         prevFriends.filter((friend) => friend.id !== data.friend.id)
+  //       );
+  //     }
+  //   }
+  // }, [socket]);
   useEffect(() => {
-    if(socket === null) return;
+    if (socket === null) return;
+    
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data);
       console.log("data", data);
+  
       if (data.type === "friend_request_accepted") {
-        setFriends((prevFriends) => [...prevFriends, data.friend]);
+        // Prevent adding duplicates
+        setFriends((prevFriends) => {
+          if (!prevFriends.some(friend => friend.id === data.friend.id)) {
+            return [...prevFriends, data.friend];  // Add only if friend is not already in the list
+          }
+          return prevFriends;  // Return the same list if friend already exists
+        });
+      } else if (data.type === "friend_removed_you") {
+        // Remove the friend if they are in the list
+        setFriends((prevFriends) => {
+          return prevFriends.filter((friend) => friend.id !== data.friend.id);
+        });
       }
-    }
+    };
+  
   }, [socket]);
+  
+
 
   const sendFriendRequest = async (to_user) => {
     const response = await fetch(
@@ -115,7 +142,12 @@ console.log("USER IS:", user)
   };
   const handleFriendShip = async () => {
     if (switchUser.friendship_status === "friends")
+    {
       await removeFriend(switchUser.id);
+      setFriends((prevFriends) =>
+        prevFriends.filter((friend) => friend.id !== switchUser.id)
+      );
+    }
     else if (switchUser.friendship_status === "pending")
       toast.error("Friendship request already sent");
     else sendFriendRequest(switchUser.id);
@@ -150,7 +182,7 @@ console.log("USER IS:", user)
     }
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
-  console.log("switchUser", switchUser.is_online);
+
   return (
     <div className="profile-component">
       <div className="top-side-prfl">

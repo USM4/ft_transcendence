@@ -13,11 +13,10 @@ function UserDataProvider({ children }) {
           method: "GET",
           credentials: "include",
         });
-        console.log("response", response)
         if (response.ok) {
           const data = await response.json();
           setUser(data);
-          // navigate('dashboard')
+        
         }
         else
           navigate('signin/')
@@ -31,7 +30,6 @@ function UserDataProvider({ children }) {
     const updateUser = (updatedUser) => {
       setUser(updatedUser);
   };
-  console.log("USER CONTEXT PROVDER:", user)
   return (
     <UserDataContext.Provider value={{ user, updateUser}}>
       {children}
