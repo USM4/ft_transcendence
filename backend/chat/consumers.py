@@ -37,7 +37,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "type": "online",
                         "online": friend.is_online,
                         "friend_id": friend.id,
-                        "message": None,
                     }))
             except Exception as e:
                 print("An error occurred: ", str(e))
@@ -94,23 +93,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             try:
                 chat_room = await self.get_or_create_room(self.sender.id, receiver)
                 await self.block_friend(flag,receiver)
+                blocker = self.sender.username
                 await self.channel_layer.group_send(
                     self.room_name, {
                         "type": "block",
                         "flag": flag,
-                        "message": None,
                         "receiver": receiver,
-                        "sender": self.sender.id,
-                        "chat_room": chat_room.id,
+                        "blocker": blocker,
                     })
                 await self.channel_layer.group_send(
                     room_receive, {
                         "type": "block",
                         "flag": flag,
-                        "message": None,
                         "receiver": receiver,
-                        "sender": self.sender.id,
-                        "chat_room": chat_room.id,
+                        "blocker": blocker,
                     })
             except Exception as e:
                 print("An error occurred: ", str(e))
@@ -140,15 +136,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def block(self, event):
         flag = event["flag"]
         receiver = event["receiver"]
-        chat_room = event["chat_room"]
+        blocker = event["blocker"]
         
         await self.send(text_data=json.dumps({
             "type": "block",
             "flag": flag,
-            "message": None,
-            "receiver": receiver,
-            "sender": self.sender.id,
-            "chat_room": chat_room.id,
+            "blocked": receiver,
+            "blocker": blocker,           
         }))
 
 

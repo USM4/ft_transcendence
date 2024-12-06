@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Chat_header from './Chat-header.jsx';
 import Chat_area from './Chat-area.jsx';
 import Chat_input from './Chat-input.jsx';
@@ -9,6 +9,7 @@ import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FriendDataContext } from '../DashBoard/FriendDataContext.jsx'
 import { ChatSocketContext } from './Chat.jsx'
+import { use } from 'react';
 
 
 export default function Chat_sidebar() {
@@ -20,13 +21,19 @@ export default function Chat_sidebar() {
 	const [selectedFriend, setSelectedFriend] = useState(null);
 	const [clicked, setClicked] = useState(null);
 	const [friendsList, setFriendsList] = useState([]);
+	const friendsRef = useRef([]);
+	const selectedFriendRef = useRef(null);
 
 	useEffect(() => {
+		selectedFriendRef.current = selectedFriend;
+		console.log("Selected: " ,selectedFriend);
+	}, [selectedFriend]);
+
+	useEffect(() => {
+		friendsRef.current = friends;
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			const { chat_room, message, message_id } = data;
-			console.log(data);
-
 
 			if (chat_room)
 				setChatroom(chat_room);
@@ -46,7 +53,48 @@ export default function Chat_sidebar() {
 					return prevMessage;
 				});
 			}
-			else if (data.type !== 'online') {
+			else if (data.type === 'online') {
+				friendsRef.current = friendsRef.current.map((friend) => {
+					if (friend.id === data.friend_id) {
+						return { ...friend, is_online: data.online };
+					}
+					return friend;
+				});
+				setFriendsList([...friendsRef.current]);
+			}
+			if (data.type === 'block') {
+				console.log(data);
+
+				// Update friendsRef directly
+				const updatedFriends = friendsRef.current.map((friend) => {
+					if (friend.id === data.blocked || friend.username === data.blocker) {
+						return {
+							...friend,
+							is_blocked: data.flag,
+							blocker: data.blocker,
+						};
+					}
+					return friend;
+				});
+
+				friendsRef.current = updatedFriends;
+				setFriendsList(updatedFriends);
+
+				// Update selected friend if affected
+				const currentSelected = selectedFriendRef.current;
+				if (
+					currentSelected &&
+					(currentSelected.id === data.blocked || currentSelected.username === data.blocker)
+				) {
+					console.log("ana henaaaaaaaaa");
+					const updatedSelectedFriend = updatedFriends.find(
+						(friend) => friend.id === currentSelected.id
+					);
+					setSelectedFriend(updatedSelectedFriend);
+				}
+
+			}
+			else {
 				setMessage((prevMessage) => {
 					const chatMessage = prevMessage[chat_room] || [];
 					return {
@@ -55,32 +103,12 @@ export default function Chat_sidebar() {
 					};
 				});
 			}
-			// else if (data.type === 'block') {
-			// 	friends.map((friend) => {
-			// 		if (friend.id == data.friend_id) {
-			// 			friend.is_blocked = data.flag;
-			// 		}
-			// 		setFriendsList((prevFriends) => {
-			// 			return prevFriends.map((friend) =>
-			// 				friend.id === data.id ? { ...friend, ...data } : friend
-			// 			);
-			// 		});
-			// 	});
-			// }
-			else {
-				friends.map((friend) => {
-					if (friend.id == data.friend_id) {
-						friend.is_online = data.online;
-					}
-					setFriendsList((prevFriends) => {
-						return prevFriends.map((friend) =>
-							friend.id === data.id ? { ...friend, ...data } : friend
-						);
-					});
-				})
-			}
 		};
-	}, [socket])
+	}, [socket, selectedFriend])
+	useEffect(() => {
+		friendsRef.current = friends;
+		setFriendsList([...friends]);
+	}, [friends, socket]);
 	const chatroomMessages = message[chatroom] || [];
 
 	useEffect(() => {
@@ -90,6 +118,16 @@ export default function Chat_sidebar() {
 		}
 	}, [location]);
 
+	useEffect(() => {
+		if (selectedFriend) {
+			const updatedFriend = friendsList.find((friend) => friend.id === selectedFriend.id);
+			if (updatedFriend) {
+				setSelectedFriend(updatedFriend);
+			}
+			console.log("Selected1: ", selectedFriend);
+		}
+	}, [friendsList]);
+
 	function handleClick(friend) {
 		if (!selectedFriend)
 			setSelectedFriend(friend);
@@ -97,50 +135,36 @@ export default function Chat_sidebar() {
 			setSelectedFriend(friend);
 		{ clicked != friend.id && (socket.send(JSON.stringify({ type: 'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
 	}
-	useEffect(() => {
-		const fetchStatuses = async () => {
-			socket.send(JSON.stringify({ type: 'online', message: null, receiver: null, flag: null, }));
-		};
-
-		fetchStatuses();
-
-		const interval = setInterval(fetchStatuses, 10000);
-
-		return () => clearInterval(interval);
-	}, [socket]);
-	useEffect(() => {
-		setFriendsList(friends.map((friend) => (
-			<li key={friend.id} className="user" onClick={() => handleClick(friend)}>
-				<div className="avatar">
-					<Badge
-						sx={{
-							'& .MuiBadge-dot': {
-								backgroundColor: friend.is_online ? '#00ff00' : '#ff0000',
-							},
-						}}
-						variant="dot"
-						overlap="circular"
-						anchorOrigin={{
-							vertical: 'bottom',
-							horizontal: 'right',
-						}}
-					>
-						<img src={friend.avatar} alt={`${friend.username}'s avatar`} />
-					</Badge>
-				</div>
-				<div className="details">
-					<p className="name">{friend.username}</p>
-				</div>
-			</li>
-		)));
-	}, [friends]);
 
 
 	return (
 		<div className="chat-wrapper">
 			<div className="chat-sidebar">
 				<ul className="user-list">
-					{friendsList}
+					{friendsList.map((friend) => (
+						<li key={friend.id} className="user" onClick={() => handleClick(friend)}>
+							<div className="avatar">
+								<Badge
+									sx={{
+										'& .MuiBadge-dot': {
+											backgroundColor: friend.is_online ? '#00ff00' : '#ff0000',
+										},
+									}}
+									variant="dot"
+									overlap="circular"
+									anchorOrigin={{
+										vertical: 'bottom',
+										horizontal: 'right',
+									}}
+								>
+									<img src={friend.avatar} alt={`${friend.username}'s avatar`} />
+								</Badge>
+							</div>
+							<div className="details">
+								<p className="name">{friend.username}</p>
+							</div>
+						</li>
+					))}
 				</ul>
 			</div>
 
