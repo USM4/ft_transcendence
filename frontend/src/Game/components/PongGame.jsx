@@ -16,11 +16,11 @@ const PongGame = ({ isAIEnabled }) => {
   });
 
   const [leftRacket, setLeftRacket] = useState({
-    x: 40, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
+    x: 40, y: 200, width: 10, height: 100, color: '#000000', velocity: 40,
   });
 
   const [rightRacket, setRightRacket] = useState({
-    x: 950, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
+    x: 950, y: 200, width: 10, height: 100, color: '#000000', velocity: 40,
   });
 
   const [keysPressed, setKeysPressed] = useState({
@@ -115,7 +115,7 @@ const PongGame = ({ isAIEnabled }) => {
       return { ...prev, y: newY };
     });
   };
-
+  
   const moveRightRacket = (direction) => {
     setRightRacket((prev) => {
       let newY = prev.y + direction * prev.velocity;

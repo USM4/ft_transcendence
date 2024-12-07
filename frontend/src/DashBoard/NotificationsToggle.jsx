@@ -65,14 +65,14 @@ function NotificationsToggle({ displayNotification }) {
 
   useEffect(() => {
     handleNotification();
-    console.log("Notification:", notif);
+    // console.log("Notification:", notif);
   }, [notif]);
 
   return (
     <div className="notif-invitation-text">
-      {console.log("Current notifications:", notifications)}
+      {/* {console.log("Current notifications:", notifications)} */}
       <div className="notifications-compo">
-        {console.log("length ..................... :", notifications.length)}
+        {/* {console.log("length ..................... :", notifications.length)} */}
         {notifications.length === 0 ? (
           <div style={{ color: "white" }}> No Notifications </div>
         ) : (

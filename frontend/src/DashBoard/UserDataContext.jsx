@@ -1,9 +1,11 @@
 import React from "react";
 import { useContext, createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const UserDataContext = createContext();
 function UserDataProvider({ children }) {
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const getData = async () => {
       try {
@@ -14,9 +16,10 @@ function UserDataProvider({ children }) {
         if (response.ok) {
           const data = await response.json();
           setUser(data);
+        
         }
         else
-        console.error('error getting data ');
+          navigate('signin/')
       } catch (error) {
         console.error('error getting data :', error);
       }

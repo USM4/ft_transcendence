@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import './App.css';
+import { useState } from 'react'
+import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './Navbar.jsx';
-import Chat from './Chat/Chat.jsx';
-import SignIn from './SignIn.jsx';
-import SignUp from './SignUp.jsx';
-import NavbarSideBar from './DashBoard/NavBarSideBar.jsx';
+import Navbar from './Navbar.jsx'
+import Chat from './Chat/Chat.jsx'
+import SignIn from './SignIn.jsx'
+import SignUp from './SignUp.jsx'
+import NavbarSideBar from './DashBoard/NavBarSideBar.jsx'
 import Dashboard from './DashBoard/Dashboard.jsx';
-import Profile from './DashBoard/Profile.jsx';
-import ProfileSettings from './DashBoard/ProfileSettings.jsx';
+import Profile from './DashBoard/Profile.jsx'
+import ProfileSettings from'./DashBoard/ProfileSettings.jsx';
 import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import UserDataProvider from './DashBoard/UserDataContext.jsx';
-import FriendDataProvider from './DashBoard/FriendDataContext.jsx';
+import UserDataProvider from './DashBoard/UserDataContext.jsx'
+import FriendDataProvider from './DashBoard/FriendDataContext.jsx'
 import SocketContextProvider from './DashBoard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
@@ -29,128 +29,92 @@ function App() {
   return (
     <>
       <Router>
-        <Toaster position="top-center" reverseOrder={false} />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<><Navbar /><HomePage /></>} />
-          <Route path="/signin" element={<><Navbar /><SignIn /></>} />
-          <Route path="/signup" element={<><Navbar /><SignUp /></>} />
-          <Route path="/2fa" element={<><Navbar /><TwoFa /></>} />
-          <Route path="/features" element={<><Navbar /><Features /></>} />
-          <Route path="/howtoplay" element={<><Navbar /><HowToPlay /></>} />
+        <UserDataProvider>
+          <SocketContextProvider>
+          <Toaster position="top-center" reverseOrder={false} />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<><Navbar /><HomePage /></>} />
+            <Route path="/signin" element={<><Navbar /><SignIn /></>} />
+            <Route path="/signup" element={<><Navbar /><SignUp /></>} />
+            <Route path="/2fa" element={<><Navbar /><TwoFa /></>} />
+            <Route path="/features" element={<><Navbar /><Features /></>} />
+            <Route path="/howtoplay" element={<><Navbar /><HowToPlay /></>} />
 
-          {/* Protected Routes */}
-          <Route path="/dashboard" element={
-            <UserDataProvider>
-              <SocketContextProvider>
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={
                 <FriendDataProvider>
                   <ProtectedRoute component={NavbarSideBar} />
                 </FriendDataProvider>
-              </SocketContextProvider>
-            </UserDataProvider>
-          }>
-            <Route path="" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <FriendDataProvider>
-                    <ProtectedRoute component={Dashboard} />
-                  </FriendDataProvider>
-                </SocketContextProvider>
-              </UserDataProvider>
-            } />
-            <Route path="profile/:username" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <FriendDataProvider>
-                    <ProtectedRoute component={Profile} />
-                  </FriendDataProvider>
-                </SocketContextProvider>
-              </UserDataProvider>
-            } />
-            <Route path="settings" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <ProtectedRoute component={ProfileSettings} />
-                </SocketContextProvider>
-              </UserDataProvider>
-            } />
-          </Route>
-
-          <Route path="/Chat" element={
-            <UserDataProvider>
-              <SocketContextProvider>
-                <FriendDataProvider>
-                  <ProtectedRoute component={NavbarSideBar} />
-                </FriendDataProvider>
-              </SocketContextProvider>
-            </UserDataProvider>
-          }>
-            <Route path="" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <FriendDataProvider>
-                    <ProtectedRoute component={Chat} />
-                  </FriendDataProvider>
-                </SocketContextProvider>
-              </UserDataProvider>
-            } />
-          </Route>
-
-          <Route path="/tournament/options" element={
-            <UserDataProvider>
-              <SocketContextProvider>
-                <ProtectedRoute component={NavbarSideBar} />
-              </SocketContextProvider>
-            </UserDataProvider>
-          }>
-            {/* Tournament Options */}
-            <Route path="" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <FriendDataProvider>
-                    <ProtectedRoute component={OptionsPage} />
-                  </FriendDataProvider>
-                </SocketContextProvider>
-              </UserDataProvider>
-            } />
-            <Route path="play-tournament" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <ProtectedRoute component={Tournament} />
-                </SocketContextProvider>
-              </UserDataProvider>
-            } />
-            <Route path="tournament-registration" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <ProtectedRoute component={TournamentRegistration} />
-                </SocketContextProvider>
-              </UserDataProvider>
-            } />
-            <Route path="game/*" element={
-              <UserDataProvider>
-                <SocketContextProvider>
-                  <ProtectedRoute component={AppGame} />
-                </SocketContextProvider>
-              </UserDataProvider>
             }>
               <Route path="" element={
-                <UserDataProvider>
-                  <SocketContextProvider>
-                    <FriendDataProvider>
-                      <ProtectedRoute component={AppGame} />
-                    </FriendDataProvider>
-                  </SocketContextProvider>
-                </UserDataProvider>
+                <FriendDataProvider>
+                  <ProtectedRoute component={Dashboard} />
+                </FriendDataProvider>
+              } />
+              <Route path="profile/:username" element={
+                <FriendDataProvider>
+                  <ProtectedRoute component={Profile} />
+                </FriendDataProvider>
+              } />
+              <Route path="settings" element={<ProtectedRoute component={ProfileSettings} />} />
+            </Route>
+
+            <Route path="/Chat" element={
+                <FriendDataProvider>
+                  <ProtectedRoute component={NavbarSideBar} />
+                </FriendDataProvider>
+            }>
+              <Route path="" element={
+                <FriendDataProvider>
+                  <ProtectedRoute component={Chat} />
+                </FriendDataProvider>
               } />
             </Route>
-          </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route path="/tournament/options" element={
+                <ProtectedRoute component={NavbarSideBar} />
+            }>
+              {/* Default OptionsPage for Tournament Options */}
+              <Route path="" element={
+                <FriendDataProvider>
+                  <ProtectedRoute component={OptionsPage} />
+                </FriendDataProvider>
+              } />
+              <Route path="play-tournament" element={
+                  <ProtectedRoute component={Tournament} />
+              } />
+              <Route path="tournament-registration" element={
+                  <ProtectedRoute component={TournamentRegistration} />
+              } />
+               <Route path='game/*' element={
+                <ProtectedRoute component={AppGame} />
+            }>
+            <Route path='' element={
+              <FriendDataProvider>
+                <ProtectedRoute component={AppGame} />
+              </FriendDataProvider>
+            }/>
+            </Route>
+              {/* Play vs Bot */}
+              {/* <Route path="play-vs-bot" element={
+                  <ProtectedRoute component={PlayVsBot} />
+              } /> */}
+              
+              {/* Play vs Friend */}
+              {/* <Route path="play-vs-friend" element={
+                  <ProtectedRoute component={PlayVsFriend} />
+              } /> */}
+              
+              {/* Play Tournament */}
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </SocketContextProvider>
+        </UserDataProvider>
       </Router>
     </>
   );
 }
 
-export default App;
+export default App

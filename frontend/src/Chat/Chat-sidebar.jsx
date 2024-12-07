@@ -30,7 +30,7 @@ export default function Chat_sidebar() {
 	}, [selectedFriend]);
 
 	useEffect(() => {
-		friendsRef.current = friends;
+		friendsRef.current = friendsList;
 		socket.onmessage = (event) => {
 			const data = JSON.parse(event.data);
 			const { chat_room, message, message_id } = data;

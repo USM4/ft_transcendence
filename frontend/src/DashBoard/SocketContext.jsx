@@ -1,47 +1,81 @@
-import React from "react";
-import { useContext, createContext, useState, useEffect} from 'react';
-import { useLocation } from "react-router-dom";
-import { UserDataContext } from "./UserDataContext.jsx";
+import React, { useContext, createContext, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { UserDataContext } from './UserDataContext.jsx';
 
 export const SocketContext = createContext();
-function SocketContextProvider ({ children }) {
+
+function SocketContextProvider({ children }) {
     const [socket, setSocket] = useState(null);
     const { user } = useContext(UserDataContext);
     const location = useLocation();
     const pathname = location.pathname;
 
     useEffect(() => {
-        const establishConnection =  () => {
-        console.log("Establishing WebSocket connection...");
-        const ws = new WebSocket('ws://localhost:8000/ws/online_status/');
+        // Function to establish a WebSocket connection
+        const establishConnection = () => {
+            console.log("Establishing WebSocket connection...");
+            const ws = new WebSocket('ws://localhost:8000/ws/online_status/');
 
-        ws.onopen = () => {
-            console.log("WebSocket connection establishe");
-            setSocket(ws);
+            ws.onopen = () => {
+                console.log("---------{ WebSocket connection established }--------------");
+                setSocket(ws);
+            };
+
+            ws.onerror = (error) => {
+                setSocket(null);
+                console.error("WebSocket error:", error);
+            };
+
+            ws.onclose = () => {
+                setSocket(null);
+                console.log("WebSocket connection closed.");
+            };
         };
 
-        ws.onerror = (error) => {
-            setSocket(null);
-            console.error("WebSocket error:", error);
+        // Only establish the WebSocket connection if user is logged in
+        // and the pathname is not one of the ignored paths
+        if (
+            pathname !== '/signin' &&
+            pathname !== '/' &&
+            pathname !== '/signup' &&
+            pathname !== '/features' &&
+            pathname !== '/howtoplay' &&
+            user && // Only if user is present
+            !socket // Only open a new connection if there's no existing one
+        ) {
+            establishConnection();
+        }
+
+        // If the pathname matches an ignored path or user is not logged in, close the WebSocket
+        if (
+            pathname === '/signin' ||
+            pathname === '/' ||
+            pathname === '/signup' ||
+            pathname === '/features' ||
+            pathname === '/howtoplay' ||
+            !user
+        ) {
+            if (socket) {
+                socket.close();  // Close WebSocket if it's open
+                setSocket(null);  // Clear socket state
+            }
+        }
+
+        // Cleanup: Close WebSocket when component unmounts or when necessary
+        return () => {
+            if (socket) {
+                socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+                setSocket(null); // Cleanup the socket state
+            }
         };
-    
-        ws.onclose = () => {
-            setSocket(null);
-            console.log("WebSocket connection closed.");
-        };
-    }
-    if(pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/features' && pathname !== '/howtoplay' && !socket && user){
-        establishConnection();
-    }
-    // else if(socket !== null){
-    //     socket.close();
-    //     setSocket(null);
-    // }
-    }, [pathname, user]);
-    return(
-        <SocketContext.Provider value={{ socket}}>
-        {children}
-      </SocketContext.Provider>
-    );    
-};
+
+    }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
+
+    return (
+        <SocketContext.Provider value={{ socket }}>
+            {children}
+        </SocketContext.Provider>
+    );
+}
+
 export default SocketContextProvider;

@@ -227,8 +227,11 @@ function ProfileSettings() {
           </>
         )}
         <div className="save-settings">
-        <button onClick={() => isTwoFactor ? saveCode() : updateInfos()}
-        >Save</button>
+          {isTwoFactor ? (
+            <button onClick={saveCode}>Save</button>
+          ) : (
+            <button onClick={updateInfos}>Save</button>
+          )}
         </div>
       </div>
     </div>
