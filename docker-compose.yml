@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "5173:5173"
+    env_file:
+      - frontend/.env
+    restart: on-failure
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  backend:
+    build: 
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - backend/.env
+    restart: on-failure
+    volumes:
+      - ./backend:/app

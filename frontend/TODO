@@ -1,2 +1,0 @@
-PROBLEMS:
--> when you enter  http://localhost:5173/dashboard/settings and not logged in should protect if the user in not None
