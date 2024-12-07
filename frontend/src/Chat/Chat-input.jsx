@@ -5,7 +5,6 @@ import { ChatSocketContext } from './Chat.jsx'
 export default function Chat_input({ selected }) {
     const [message, setMessage] = useState('');
     const socket = useContext(ChatSocketContext);
-    // const [blocked, setBlocked] = useState(selected.is_blocked);
 
 
     function handleSubmit() {
@@ -26,14 +25,6 @@ export default function Chat_input({ selected }) {
             setMessage('');
         }
     }
-    // useEffect(() => {
-    //     socket.onmessage = (event) => {
-    //         const data = JSON.parse(event.data);
-    //         console.log("Chat_input----", data)
-    //         setBlocked(selected.is_blocked);
-    //     }
-    // }, [selected.is_blocked])
-
 
 
     return (
