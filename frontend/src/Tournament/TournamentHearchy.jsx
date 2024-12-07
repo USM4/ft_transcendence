@@ -50,17 +50,17 @@ const TournamentHearchy = () => {
 
 	const handlClick = () => {
 				
-		// const semiResults = {
-		// 	matche1:{
-		// 		Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche1 }),
-		// 		Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche2 }),
-		// 	},
-		// 	matche2:{
-		// 		Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche3 }),
-		// 		Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche4 }),
-		// 	},
-		// };
-		// setSemi_Players(semiResults);
+		const semiResults = {
+			matche1:{
+				Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche1 }),
+				Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche2 }),
+			},
+			matche2:{
+				Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche3 }),
+				Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche4 }),
+			},
+		};
+		setSemi_Players(semiResults);
 	};
 	// useEffect(() => {
 	// const play_final = async () => {
