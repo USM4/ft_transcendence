@@ -11,7 +11,6 @@ import player2Image from '/pensioner.png';
 
 const PongGame = ({ isAIEnabled }) => {
 
-  console.log('PongGame.jsx: PongGame()');
   const matche = JSON.parse(localStorage.getItem('matche')) || [];
   const [ball, setBall] = useState({
     x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff'
@@ -194,12 +193,12 @@ const PongGame = ({ isAIEnabled }) => {
       <div className="player-profiles">
         <div>
         <img src={player1Image}></img>
-          <h3>Player 1</h3>
+          <h3>{matche.Player1}</h3>
           <p>Score: {scores.leftPlayer}</p>
         </div>
         <div>
           <img src={player2Image}></img>
-          <h3>{isAIEnabled ? 'AI' : 'Player 2'}</h3>
+          <h3>{matche.Player2}</h3>
           <p>Score: {scores.rightPlayer}</p>
         </div>
       </div>

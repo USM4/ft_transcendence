@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PongGame from "./TournametGame/PongGame.jsx";
 
@@ -68,26 +67,23 @@ const TournamentHearchy = () => {
 			score2: 0,
 		},
 	})
+
 	const startgame = async (matche) => {
-		if (matche)
-		{
+		if (matche) {
 			localStorage.setItem('matche', JSON.stringify(matche));
-			navigate("/tournament/options/game/local");
+			navigate("/tournament/options/pong-tournament");
+			return matche.winner;
 		}
 	}
 
 	const handlClick = async () => {
 				
-		const semiResults = {
-			matche1:{
-				Player1: await startgame(players.matche1),
-				Player2: await startgame(players.matche2),
-			},
-			matche2:{
-				Player1: await startgame(players.matche3),
-				Player2: await startgame(players.matche4),
-			},
-		};
+		const semiResults = await Promise.all([
+			await startgame(players.matche1),
+			await startgame(players.matche2),
+			await startgame(players.matche3),
+			await startgame(players.matche4),
+		]);
 		setSemi_Players(semiResults);
 	};
 	// useEffect(() => {
