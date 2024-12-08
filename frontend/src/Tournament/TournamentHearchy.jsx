@@ -1,33 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import PongGame from "./TournametGame/PongGame.jsx";
 
 
 const TournamentHearchy = () => {
-	const location = useLocation()
+	const playersName = JSON.parse(localStorage.getItem('players')) || [];
 	const navigate = useNavigate()
 	const [winner, setWinner] = useState("");
 	const [ongoing, setOngoing] = useState({ Player1: "", Player2: "" });
 	
-	console.log("LOCATION", location)
 	const players = {
 		matche1: {
-			Player1: location.state[0].name,
-			Player2: location.state[1].name,
+			Player1: playersName[0].name,
+			Player2: playersName[1].name,
+			winner: "",
+			score1: 0,
+			score2: 0,
 		},
 		matche2: {
-			Player1: location.state[2].name,
-			Player2: location.state[3].name,
+			Player1: playersName[2].name,
+			Player2: playersName[3].name,
+			winner: "",
+			score1: 0,
+			score2: 0,
 
 		},
 		matche3: {
-			Player1: location.state[4].name,
-			Player2: location.state[5].name,
+			Player1: playersName[4].name,
+			Player2: playersName[5].name,
+			winner: "",
+			score1: 0,
+			score2: 0,
 
 		},
 		matche4: {
-			Player1: location.state[6].name,
-			Player2: location.state[7].name,
+			Player1: playersName[6].name,
+			Player2: playersName[7].name,
+			winner: "",
+			score1: 0,
+			score2: 0,
 
 		},
 	}
@@ -35,29 +47,45 @@ const TournamentHearchy = () => {
 		matche1: {
 			Player1: null,
 			Player2: null,
+			winner: "",
+			score1: 0,
+			score2: 0,
 		},
 		matche2: {
 			Player1: null,
 			Player2: null,
+			winner: "",
+			score1: 0,
+			score2: 0,
 		},
 	})
 	const [final_players, setFinal_Players] = useState({
 		matche: {
 			Player1: null,
 			Player2: null,
+			winner: "",
+			score1: 0,
+			score2: 0,
 		},
 	})
+	const startgame = async (matche) => {
+		if (matche)
+		{
+			localStorage.setItem('matche', JSON.stringify(matche));
+			navigate("/tournament/options/game/local");
+		}
+	}
 
-	const handlClick = () => {
+	const handlClick = async () => {
 				
 		const semiResults = {
 			matche1:{
-				Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche1 }),
-				Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche2 }),
+				Player1: await startgame(players.matche1),
+				Player2: await startgame(players.matche2),
 			},
 			matche2:{
-				Player1: navigate("/tournament/options/play-tournament/game" , { state: players.matche3 }),
-				Player2: navigate("/tournament/options/play-tournament/game" , { state: players.matche4 }),
+				Player1: await startgame(players.matche3),
+				Player2: await startgame(players.matche4),
 			},
 		};
 		setSemi_Players(semiResults);
