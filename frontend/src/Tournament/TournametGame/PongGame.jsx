@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Canvas from './Canvas';
-import Ball from './Ball';
-import WinPage from './WinPage';
-// import player1Image from '../img/player1.jpeg';
-// import player2Image from '../img/player2.jpeg';
+import Canvas from './Canvas.jsx';
+import Ball from './Ball.jsx';
+import WinPage from './WinPage.jsx';
+import player1Image from '/pensioner.png';
+import player2Image from '/pensioner.png';
 
 
 
 
 const PongGame = ({ isAIEnabled }) => {
-  const navigate = useNavigate();
+
+  console.log('PongGame.jsx: PongGame()');
+  const matche = JSON.parse(localStorage.getItem('matche')) || [];
   const [ball, setBall] = useState({
     x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff'
   });

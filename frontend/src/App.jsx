@@ -13,9 +13,9 @@ import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import UserDataProvider from './DashBoard/UserDataContext.jsx'
+import UserDataProvider from './Dashboard/UserDataContext.jsx'
 import FriendDataProvider from './DashBoard/FriendDataContext.jsx'
-import SocketContextProvider from './DashBoard/SocketContext.jsx';
+import SocketContextProvider from './Dashboard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
 import NotFound from './NotFound.jsx';
@@ -83,7 +83,11 @@ function App() {
               } />
               <Route path="play-tournament" element={
                   <ProtectedRoute component={Tournament} />
-              } />
+                } >
+                <Route path="pong" element={
+                  <ProtectedRoute component={PongGame} />
+                } />
+              </Route>
               <Route path="tournament-registration" element={
                   <ProtectedRoute component={TournamentRegistration} />
               } />
@@ -96,17 +100,6 @@ function App() {
               </FriendDataProvider>
             }/>
             </Route>
-              {/* Play vs Bot */}
-              {/* <Route path="play-vs-bot" element={
-                  <ProtectedRoute component={PlayVsBot} />
-              } /> */}
-              
-              {/* Play vs Friend */}
-              {/* <Route path="play-vs-friend" element={
-                  <ProtectedRoute component={PlayVsFriend} />
-              } /> */}
-              
-              {/* Play Tournament */}
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
