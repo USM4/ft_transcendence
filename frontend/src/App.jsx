@@ -83,11 +83,10 @@ function App() {
               } />
               <Route path="play-tournament" element={
                   <ProtectedRoute component={Tournament} />
-                } >
-                <Route path="pong" element={
+                } />
+                <Route path="pong-tournament" element={
                   <ProtectedRoute component={PongGame} />
                 } />
-              </Route>
               <Route path="tournament-registration" element={
                   <ProtectedRoute component={TournamentRegistration} />
               } />
