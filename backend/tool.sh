@@ -1,7 +1,4 @@
-!/bin/bash
-python3 -m venv env
-
-source ./env/bin/activate
+#!/bin/bash
 
 pip install Django
 

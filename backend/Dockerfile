@@ -6,12 +6,11 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only necessary files
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 
-# Copy project files
-COPY backend/ .
+RUN pip install -r requirements.txt
+    
+RUN chmod +x tool.sh
 
 # Create requirements file with these packages:
 # Django
@@ -29,4 +28,4 @@ COPY backend/ .
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["./tool.sh"]
