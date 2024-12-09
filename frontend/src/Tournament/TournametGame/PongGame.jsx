@@ -1,27 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Canvas from './Canvas.jsx';
-import Ball from './Ball.jsx';
-import WinPage from './WinPage.jsx';
+import Canvas from './Canvas';
+import Ball from './Ball';
+import WinPage from './WinPage';
+import Racket from './Racket';
 import player1Image from '/pensioner.png';
 import player2Image from '/pensioner.png';
 
 
 
 
-const PongGame = ({ isAIEnabled }) => {
-
-  const matche = JSON.parse(localStorage.getItem('matche')) || [];
+const PongGame = () => {
+  const navigate = useNavigate();
+  const matche = JSON.parse(localStorage.getItem('matche')) || {};
   const [ball, setBall] = useState({
     x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff'
   });
 
   const [leftRacket, setLeftRacket] = useState({
-    x: 40, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
+    x: 10, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
   });
 
   const [rightRacket, setRightRacket] = useState({
-    x: 950, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
+    x: 980, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
   });
 
   const [keysPressed, setKeysPressed] = useState({
@@ -39,7 +40,6 @@ const PongGame = ({ isAIEnabled }) => {
     setLeftRacket((prev) => ({ ...prev, y: 200 }));
     setRightRacket((prev) => ({ ...prev, y: 200 }));
     setScores({ leftPlayer: 0, rightPlayer: 0 });
-    setWinner(null);
   };
 
   const moveAIRacket = () => {
@@ -51,17 +51,28 @@ const PongGame = ({ isAIEnabled }) => {
     });
   };
 
+  const resetPositions = () => {
+    setLeftRacket((prev) => ({
+      ...prev,
+      y: 200,
+    }));
+    setRightRacket((prev) => ({
+      ...prev,
+      y: 200,
+    }));
+  };
+
   const updateBallPosition = useCallback(() => {
     setBall((prevBall) => {
       let { x, y, velocityX, velocityY } = prevBall;
-
       x += velocityX;
       y += velocityY;
-
+  
       if (y - ball.radius <= 0 || y + ball.radius >= 500) {
         velocityY = -velocityY;
       }
-
+  
+      // Left Racket Collision
       if (
         x - ball.radius <= leftRacket.x + leftRacket.width &&
         y >= leftRacket.y &&
@@ -71,6 +82,7 @@ const PongGame = ({ isAIEnabled }) => {
         x = leftRacket.x + leftRacket.width + ball.radius;
       }
   
+      // Right Racket Collision
       if (
         x + ball.radius >= rightRacket.x &&
         y >= rightRacket.y &&
@@ -79,35 +91,51 @@ const PongGame = ({ isAIEnabled }) => {
         velocityX = -Math.abs(velocityX);
         x = rightRacket.x - ball.radius;
       }
-
+  
       let updatedScores = { ...scores };
       if (x - ball.radius <= 0) {
+        // Right player scores
         updatedScores.rightPlayer += 1;
+        setScores(updatedScores); // Update score
+  
+        // Check if anyone won
+        if (updatedScores.rightPlayer === 2) {
+          matche.winner = matche.Player2;
+          matche.score1 = updatedScores.leftPlayer;
+          matche.score2 = updatedScores.rightPlayer;
+          setWinner(matche.Player2);
+          localStorage.setItem('matchePlayed', JSON.stringify(matche));
+          localStorage.removeItem('matche');
+        }
+  
+        resetPositions();
+        return { ...prevBall, x: 500, y: 250, velocityX: 4, velocityY: 4 };
       } else if (x + ball.radius >= 1000) {
+        // Left player scores
         updatedScores.leftPlayer += 1;
+        setScores(updatedScores); // Update score
+  
+        // Check if anyone won
+        if (updatedScores.leftPlayer === 2) {
+          matche.winner = matche.Player1;
+          matche.score1 = updatedScores.leftPlayer;
+          matche.score2 = updatedScores.rightPlayer;
+          setWinner(matche.Player1);
+          localStorage.setItem('matchePlayed', JSON.stringify(matche));
+          localStorage.removeItem('matche');
+        }
+  
+        resetPositions();
+        return { ...prevBall, x: 500, y: 250, velocityX: -4, velocityY: 4 };
       }
-
-      if (updatedScores.leftPlayer === 5) {
-        setWinner('Player 1');
-      } else if (updatedScores.rightPlayer === 5) {
-        setWinner('Player 2');
-      }
-
-      setScores(updatedScores);
-
-      if (x - ball.radius <= 0 || x + ball.radius >= 1000) {
-        return {
-          ...prevBall,
-          x: 500,
-          y: 250,
-          velocityX: (updatedScores.leftPlayer === 5 ? -1 : 1) * 4,
-          velocityY: 4,
-        };
-      }
-
+  
+      // Return ball position
       return { ...prevBall, x, y, velocityX, velocityY };
     });
   }, [leftRacket, rightRacket, scores]);
+  
+
+  
 
   const moveLeftRacket = (direction) => {
     setLeftRacket((prev) => {
@@ -163,6 +191,16 @@ const PongGame = ({ isAIEnabled }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const gameInterval = setInterval(() => {
+      if (!matche.winner) {
+        updateBallPosition();
+      }
+    }, 16);
+  
+    return () => clearInterval(gameInterval);
+  }, [updateBallPosition, moveAIRacket, matche.winner]);
+
   const draw = useCallback(
     (context) => {
       context.clearRect(0, 0, 1000, 500);
@@ -179,14 +217,18 @@ const PongGame = ({ isAIEnabled }) => {
 
       context.fillStyle = rightRacket.color;
       context.fillRect(rightRacket.x, rightRacket.y, rightRacket.width, rightRacket.height);
-      if (winner) return;
+      if (matche.winner) return;
     },
     [ball, leftRacket, rightRacket]
   );
 
-  if (winner) {
-    return <WinPage winner={winner} resetGame={resetGame} />;
-  }
+  useEffect(() => {
+    const matcheP = JSON.parse(localStorage.getItem('matchePlayed')) || {};
+    console.log(matcheP);
+    if (matcheP.winner) {
+      navigate("/tournament/options/play-tournament");
+    }
+  }, [winner, navigate]);
 
   return (
     <div className='Game-render'>
@@ -202,22 +244,25 @@ const PongGame = ({ isAIEnabled }) => {
           <p>Score: {scores.rightPlayer}</p>
         </div>
       </div>
-      <Canvas draw={draw} width={1000} height={500} />
+      <div className='canvas-container'>
+        <Canvas draw={draw} width={1000} height={500} />
+      </div>
       <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
+      <Racket x={leftRacket.x} y={leftRacket.y} width={leftRacket.width} height={leftRacket.height} color={leftRacket.color} upKey="w" downKey="s" onMove={moveLeftRacket} />
+        <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
       <h3>
         {/* <img src='../img/W-key.png' alt="W key" className="key-img" />  */}
         {/* <img src='../img/S-key.png' alt="S key" className="key-img" />  */}
         Click W to go up and S to go down
       </h3>
-      <h3>
-        {/* <img src='../img/O-key.png' alt="O key" className="key-img" />  */}
-        {/* <img src='../img/L-key.png' alt="L key" className="key-img" />  */}
-        Click O to go up and L to go down
-      </h3>
+        <h3>
+          {/* <img src='../img/O-key.png' alt="O key" className="key-img" />  */}
+          {/* <img src='../img/L-key.png' alt="L key" className="key-img" />  */}
+          Click O to go up and L to go down
+        </h3>
     </div>
   );
 };
 
 export default PongGame;
-
 

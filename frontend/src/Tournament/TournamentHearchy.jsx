@@ -9,6 +9,14 @@ const TournamentHearchy = () => {
 	const [winner, setWinner] = useState("");
 	const [ongoing, setOngoing] = useState({ Player1: "", Player2: "" });
 	
+	useEffect(() => {
+		const matchePlayed = JSON.parse(localStorage.getItem('matchePlayed'));
+		if (matchePlayed) {
+			console.log(matchePlayed);
+			setOngoing(matchePlayed);
+		}
+	} , [navigate]);
+
 	const players = {
 		matche1: {
 			Player1: playersName[0].name,
@@ -70,40 +78,53 @@ const TournamentHearchy = () => {
 
 	const startgame = async (matche) => {
 		if (matche) {
+			setOngoing(matche);
 			localStorage.setItem('matche', JSON.stringify(matche));
 			navigate("/tournament/options/pong-tournament");
+			if (ongoing.Player1 == matche.Player1 && ongoing.Player2 == matche.Player2) {
+				matche.score1 = ongoing.score1;
+				matche.score2 = ongoing.score2;
+				matche.winner = ongoing.winner;
+				console.log(matche);
+				
+				return matche.winner;
+			}
+			console.log(ongoing)
 			return matche.winner;
 		}
 	}
 
 	const handlClick = async () => {
 				
-		const semiResults = await Promise.all([
-			await startgame(players.matche1),
-			await startgame(players.matche2),
-			await startgame(players.matche3),
-			await startgame(players.matche4),
-		]);
+		const semiResults = {
+			matche1: {
+				Player1: await startgame(players.matche1),
+				Player2: (players.matche1.winner ? await startgame(players.matche2) : null),
+			},
+			matche2: {
+				Player1: (players.matche2.winner ? await startgame(players.matche3) : null),
+				Player2: (players.matche3.winner ? await startgame(players.matche4) : null),
+			}
+		}
 		setSemi_Players(semiResults);
 	};
 	// useEffect(() => {
-	// const play_final = async () => {
-	// 		if (semi_players.matche1 && semi_players.matche2) {
+	// 	if (semi_players.matche1.Player1 && semi_players.matche2.Player1) {
+	// 		const playFinal = async () => {
 	// 			const finalResults = {
-	// 				matche:
-	// 				{
-	// 					Player1: await startgame(semi_players.matche1),
-	// 					Player2: await startgame(semi_players.matche2),
-	// 				} 
+	// 				matche: {
+	// 					Player1: (semi_players.matche1.winner ? await startgame(semi_players.matche1) : null),
+	// 					Player2: (semi_players.matche2.winner ? await startgame(semi_players.matche2) : null),
+	// 				},
 	// 			};
 	// 			setFinal_Players(finalResults);
-	// 		}
+	// 		};
+	// 		playFinal();
 	// 	}
-	// 	play_final();
 	// }, [semi_players]);
 	// useEffect(() => {
 	// 	const get_winner = async () => {
-	// 		if (final_players.matche) {
+	// 		if (final_players.matche.Player1 ) {
 	// 			const matchWinner = await startgame(final_players.matche);
 	// 			setWinner(matchWinner);
 	// 		}
@@ -112,6 +133,9 @@ const TournamentHearchy = () => {
 	// }, [final_players]);
 	const resetTournament = () => {
 		navigate("/tournament/options/tournament-registration");
+		localStorage.removeItem('players');
+		localStorage.removeItem('matche');
+		localStorage.removeItem('matchePlayed');
 	};
 
 	return (
@@ -144,7 +168,7 @@ const TournamentHearchy = () => {
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche1.Player1}
+					{players.matche1.score1}
 				</text>
 				<rect
 					x="0.5"
