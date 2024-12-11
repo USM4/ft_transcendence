@@ -13,9 +13,9 @@ import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
-import UserDataProvider from './Dashboard/UserDataContext.jsx'
+import UserDataProvider from './DashBoard/UserDataContext.jsx'
 import FriendDataProvider from './DashBoard/FriendDataContext.jsx'
-import SocketContextProvider from './Dashboard/SocketContext.jsx';
+import SocketContextProvider from './DashBoard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
 import NotFound from './NotFound.jsx';

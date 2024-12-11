@@ -7,9 +7,6 @@ import Racket from './Racket';
 import player1Image from '/pensioner.png';
 import player2Image from '/pensioner.png';
 
-
-
-
 const PongGame = () => {
   const navigate = useNavigate();
   const matche = JSON.parse(localStorage.getItem('matche')) || {};
@@ -224,7 +221,6 @@ const PongGame = () => {
 
   useEffect(() => {
     const matcheP = JSON.parse(localStorage.getItem('matchePlayed')) || {};
-    console.log(matcheP);
     if (matcheP.winner) {
       navigate("/tournament/options/play-tournament");
     }

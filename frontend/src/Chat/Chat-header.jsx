@@ -98,14 +98,14 @@ export default function Chat_header({ selected }) {
                     {menu &&
                         <div className="menu-list block-box">
                             <li className="menu-content" onClick={handleBlockClicked}>
-                                {selected.blocker !== selected.username ? (selected.is_blocked ? <h2>⊘ UNBLOCK</h2> : <h2>⊘ BLOCK</h2>) : null}
+                                {selected.is_blocked ? (selected.blocker !== selected.username ? <h2>⊘ UNBLOCK</h2> : null) : <h2>⊘ BLOCK</h2>}
                             </li>
                             <li className="menu-content" onClick={handleProfileClicked}>
                                 <h2>👤 PROFILE</h2>
 
                             </li>
                             <li className="menu-content" onClick={!selected.is_blocked ? () => handleGameClicked(selected) : null}>
-                                {selected.blocker != selected.username ? (!selected.is_blocked ? <h2>🕹️ GAMEINVITE</h2> : null) : null}
+                                {selected.is_blocked ? null : <h2>🕹️ GAMEINVITE</h2>}
                             </li>
                         </div>}
                 </ul>
