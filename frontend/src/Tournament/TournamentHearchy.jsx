@@ -1,141 +1,241 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import PongGame from "./TournametGame/PongGame.jsx";
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 const TournamentHearchy = () => {
-	const playersName = JSON.parse(localStorage.getItem('players')) || [];
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 	const [winner, setWinner] = useState("");
-	const [ongoing, setOngoing] = useState({ Player1: "", Player2: "" });
-	
-	useEffect(() => {
-		const matchePlayed = JSON.parse(localStorage.getItem('matchePlayed'));
-		if (matchePlayed) {
-			console.log(matchePlayed);
-			setOngoing(matchePlayed);
-		}
-	} , [navigate]);
+	const playersName = JSON.parse(localStorage.getItem('players'));
 
-	const players = {
-		matche1: {
+	const [tournamentState, setTournamentState] = useState({
+        players: {
+            matche1: {
+                Player1: playersName[0].name,
+                Player2: playersName[1].name,
+                score1: 0,
+                score2: 0,
+                winner: null,
+            },
+            matche2: {
+                Player1: playersName[2].name,
+                Player2: playersName[3].name,
+                score1: 0,
+                score2: 0,
+                winner: null,
+            },
+            matche3: {
+                Player1: playersName[4].name,
+                Player2: playersName[5].name,
+                score1: 0,
+                score2: 0,
+                winner: null,
+            },
+            matche4: {
+                Player1: playersName[6].name,
+                Player2: playersName[7].name,
+                score1: 0,
+                score2: 0,
+                winner: null,
+            },
+        },
+        semi_players: {
+            matche1: {
+                Player1: null,
+                Player2: null,
+                score1: 0,
+                score2: 0,
+                winner: null,
+            },
+            matche2: {
+                Player1: null,
+                Player2: null,
+                score1: 0,
+                score2: 0,
+                winner: null,
+            },
+        },
+        final_players: {
+            matche: {
+                Player1: null,
+                Player2: null,
+                score1: 0,
+                score2: 0,
+                winner: null,
+            },
+        },
+        ongoing:
+		{
 			Player1: playersName[0].name,
-			Player2: playersName[1].name,
-			winner: "",
+            Player2: playersName[1].name,
 			score1: 0,
 			score2: 0,
-		},
-		matche2: {
-			Player1: playersName[2].name,
-			Player2: playersName[3].name,
-			winner: "",
-			score1: 0,
-			score2: 0,
-
-		},
-		matche3: {
-			Player1: playersName[4].name,
-			Player2: playersName[5].name,
-			winner: "",
-			score1: 0,
-			score2: 0,
-
-		},
-		matche4: {
-			Player1: playersName[6].name,
-			Player2: playersName[7].name,
-			winner: "",
-			score1: 0,
-			score2: 0,
-
-		},
-	}
-	const [semi_players, setSemi_Players] = useState({
-		matche1: {
-			Player1: null,
-			Player2: null,
-			winner: "",
-			score1: 0,
-			score2: 0,
-		},
-		matche2: {
-			Player1: null,
-			Player2: null,
-			winner: "",
-			score1: 0,
-			score2: 0,
-		},
-	})
-	const [final_players, setFinal_Players] = useState({
-		matche: {
-			Player1: null,
-			Player2: null,
-			winner: "",
-			score1: 0,
-			score2: 0,
-		},
-	})
-
-	const startgame = async (matche) => {
-		if (matche) {
-			setOngoing(matche);
-			localStorage.setItem('matche', JSON.stringify(matche));
-			navigate("/tournament/options/pong-tournament");
-			if (ongoing.Player1 == matche.Player1 && ongoing.Player2 == matche.Player2) {
-				matche.score1 = ongoing.score1;
-				matche.score2 = ongoing.score2;
-				matche.winner = ongoing.winner;
-				console.log(matche);
-				
-				return matche.winner;
-			}
-			console.log(ongoing)
-			return matche.winner;
+			winner: null,
 		}
-	}
+    });
+
+    useEffect(() => {
+        const savedTournamentState = localStorage.getItem('tournamentState');
+        
+        if (savedTournamentState) {
+            const parsedState = JSON.parse(savedTournamentState);
+            setTournamentState(prevState => ({
+                ...prevState,
+                ...parsedState
+            }));
+        }
+    }, []);
+
+    useEffect(() => {
+        const matchePlayed = JSON.parse(localStorage.getItem('matchePlayed'));
+        
+        if (matchePlayed) {
+            localStorage.removeItem('matchePlayed');
+
+            setTournamentState(prevState => {
+                const updatedState = { ...prevState };
+
+                const quarterFinalKeys = ['matche1', 'matche2', 'matche3', 'matche4'];
+                quarterFinalKeys.forEach(matchKey => {
+                    const match = updatedState.players[matchKey];
+                    if (
+                        (match.Player1 === matchePlayed.Player1 && match.Player2 === matchePlayed.Player2) ||
+                        (match.Player1 === matchePlayed.Player2 && match.Player2 === matchePlayed.Player1)
+                    ) {
+                        match.score1 = matchePlayed.score1;
+                        match.score2 = matchePlayed.score2;
+                        match.winner = matchePlayed.winner;
+                    }
+                });
+
+                const quarterFinalsWinners = {
+                    'matche1': updatedState.players.matche1.winner,
+                    'matche2': updatedState.players.matche2.winner,
+                    'matche3': updatedState.players.matche3.winner,
+                    'matche4': updatedState.players.matche4.winner
+                };
+
+                if ((!updatedState.semi_players.matche1.Player1 || !updatedState.semi_players.matche1.Player2) && (quarterFinalsWinners.matche1 || quarterFinalsWinners.matche2)) {
+                    updatedState.semi_players.matche1 = {
+                        Player1: quarterFinalsWinners.matche1,
+                        Player2: quarterFinalsWinners.matche2,
+						score1: 0,
+						score2: 0,
+						winner: null,
+                    };
+                }
+
+                if ((!updatedState.semi_players.matche2.Player1 || !updatedState.semi_players.matche2.Player2) && (quarterFinalsWinners.matche3 || quarterFinalsWinners.matche4)) {
+                    updatedState.semi_players.matche2 = {
+                        Player1: quarterFinalsWinners.matche3,
+                        Player2: quarterFinalsWinners.matche4,
+						score1: 0,
+						score2: 0,
+						winner: null,
+                    };
+                }
+
+                const semiFinalKeys = ['matche1', 'matche2'];
+                semiFinalKeys.forEach(matchKey => {
+                    const match = updatedState.semi_players[matchKey];
+                    if (
+                        match.Player1 === matchePlayed.Player1 && match.Player2 === matchePlayed.Player2 ||
+						match.Player1 === matchePlayed.Player2 && match.Player2 === matchePlayed.Player1
+					) {
+                        match.score1 = matchePlayed.score1;
+                        match.score2 = matchePlayed.score2;
+                        match.winner = matchePlayed.winner;
+                    }
+                });
+
+                const semiFinalWinners = {
+                    'matche1': updatedState.semi_players.matche1.winner,
+                    'matche2': updatedState.semi_players.matche2.winner,
+                };
+
+                if ((!updatedState.final_players.matche.Player1 || !updatedState.final_players.matche.Player2) && (semiFinalWinners.matche1 || semiFinalWinners.matche2)) {
+                    updatedState.final_players.matche = {
+                        Player1: semiFinalWinners.matche1,
+                        Player2: semiFinalWinners.matche2,
+						score1: 0,
+						score2: 0,
+						winner: null,
+                    };
+                }
+
+                const finalMatch = updatedState.final_players.matche;
+                if (
+                    finalMatch.Player1 === matchePlayed.Player1 && finalMatch.Player2 === matchePlayed.Player2 || 
+					finalMatch.Player1 === matchePlayed.Player2 && finalMatch.Player2 === matchePlayed.Player1
+				) {
+                    finalMatch.score1 = matchePlayed.score1;
+                    finalMatch.score2 = matchePlayed.score2;
+                    finalMatch.winner = matchePlayed.winner;
+                    
+                    if (matchePlayed.winner) {
+                        setWinner(matchePlayed.winner);
+                    }
+                }
+
+                updatedState.ongoing = matchePlayed;
+                
+                localStorage.setItem('tournamentState', JSON.stringify(updatedState));
+                
+                return updatedState;
+            });
+        }
+    }, []);
+
+    const startgame = async (matche, nextmatche) => {
+        if (matche) {
+            setTournamentState(prevState => ({
+                ...prevState,
+                ongoing: nextmatche
+            }));
+            localStorage.setItem('tournamentState', JSON.stringify(tournamentState));
+            
+            localStorage.setItem('matche', JSON.stringify(matche));
+            navigate("/tournament/options/pong-tournament");
+        }
+    };
 
 	const handlClick = async () => {
-				
-		const semiResults = {
-			matche1: {
-				Player1: await startgame(players.matche1),
-				Player2: (players.matche1.winner ? await startgame(players.matche2) : null),
-			},
-			matche2: {
-				Player1: (players.matche2.winner ? await startgame(players.matche3) : null),
-				Player2: (players.matche3.winner ? await startgame(players.matche4) : null),
-			}
+		const state = { ...tournamentState };
+	
+		if (!state.players.matche1.winner) {
+			await startgame(state.players.matche1, state.players.matche2);
+			return; 
 		}
-		setSemi_Players(semiResults);
+		if (!state.players.matche2.winner) {
+			await startgame(state.players.matche2, state.players.matche3);
+			return;
+		}
+		if (!state.players.matche3.winner) {
+			await startgame(state.players.matche3, state.players.matche4);
+			return;
+		}
+		if (!state.players.matche4.winner) {
+			await startgame(state.players.matche4, state.semi_players.matche1);
+			return;
+		}
+	
+		if (!state.semi_players.matche1.winner) {
+			await startgame(state.semi_players.matche1, state.semi_players.matche2);
+			return;
+		}
+		if (!state.semi_players.matche2.winner) {
+			await startgame(state.semi_players.matche2, state.final_players.matche);
+			return;
+		}
+	
+		if (!state.final_players.matche.winner) {
+			await startgame(state.final_players.matche, null);
+			return;
+		}
 	};
-	// useEffect(() => {
-	// 	if (semi_players.matche1.Player1 && semi_players.matche2.Player1) {
-	// 		const playFinal = async () => {
-	// 			const finalResults = {
-	// 				matche: {
-	// 					Player1: (semi_players.matche1.winner ? await startgame(semi_players.matche1) : null),
-	// 					Player2: (semi_players.matche2.winner ? await startgame(semi_players.matche2) : null),
-	// 				},
-	// 			};
-	// 			setFinal_Players(finalResults);
-	// 		};
-	// 		playFinal();
-	// 	}
-	// }, [semi_players]);
-	// useEffect(() => {
-	// 	const get_winner = async () => {
-	// 		if (final_players.matche.Player1 ) {
-	// 			const matchWinner = await startgame(final_players.matche);
-	// 			setWinner(matchWinner);
-	// 		}
-	// 	}
-	// 	get_winner();
-	// }, [final_players]);
+	
 	const resetTournament = () => {
 		navigate("/tournament/options/tournament-registration");
-		localStorage.removeItem('players');
-		localStorage.removeItem('matche');
-		localStorage.removeItem('matchePlayed');
+		localStorage.clear()
 	};
 
 	return (
@@ -158,17 +258,17 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(ongoing.Player1 == players.matche1.Player1 && ongoing.Player2 == players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="77"
+					x="87"
 					y="32"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche1.score1}
+					{tournamentState.players.matche1.Player1 + ": " + tournamentState.players.matche1.score1}
 				</text>
 				<rect
 					x="0.5"
@@ -176,17 +276,17 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(ongoing.Player1 == players.matche1.Player1 && ongoing.Player2 == players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="77"
+					x="87"
 					y="126"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche1.Player2}
+					{tournamentState.players.matche1.Player2 + ": " + tournamentState.players.matche1.score2}
 				</text>
 				<rect
 					x="0.5"
@@ -194,17 +294,17 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(ongoing.Player1 == players.matche2.Player1 && ongoing.Player2 == players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="77"
+					x="87"
 					y="305"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche2.Player1}
+					{tournamentState.players.matche2.Player1 + ": " + tournamentState.players.matche2.score1}
 				</text>
 				<rect
 					x="0.5"
@@ -212,17 +312,17 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(ongoing.Player1 == players.matche2.Player1 && ongoing.Player2 == players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="77"
+					x="87"
 					y="400"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche2.Player2}
+					{tournamentState.players.matche2.Player2 + ": " + tournamentState.players.matche2.score2}
 				</text>
 
 
@@ -238,17 +338,17 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 0)"
-					stroke={(ongoing.Player1 == players.matche3.Player1 && ongoing.Player2 == players.matche3.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche3.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche3.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="1273"
-					y="28"
+					x="1263"
+					y="31"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche3.Player1}
+					{tournamentState.players.matche3.score1 + " :" + tournamentState.players.matche3.Player1}
 				</text>
 				<rect
 					x="-0.5"
@@ -257,17 +357,17 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 94)"
-					stroke={(ongoing.Player1 == players.matche3.Player1 && ongoing.Player2 == players.matche3.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche3.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche3.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="1268"
+					x="1263"
 					y="126"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche3.Player2}
+					{tournamentState.players.matche3.score2 + " :" + tournamentState.players.matche3.Player2}
 				</text>
 				<rect
 					x="-0.5"
@@ -276,17 +376,17 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 367)"
-					stroke={(ongoing.Player1 == players.matche4.Player1 && ongoing.Player2 == players.matche4.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche4.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche4.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="1270"
+					x="1263"
 					y="400"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche4.Player2}
+					{tournamentState.players.matche4.score2 + " :" + tournamentState.players.matche4.Player2}
 				</text>
 				<rect
 					x="-0.5"
@@ -295,17 +395,17 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 273)"
-					stroke={(ongoing.Player1 == players.matche4.Player1 && ongoing.Player2 == players.matche4.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche4.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche4.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="1270"
+					x="1263"
 					y="305"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{players.matche4.Player1}
+					{tournamentState.players.matche4.score1 + " :" + tournamentState.players.matche4.Player1}
 				</text>
 
 
@@ -319,17 +419,17 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(semi_players && ongoing.Player1 == semi_players.matche1.Player1 && ongoing.Player2 == semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="320"
+					x="330"
 					y="168"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{semi_players.matche1.Player1}
+					{tournamentState.semi_players.matche1.Player1 && (tournamentState.semi_players.matche1.Player1 + ": " + tournamentState.semi_players.matche1.score1)}
 				</text>
 				<rect
 					x="242.5"
@@ -337,17 +437,17 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(semi_players && ongoing.Player1 == semi_players.matche1.Player1 && ongoing.Player2 == semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="320"
+					x="330"
 					y="262"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{semi_players.matche1.Player2}
+					{tournamentState.semi_players.matche1.Player2 && (tournamentState.semi_players.matche1.Player2 + ": " + tournamentState.semi_players.matche1.score2)}
 				</text>
 				{/*---------------------------------------------- RIGHT SEMI_FINAL ----------------------------------------------*/}
 				<rect
@@ -357,7 +457,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1108 230)"
-					stroke={(semi_players && ongoing.Player1 == semi_players.matche2.Player1 && ongoing.Player2 == semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1020"
@@ -367,7 +467,7 @@ const TournamentHearchy = () => {
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{semi_players.matche2.Player1}
+					{tournamentState.semi_players.matche2.Player1 && (tournamentState.semi_players.matche2.score1 + " :" + tournamentState.semi_players.matche2.Player1)}
 				</text>
 				<rect
 					x="-0.5"
@@ -376,7 +476,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1108 136)"
-					stroke={(semi_players && ongoing.Player1 == semi_players.matche2.Player1 && ongoing.Player2 == semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1020"
@@ -386,7 +486,7 @@ const TournamentHearchy = () => {
 					textAnchor="middle"
 					fontFamily="IBM Plex Mono"
 				>
-					{semi_players.matche2.Player2}
+					{tournamentState.semi_players.matche2.Player2 && (tournamentState.semi_players.matche2.score2 + " :" + tournamentState.semi_players.matche2.Player2)}
 				</text>
 				<line x1="390" y1="163.5" x2="411" y2="163.5" stroke="#FFD700" />
 				<line x1="390" y1="257.5" x2="411" y2="257.5" stroke="#FFD700" />
@@ -415,17 +515,17 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(final_players && ongoing.Player1 == final_players.matche.Player1 && ongoing.Player2 == final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.final_players && tournamentState.ongoing.Player1 == tournamentState.final_players.matche.Player1 && tournamentState.ongoing.Player2 == tournamentState.final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="558"
+					x="535"
 					y="215"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="start"
 					fontFamily="IBM Plex Mono"
 				>
-					{final_players.matche.Player1}
+					{tournamentState.final_players.matche.Player1 && (tournamentState.final_players.matche.Player1 + ": " + tournamentState.final_players.matche.score1)}
 				</text>
 				<rect
 					x="-0.5"
@@ -434,17 +534,17 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 866 183)"
-					stroke={(final_players && ongoing.Player1 == final_players.matche.Player1 && ongoing.Player2 == final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.final_players && tournamentState.ongoing.Player1 == tournamentState.final_players.matche.Player1 && tournamentState.ongoing.Player2 == tournamentState.final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
-					x="793"
+					x="815"
 					y="215"
 					fill="#FFD700"
 					fontSize="12"
 					textAnchor="end"
 					fontFamily="IBM Plex Mono"
 				>
-					{final_players.matche.Player2}
+					{tournamentState.final_players.matche.Player2 && (tournamentState.final_players.matche.score2 + ": " + tournamentState.final_players.matche.Player2)}
 				</text>
 
 
@@ -540,33 +640,6 @@ const TournamentHearchy = () => {
 				/>
 				<circle cx="25" cy="27" r="18.5" stroke="#FFD700" fill="url(#image1)" />
 
-				{/* <foreignObject
-				x="6.5"
-				y="8.5"
-				width="37"
-				height="37"
-				transform="matrix(1 0 0 1 0 0)"
-			>
-				<div
-					xmlns="http://www.w3.org/1999/xhtml"
-					style={{
-						width: "100%",
-						height: "100%",
-						borderRadius: "50%",
-						overflow: "hidden",
-					}}
-				>
-					<img
-						src={hamster}
-						alt="Group"
-						style={{
-							width: "100%",
-							height: "100%",
-							objectFit: "cover",
-						}}
-					/>
-				</div>
-			</foreignObject> */}
 				<circle
 					cx="19"
 					cy="19"
@@ -576,33 +649,7 @@ const TournamentHearchy = () => {
 					fill="url(#image1)"
 				/>
 				<circle cx="267" cy="164" r="18.5" stroke="#FFD700" fill="url(#image1)" />
-				{/* <foreignObject
-				x="6.5"
-				y="8.5"
-				width="37"
-				height="37"
-				transform="matrix(1 0 0 1 0 0)"
-			>
-				<div
-					xmlns="http://www.w3.org/1999/xhtml"
-					style={{
-						width: "100%",;
-						height: "100%",
-						borderRadius: "50%",
-						overflow: "hidden",
-					}}
-				>
-					<img
-						src={hamster}
-						alt="Group"
-						style={{
-							width: "100%",
-							height: "100%",
-							objectFit: "cover",
-						}}
-					/>
-				</div>
-			</foreignObject> */}
+
 				<circle
 					cx="19"
 					cy="19"

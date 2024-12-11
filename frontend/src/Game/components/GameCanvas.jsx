@@ -22,7 +22,7 @@ const GameCanvas = ({ gameState, updateGameState }) => {
     drawGame();
   }, [gameState]);
 
-  return <canvas ref={canvasRef} width="500" height="400"></canvas>;
+  return <canvas className="canvas-game" ref={canvasRef} width="500" height="400"></canvas>;
 };
 
 export default GameCanvas;
