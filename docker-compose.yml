@@ -2,15 +2,26 @@ version: '3.8'
 services:
   backend:
     build: ./backend
-    ports:
+    expose:
       - "8000:8000"
     volumes:
       - ./backend:/app
     depends_on:
       - frontend
+    
   frontend:
     build: ./frontend
-    ports:
+    expose:
       - "5173:5173"
     volumes:
       - ./frontend:/app
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/default.conf
