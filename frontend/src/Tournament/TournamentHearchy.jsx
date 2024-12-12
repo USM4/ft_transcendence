@@ -73,6 +73,19 @@ const TournamentHearchy = () => {
 		}
     });
 
+	useEffect(() => {
+		const currentStoredState = localStorage.getItem('tournamentState');
+		const currentStateString = JSON.stringify(tournamentState);
+	
+		console.log('currentStoredState', currentStoredState);
+		console.log('currentStateString', currentStateString);
+		if (currentStoredState !== currentStateString) {
+
+			localStorage.setItem('tournamentState', currentStoredState);
+			setTournamentState(JSON.parse(currentStoredState));
+		}
+	}, [tournamentState]);
+
     useEffect(() => {
         const savedTournamentState = localStorage.getItem('tournamentState');
         
