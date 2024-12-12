@@ -46,7 +46,7 @@ function ProfileSettings() {
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
-        setIsEnabled(false);
+        setIsEnabled(true);
       } else {
         toast.error(data.error);
         console.log(data);
