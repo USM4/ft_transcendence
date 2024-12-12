@@ -18,6 +18,7 @@ function SignIn() {
         const response_type = 'code';
         const redirectUri='http://localhost:8000/accounts/42school/login/callback/';
         const auth_url_concatinated = `${auth_url}?client_id=${client_id}&redirect_uri=${redirectUri}&response_type=${response_type}`;
+        console.log("aaaaaaaauth --------> ",auth_url_concatinated);
         window.location.href = auth_url_concatinated;
     };
     const handleSignInClick = async(e) => {

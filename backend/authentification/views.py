@@ -128,9 +128,9 @@ class ExtractCodeFromIntraUrl(APIView):
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
         if user.is_2fa_enabled:
-            response = redirect('http://localhost:5173/2fa')
+            response = redirect('https://localhost/2fa')
         else:       
-            response = redirect('http://localhost:5173/dashboard')
+            response = redirect('https://localhost/dashboard')
         response.set_cookie(
             'client',
             access,

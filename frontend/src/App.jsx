@@ -28,7 +28,12 @@ import AppGame from './Game/AppGame.jsx';
 function App() {
   return (
     <>
-      <Router>
+      <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+      >
         <UserDataProvider>
           <SocketContextProvider>
           <Toaster position="top-center" reverseOrder={false} />
