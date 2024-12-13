@@ -1,29 +1,37 @@
-import React, { useState } from "react";
-import PongGame from "./PongGame";
+import React,{ useEffect} from "react";
+import { Routes, Route,useLocation } from "react-router-dom";
+import RemotePong from "./RemotePong";
+import { use } from "react";
 
-const Matchmaking = () => {
-  const [roomName, setRoomName] = useState("");
-  const [joined, setJoined] = useState(false);
 
-  const joinRoom = () => {
-    if (roomName.trim() !== "") {
-      setJoined(true);
-    }
-  };
+export const MatchmakingContext = createContext()
+export default function Matchmaking() {
+    const [gamesocket, setGameSocket] = useState(null);
+      const location = useLocation();
+      const pathname = location.pathname;
 
-  return joined ? (
-    <PongGame isAIEnabled={true} roomName={roomName} />
-  ) : (
-    <div>
-      <h2>Enter Room Name</h2>
-      <input
-        type="text"
-        value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
-      />
-      <button onClick={joinRoom}>Join Room</button>
-    </div>
-  );
-};
+    useEffect(() => {
+        const establishConnection = () => {
+          const socket = new WebSocket(`ws://localhost:8000/ws/game/`);
+          socket.onopen = () => {
+            setGameSocket(socket);
+            console.log("Game connection established.")
+          };
+          socket.onclose = () => {
+            console.log("Game connection closed.")
+          };
+        }
+        if (pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/features' && pathname !== '/howtoplay')
+          establishConnection();
+      }, [])
 
-export default Matchmaking;
+      return (
+        <>
+          {gamesocket &&
+            (<MatchmakingContext.Provider value={gamesocket}>
+              <RemotePong ></RemotePong>
+            </MatchmakingContext.Provider>)
+          }
+        </>
+      );
+}
