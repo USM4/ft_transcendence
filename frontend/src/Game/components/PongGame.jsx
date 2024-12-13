@@ -91,24 +91,6 @@ const PongGame = ({ isAIEnabled }) => {
         x = rightRacket.x - ball.radius;
       }
 
-      // if (x - ball.radius <= 0) {
-      //   setScores((prevScores) => ({
-      //     ...prevScores,
-      //     rightPlayer: prevScores.rightPlayer + 1,
-      //   }));
-      //   resetPositions();
-      //   return { ...prevBall, x: 500, y: 250, velocityX: 4, velocityY: 4 };
-      // }
-  
-      // if (x + ball.radius >= 1000) {
-      //   setScores((prevScores) => ({
-      //     ...prevScores,
-      //     leftPlayer: prevScores.leftPlayer + 1,
-      //   }));
-      //   resetPositions();
-      //   return { ...prevBall, x: 500, y: 250, velocityX: -4, velocityY: 4 };
-      // }
-
       let updatedScores = { ...scores };
       if (x - ball.radius <= 0) {
         setScores((prevScores) => ({
