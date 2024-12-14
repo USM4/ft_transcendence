@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useCallback,useContext } from 'react';
-import Canvas from './Canvas';
-import Ball from './Ball';
 import WinPage from './WinPage';
-import Racket from './Racket';
-import player1Image from '../img/player1.jpeg';
-import player2Image from '../img/player2.jpeg';
 import { MatchmakingContext } from './Matchmaking.jsx';
 import { use } from 'react';
 
