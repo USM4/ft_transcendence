@@ -1,3 +1,5 @@
+// import React from 'react';
+// import Sketch from 'react-p5';
 import React, { useEffect, useRef } from "react";
 
 const GameCanvas = ({ gameState, updateGameState }) => {
@@ -11,15 +13,15 @@ const GameCanvas = ({ gameState, updateGameState }) => {
       context.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw paddles
-      context.fillStyle = "black";
-      context.fillRect(20, gameState.player1Y, 10, 80);
-      context.fillRect(470, gameState.player2Y, 10, 80);
+      // context.fillStyle = "black";
+      // context.fillRect(20, gameState.player1Y, 10, 80);
+      // context.fillRect(470, gameState.player2Y, 10, 80);
 
       // Draw ball
-      context.fillRect(gameState.ballX, gameState.ballY, 10, 10);
+      // context.fillRect(gameState.ballX, gameState.ballY, 10, 10);
     };
 
-    drawGame();
+    // drawGame();
   }, [gameState]);
 
   return <canvas className="canvas-game" ref={canvasRef} width="500" height="400"></canvas>;

@@ -2211,11 +2211,10 @@ body {
   justify-content: center;
   font-family: inherit;
   text-align: center;
-  background-image: url('Game/img/d95ded2ac516e5076ff61ff0dccf4bb0.jpg');
   background-size: cover;
   background-position: center;
   height: 100vh;
-  color: #fff;
+  color: #000;
   padding: 20px;
 }
 
@@ -2228,7 +2227,7 @@ body {
 
 .Game-main-Page button {
   border: 3px solid #FFAA39;
-  color: #ffd700;
+  color: #000;
   cursor: pointer;
   font-size: 25px;
   font-weight: bold;
@@ -2335,7 +2334,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* width: 45%; */
+  width: 45%;
   text-align: center;
 }
 
@@ -2368,7 +2367,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* height: 100vh; */
+  height: 100vh;
   background-color: #000;
   text-align: center;
 }
@@ -2417,9 +2416,9 @@ body {
 .canvas-container {
   position: relative;
   width: 90%;
-  max-width: 1000px; /* Optional: Set a max width for larger screens */
-  aspect-ratio: 2 / 1; /* Maintains a 2:1 ratio for a 1000x500 canvas */
-  margin: 0 auto; /* Centers the canvas horizontally */
+  max-width: 1000px;
+  aspect-ratio: 2 / 1;
+  margin: 0 auto;
   border: 2px solid #000;
 }
 

@@ -16,6 +16,7 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 import UserDataProvider from './DashBoard/UserDataContext.jsx'
 import FriendDataProvider from './DashBoard/FriendDataContext.jsx'
 import SocketContextProvider from './DashBoard/SocketContext.jsx';
+// import MatchMakingContextProvider from './Game/components/Matchmaking.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
 import NotFound from './NotFound.jsx';
@@ -28,9 +29,15 @@ import AppGame from './Game/AppGame.jsx';
 function App() {
   return (
     <>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <UserDataProvider>
-          <SocketContextProvider>
+        <SocketContextProvider>
+          {/* <MatchMakingContextProvider> */}
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             {/* Public Routes */}
@@ -102,6 +109,7 @@ function App() {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+        {/* </MatchMakingContextProvider> */}
         </SocketContextProvider>
         </UserDataProvider>
       </Router>

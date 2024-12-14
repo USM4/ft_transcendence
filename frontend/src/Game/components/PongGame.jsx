@@ -13,15 +13,15 @@ import player2Image from '../img/player2.jpeg';
 const PongGame = ({ isAIEnabled }) => {
   const navigate = useNavigate();
   const [ball, setBall] = useState({
-    x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff'
+    x: 500, y: 250, velocityX: 2, velocityY: 2, radius: 10, color: '#ff0000'
   });
 
   const [leftRacket, setLeftRacket] = useState({
-    x: 10, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
+    x: 10, y: 200, width: 10, height: 100, color: '#0000ff', velocity: 7,
   });
 
   const [rightRacket, setRightRacket] = useState({
-    x: 980, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
+    x: 980, y: 200, width: 10, height: 100, color: '#000000', velocity: 7,
   });
 
   const [keysPressed, setKeysPressed] = useState({
@@ -35,7 +35,7 @@ const PongGame = ({ isAIEnabled }) => {
   const [winner, setWinner] = useState(null);
 
   const resetGame = () => {
-    setBall({ x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#fff' });
+    setBall({ x: 500, y: 250, velocityX: 4, velocityY: 4, radius: 10, color: '#ff0000' });
     setLeftRacket((prev) => ({ ...prev, y: 200 }));
     setRightRacket((prev) => ({ ...prev, y: 200 }));
     setScores({ leftPlayer: 0, rightPlayer: 0 });
@@ -65,7 +65,7 @@ const PongGame = ({ isAIEnabled }) => {
   const updateBallPosition = useCallback(() => {
     setBall((prevBall) => {
       let { x, y, velocityX, velocityY } = prevBall;
-
+      // console.log('ball', x, y, velocityX, velocityY);
       x += velocityX;
       y += velocityY;
 
@@ -91,32 +91,32 @@ const PongGame = ({ isAIEnabled }) => {
         x = rightRacket.x - ball.radius;
       }
 
-      let updatedScores = { ...scores };
-      if (x - ball.radius <= 0) {
-        setScores((prevScores) => ({
-          ...prevScores,
-          rightPlayer: prevScores.rightPlayer + 1,
-        }));
-        updatedScores.rightPlayer += 1;
-        resetPositions();
-        return { ...prevBall, x: 500, y: 250, velocityX: 4, velocityY: 4 };
-      } else if (x + ball.radius >= 1000) {
-        setScores((prevScores) => ({
-          ...prevScores,
-          leftPlayer: prevScores.leftPlayer + 1,
-        }));
-        updatedScores.leftPlayer += 1;
-        resetPositions();
-        return { ...prevBall, x: 500, y: 250, velocityX: -4, velocityY: 4 };
-      }
+      // let updatedScores = { ...scores };
+      // if (x - ball.radius <= 0) {
+      //   setScores((prevScores) => ({
+      //     ...prevScores,
+      //     rightPlayer: prevScores.rightPlayer + 1,
+      //   }));
+      //   updatedScores.rightPlayer += 1;
+      //   resetPositions();
+      //   return { ...prevBall, x: 500, y: 250, velocityX: 4, velocityY: 4 };
+      // } else if (x + ball.radius >= 1000) {
+      //   setScores((prevScores) => ({
+      //     ...prevScores,
+      //     leftPlayer: prevScores.leftPlayer + 1,
+      //   }));
+      //   updatedScores.leftPlayer += 1;
+      //   resetPositions();
+      //   return { ...prevBall, x: 500, y: 250, velocityX: -4, velocityY: 4 };
+      // }
 
-      if (updatedScores.leftPlayer === 5) {
-        setWinner('Player 1');
-      } else if (updatedScores.rightPlayer === 5) {
-        setWinner('Player 2');
-      }
+      // if (updatedScores.leftPlayer === 5) {
+      //   setWinner('Player 1');
+      // } else if (updatedScores.rightPlayer === 5) {
+      //   setWinner('Player 2');
+      // }
 
-      setScores(updatedScores);
+      // setScores(updatedScores);
 
       return { ...prevBall, x, y, velocityX, velocityY };
     });
@@ -124,7 +124,8 @@ const PongGame = ({ isAIEnabled }) => {
 
   const moveLeftRacket = (direction) => {
     setLeftRacket((prev) => {
-      let newY = prev.y + direction * prev.velocity;
+      console.log('direction', direction);
+      let newY = prev.y + direction * prev.velocity * 2;
       newY = Math.max(0, Math.min(newY, 500 - prev.height));
       return { ...prev, y: newY };
     });
@@ -184,7 +185,7 @@ const PongGame = ({ isAIEnabled }) => {
           moveAIRacket();
         }
       }
-    }, 16);
+    }, 1);
   
     return () => clearInterval(gameInterval);
   }, [updateBallPosition, moveAIRacket, winner, isAIEnabled]);
@@ -192,7 +193,7 @@ const PongGame = ({ isAIEnabled }) => {
   const draw = useCallback(
     (context) => {
       context.clearRect(0, 0, 1000, 500);
-      context.fillStyle = '#326da4';
+      context.fillStyle = '#ffffff';
       context.fillRect(0, 0, 1000, 500);
 
       context.beginPath();
@@ -222,7 +223,7 @@ const PongGame = ({ isAIEnabled }) => {
           <h3>Player 1</h3>
           <p>Score: {scores.leftPlayer}</p>
         </div>
-        <div>
+        <div className="score-displayers">
           <img src={player2Image}></img>
           <h3>{isAIEnabled ? 'AI' : 'Player 2'}</h3>
           <p>Score: {scores.rightPlayer}</p>
@@ -231,7 +232,7 @@ const PongGame = ({ isAIEnabled }) => {
       <div className='canvas-container'>
         <Canvas draw={draw} width={1000} height={500} />
       </div>
-      <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
+      {/* <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} /> */}
       <Racket x={leftRacket.x} y={leftRacket.y} width={leftRacket.width} height={leftRacket.height} color={leftRacket.color} upKey="w" downKey="s" onMove={moveLeftRacket} />
       {!isAIEnabled && (
         <Racket x={rightRacket.x} y={rightRacket.y} width={rightRacket.width} height={rightRacket.height} color={rightRacket.color} upKey="o" downKey="l" onMove={moveRightRacket} />
@@ -239,13 +240,13 @@ const PongGame = ({ isAIEnabled }) => {
       <h3>
         {/* <img src='../img/W-key.png' alt="W key" className="key-img" />  */}
         {/* <img src='../img/S-key.png' alt="S key" className="key-img" />  */}
-        Click W to go up and S to go down
+        {/* Click W to go up and S to go down */}
       </h3>
       {!isAIEnabled && (
         <h3>
           {/* <img src='../img/O-key.png' alt="O key" className="key-img" />  */}
           {/* <img src='../img/L-key.png' alt="L key" className="key-img" />  */}
-          Click O to go up and L to go down
+          {/* Click O to go up and L to go down */}
         </h3>
       )}
     </div>

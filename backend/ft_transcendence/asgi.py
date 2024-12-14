@@ -18,6 +18,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import authentification.routing
 import chat.routing
+import game.routing
 from chat.middleware import QueryAuthMiddleware
 
  
@@ -27,7 +28,7 @@ application = ProtocolTypeRouter({
         AuthMiddlewareStack(
             QueryAuthMiddleware(
                 URLRouter(
-                    authentification.routing.websocket_urlpatterns 
+                    authentification.routing.websocket_urlpatterns
                     + chat.routing.websocket_urlpatterns
                 )
             )

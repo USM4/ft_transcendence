@@ -61,7 +61,8 @@ function SocketContextProvider({ children }) {
             }
         }
 
-        // Cleanup: Close WebSocket when component unmounts or when necessary
+        // Cleanup: Close WebSocket when component unmounts or when necessary 
+
         return () => {
             if (socket) {
                 socket.close(); // Ensure to close the socket when the component unmounts or on path changes
