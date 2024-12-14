@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Sketch from 'react-p5';
 
 const Ball = ({ x, y, radius, color, updatePosition, draw }) => {
   useEffect(() => {

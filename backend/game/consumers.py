@@ -3,6 +3,8 @@ import json
 from authentification.models import Client
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.contrib.auth.models import User
+from django.db import models
 
 class gameState():
     canvas_width = 1000
@@ -49,7 +51,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         #assign the player number
         if gameState.paddle1_number == None:
             gameState.paddle1_number = self.sender.id
-        
         else:
             gameState.paddle2_number = self.sender.id
 
@@ -60,7 +61,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         if gameState.paddle1_number == 1:
             gameState.paddle1_number = None
-
         else:
             gameState.paddle2_number = None
         await self.channel_layer.group_discard("game_room", self.channel_name)
