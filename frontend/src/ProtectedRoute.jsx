@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Route, Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ component: Component }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // Start with null for loading state
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
     const verifyToken = async () => {

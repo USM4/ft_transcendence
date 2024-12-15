@@ -13,22 +13,22 @@ function SocketContextProvider({ children }) {
     useEffect(() => {
         // Function to establish a WebSocket connection
         const establishConnection = () => {
-            console.log("Establishing WebSocket connection...");
+            // console.log("Establishing WebSocket connection...");
             const ws = new WebSocket('ws://localhost:8000/ws/online_status/');
 
             ws.onopen = () => {
-                console.log("---------{ WebSocket connection established }--------------");
+                // console.log("---------{ WebSocket connection established }--------------");
                 setSocket(ws);
             };
 
             ws.onerror = (error) => {
                 setSocket(null);
-                console.error("WebSocket error:", error);
+                // console.error("WebSocket error:", error);
             };
 
             ws.onclose = () => {
                 setSocket(null);
-                console.log("WebSocket connection closed.");
+                // console.log("WebSocket connection closed.");
             };
         };
 

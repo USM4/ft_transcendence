@@ -30,6 +30,7 @@ application = ProtocolTypeRouter({
                 URLRouter(
                     authentification.routing.websocket_urlpatterns
                     + chat.routing.websocket_urlpatterns
+                    + game.routing.websocket_urlpatterns
                 )
             )
         )

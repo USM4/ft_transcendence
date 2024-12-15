@@ -1,132 +1,243 @@
-import React, { useState, useEffect, useCallback,useContext } from 'react';
-import WinPage from './WinPage';
-import { MatchmakingContext } from './Matchmaking.jsx';
-import { use } from 'react';
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { GameSocketContext } from "./GameSocketContext"; 
+import WaitingOpponent from "./WaitingOpponent"; 
+import player1Image from "../../../public/skull.jpeg";
+import player2Image from "../../../public/realone.png";
 
+const RemotePong = ({ isAIEnabled }) => {
+  const { socket } = useContext(GameSocketContext); 
+  const canvasRef = useRef(null);
+  const [gameState, setGameState] = useState("Playing");
+  const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
+  const [winner, setWinner] = useState(null);
 
+  const wsRef = useRef(null); 
 
-const RemotePong = () => {
-  // const gamesocket = useContext(MatchmakingContext);
-  // const [ball, setBall] = useState({});
+  const ballRef = useRef({
+    x: 500,
+    y: 250,
+    velocityX: 2,
+    velocityY: 2,
+    radius: 10,
+    color: "yellow",
+  });
 
-  // const [playerRacket, setPlayerRacket] = useState({
-  //   x: 10, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
-  // });
+  const leftRacket = useRef({
+    x: 10,
+    y: 200,
+    width: 10,
+    height: 100,
+    color: "blue",
+    velocity: 13,
+  });
 
-  // const [friendRacket, setFriendRacket] = useState({
-  //   x: 980, y: 200, width: 10, height: 100, color: '#000000', velocity: 20,
-  // });
+  const rightRacket = useRef({
+    x: 980,
+    y: 200,
+    width: 10,
+    height: 100,
+    color: "red",
+    velocity: isAIEnabled ? 2 : 13,
+  });
 
-  // const [keysPressed, setKeysPressed] = useState({
-  //   w: false,
-  //   s: false,
-  // });
+  const keyState = useRef({
+    w: false,
+    s: false,
+    ArrowUp: false,
+    ArrowDown: false,
+  });
 
-  // const [scores, setScores] = useState({ Player: 0, Friend: 0 });
-  // const [winner, setWinner] = useState(null);
-
-  // useEffect(() => {
-  //   gamesocket.onmessage = (e) => {
-  //     const data = JSON.parse(e.data);
-  //     setBall(data.ball);
-  //     setPlayerRacket(data.playerRacket);
-  //     setFriendRacket(data.friendRacket);
-  //     setScores(data.scores);
-  //     setWinner(data.winner);
-  //   }
-  // }, [gamesocket]);
-  // useEffect(() => {
-  //   gamesocket.send(JSON.stringify({ type: 'movepaddle', keysPressed }));
-  // }, [keysPressed]);
-
-  // const handleKeyDown = (e) => {
-  //   setKeysPressed((prev) => {
-  //     const updatedKeys = { ...prev, [e.key]: true };
-
-  //     return updatedKeys;
-  //   });
-  // };
-
-  // const handleKeyUp = (e) => {
-  //   setKeysPressed((prev) => {
-  //     const updatedKeys = { ...prev, [e.key]: false };
-  //     return updatedKeys;
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('keydown', handleKeyDown);
-  //   window.addEventListener('keyup', handleKeyUp);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //     window.removeEventListener('keyup', handleKeyUp);
-  //   };
-  // }, []);
-
-  // // useEffect(() => {
-  // //   const gameInterval = setInterval(() => {
-  // //     if (!winner) {
-  // //       updateBallPosition();
-  // //       if (isAIEnabled) {
-  // //         moveAIRacket();
-  // //       }
-  // //     }
-  // //   }, 16);
   
-  // //   return () => clearInterval(gameInterval);
-  // // }, [updateBallPosition, moveAIRacket, winner, isAIEnabled]);
+  useEffect(() => {
+    if (socket) {
+      
+      wsRef.current = socket;
 
-  // const draw = useCallback(
-  //   (context) => {
-  //     context.clearRect(0, 0, 1000, 500);
-  //     context.fillStyle = '#326da4';
-  //     context.fillRect(0, 0, 1000, 500);
+      wsRef.current.onopen = () => {
+        console.log("WebSocket connection established.");
+      };
 
-  //     context.beginPath();
-  //     context.fillStyle = ball.color;
-  //     context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-  //     context.fill();
+      wsRef.current.onclose = () => {
+        console.log("WebSocket connection closed.");
+      };
 
-  //     context.fillStyle = playerRacket.color;
-  //     context.fillRect(playerRacket.x, playerRacket.y, playerRacket.width, playerRacket.height);
+      wsRef.current.onerror = (error) => {
+        console.error("WebSocket Error:", error);
+      };
 
-  //     context.fillStyle = friendRacket.color;
-  //     context.fillRect(friendRacket.x, friendRacket.y, friendRacket.width, friendRacket.height);
-  //     if (winner) return;
-  //   },
-  //   [ball, playerRacket, friendRacket]
-  // );
+      
+      wsRef.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+      
+        if (data.type === "game_state_update") {
+          const gameState = data.message;
+          console.log("Game state:", gameState);
+      
+          leftRacket.current = gameState.paddle1;
+          rightRacket.current = gameState.paddle2;
+          ballRef.current = gameState.ball;
+        }
+      };
+      
+      return () => {
+        if (wsRef.current) {
+          console.log("Closing WebSocket connection.");
+          wsRef.current.close();
+        }
+      };
+    }
+  }, [socket]); 
 
-  // if (winner) {
-  //   return <WinPage winner={winner} resetGame={resetGame} />;
-  // }
+  
+  const handleKeyDown = (e) => {
+    const key = e.key.toLowerCase();
 
-  // return (
-  //   <div className='Game-render'>
-  //     <div className="player-profiles">
-  //       <div>
-  //       <img src={player1Image}></img>
-  //         <h3>Player 1</h3>
-  //         <p>Score: {scores.Player}</p>
-  //       </div>
-  //       <div>
-  //         <img src={player2Image}></img>
-  //         <h3>{isAIEnabled ? 'AI' : 'Player 2'}</h3>
-  //         <p>Score: {scores.Friend}</p>
-  //       </div>
-  //     </div>
-  //     <div className='canvas-container'>
-  //       <Canvas draw={draw} width={1000} height={500} />
-  //     </div>
-  //     <Ball x={ball.x} y={ball.y} radius={ball.radius} color={ball.color} updatePosition={updateBallPosition} />
-  //     <Racket x={playerRacket.x} y={playerRacket.y} width={playerRacket.width} height={playerRacket.height} color={playerRacket.color} upKey="w" downKey="s" onMove={movePlayerRacket} />
-  //       <Racket x={friendRacket.x} y={friendRacket.y} width={friendRacket.width} height={friendRacket.height} color={friendRacket.color} upKey="o" downKey="l" onMove={moveFriendRacket} />
+    if (["w", "s", "arrowup", "arrowdown"].includes(key) &&!keyState.current[key]) {
+      const message = {
+        type: "key_press",
+        key: key,
+      };
 
-  //     <h3>
-  //       Click W to go up and S to go down
-  //     </h3>
-  //   </div>
-  // );
+      
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        console.log("Sending key press:", message.key); 
+        wsRef.current.send(JSON.stringify(message)); 
+        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
+        // keyState.current[key] = true
+      } else {
+        console.error("WebSocket is not open, message not sent");
+      }
+    }
+  };
+
+  const handleKeyUp = (e) => {
+    const key = e.key.toLowerCase();
+    console.log("Key up:", key); 
+
+    if ( ["w", "s", "arrowup", "arrowdown"].includes(key) && keyState.current[key]) {
+      const message = {
+        type: "key_release",
+        key: key,
+      };
+
+      
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        console.log("Sending key release:", message.key); 
+        wsRef.current.send(JSON.stringify(message)); 
+        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
+        // keyState.current[key] = false; 
+      } else {
+        console.error("WebSocket is not open, message not sent");
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
+  useEffect(() => {
+    const animate = () => {
+      if (canvasRef.current === null) {
+        console.log("Canvas is null");
+        return;
+      }
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
+      context.clearRect(0, 0, 1000, 500);
+      context.fillStyle = "#000000";
+      context.fillRect(0, 0, 1000, 500);
+
+      context.beginPath();
+      context.fillStyle = ballRef.current.color;
+      context.arc(
+        ballRef.current.x,
+        ballRef.current.y,
+        ballRef.current.radius,
+        0,
+        Math.PI * 2
+      );
+      context.fill();
+
+      context.fillStyle = leftRacket.current.color;
+      context.fillRect(
+        leftRacket.current.x,
+        leftRacket.current.y,
+        leftRacket.current.width,
+        leftRacket.current.height
+      );
+
+      context.fillStyle = rightRacket.current.color;
+      context.fillRect(
+        rightRacket.current.x,
+        rightRacket.current.y,
+        rightRacket.current.width,
+        rightRacket.current.height
+      );
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+  }, []);
+
+  return (
+    <div className="Game-render">
+      {gameState === "Waiting" && <WaitingOpponent isVisible={true} />}
+      {gameState === "Playing" && (
+        <>
+          <div className="player-profiles">
+            <div className="player-card">
+              <div className="player-name">
+                <h3>Player 1</h3>
+                <span className="status-dot active"></span>
+              </div>
+              <div className="score-container">
+                <span className="score">{scores.leftPlayer}</span>
+              </div>
+              <div className="player-avatar">
+                <img src={player1Image} alt="Player 1" />
+                <div className="glow-effect"></div>
+              </div>
+            </div>
+
+            <div className="vs-container">
+              <span className="vs-text">VS</span>
+            </div>
+
+            <div className="player-card">
+              <div className="player-name">
+                <h3>{isAIEnabled ? "AI" : "Player 2"}</h3>
+                <span className="status-dot active"></span>
+              </div>
+              <div className="score-container">
+                <span className="score">{scores.rightPlayer}</span>
+              </div>
+              <div className="player-avatar">
+                <img src={player2Image} alt="Player 2" />
+                <div className="glow-effect"></div>
+              </div>
+            </div>
+          </div>
+          <div className="canvas-container">
+            <canvas
+              className="canvas-game"
+              ref={canvasRef}
+              width={1000}
+              height={500}
+            />
+            <div className="match-timer">00:00</div>
+          </div>
+        </>
+      )}
+    </div>
+  );
 };
 
 export default RemotePong;
