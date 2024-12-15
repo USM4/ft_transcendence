@@ -29,6 +29,7 @@ const RemotePong = ({ isAIEnabled }) => {
     height: 100,
     color: "blue",
     velocity: 13,
+    score: 0,
   });
 
   const rightRacket = useRef({
@@ -38,6 +39,7 @@ const RemotePong = ({ isAIEnabled }) => {
     height: 100,
     color: "red",
     velocity: isAIEnabled ? 2 : 13,
+    score: 0,
   });
 
   const keyState = useRef({
@@ -65,19 +67,25 @@ const RemotePong = ({ isAIEnabled }) => {
         console.error("WebSocket Error:", error);
       };
 
-      
+      /*******************************--L3ROSA--***********************************************/
       wsRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-      
+        
         if (data.type === "game_state_update") {
           const gameState = data.message;
-          console.log("Game state:", gameState);
-      
-          leftRacket.current = gameState.paddle1;
-          rightRacket.current = gameState.paddle2;
+          // console.log("Game state:", gameState);
+          leftRacket.current = gameState.pleft;
+          rightRacket.current = gameState.pright;
           ballRef.current = gameState.ball;
-        }
-      };
+          // console.log("Game state: x BALL", gameState.ball.velocityX);
+          // console.log("Game state: Y BALL", gameState.ball.velocityY);
+          setGameState("Playing");
+          setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
+          }
+          else if (data.type === "waiting-for-players")
+            setGameState("Waiting");
+      
+      /***************************************************************************************/
       
       return () => {
         if (wsRef.current) {
@@ -86,7 +94,9 @@ const RemotePong = ({ isAIEnabled }) => {
         }
       };
     }
-  }, [socket]); 
+  }
+}, [socket]);
+
 
   
   const handleKeyDown = (e) => {
