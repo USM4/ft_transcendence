@@ -4,7 +4,7 @@ import Canvas from './Canvas';
 const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
     const racketSpeed = 6;
     const maxScore = 5;
-    const safetyMargin = 10; // Espace minimal entre les raquettes
+    const safetyMargin = 10;
 
     const [ball, setBall] = useState({
         x: canvasWidth / 2,
@@ -52,7 +52,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
 
     const [keys, setKeys] = useState({});
 
-    // Gestion des touches pressées
     const handleKeyDown = (event) => setKeys((prev) => ({ ...prev, [event.key]: true }));
     const handleKeyUp = (event) => setKeys((prev) => ({ ...prev, [event.key]: false }));
 
@@ -65,7 +64,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         };
     }, []);
 
-    // Vérifie si deux raquettes se chevauchent
     const checkRacketOverlap = (racket1, racket2) => {
         return (
             racket1.x < racket2.x + racket2.width &&
@@ -75,9 +73,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         );
     };
 
-    // Déplacement des raquettes avec gestion des chevauchements
     const updateRackets = () => {
-        // Raquette gauche
         setLeftRacket((prev) => {
             let newY = prev.y;
             if (keys['w'] && newY > 0) {
@@ -95,7 +91,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             return { ...prev, y: newY };
         });
 
-        // Raquette droite
         setRightRacket((prev) => {
             let newY = prev.y;
             if (keys['o'] && newY > 0) {
@@ -113,7 +108,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             return { ...prev, y: newY };
         });
 
-        // Raquette du haut
         setTopRacket((prev) => {
             let newX = prev.x;
             if (keys['x'] && newX > 0) {
@@ -131,7 +125,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             return { ...prev, x: newX };
         });
 
-        // Raquette du bas
         setBotRacket((prev) => {
             let newX = prev.x;
             if (keys['n'] && newX > 0) {
@@ -150,7 +143,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         });
     };
 
-    // Vérifie les collisions entre la balle et une raquette
     const checkCollision = (ball, racket) => {
         return (
             ball.x + ball.radius > racket.x &&
@@ -160,7 +152,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         );
     };
 
-    // Mise à jour de la balle
     const updateBall = () => {
         setBall((prevBall) => {
             let { x, y, velocityX, velocityY } = prevBall;
@@ -168,7 +159,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             x += velocityX;
             y += velocityY;
 
-            // Collision avec les raquettes
             if (checkCollision(prevBall, leftRacket)) {
                 velocityX = Math.abs(velocityX);
             } else if (checkCollision(prevBall, rightRacket)) {
@@ -179,7 +169,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
                 velocityY = -Math.abs(velocityY);
             }
 
-            // Gestion des murs
             if (x - ball.radius <= 0) {
                 setScores((prevScores) => ({ ...prevScores, rightPlayer: prevScores.rightPlayer + 1 }));
                 x = canvasWidth / 2;
@@ -202,29 +191,25 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         });
     };
 
-    // Animation du jeu
     useEffect(() => {
         const interval = setInterval(() => {
             updateRackets();
             updateBall();
-        }, 16); // ~60 FPS
+        }, 16);
         return () => clearInterval(interval);
     }, [updateRackets, updateBall]);
 
-    // Dessin du canvas
     const draw = useCallback(
         (context) => {
             context.clearRect(0, 0, canvasWidth, canvasHeight);
             context.fillStyle = '#326da4';
             context.fillRect(0, 0, canvasWidth, canvasHeight);
 
-            // Dessine la balle
             context.beginPath();
             context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
             context.fillStyle = ball.color;
             context.fill();
 
-            // Dessine les raquettes
             context.fillStyle = leftRacket.color;
             context.fillRect(leftRacket.x, leftRacket.y, leftRacket.width, leftRacket.height);
 
