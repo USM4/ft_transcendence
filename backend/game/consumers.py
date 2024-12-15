@@ -17,8 +17,8 @@ class GameState:
     ball = {
         "x": canvas_width / 2,
         "y": canvas_height / 2,
-        "velocityX": 2,
-        "velocityY": 2,
+        "velocityX": 1,
+        "velocityY": 1,
         "radius": 10,
         "color": "yellow",
     }
@@ -77,13 +77,14 @@ class GameState:
     def update_ball(self):
         # Update ball position
         self.ball["x"] += self.ball["velocityX"]
-        self.ball["y"] += self.ball["velocityY"]    
+        self.ball["y"] += self.ball["velocityY"]
 
         # print(f"Ball position: ({self.ball['x']}, {self.ball['y']})")
 
         # Check for collisions with top and bottom walls
         if self.ball["y"] - self.ball["radius"] <= 0 or self.ball["y"] + self.ball["radius"] >= self.canvas_height:
             self.ball["velocityY"] *= -1  # Reverse vertical velocity
+        
 
         # Check for collisions with paddles
         # Left paddle collision
@@ -113,7 +114,7 @@ class GameState:
         self.ball["x"] = self.canvas_width / 2
         self.ball["y"] = self.canvas_height / 2
         self.ball["velocityX"] *= -1  # Reverse horizontal direction
-        self.ball["velocityY"] = 2  # Reset vertical velocity
+        self.ball["velocityY"] = 1  # Reset vertical velocity
 
 
 
@@ -126,7 +127,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.sender = self.scope.get('user')
         # Add the user to the group
         await self.channel_layer.group_add("game_room", self.channel_name)
-        connected_users.append(self.sender)
+        if self.sender not in connected_users and len(connected_users) < 2:
+            connected_users.append(self.sender)
         print(f"{self.sender} ======================== Current users ============> {list(connected_users)}")
 
         # Check if there are enough players to start the game
@@ -186,9 +188,13 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def send_game_state(self, event):
         message = event["message"]
+        leftPlayer = connected_users[0].username if len(connected_users) > 0 else None
+        rightPlayer = connected_users[1].username if len(connected_users) > 1 else None 
         await self.send(text_data=json.dumps({
             "type": "game_state_update",
             "message": message,
+            "leftPlayer": leftPlayer,
+            "rightPlayer": rightPlayer
         }))
 
     async def game_loop(self):
