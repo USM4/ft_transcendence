@@ -13,7 +13,7 @@ const WaitingOpponent = (isVisible) => {
         <div className="paddle right-paddle"></div>
       </div>
       <div className="waiting-text">
-        <h2>Waiting for opponent</h2>
+        <h2>Waiting for the Opponent</h2>
         <div className="loading-dots">
           <span></span>
           <span></span>

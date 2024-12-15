@@ -15,7 +15,7 @@ export const GameSocketProvider = ({ children }) => {
   useEffect(() => {
     // Function to establish a WebSocket connection
     const establishConnection = () => {
-      console.log("Establishing WebSocket connection...");
+      console.log("Establishing WebSocket dyal l'Game...");
       const ws = new WebSocket("ws://localhost:8000/ws/game/");
 
       ws.onopen = () => {
@@ -27,7 +27,7 @@ export const GameSocketProvider = ({ children }) => {
 
       ws.onerror = (error) => {
         setSocket(null);
-        console.error("Game Socket  connection error:", error);
+        console.error("Game Socket connection error:", error);
       };
 
       ws.onclose = () => {
