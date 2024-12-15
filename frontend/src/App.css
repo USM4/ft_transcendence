@@ -2506,3 +2506,139 @@ body {
   border-radius: 20px;
   border: 2px solid red;
 }
+
+/* ***************************************************************** */
+
+.waiting-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.ping-pong-animation {
+  width: 200px;
+  height: 100px;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.paddle {
+  width: 10px;
+  height: 50px;
+  background: #fff;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.left-paddle {
+  left: 0;
+  animation: paddleMove 1s ease-in-out infinite;
+}
+
+.right-paddle {
+  right: 0;
+  animation: paddleMove 1s ease-in-out infinite reverse;
+}
+
+.ball {
+  width: 12px;
+  height: 12px;
+  background: #4ecdc4;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ballMove 1s linear infinite;
+  box-shadow: 0 0 15px #4ecdc4;
+}
+
+.waiting-text {
+  text-align: center;
+  color: #fff;
+}
+
+.waiting-text h2 {
+  margin-bottom: 10px;
+  font-size: 1.5em;
+  color: #4ecdc4;
+  text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+}
+
+.loading-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  background: #ff6b6b;
+  border-radius: 50%;
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes paddleMove {
+  0%, 100% {
+    transform: translateY(-70%);
+  }
+  50% {
+    transform: translateY(-30%);
+  }
+}
+
+@keyframes ballMove {
+  0%, 100% {
+    left: 10%;
+    background: #ff6b6b;
+    box-shadow: 0 0 15px #ff6b6b;
+  }
+  50% {
+    left: 90%;
+    background: #4ecdc4;
+    box-shadow: 0 0 15px #4ecdc4;
+  }
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ping-pong-animation {
+    width: 150px;
+    height: 75px;
+  }
+  
+  .waiting-text h2 {
+    font-size: 1.2em;
+  }
+}

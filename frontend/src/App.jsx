@@ -37,7 +37,6 @@ function App() {
       >
         <UserDataProvider>
         <SocketContextProvider>
-          {/* <MatchMakingContextProvider> */}
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             {/* Public Routes */}
@@ -109,7 +108,6 @@ function App() {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        {/* </MatchMakingContextProvider> */}
         </SocketContextProvider>
         </UserDataProvider>
       </Router>

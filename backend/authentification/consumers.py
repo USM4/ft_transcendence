@@ -13,7 +13,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 			user_channel_name[self.user.id].append(self.channel_name)
 		else:
 			user_channel_name[self.user.id] = [self.channel_name]
-		print(f"++++++++++ {user_channel_name}")
+		# print(f"++++++++++ {user_channel_name}")
 		await self.channel_layer.group_add(
 			self.room_group_name,
 			self.channel_name
