@@ -7,7 +7,16 @@ const Canvas = ({ draw, width, height }) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-    draw(context);
+  
+    let animationFrameId;
+    const render = () => {
+      draw(context);
+      animationFrameId = requestAnimationFrame(render);
+    };
+  
+    render();
+  
+    return () => cancelAnimationFrame(animationFrameId);
   }, [draw]);
 
   return (

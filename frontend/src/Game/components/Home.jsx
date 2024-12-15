@@ -9,8 +9,8 @@ const Home = () => {
     <div className="Game-main-Page">
       <h1>Pong Game</h1>
       <button onClick={() => navigate("local")}>Play Local</button>
-      <button onClick={() => navigate("online")}>Play Online</button>
-      <button onClick={() => navigate("bot")}>Play Bot</button>
+      <button onClick={() => navigate("2vs2")}>2 vs 2</button>
+      <button onClick={() => navigate("bot")}>Play vs Bot</button>
     </div>
   );
 };
