@@ -195,8 +195,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         while True:
             # Update ball position
             self.game_state.update_ball()
-            # print("floooooop")
-            # print('ana f loooop')
+            print('ana f loooop')
             # Broadcast the updated game state
             await self.channel_layer.group_send(
                 "game_room",
@@ -206,6 +205,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             )
             await asyncio.sleep(1 / 60)
+        print("*************************Game loop ended***************************")
 
     def move_paddle(self, paddle, direction):
         if paddle == "pleft":

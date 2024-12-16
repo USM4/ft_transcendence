@@ -35,7 +35,6 @@ export const GameSocketProvider = ({ children }) => {
         console.log("Game Socket  connection closed.");
       };
     };
-
     // Only establish the WebSocket connection if user is logged in
     // and the pathname is not one of the ignored paths
     if (
@@ -44,6 +43,10 @@ export const GameSocketProvider = ({ children }) => {
       pathname !== "/signup" &&
       pathname !== "/features" &&
       pathname !== "/howtoplay" &&
+      pathname !== "/dashboard/*" &&
+      pathname !== "/tournament/options" &&
+      pathname !== "/tournament/options/game/local" &&
+      pathname !== "/tournament/options/game/bot" &&
       user && // Only if user is present
       !socket // Only open a new connection if there's no existing one
     ) {
@@ -57,6 +60,11 @@ export const GameSocketProvider = ({ children }) => {
       pathname === "/signup" ||
       pathname === "/features" ||
       pathname === "/howtoplay" ||
+      pathname === "/dashboard/*" &&
+      pathname === "/tournament/options/" &&
+      pathname === "/tournament/options/game/local" &&
+      pathname === "/tournament/options/game/bot" &&
+
       !user
     ) {
       if (socket) {
@@ -65,8 +73,7 @@ export const GameSocketProvider = ({ children }) => {
       }
     }
 
-    // Cleanup: Close WebSocket when component unmounts or when necessary
-
+ 
     return () => {
       if (socket) {
         socket.close(); // Ensure to close the socket when the component unmounts or on path changes
