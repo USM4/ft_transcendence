@@ -8,9 +8,9 @@ function AppGame() {
   return (
     <Routes>
       <Route path="" element={<Home />} />
-      <Route path="local" element={<PongGame isAIEnabled={false} />} />
-      <Route path="2vs2" element={<FPlayer />} />
-      <Route path="bot" element={<PongGame isAIEnabled={true} />} />
+      <Route path="2Player" element={<PongGame isAIEnabled={false} />} />
+      <Route path="4Player" element={<FPlayer />} />
+      <Route path="vsbot" element={<PongGame isAIEnabled={true} />} />
     </Routes>
   );
 }

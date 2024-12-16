@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Canvas from './Canvas';
+import WinPage from './WinPage';
 
 const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
     const racketSpeed = 6;
@@ -72,6 +73,15 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             racket1.y + racket1.height > racket2.y
         );
     };
+
+    const resetGame = () => {
+        setLeftRacket((prev) => ({ ...prev, y: 250 }));
+        setRightRacket((prev) => ({ ...prev, y: 250 }));
+        setTopRacket((prev) => ({ ...prev, x: 250 }));
+        setBotRacket((prev) => ({ ...prev, x: 250 }));
+        setScores({ leftPlayer: 0, rightPlayer: 0 });
+        setWinner(null);
+      };
 
     const updateRackets = () => {
         setLeftRacket((prev) => {
@@ -159,36 +169,61 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             x += velocityX;
             y += velocityY;
 
+            const randomizeAngle = () => (Math.random() * Math.PI) / 6;
+            const randomizeSpeed = () => 6;
+
             if (checkCollision(prevBall, leftRacket)) {
-                velocityX = Math.abs(velocityX);
+                const angle = randomizeAngle();
+                velocityX = Math.cos(angle) * randomizeSpeed();
+                velocityY += Math.sin(angle);
+                x = leftRacket.x + leftRacket.width + ball.radius + 1;
             } else if (checkCollision(prevBall, rightRacket)) {
-                velocityX = -Math.abs(velocityX);
+                const angle = randomizeAngle();
+                velocityX = -Math.cos(angle) * randomizeSpeed();
+                velocityY += Math.sin(angle);
+                x = rightRacket.x - ball.radius - 1;
             } else if (checkCollision(prevBall, topRacket)) {
-                velocityY = Math.abs(velocityY);
+                const angle = randomizeAngle();
+                velocityY = Math.cos(angle) * randomizeSpeed();
+                velocityX += Math.sin(angle);
+                y = topRacket.y + topRacket.height + ball.radius + 1;
             } else if (checkCollision(prevBall, botRacket)) {
-                velocityY = -Math.abs(velocityY);
+                const angle = randomizeAngle();
+                velocityY = -Math.cos(angle) * randomizeSpeed();
+                velocityX += Math.sin(angle);
+                y = botRacket.y - ball.radius - 1;
             }
 
             if (x - ball.radius <= 0) {
-                setScores((prevScores) => ({ ...prevScores, rightPlayer: prevScores.rightPlayer + 1 }));
-                x = canvasWidth / 2;
-                y = canvasHeight / 2;
+                setScores((prevScores) => ({ ...prevScores, rightPlayer: prevScores.rightPlayer + 0.5 }));
+                return resetBall();
             } else if (x + ball.radius >= canvasWidth) {
-                setScores((prevScores) => ({ ...prevScores, leftPlayer: prevScores.leftPlayer + 1 }));
-                x = canvasWidth / 2;
-                y = canvasHeight / 2;
+                setScores((prevScores) => ({ ...prevScores, leftPlayer: prevScores.leftPlayer + 0.5 }));
+                return resetBall();
             } else if (y - ball.radius <= 0) {
-                setScores((prevScores) => ({ ...prevScores, botPlayer: prevScores.botPlayer + 1 }));
-                x = canvasWidth / 2;
-                y = canvasHeight / 2;
+                setScores((prevScores) => ({ ...prevScores, botPlayer: prevScores.botPlayer + 0.5 }));
+                return resetBall();
             } else if (y + ball.radius >= canvasHeight) {
-                setScores((prevScores) => ({ ...prevScores, topPlayer: prevScores.topPlayer + 1 }));
-                x = canvasWidth / 2;
-                y = canvasHeight / 2;
+                setScores((prevScores) => ({ ...prevScores, topPlayer: prevScores.topPlayer + 0.5 }));
+                return resetBall();
             }
 
             return { ...prevBall, x, y, velocityX, velocityY };
         });
+    };
+
+    const resetBall = () => {
+        const angle = Math.random() * 2 * Math.PI;
+        const speed = 6
+    
+        return {
+            x: canvasWidth / 2,
+            y: canvasHeight / 2,
+            velocityX: Math.cos(angle) * speed,
+            velocityY: Math.sin(angle) * speed,
+            radius: 10,
+            color: '#fff',
+        };
     };
 
     useEffect(() => {
@@ -225,13 +260,19 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         [ball, leftRacket, rightRacket, topRacket, botRacket, canvasWidth, canvasHeight]
     );
 
+    if (winner) {
+        return <WinPage winner={winner} resetGame={resetGame} />;
+      }
+
     return (
-        <div className='FGame'>
-            <div className='canvas-container'>
+        <div className="FGame">
+            <div className="score top-score">Top: {scores.topPlayer}</div>
+            <div className="canvas-containerF">
+                <div className="score left-score">Left: {scores.leftPlayer}</div>
                 <Canvas width={canvasWidth} height={canvasHeight} draw={draw} />
+                <div className="score right-score">Right: {scores.rightPlayer}</div>
             </div>
-            <div>Left: {scores.leftPlayer} | Right: {scores.rightPlayer}</div>
-            <div>Top: {scores.topPlayer} | Bottom: {scores.botPlayer}</div>
+            <div className="score bottom-score">Bottom: {scores.botPlayer}</div>
         </div>
     );
 };

@@ -2279,18 +2279,31 @@ body {
 
 .canvas-container {
   position: relative;
-  width: 90%;
-  max-width: 500px;
-  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: 1000px;
+  aspect-ratio: 2 / 1;
   margin: 0 auto;
   border: 2px solid #000;
 }
 
+.canvas-containerF {
+  position: relative;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  /* border: 2px solid #000; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
 canvas {
-  position: absolute;
   top: 0;
   left: 0;
+  width: 90%;
   display: block;
+  border-radius: 15px;
 }
 
 .FGame {
@@ -2311,9 +2324,46 @@ canvas {
   padding: 5vh 5vw;
   box-sizing: border-box;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  position: relative;
 }
 
 .FGame > * {
   margin: 0 auto;
   padding: 10px;
 }
+
+.score {
+  position: absolute;
+  font-size: 1.2rem;
+  color: #fff;
+  font-weight: bold;
+}
+
+.top-score {
+  position: relative;
+  top: 230px;
+  text-align: center;
+}
+
+.bottom-score {
+  position: relative;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.left-score {
+  position: absolute;
+  left: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.right-score {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
