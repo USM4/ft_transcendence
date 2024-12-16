@@ -10,13 +10,15 @@ import Matchmaking from "./components/Matchmaking.jsx";
 
 function AppGame() {
   return (
+        <GameSocketProvider>
       <Routes>
         <Route path="" element={<Home />} />
         <Route path="local" element={<PongGame isAIEnabled={false} />} />
-        <Route path="matchMaking" element={<GameSocketProvider><Matchmaking isAIEnabled={false} /></GameSocketProvider>} />
-        <Route path="online" element={<GameSocketProvider><RemotePong isAIEnabled={false} /></GameSocketProvider>} />
+        <Route path="matchMaking" element={<Matchmaking isAIEnabled={false} />} />
+        <Route path="online" element={<RemotePong isAIEnabled={false} />} />
         <Route path="bot" element={<PongGame isAIEnabled={true} />} />
       </Routes>
+        </GameSocketProvider>
   );
 }
 

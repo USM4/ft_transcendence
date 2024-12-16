@@ -70,7 +70,7 @@ const RemotePong = ({ isAIEnabled }) => {
       /*******************************--L3ROSA--***********************************************/
       wsRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        
+      
         if (data.type === "game_state_update") {
           const gameState = data.message;
           // console.log("Game state:", gameState);
@@ -79,22 +79,22 @@ const RemotePong = ({ isAIEnabled }) => {
           ballRef.current = gameState.ball;
           // console.log("Game state: x BALL", gameState.ball.velocityX);
           // console.log("Game state: Y BALL", gameState.ball.velocityY);
-          setGameState("Playing");
-          setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
+            setGameState("Playing");
+            setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
           }
           else if (data.type === "waiting-for-players")
             setGameState("Waiting");
-          else if (data.type === "game_over")
-          {
-            setGameState("GameOver");
-            // setWinner(data.winner);
-          }
+          // else if (data.type === "game_over")
+          // {
+          //   setGameState("GameOver");
+          //   // setWinner(data.winner);
+          // }
             
       /***************************************************************************************/
       
       return () => {
         if (wsRef.current) {
-          console.log("Closing WebSocket connection.");
+          console.log("WebSocket connection closed 5.");
           wsRef.current.close();
         }
       };
