@@ -60,11 +60,10 @@ export const GameSocketProvider = ({ children }) => {
       pathname === "/signup" ||
       pathname === "/features" ||
       pathname === "/howtoplay" ||
-      pathname === "/dashboard/*" &&
-      pathname === "/tournament/options/" &&
-      pathname === "/tournament/options/game/local" &&
-      pathname === "/tournament/options/game/bot" &&
-
+      pathname === "/dashboard/*" ||
+      pathname === "/tournament/options/" ||
+      pathname === "/tournament/options/game/local" ||
+      pathname === "/tournament/options/game/bot" ||
       !user
     ) {
       if (socket) {
