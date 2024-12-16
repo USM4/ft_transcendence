@@ -10,7 +10,7 @@ const Matchmaking = () => {
     
     const navigate = useNavigate();
     const [isReady, setIsReady] = useState(false);
-    const [countdown, setCountdown] = useState(5); // Countdown starts at 5
+    const [countdown, setCountdown] = useState(3); // Countdown starts at 5
     const { socket } = useContext(GameSocketContext);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ const Matchmaking = () => {
             const navigateTimeout = setTimeout(() => {
                 // ghaymchi l page online f 3 seconds ila kan ready
                 navigate("/tournament/options/game/online");
-            }, 5000);
+            }, 3000);
 
             // Cleanup intervals and timeouts
             return () => {
@@ -36,22 +36,15 @@ const Matchmaking = () => {
         if (socket) {
             socket.onmessage = () => {
                 const data = JSON.parse(event.data);
-                
-                switch(data.type) {
-                  case 'game_start':
-                    console.log(`Game starting as player ${data.player}`);
+                if  (data.type ==='game_start'){
+                      console.log(`Game starting l  plaaaaaaayer ------------> ${data.player}`);
                     setIsReady(true);
-                    break;
-                  case 'game_state_update':
-                    console.log('Game state update:', data.state);
-                    break;
-                  case 'waiting_for_players':
-                    console.log(data.message);
-                    break;
-                  default:
-                    console.log('Unknown message type:', data.type);
                 }
-              };
+                else if (data.type === 'waiting_for_players')
+                {
+                    setIsReady(false);
+                    console.log(data.message);
+                }
             socket.onerror = (error) => {
                 console.error("WebSocket error:", error);
             };
@@ -60,6 +53,7 @@ const Matchmaking = () => {
             };
         }
     }
+}
     , [socket]);
 
     return (

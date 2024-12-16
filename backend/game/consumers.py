@@ -218,11 +218,23 @@ class GameConsumer(AsyncWebsocketConsumer):
             "type": "game_state_update",
             "message": message,
         }))
-
+# **********************************************GAME LOOOOOOOP****************************************************
     async def game_loop(self):
         while True:
             self.game_state.update_ball()
             print("Game loop running")
+            # if self.game_state.pleft["score"] == 5 or self.game_state.pright["score"] == 5:
+            #     break
+            # elif self.game_state.pleft["score"] == 5:
+            #     await self.send(text_data=json.dumps({
+            #         "type": "game_over",
+            #         "message": "Left paddle wins!",
+            #     }))
+            # elif self.game_state.pright["score"] == 5:
+            #     await self.send(text_data=json.dumps({
+            #         "type": "game_over",
+            #         "message": "Right paddle wins!",
+            #     }))
             await self.channel_layer.group_send(
                 "game_room",
                 {
@@ -233,6 +245,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(1 / 60)
 
         print("*************************Game loop ended***************************")
+# **************************************************************************************************
 
     def move_paddle(self, paddle, direction):
         if paddle == "pleft":
