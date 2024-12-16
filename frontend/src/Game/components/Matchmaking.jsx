@@ -3,12 +3,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import player1Image from "../../../public/skull.jpeg";
 import player2Image from "../../../public/realone.png";
+import { useContext } from "react";
+import { GameSocketContext } from "./GameSocketContext.jsx";
 
 const Matchmaking = () => {
     
     const navigate = useNavigate();
-    const [isReady, setIsReady] = useState(true);
+    const [isReady, setIsReady] = useState(false);
     const [countdown, setCountdown] = useState(5); // Countdown starts at 5
+    const { socket } = useContext(GameSocketContext);
 
     useEffect(() => {
         if (isReady) {
@@ -28,6 +31,37 @@ const Matchmaking = () => {
             };
         }
     }, [isReady, navigate]);
+
+    useEffect(() => {
+        if (socket) {
+            socket.onmessage = () => {
+                const data = JSON.parse(event.data);
+                
+                switch(data.type) {
+                  case 'game_start':
+                    console.log(`Game starting as player ${data.player}`);
+                    setIsReady(true);
+                    break;
+                  case 'game_state_update':
+                    console.log('Game state update:', data.state);
+                    break;
+                  case 'waiting_for_players':
+                    console.log(data.message);
+                    break;
+                  default:
+                    console.log('Unknown message type:', data.type);
+                }
+              };
+            socket.onerror = (error) => {
+                console.error("WebSocket error:", error);
+            };
+            socket.onclose = () => {
+                console.warn("WebSocket connection closed.");
+            };
+        }
+    }
+    , [socket]);
+
     return (
         <div className="match-making-global-component">
             <div className="match-making-title">Looking for a player...</div>
