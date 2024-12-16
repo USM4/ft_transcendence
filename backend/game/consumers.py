@@ -9,6 +9,8 @@ from django.db.models import Q
 from collections import deque
 
 connected_users = deque()  # list of connected clients
+connected_users_set = set()  # set of connected clients
+user_channels = {} # map of user to channel name
 
 class GameState:
     canvas_width = 1000
@@ -105,9 +107,16 @@ class GameState:
         if self.ball["x"] - self.ball["radius"] <= 0:
             self.pright["score"] += 1  # Right paddle scores
             self.reset_ball()
+            self.reset_paddles()
         elif self.ball["x"] + self.ball["radius"] >= self.canvas_width:
             self.pleft["score"] += 1  # Left paddle scores
             self.reset_ball()
+            self.reset_paddles()
+    
+    def reset_paddles(self):
+        # Reset paddles to the center
+        self.pleft["y"] = self.canvas_height / 2 - self.pleft["height"] / 2
+        self.pright["y"] = self.canvas_height / 2 - self.pright["height"] / 2
 
     def reset_ball(self):
         # Reset ball to the center
@@ -117,92 +126,72 @@ class GameState:
         self.ball["velocityY"] = 1  # Reset vertical velocity
 
 
-
-
-
 class GameConsumer(AsyncWebsocketConsumer):
-    game_state = GameState()  # Create a global game state instance
+    game_state = GameState()
+    game_started = False  # Shared flag to prevent multiple game loops
 
     async def connect(self):
         self.sender = self.scope.get('user')
-        # Add the user to the group
-        await self.channel_layer.group_add("game_room", self.channel_name)
-        if self.sender not in connected_users and len(connected_users) < 2:
-            connected_users.append(self.sender)
-        print(f"{self.sender} ======================== Current users ============> {list(connected_users)}")
-
-        # Check if there are enough players to start the game
-        # if len(connected_users) % 2 == 0 and len(connected_users) > 0:
-        #     await self.start_game()
-        # else:
-        #     await self.send(text_data=json.dumps({
-        #         "type": "waiting_for_players",
-        #         "message": "Waiting for second player..."
-        #     }))
-
-        # Accept the connection after handling the logic
         await self.accept()
+        await self.channel_layer.group_add("game_room", self.channel_name)
+        print(f"{self.sender} connected. Channel name: {self.channel_name}")
+        user_channels[self.sender] = self.channel_name
+        print("user_channels", user_channels)
+
+        if self.sender not in connected_users_set:
+            connected_users.append(self.sender)
+            connected_users_set.add(self.sender)
+            print(f"{self.sender} added. Connected users: {list(connected_users)}")
+
+        if len(connected_users) >= 2:
+            user1 = connected_users.popleft()
+            user2 = connected_users.popleft()
+            connected_users_set.remove(user1)
+            connected_users_set.remove(user2)
+            await self.notify_users(user1, user2)
+        else:
+            await self.send(text_data=json.dumps({
+                "type": "waiting_for_players",
+                "message": "Waiting for another player to join.",
+            }))
+
+    async def notify_users(self, user1, user2):
+        print("**************USERRR 1  , 2 ***********", user1, user2)
+        if user1 in user_channels:
+            print("sending message to user_channels[user1]", user_channels[user1])
+            await self.channel_layer.send(user_channels[user1], {
+                "type": "game_start",
+                "message": "The game is starting!",
+                "player": "1"
+            })
         
-        game_loop_task = asyncio.create_task(self.game_loop())
+        if user2 in user_channels:
+            print("sending message to user_channels[user2]", user_channels[user2])
+            await self.channel_layer.send(user_channels[user2], {
+                "type": "game_start",
+                "message": "The game is starting!",
+                "player": "2"
+            })
 
+        # Start the game loop only once for the primary player
+        if not self.game_started:
+            self.game_started = True
+            asyncio.create_task(self.game_loop())
 
-    async def disconnect(self, close_code):
-        if self.sender in connected_users:
-            connected_users.remove(self.sender)
-        print(f"{self.sender} disconnected. Current users: {list(connected_users)}")
-        await self.channel_layer.group_discard("game_room", self.channel_name)
-
-    # async def start_game(self):
-    #     await self.channel_layer.group_send(
-    #         "game_room",
-    #         {
-    #             "type": "start_game",
-    #             "message": "The game has started!",
-    #         }
-    #     )
-
-    #     await self.game_loop()
-
-    async def receive(self, text_data):
-        data = json.loads(text_data)
-        # Handle key press events and update paddles
-        if data["type"] == "key_press":
-            key = data["key"]
-            if key == "w":  # Paddle 1 up
-                self.move_paddle("pleft", "up")
-            elif key == "s":  # Paddle 1 down
-                self.move_paddle("pleft", "down")
-            elif key == "arrowup":  # Paddle 2 up
-                self.move_paddle("pright", "up")
-            elif key == "arrowdown":  # Paddle 2 down
-                self.move_paddle("pright", "down")
-
-        # Broadcast updated game state
-        await self.channel_layer.group_send(
-            "game_room",
-            {
-                "type": "send_game_state",
-                "message": self.game_state.get_game_state(),
-            }
-        )
-
-    async def send_game_state(self, event):
-        message = event["message"]
-        leftPlayer = connected_users[0].username if len(connected_users) > 0 else None
-        rightPlayer = connected_users[1].username if len(connected_users) > 1 else None 
+    async def game_start(self, event):
+        print(event["message"], event["player"])
         await self.send(text_data=json.dumps({
-            "type": "game_state_update",
-            "message": message,
-            "leftPlayer": leftPlayer,
-            "rightPlayer": rightPlayer
+            "type": "game_start",
+            "message": event["message"],
+            "player": event["player"]
         }))
 
     async def game_loop(self):
+        await asyncio.sleep(4)
+        print("*************************Game loop started***************************")
         while True:
-            # Update ball position
             self.game_state.update_ball()
-            # print("floooooop")
-            # print('ana f loooop')
+            
             # Broadcast the updated game state
             await self.channel_layer.group_send(
                 "game_room",
@@ -212,6 +201,37 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             )
             await asyncio.sleep(1 / 60)
+
+    async def send_game_state(self, event):
+        message = event["message"]
+        try:
+            await self.send(text_data=json.dumps({
+                "type": "game_state_update",
+                "message": message,
+            }))
+        except Exception as e:
+            print(f"Failed to send message: {e}")
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        if data["type"] == "key_press":
+            key = data["key"].lower()  # Convert to lowercase for consistency
+            if key == "w":
+                self.move_paddle("pleft", "up")
+            elif key == "s":
+                self.move_paddle("pleft", "down")
+            elif key == "arrowup":
+                self.move_paddle("pright", "up")
+            elif key == "arrowdown":
+                self.move_paddle("pright", "down")
+
+        await self.channel_layer.group_send(
+            "game_room",
+            {
+                "type": "send_game_state",
+                "message": self.game_state.get_game_state(),
+            }
+        )
 
     def move_paddle(self, paddle, direction):
         if paddle == "pleft":

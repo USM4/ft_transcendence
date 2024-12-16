@@ -2585,7 +2585,7 @@ body {
 .loading-dots span {
   width: 8px;
   height: 8px;
-  background: #ff6b6b;
+  background: #FF4500;
   border-radius: 50%;
   animation: dotPulse 1.4s ease-in-out infinite;
 }
@@ -2631,14 +2631,118 @@ body {
   }
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .ping-pong-animation {
-    width: 150px;
-    height: 75px;
+
+/* Global Styling */
+.match-making-global-component {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  height: 80%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  margin: auto;
+  border: 1px solid #FF4500;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.match-making-global-component .match-making-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 8%;
+
+  font-size: 35px;
+  font-weight: bold;
+  color: #000000;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 0 15px #FF4500;
+  gap: 20px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.match-making-global-component .match-making-container {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  height: 50%;
+  gap: 20px;
+  padding: 20px;
+  background-color: #000;
+  border-radius: 10px;
+  color: #030da2;
+  animation: bounceIn 1s ease-in-out;
+}
+
+.match-making-container .current-player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  gap: 40px;
+  padding: 20px;
+  animation: scaleUp 1s ease-in-out;
+}
+
+/* .match-making-container .current-player-card:hover {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+} */
+
+.match-making-container .current-player-card .current-player-img img {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 15px #FF4500;
+  animation: glow 2s infinite alternate ease-in-out;
+}
+
+.match-making-container .current-player-card .current-player-status {
+  font-size: 20px;
+  font-weight: bold;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.match-making-container .current-player-card .status-ready {
+  color: #28a745; /* Green for ready */
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.match-making-container .current-player-card .status-not-ready {
+  color: #FF4500; /* Red for not ready */
+  animation: blink 1.5s infinite alternate ease-in-out;
+}
+
+/* when navigatting to match making first render */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .waiting-text h2 {
-    font-size: 1.2em;
+  to {
+    opacity: 1;
   }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.countdown{
+  font-size: 50px;
+  font-weight: bold;
+  color: green;
+  animation: pulse 1.5s infinite ease-in-out;
 }
