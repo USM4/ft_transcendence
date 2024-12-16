@@ -84,7 +84,12 @@ const RemotePong = ({ isAIEnabled }) => {
           }
           else if (data.type === "waiting-for-players")
             setGameState("Waiting");
-      
+          else if (data.type === "game_over")
+          {
+            setGameState("GameOver");
+            // setWinner(data.winner);
+          }
+            
       /***************************************************************************************/
       
       return () => {
