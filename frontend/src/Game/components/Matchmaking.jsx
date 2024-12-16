@@ -34,8 +34,9 @@ const Matchmaking = () => {
 
     useEffect(() => {
         if (socket) {
-            socket.onmessage = () => {
+            socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
+                // console.log("socket from backend", data);
                 if  (data.type ==='game_start'){
                       console.log(`Game starting l  plaaaaaaayer ------------> ${data.player}`);
                     setIsReady(true);

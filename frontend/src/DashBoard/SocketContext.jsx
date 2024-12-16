@@ -13,7 +13,7 @@ function SocketContextProvider({ children }) {
     useEffect(() => {
         // Function to establish a WebSocket connection
         const establishConnection = () => {
-            // console.log("Establishing WebSocket connection...");
+            console.log("Establishing WebSocket connection... socketa dyal online status");
             const ws = new WebSocket('ws://localhost:8000/ws/online_status/');
 
             ws.onopen = () => {
@@ -57,6 +57,7 @@ function SocketContextProvider({ children }) {
         ) {
             if (socket) {
                 socket.close();  // Close WebSocket if it's open
+                console.log("WebSocket connection closed 1.");
                 setSocket(null);  // Clear socket state
             }
         }
@@ -66,6 +67,7 @@ function SocketContextProvider({ children }) {
         return () => {
             if (socket) {
                 socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+                console.log("WebSocket connection closed 2.");
                 setSocket(null); // Cleanup the socket state
             }
         };

@@ -15,7 +15,7 @@ export const GameSocketProvider = ({ children }) => {
   useEffect(() => {
     // Function to establish a WebSocket connection
     const establishConnection = () => {
-      console.log("Establishing WebSocket connection...");
+      console.log("Establishing WebSocket connection... socketa dyal game");
       const ws = new WebSocket("ws://localhost:8000/ws/game/");
 
       ws.onopen = () => {
@@ -44,7 +44,7 @@ export const GameSocketProvider = ({ children }) => {
       pathname !== "/features" &&
       pathname !== "/howtoplay" &&
       pathname !== "/dashboard/*" &&
-      pathname !== "/tournament/options" &&
+      pathname !== "/tournament/options/game" &&
       pathname !== "/tournament/options/game/local" &&
       pathname !== "/tournament/options/game/bot" &&
       user && // Only if user is present
@@ -61,13 +61,14 @@ export const GameSocketProvider = ({ children }) => {
       pathname === "/features" ||
       pathname === "/howtoplay" ||
       pathname === "/dashboard/*" ||
-      pathname === "/tournament/options/" ||
+      pathname === "/tournament/options/game" ||
       pathname === "/tournament/options/game/local" ||
       pathname === "/tournament/options/game/bot" ||
       !user
     ) {
       if (socket) {
         socket.close(); // Close WebSocket if it's open
+        console.log("WebSocket connection closed 3.");
         setSocket(null); // Clear socket state
       }
     }
@@ -76,6 +77,7 @@ export const GameSocketProvider = ({ children }) => {
     return () => {
       if (socket) {
         socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+        console.log("WebSocket connection closed 4.");
         setSocket(null); // Cleanup the socket state
       }
     };

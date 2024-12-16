@@ -111,7 +111,7 @@ if os.getenv('DJANGO_ENV') == 'development':
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
     'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
@@ -149,7 +149,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "CONFIG": {
+            "capacity": 1000,  # Increase the capacity to handle more messages
+        },
     }
 }
 

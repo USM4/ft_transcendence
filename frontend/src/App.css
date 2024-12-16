@@ -2744,5 +2744,5 @@ body {
   font-size: 50px;
   font-weight: bold;
   color: green;
-  /* animation: pulse 1.5s infinite ease-in-out; */
+  animation: pulse 1.5s infinite ease-in-out;
 }
