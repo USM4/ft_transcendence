@@ -190,7 +190,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         print("*************************Game loop started***************************")
         while True:
             self.game_state.update_ball()
-
+            
             # Broadcast the updated game state
             await self.channel_layer.group_send(
                 "game_room",
@@ -203,10 +203,13 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def send_game_state(self, event):
         message = event["message"]
-        await self.send(text_data=json.dumps({
-            "type": "game_state_update",
-            "message": message,
-        }))
+        try:
+            await self.send(text_data=json.dumps({
+                "type": "game_state_update",
+                "message": message,
+            }))
+        except Exception as e:
+            print(f"Failed to send message: {e}")
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -228,31 +231,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "message": self.game_state.get_game_state(),
             }
         )
-    
-    async def send_game_state(self, event):
-        message = event["message"]
-        await self.send(text_data=json.dumps({
-            "type": "game_state_update",
-            "message": message,
-        }))
-    
-# **********************************************GAME LOOOOOOOP****************************************************
-    async def game_loop(self):
-        await asyncio.sleep(4)
-        print("*************************Game loop started***************************")
-        while True:
-            self.game_state.update_ball()
-            print("Game loop running")
-            await self.channel_layer.group_send(
-                "game_room",
-                {
-                    "type": "send_game_state",
-                    "message": self.game_state.get_game_state(),
-                }
-            )
-            await asyncio.sleep(1 / 60)
-        print("*************************Game loop ended***************************")
-# **************************************************************************************************
 
     def move_paddle(self, paddle, direction):
         if paddle == "pleft":

@@ -115,7 +115,7 @@ const RemotePong = ({ isAIEnabled }) => {
 
       
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        console.log("Sending key press:", message.key); 
+        // console.log("Sending key press:", message.key); 
         wsRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
         // keyState.current[key] = true
@@ -127,7 +127,7 @@ const RemotePong = ({ isAIEnabled }) => {
 
   const handleKeyUp = (e) => {
     const key = e.key.toLowerCase();
-    console.log("Key up:", key); 
+    // console.log("Key up:", key); 
 
     if ( ["w", "s", "arrowup", "arrowdown"].includes(key) && keyState.current[key]) {
       const message = {
@@ -137,7 +137,7 @@ const RemotePong = ({ isAIEnabled }) => {
 
       
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        console.log("Sending key release:", message.key); 
+        // console.log("Sending key release:", message.key); 
         wsRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = false; 
@@ -160,7 +160,7 @@ const RemotePong = ({ isAIEnabled }) => {
   useEffect(() => {
     const animate = () => {
       if (canvasRef.current === null) {
-        console.log("Canvas is null");
+        // console.log("Canvas is null");
         return;
       }
       const canvas = canvasRef.current;
