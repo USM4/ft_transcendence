@@ -16,7 +16,6 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 import UserDataProvider from './DashBoard/UserDataContext.jsx'
 import FriendDataProvider from './DashBoard/FriendDataContext.jsx'
 import SocketContextProvider from './DashBoard/SocketContext.jsx';
-// import MatchMakingContextProvider from './Game/components/Matchmaking.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
 import NotFound from './NotFound.jsx';

@@ -75,7 +75,7 @@ const RemotePong = ({ isAIEnabled }) => {
       /*******************************--L3ROSA--***********************************************/
       wsRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        
+      
         if (data.type === "game_state_update") {
           const gameState = data.message;
           // console.log("Game state:", gameState);
@@ -87,18 +87,22 @@ const RemotePong = ({ isAIEnabled }) => {
           rightPlayer.current = data.rightPlayer;
           // console.log("Game state: x BALL", gameState.ball.velocityX);
           // console.log("Game state: Y BALL", gameState.ball.velocityY);
-          
-          setGameState("Playing");
-          setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
+            setGameState("Playing");
+            setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
           }
           else if (data.type === "waiting-for-players")
             setGameState("Waiting");
-      
+          // else if (data.type === "game_over")
+          // {
+          //   setGameState("GameOver");
+          //   // setWinner(data.winner);
+          // }
+            
       /***************************************************************************************/
       
       return () => {
         if (wsRef.current) {
-          console.log("Closing WebSocket connection.");
+          console.log("WebSocket connection closed 5.");
           wsRef.current.close();
         }
       };
@@ -118,33 +122,13 @@ const RemotePong = ({ isAIEnabled }) => {
       console.log("leftPlayer:", leftPlayer.current);
       console.log("rightPlayer:", rightPlayer.current);
       
-      if ((key === "w" || key === "s") && user.username === leftPlayer.current) {
-        const message = {
-          type: "key_press",
-          key: key,
-        };
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-          console.log("Sending key press:", message.key); 
-          wsRef.current.send(JSON.stringify(message)); 
-          //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
-          // keyState.current[key] = true
-        } else {
-          console.error("WebSocket is not open, message not sent");
-        }
-      }
-      else if ((key === "arrowup" || key === "arrowdown") && user.username === rightPlayer.current) {
-        const message = {
-          type: "key_press",
-          key: key,
-        };
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-          console.log("Sending key press:", message.key); 
-          wsRef.current.send(JSON.stringify(message)); 
-          //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
-          // keyState.current[key] = true
-        } else {
-          console.error("WebSocket is not open, message not sent");
-        }
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        // console.log("Sending key press:", message.key); 
+        wsRef.current.send(JSON.stringify(message)); 
+        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
+        // keyState.current[key] = true
+      } else {
+        console.error("WebSocket is not open, message not sent");
       }
     }
   };
@@ -160,7 +144,7 @@ const RemotePong = ({ isAIEnabled }) => {
 
       
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        console.log("Sending key release:", message.key); 
+        // console.log("Sending key release:", message.key); 
         wsRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = false; 
@@ -183,7 +167,7 @@ const RemotePong = ({ isAIEnabled }) => {
   useEffect(() => {
     const animate = () => {
       if (canvasRef.current === null) {
-        console.log("Canvas is null");
+        // console.log("Canvas is null");
         return;
       }
       const canvas = canvasRef.current;

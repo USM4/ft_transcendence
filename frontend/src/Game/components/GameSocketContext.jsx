@@ -15,7 +15,7 @@ export const GameSocketProvider = ({ children }) => {
   useEffect(() => {
     // Function to establish a WebSocket connection
     const establishConnection = () => {
-      console.log("Establishing WebSocket connection...");
+      console.log("Establishing WebSocket connection... socketa dyal game");
       const ws = new WebSocket("ws://localhost:8000/ws/game/");
 
       ws.onopen = () => {
@@ -35,7 +35,6 @@ export const GameSocketProvider = ({ children }) => {
         console.log("Game Socket  connection closed.");
       };
     };
-
     // Only establish the WebSocket connection if user is logged in
     // and the pathname is not one of the ignored paths
     if (
@@ -44,6 +43,10 @@ export const GameSocketProvider = ({ children }) => {
       pathname !== "/signup" &&
       pathname !== "/features" &&
       pathname !== "/howtoplay" &&
+      pathname !== "/dashboard/*" &&
+      pathname !== "/tournament/options/game" &&
+      pathname !== "/tournament/options/game/local" &&
+      pathname !== "/tournament/options/game/bot" &&
       user && // Only if user is present
       !socket // Only open a new connection if there's no existing one
     ) {
@@ -57,19 +60,24 @@ export const GameSocketProvider = ({ children }) => {
       pathname === "/signup" ||
       pathname === "/features" ||
       pathname === "/howtoplay" ||
+      pathname === "/dashboard/*" ||
+      pathname === "/tournament/options/game" ||
+      pathname === "/tournament/options/game/local" ||
+      pathname === "/tournament/options/game/bot" ||
       !user
     ) {
       if (socket) {
         socket.close(); // Close WebSocket if it's open
+        console.log("WebSocket connection closed 3.");
         setSocket(null); // Clear socket state
       }
     }
 
-    // Cleanup: Close WebSocket when component unmounts or when necessary
-
+ 
     return () => {
       if (socket) {
         socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+        console.log("WebSocket connection closed 4.");
         setSocket(null); // Cleanup the socket state
       }
     };
