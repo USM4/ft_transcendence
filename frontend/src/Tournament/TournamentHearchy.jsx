@@ -734,7 +734,7 @@ const TournamentHearchy = () => {
 			{winner && (
 				<div className="winner-display">
 					<h2>🏆 The Winner is {winner} 🎉</h2>
-					<button onClick={resetTournament}>Replay Tournament</button>
+					<button onClick={resetTournament}>Reset Tournament</button>
 				</div>
 			)}
 		</div>

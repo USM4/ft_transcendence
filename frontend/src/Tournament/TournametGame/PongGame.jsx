@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useCallback,useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Canvas from './Canvas';
+import Ball from './Ball';
+import WinPage from './WinPage';
+import Racket from './Racket';
 import player1Image from '/pensioner.png';
 import player2Image from '/pensioner.png';
 
