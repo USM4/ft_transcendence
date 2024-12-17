@@ -291,6 +291,8 @@ const PongGame = ({ isAIEnabled }) => {
   // );
 
   if (winner) {
+    console.log("Winner is", winner);
+    console.log("Scores", scores);
     return <WinPage winner={winner} resetGame={resetGame} />;
   }
 
