@@ -74,15 +74,15 @@ export const GameSocketProvider = ({ children }) => {
         setSocket(null); // Clear socket state
     }
 
- 
-    return () => {
-      console.log("CLEANUP");
-    //   if (socket) {
-    //     socket.close(); // Ensure to close the socket when the component unmounts or on path changes
-    //     console.log("WebSocket connection closed 4.");
-    //     setSocket(null); // Cleanup the socket state
-    //   }
-    };
+      
+    // return () => {
+    //   console.log("CLEANUP");
+    // //   if (socket) {
+    // //     socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+    // //     console.log("WebSocket connection closed 4.");
+    // //     setSocket(null); // Cleanup the socket state
+    // //   }
+    // };
   }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
   return (
     <GameSocketContext.Provider value={{ socket }}>
