@@ -6,6 +6,7 @@ import player1Image from "../../../public/skull.jpeg";
 import player2Image from "../../../public/realone.png";
 
 const PongGame = ({ isAIEnabled }) => {
+  let start_time = Date.now();
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const keys = {};
@@ -33,7 +34,8 @@ const PongGame = ({ isAIEnabled }) => {
     width: 10,
     height: 100,
     color: "red",
-    velocity: isAIEnabled ? 2 : 13,
+    velocity: isAIEnabled ?  13  : 13,
+    y_ball: isAIEnabled ?  ballRef.current.y : -1 ,
   });
 
   const [keysPressed, setKeysPressed] = useState({
@@ -63,16 +65,31 @@ const PongGame = ({ isAIEnabled }) => {
   };
 
   const moveAIRacket = () => {
-    // setRightRacket((prev) => {
+    let another_date = Date.now();
     if (ballRef.current.velocityX < 0) return;
-    const direction =
+    let diff = another_date - start_time;
+    if (diff >= 1000)
+    {
+      const direction =
       ballRef.current.y > rightRacket.current.y + rightRacket.current.height / 2
-        ? 1
+      ? 1
+      : -1;
+      let newY = rightRacket.current.y + direction * rightRacket.current.velocity;
+      newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
+      rightRacket.current = { ...rightRacket.current, y: newY };
+      start_time = Date.now();
+      rightRacket.current.y_ball = ballRef.current.y;
+    }
+    else
+    {
+      const direction =
+      rightRacket.current.y_ball > rightRacket.current.y + rightRacket.current.height / 2
+      ? 1
         : -1;
-    let newY = rightRacket.current.y + direction * rightRacket.current.velocity;
-    newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
-    rightRacket.current = { ...rightRacket.current, y: newY };
-    // });
+      let newY = rightRacket.current.y + direction * rightRacket.current.velocity;
+      newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
+      rightRacket.current = { ...rightRacket.current, y: newY };
+    }
   };
 
   const resetPositions = () => {

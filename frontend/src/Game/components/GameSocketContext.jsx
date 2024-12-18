@@ -37,6 +37,7 @@ export const GameSocketProvider = ({ children }) => {
     };
     // Only establish the WebSocket connection if user is logged in
     // and the pathname is not one of the ignored paths
+    console.log("pathname", pathname, "user", user, "socket", socket);
     if (
       pathname !== "/signin" &&
       pathname !== "/" &&
@@ -44,6 +45,7 @@ export const GameSocketProvider = ({ children }) => {
       pathname !== "/features" &&
       pathname !== "/howtoplay" &&
       pathname !== "/dashboard/*" &&
+      pathname !== "/tournament/options" &&
       pathname !== "/tournament/options/game" &&
       pathname !== "/tournament/options/game/local" &&
       pathname !== "/tournament/options/game/bot" &&
@@ -62,19 +64,20 @@ export const GameSocketProvider = ({ children }) => {
       pathname === "/features" ||
       pathname === "/howtoplay" ||
       pathname === "/dashboard/*" ||
+      pathname === "/tournament/options" ||
       pathname === "/tournament/options/game" ||
       pathname === "/tournament/options/game/local" ||
       pathname === "/tournament/options/game/bot" ||
       !user) &&
       socket
     ) {
-      console.log("closing =======> ", user, pathname);
+      console.log("closing =======> ", user.username, pathname);
         socket.close(); // Close WebSocket if it's open
         console.log("WebSocket connection closed 3.");
         setSocket(null); // Clear socket state
     }
 
-      
+
     // return () => {
     //   console.log("CLEANUP");
     // //   if (socket) {
@@ -83,6 +86,7 @@ export const GameSocketProvider = ({ children }) => {
     // //     setSocket(null); // Cleanup the socket state
     // //   }
     // };
+  
   }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
   return (
     <GameSocketContext.Provider value={{ socket }}>

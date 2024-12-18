@@ -7,9 +7,13 @@ import player2Image from "../../../public/realone.png";
 const RemotePong = ({ isAIEnabled }) => {
   const { socket } = useContext(GameSocketContext); 
   const canvasRef = useRef(null);
-  const [gameState, setGameState] = useState("Playing");
+  if(localStorage.getItem("gameState") === null)
+    localStorage.setItem("gameState", "Playing");
+  const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
+
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
   const [winner, setWinner] = useState(null);
+
 
   const wsRef = useRef(null); 
 
@@ -74,19 +78,27 @@ const RemotePong = ({ isAIEnabled }) => {
         if (data.type === "game_state_update") {
           const gameState = data.message;
           // console.log("Game state:", gameState);
+          // setPlayer1(gameState.pleft);
+          // setPlayer2(gameState.pright);
           leftRacket.current = gameState.pleft;
           rightRacket.current = gameState.pright;
           ballRef.current = gameState.ball;
           // console.log("Game state: x BALL", gameState.ball.velocityX);
           // console.log("Game state: Y BALL", gameState.ball.velocityY);
+            localStorage.setItem("gameState", "Playing");
             setGameState("Playing");
             setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
           }
           else if (data.type === "waiting-for-players")
-            setGameState("Waiting");
-          else if (data.type === "game_over")
-          {
-            setGameState("Waiting");
+            {
+              localStorage.setItem("gameState", "Waiting");
+              setGameState("Waiting");
+            }
+            else if (data.type === "game_over")
+              {
+              console.log("Game Over ++++++++++++++++++");
+              localStorage.setItem("gameState", "Waiting");
+              setGameState("Waiting");
             // setWinner(data.winner);
           }
             
@@ -204,8 +216,8 @@ const RemotePong = ({ isAIEnabled }) => {
 
   return (
     <div className="Game-render">
-      {gameState === "Waiting" && <WaitingOpponent isVisible={true} />}
-      {gameState === "Playing" && (
+      {localStorage.getItem("gameState") === "Waiting" && <WaitingOpponent isVisible={true} />}
+      {localStorage.getItem("gameState") === "Playing" && (
         <>
           <div className="player-profiles">
             <div className="player-card">

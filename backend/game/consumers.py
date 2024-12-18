@@ -11,6 +11,7 @@ from collections import deque
 connected_users = deque()  # list of connected clients
 connected_users_set = set()  # set of connected clients
 user_channels = {} # map of user to channel name
+game_started = False  # Shared flag to prevent multiple game loops
 
 class GameState:
     canvas_width = 1000
@@ -95,6 +96,7 @@ class GameState:
             self.pleft["y"] <= self.ball["y"] <= self.pleft["y"] + self.pleft["height"]
         ):
             self.ball["velocityX"] *= -1  # Reverse horizontal velocity
+            self.ball["x"] = self.pleft["x"] + self.pleft["width"] + self.ball["radius"]
 
         # Right paddle collision
         elif (
@@ -102,6 +104,7 @@ class GameState:
             self.pright["y"] <= self.ball["y"] <= self.pright["y"] + self.pright["height"]
         ):
             self.ball["velocityX"] *= -1  # Reverse horizontal velocity
+            self.ball["x"] = self.pright["x"] - self.ball["radius"]
 
         # Check for scoring
         if self.ball["x"] - self.ball["radius"] <= 0:
@@ -122,15 +125,15 @@ class GameState:
         # Reset ball to the center
         self.ball["x"] = self.canvas_width / 2
         self.ball["y"] = self.canvas_height / 2
-        self.ball["velocityX"] = -1  # Reverse horizontal direction
+        self.ball["velocityX"] = 4  # Reverse horizontal direction
         self.ball["velocityY"] = 4  # Reset vertical velocity
 
 
 class GameConsumer(AsyncWebsocketConsumer):
     game_state = GameState()
-    game_started = False  # Shared flag to prevent multiple game loops
 
     async def connect(self):
+        global game_started
         # print("########## user ##############", self.scope.get('user'))
         self.sender = self.scope.get('user')
         await self.accept()
@@ -158,47 +161,59 @@ class GameConsumer(AsyncWebsocketConsumer):
             }))
 
     async def notify_users(self, user1, user2):
+        global game_started
         # print("**************USERRR 1  , 2 ***********", user1, user2)
-        if user1 in user_channels:
-            # print("sending message to user_channels[user1]", user_channels[user1])
+            # print("sending message to user_channels[user1]", user_channels[user1
+        if user1 in user_channels and user1 != self.sender:
+            avatar_url = user2.avatar
+            print("avaaaaaaaaar", avatar_url)
             await self.channel_layer.send(user_channels[user1], {
                 "type": "game_start",
                 "message": "The game is starting!",
-                "player": "1"
+                "player": user2.username,
+                "avatar": avatar_url,
             })
-        
-        if user2 in user_channels:
-            # print("sending message to user_channels[user2]", user_channels[user2])
+ 
+        if user2 in user_channels and user2 == self.sender:
+            avatar_url = user1.avatar
+            print("avaaaaaaaaar----------->", avatar_url)
             await self.channel_layer.send(user_channels[user2], {
                 "type": "game_start",
                 "message": "The game is starting!",
-                "player": "2"
+                "player": user1.username,
+                "avatar": avatar_url,
             })
 
         # Start the game loop only once for the primary player
-        # print("self.game_started", self.game_started)
-        if not self.game_started:
-            self.game_started = True
+        # print("game_started", game_started)
+        if not game_started:
+            game_started = True
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
+        global game_started
         await self.channel_layer.group_discard("game_room", self.channel_name)
         # print(f"{self.sender} disconnected. Channel name: {self.channel_name}")
-        # print("DISCONNECTED BRA L IF")
-        if self.game_started:
+        print("DISCONNECTED BRA L IF", game_started, self.sender)
+        if game_started:
             # print("DISCONNECTED fel IF")
+            print("---------before ", user_channels , "**********")
             if self.sender in connected_users_set:
                 connected_users_set.remove(self.sender)
             if self.sender in user_channels:
                 user_channels.pop(self.sender)
             if self.sender in connected_users:
                 connected_users.remove(self.sender)
-            self.game_started = False
-            await self.send(text_data=json.dumps({
+            print("user disconnected send message to the other player to exit the game")
+            game_started = False
+            print("--------- after", user_channels , "**********")
+            first_user, first_channel = next(iter(user_channels.items()))
+            print("first_user", first_user)
+            await self.channel_layer.send(user_channels[first_user], {
                 "type": "game_over",
                 "message": "The other player has disconnected. Game over.",
-            }))
-    
+            })
+
         if self.sender in connected_users_set:
             connected_users_set.remove(self.sender)
             connected_users.remove(self.sender)
@@ -209,8 +224,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "type": "game_start",
             "message": event["message"],
-            "player": event["player"]
+            "player": event["player"],
+            "avatar": event["avatar"],
         }))
+
+    async def game_over(self, event):
+        print("####################### event[""] ####################### ", event["message"])
+
+        await self.send(text_data=json.dumps({
+            "type": "game_over",
+            "message": event["message"],
+        }))
+
 
     async def game_loop(self):
         await asyncio.sleep(4)
@@ -218,7 +243,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         # print("*************************Game loop started***************************")
         while True:
             self.game_state.update_ball()
-            if self.game_started == False:
+            print(self.sender, game_started)
+            if game_started == False:
                 await self.send(text_data=json.dumps({
                     "type": "game_over",
                     "message": "The other player has disconnected. Game over.",

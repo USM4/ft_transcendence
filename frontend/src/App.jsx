@@ -24,6 +24,7 @@ import OptionsPage from './Tournament/OptionsPage.jsx';
 import TournamentRegistration from './Tournament/TournamentRegistration.jsx';
 import PongGame from './Tournament/TournametGame/PongGame.jsx';
 import AppGame from './Game/AppGame.jsx';
+import { GameSocketProvider } from "./Game/components/GameSocketContext.jsx";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
       >
         <UserDataProvider>
         <SocketContextProvider>
+        <GameSocketProvider>
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             {/* Public Routes */}
@@ -107,6 +109,7 @@ function App() {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+        </GameSocketProvider>
         </SocketContextProvider>
         </UserDataProvider>
       </Router>
