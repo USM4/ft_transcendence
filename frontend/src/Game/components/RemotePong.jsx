@@ -3,8 +3,6 @@ import { GameSocketContext } from "./GameSocketContext";
 import WaitingOpponent from "./WaitingOpponent"; 
 import player1Image from "../../../public/skull.jpeg";
 import player2Image from "../../../public/realone.png";
-import { UserDataContext }  from "../../DashBoard/UserDataContext";
-
 
 const RemotePong = ({ isAIEnabled }) => {
   const { socket } = useContext(GameSocketContext); 
@@ -12,9 +10,6 @@ const RemotePong = ({ isAIEnabled }) => {
   const [gameState, setGameState] = useState("Playing");
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
   const [winner, setWinner] = useState(null);
-  const { user } = useContext(UserDataContext);
-  const leftPlayer = useRef(null);
-  const rightPlayer = useRef(null);
 
   const wsRef = useRef(null); 
 
@@ -60,17 +55,17 @@ const RemotePong = ({ isAIEnabled }) => {
       
       wsRef.current = socket;
 
-      // wsRef.current.onopen = () => {
-      //   console.log("WebSocket connection established.");
-      // };
+      wsRef.current.onopen = () => {
+        console.log("WebSocket connection established.");
+      };
 
-      // wsRef.current.onclose = () => {
-      //   console.log("WebSocket connection closed.");
-      // };
+      wsRef.current.onclose = () => {
+        console.log("WebSocket connection closed.");
+      };
 
-      // wsRef.current.onerror = (error) => {
-      //   console.error("WebSocket Error:", error);
-      // };
+      wsRef.current.onerror = (error) => {
+        console.error("WebSocket Error:", error);
+      };
 
       /*******************************--L3ROSA--***********************************************/
       wsRef.current.onmessage = (event) => {
@@ -82,9 +77,6 @@ const RemotePong = ({ isAIEnabled }) => {
           leftRacket.current = gameState.pleft;
           rightRacket.current = gameState.pright;
           ballRef.current = gameState.ball;
-          // console.log("Received data:", data.leftPlayer, data.rightPlayer);
-          leftPlayer.current = data.leftPlayer;
-          rightPlayer.current = data.rightPlayer;
           // console.log("Game state: x BALL", gameState.ball.velocityX);
           // console.log("Game state: Y BALL", gameState.ball.velocityY);
             setGameState("Playing");
@@ -92,11 +84,11 @@ const RemotePong = ({ isAIEnabled }) => {
           }
           else if (data.type === "waiting-for-players")
             setGameState("Waiting");
-          // else if (data.type === "game_over")
-          // {
-          //   setGameState("GameOver");
-          //   // setWinner(data.winner);
-          // }
+          else if (data.type === "game_over")
+          {
+            setGameState("Waiting");
+            // setWinner(data.winner);
+          }
             
       /***************************************************************************************/
       
@@ -115,12 +107,12 @@ const RemotePong = ({ isAIEnabled }) => {
   const handleKeyDown = (e) => {
     const key = e.key.toLowerCase();
 
+    if (["w", "s", "arrowup", "arrowdown"].includes(key) &&!keyState.current[key]) {
+      const message = {
+        type: "key_press",
+        key: key,
+      };
 
-    if (["w", "s", "arrowup", "arrowdown"].includes(key) && !keyState.current[key]) {
-      console.log("Key pressed:", key);
-      console.log("user:", user.username);
-      console.log("leftPlayer:", leftPlayer.current);
-      console.log("rightPlayer:", rightPlayer.current);
       
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         // console.log("Sending key press:", message.key); 
@@ -135,6 +127,7 @@ const RemotePong = ({ isAIEnabled }) => {
 
   const handleKeyUp = (e) => {
     const key = e.key.toLowerCase();
+    // console.log("Key up:", key); 
 
     if ( ["w", "s", "arrowup", "arrowdown"].includes(key) && keyState.current[key]) {
       const message = {

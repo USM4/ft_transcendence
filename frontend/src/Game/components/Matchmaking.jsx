@@ -38,13 +38,13 @@ const Matchmaking = () => {
                 const data = JSON.parse(event.data);
                 // console.log("socket from backend", data);
                 if  (data.type ==='game_start'){
-                      console.log(`Game starting l  plaaaaaaayer ------------> ${data.player}`);
+                    //   console.log(`Game starting l  plaaaaaaayer ------------> ${data.player}`);
                     setIsReady(true);
                 }
                 else if (data.type === 'waiting_for_players')
                 {
                     setIsReady(false);
-                    console.log(data.message);
+                    // console.log(data.message);
                 }
             socket.onerror = (error) => {
                 console.error("WebSocket error:", error);

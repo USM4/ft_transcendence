@@ -221,7 +221,7 @@ const PongGame = ({ isAIEnabled }) => {
 
     const animate = () => {
       if (canvasRef.current === null) {
-        console.log("Canvas is null");
+        // console.log("Canvas is null");
         return;
       }
       const canvas = canvasRef.current;
@@ -290,11 +290,11 @@ const PongGame = ({ isAIEnabled }) => {
   //   [ball, leftRacket, rightRacket]
   // );
 
-  if (winner) {
-    console.log("Winner is", winner);
-    console.log("Scores", scores);
-    return <WinPage winner={winner} resetGame={resetGame} />;
-  }
+  // if (winner) {
+  //   console.log("Winner is", winner);
+  //   console.log("Scores", scores);
+  //   return <WinPage winner={winner} resetGame={resetGame} />;
+  // }
 
   return (
     <div className="Game-render">
