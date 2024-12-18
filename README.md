@@ -146,4 +146,4 @@ WebSockets are a communication protocol that enables a persistent, two-way conne
 * These files change depending on user actions or content and aren’t typically tracked by   versioncontrol.
 * Configured with MEDIA_URL and MEDIA_ROOT.  
 
-
+-> REMOTE GAME INSTRUCTIONS
