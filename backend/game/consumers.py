@@ -19,8 +19,8 @@ class GameState:
     ball = {
         "x": canvas_width / 2,
         "y": canvas_height / 2,
-        "velocityX": 1,
-        "velocityY": 1,
+        "velocityX": 4,
+        "velocityY": 4,
         "radius": 10,
         "color": "yellow",
     }
@@ -131,19 +131,21 @@ class GameConsumer(AsyncWebsocketConsumer):
     game_started = False  # Shared flag to prevent multiple game loops
 
     async def connect(self):
+        print("########## user ##############", self.scope.get('user'))
         self.sender = self.scope.get('user')
         await self.accept()
-        await self.channel_layer.group_add("game_room", self.channel_name)
         print(f"{self.sender} connected. Channel name: {self.channel_name}")
         user_channels[self.sender] = self.channel_name
         print("user_channels", user_channels)
 
         if self.sender not in connected_users_set:
+            await self.channel_layer.group_add("game_room", self.channel_name)
             connected_users.append(self.sender)
             connected_users_set.add(self.sender)
             print(f"{self.sender} added. Connected users: {list(connected_users)}")
 
         if len(connected_users) >= 2:
+            print("**************USER: ", self.sender, "***********")
             user1 = connected_users.popleft()
             user2 = connected_users.popleft()
             connected_users_set.remove(user1)
@@ -174,9 +176,33 @@ class GameConsumer(AsyncWebsocketConsumer):
             })
 
         # Start the game loop only once for the primary player
+        print("self.game_started", self.game_started)
         if not self.game_started:
             self.game_started = True
             asyncio.create_task(self.game_loop())
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard("game_room", self.channel_name)
+        print(f"{self.sender} disconnected. Channel name: {self.channel_name}")
+        print("DISCONNECTED BRA L IF")
+        if self.game_started:
+            print("DISCONNECTED fel IF")
+            if self.sender in connected_users_set:
+                connected_users_set.remove(self.sender)
+            if self.sender in user_channels:
+                user_channels.pop(self.sender)
+            if self.sender in connected_users:
+                connected_users.remove(self.sender)
+            self.game_started = False
+            await self.send(text_data=json.dumps({
+                "type": "game_over",
+                "message": "The other player has disconnected. Game over.",
+            }))
+    
+        if self.sender in connected_users_set:
+            connected_users_set.remove(self.sender)
+            connected_users.remove(self.sender)
+            print(f"{self.sender} removed. Connected users: {list(connected_users)}")
 
     async def game_start(self, event):
         print(event["message"], event["player"])
@@ -188,10 +214,17 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self):
         await asyncio.sleep(4)
+        print('******* SENDER ********', self.sender)
         print("*************************Game loop started***************************")
         while True:
             self.game_state.update_ball()
-            
+            if self.game_started == False:
+                await self.send(text_data=json.dumps({
+                    "type": "game_over",
+                    "message": "The other player has disconnected. Game over.",
+                    }))
+                print("********* KHREEEJ WAHD ***********")
+                break
             # Broadcast the updated game state
             await self.channel_layer.group_send(
                 "game_room",

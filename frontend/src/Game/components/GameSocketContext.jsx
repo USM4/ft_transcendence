@@ -32,7 +32,7 @@ export const GameSocketProvider = ({ children }) => {
 
       ws.onclose = () => {
         setSocket(null);
-        console.log("Game Socket  connection closed.");
+        console.log("Game Socket  connection closed. 9");
       };
     };
     // Only establish the WebSocket connection if user is logged in
@@ -50,12 +50,13 @@ export const GameSocketProvider = ({ children }) => {
       user && // Only if user is present
       !socket // Only open a new connection if there's no existing one
     ) {
-      establishConnection();
+      console.log("open =======> ", user, pathname);
+        establishConnection();
     }
 
     // If the pathname matches an ignored path or user is not logged in, close the WebSocket
     if (
-      pathname === "/signin" ||
+      (pathname === "/signin" ||
       pathname === "/" ||
       pathname === "/signup" ||
       pathname === "/features" ||
@@ -64,22 +65,23 @@ export const GameSocketProvider = ({ children }) => {
       pathname === "/tournament/options/game" ||
       pathname === "/tournament/options/game/local" ||
       pathname === "/tournament/options/game/bot" ||
-      !user
+      !user) &&
+      socket
     ) {
-      if (socket) {
+      console.log("closing =======> ", user, pathname);
         socket.close(); // Close WebSocket if it's open
         console.log("WebSocket connection closed 3.");
         setSocket(null); // Clear socket state
-      }
     }
 
  
     return () => {
-      if (socket) {
-        socket.close(); // Ensure to close the socket when the component unmounts or on path changes
-        console.log("WebSocket connection closed 4.");
-        setSocket(null); // Cleanup the socket state
-      }
+      console.log("CLEANUP");
+    //   if (socket) {
+    //     socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+    //     console.log("WebSocket connection closed 4.");
+    //     setSocket(null); // Cleanup the socket state
+    //   }
     };
   }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
   return (
