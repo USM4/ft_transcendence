@@ -9,6 +9,10 @@ export const GameSocketContext = createContext();
 export const GameSocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const { user } = useContext(UserDataContext);
+  const [player, setPlayer] = useState({
+    player: "player1",
+    avatar: null
+  });
   const location = useLocation();
   const pathname = location.pathname;
 
@@ -77,19 +81,26 @@ export const GameSocketProvider = ({ children }) => {
         setSocket(null); // Clear socket state
     }
 
-
     // return () => {
-    //   console.log("CLEANUP");
-    // //   if (socket) {
-    // //     socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+      //   console.log("CLEANUP");
+      // //   if (socket) {
+        // //     socket.close(); // Ensure to close the socket when the component unmounts or on path changes
     // //     console.log("WebSocket connection closed 4.");
     // //     setSocket(null); // Cleanup the socket state
     // //   }
     // };
-  
+    
   }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
+  const handlePlayerCredentials = (avatar, name) => {
+    setPlayer(
+      {
+        player: name,
+        avatar: avatar
+      }
+    );
+  }
   return (
-    <GameSocketContext.Provider value={{ socket }}>
+    <GameSocketContext.Provider value={{ socket , handlePlayerCredentials, player}}>
       {children}
     </GameSocketContext.Provider>
   );

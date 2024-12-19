@@ -3,10 +3,12 @@ import { GameSocketContext } from "./GameSocketContext";
 import WaitingOpponent from "./WaitingOpponent"; 
 import player1Image from "../../../public/skull.jpeg";
 import player2Image from "../../../public/realone.png";
+import { UserDataContext } from "../../DashBoard/UserDataContext";
 
-const RemotePong = ({ isAIEnabled }) => {
-  const { socket } = useContext(GameSocketContext); 
+const RemotePong = ({ }) => {
+  const { socket , player} = useContext(GameSocketContext); 
   const canvasRef = useRef(null);
+  const { user } = useContext(UserDataContext);
   if(localStorage.getItem("gameState") === null)
     localStorage.setItem("gameState", "Playing");
   const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
@@ -42,7 +44,7 @@ const RemotePong = ({ isAIEnabled }) => {
     width: 10,
     height: 100,
     color: "red",
-    velocity: isAIEnabled ? 2 : 13,
+    velocity:13,
     score: 0,
   });
 
@@ -53,7 +55,6 @@ const RemotePong = ({ isAIEnabled }) => {
     ArrowDown: false,
   });
 
-  
   useEffect(() => {
     if (socket) {
       
@@ -222,14 +223,14 @@ const RemotePong = ({ isAIEnabled }) => {
           <div className="player-profiles">
             <div className="player-card">
               <div className="player-name">
-                <h3>Player 1</h3>
+                <h3>{user.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.leftPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={player1Image} alt="Player 1" />
+                <img src={user.avatar} alt="Player 1" />
                 <div className="glow-effect"></div>
               </div>
             </div>
@@ -240,14 +241,14 @@ const RemotePong = ({ isAIEnabled }) => {
 
             <div className="player-card">
               <div className="player-name">
-                <h3>{isAIEnabled ? "AI" : "Player 2"}</h3>
+                <h3>{player.name}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.rightPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={player2Image} alt="Player 2" />
+                <img src={player.avatar} alt="Player 2" />
                 <div className="glow-effect"></div>
               </div>
             </div>
