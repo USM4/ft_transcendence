@@ -404,12 +404,13 @@ class Activate2FA(APIView):
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
+        print("------------------>",request.user.secret_key)
 
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         request.user.is_2fa_enabled = True
         request.user.save()
-        return Response({'message': '2FA enabled successfully'})
+        return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
 
 class CheckOtp(APIView):
     def post(self, request):
@@ -418,7 +419,6 @@ class CheckOtp(APIView):
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        # print("------------------>",totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
@@ -426,16 +426,19 @@ class CheckOtp(APIView):
 class Disable2FA(APIView):
     def post(self, request):
         otp = request.data.get('otp')
+        print("otp", otp)
         if not otp:
             return Response({'error': 'OTP is required for desabling'}, status=400)
-        print("request.user.secret_key",request.user.secret_key)
         totp = pyotp.totp.TOTP(request.user.secret_key)
+        print("------------------>",request.user.secret_key)
+
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         request.user.is_2fa_enabled = False
         request.user.secret_key = None
         request.user.save()
-        return Response({'message': '2FA disabled successfully'})
+        print("User 2FA status updated:", request.user.is_2fa_enabled, request.user.secret_key)
+        return Response({'message': '2FA disabled successfully', 'is_2fa_enabled': False})
 
 class UpdateUserInfos(APIView):
     def post(self, request):

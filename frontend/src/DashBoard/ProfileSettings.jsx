@@ -27,14 +27,11 @@ function ProfileSettings() {
 
   const saveCode = async (e) => {
     e.preventDefault();
+    console.log("save code", code);
     const endpoint = isEnabled
     ? "http://localhost:8000/auth/activate2fa/"
     : "http://localhost:8000/auth/desactivate2fa/";
     try {
-      console.log("save code", code);
-      console.log(
-        isEnabled
-      );
       const response = await fetch(`${endpoint}`, {
         method: "POST",
         credentials: "include",
@@ -46,7 +43,8 @@ function ProfileSettings() {
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
-        setIsEnabled(true);
+        setIsEnabled(data.is_2fa_enabled);
+        updateUser((prevUser) => ({ ...prevUser, twoFa: data.is_2fa_enabled }));
       } else {
         toast.error(data.error);
         console.log(data);
@@ -57,7 +55,6 @@ function ProfileSettings() {
   };
   const updateInfos = async () => {
     try {
-      // console.log("----------------->", formData.get('avatar'));
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",
@@ -79,25 +76,28 @@ function ProfileSettings() {
   const getQRCode = async () => {
     // console.log("get qr code");
     try {
+      console.log("WLD L(HBA DKHEEEELL__________________________");
       const response = await fetch("http://localhost:8000/auth/2fa/", {
         method: "GET",
         credentials: "include",
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        console.log(data.qrcode);
+        // console.log(data);
+        // console.log(data.qrcode);
         setQrCodeUrl(data.qrcode);
       } else console.log("error");
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
-    console.log("use effect", user?.twoFa);
+    console.log("is enabled", user?.twoFa);
+    console.log("is 2FA", user?.twoFa);
     if (isEnabled && !user?.twoFa) getQRCode();
     else setQrCodeUrl(null);
-  }, [isEnabled]);
+  }, [isEnabled, user?.twoFa]);
 
   return (
     <div className="settings-component">
@@ -140,7 +140,7 @@ function ProfileSettings() {
                 <div className="switch-toggle">
                   <Switch
                     checked={isEnabled}
-                    onChange={() => setIsEnabled(!isEnabled)}
+                    onChange={() => setIsEnabled((prev) => !prev)}
                     color="secondary"
                   />
                 </div>
