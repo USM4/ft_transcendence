@@ -10,8 +10,8 @@ export const GameSocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const { user } = useContext(UserDataContext);
   const [player, setPlayer] = useState({
-    player: "player1",
-    avatar: null
+    name : "player1",
+    avatar: "./anonyme.png"
   });
   const location = useLocation();
   const pathname = location.pathname;
@@ -75,7 +75,7 @@ export const GameSocketProvider = ({ children }) => {
       !user) &&
       socket
     ) {
-      console.log("closing =======> ", user.username, pathname);
+      // console.log("closing =======> ", user.username, pathname);
         socket.close(); // Close WebSocket if it's open
         console.log("WebSocket connection closed 3.");
         setSocket(null); // Clear socket state
@@ -91,10 +91,10 @@ export const GameSocketProvider = ({ children }) => {
     // };
     
   }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
-  const handlePlayerCredentials = (avatar, name) => {
+  const handlePlayerCredentials = (name, avatar) => {
     setPlayer(
       {
-        player: name,
+        name: name,
         avatar: avatar
       }
     );

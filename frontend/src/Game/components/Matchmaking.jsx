@@ -42,7 +42,7 @@ const Matchmaking = () => {
                 const data = JSON.parse(event.data);
                 // console.log("socket from backend", data);
                 if  (data.type ==='game_start'){
-                    console.log( "$$$$$$$$$$$$$$$$" ,data.player)
+                    console.log( "$$$$$$$$$$$$$$$$ " , data.avatar , " $$$$$$$$$$$$$$$$$$$$$$$$$$$")
                     setPlayer(data.player);
                     setPlayerAvatar(data.avatar || player2Image);
                     handlePlayerCredentials(data.player, data.avatar);
@@ -77,7 +77,8 @@ const Matchmaking = () => {
             <div className="match-making-container">
                 <div className="current-player-card">
                     <div className="current-player-name">
-                        <h2>{user.username}</h2>
+                        {console.log("user-----------------_>", user.username)}
+                        <h2>{user?.username}</h2>
                     </div>
                     <div className="current-player-img">
                         <img src={user.avatar} alt="Player 1" />

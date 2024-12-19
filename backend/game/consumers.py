@@ -175,7 +175,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             })
  
         if user2 in user_channels and user2 == self.sender:
-            avatar_url = user1.avatar
+            avatar_url = user1.avatar if user1.avatar else '/player1.jpeg'
             print("avaaaaaaaaar----------->", avatar_url)
             await self.channel_layer.send(user_channels[user2], {
                 "type": "game_start",
@@ -243,7 +243,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         # print("*************************Game loop started***************************")
         while True:
             self.game_state.update_ball()
-            print(self.sender, game_started)
+            # print(self.sender, game_started)
             if game_started == False:
                 await self.send(text_data=json.dumps({
                     "type": "game_over",
