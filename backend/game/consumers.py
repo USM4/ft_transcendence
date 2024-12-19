@@ -12,6 +12,7 @@ connected_users = deque()  # list of connected clients
 connected_users_set = set()  # set of connected clients
 user_channels = {} # map of user to channel name
 game_started = False  # Shared flag to prevent multiple game loops
+player_paddles = {}  # Map of player to paddle
 
 class GameState:
     canvas_width = 1000
@@ -153,6 +154,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             user2 = connected_users.popleft()
             connected_users_set.remove(user1)
             connected_users_set.remove(user2)
+            await self.assign_padles(user1, user2)
             await self.notify_users(user1, user2)
         else:
             await self.send(text_data=json.dumps({
@@ -190,6 +192,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             game_started = True
             asyncio.create_task(self.game_loop())
 
+    async def assign_padles(self, user1, user2):
+        global player_paddles
+        player_paddles[user1] = "pleft"
+        player_paddles[user2] = "pright"
+        print("player_paddles", player_paddles)
+
     async def disconnect(self, close_code):
         global game_started
         await self.channel_layer.group_discard("game_room", self.channel_name)
@@ -202,13 +210,15 @@ class GameConsumer(AsyncWebsocketConsumer):
                 connected_users_set.remove(self.sender)
             if self.sender in user_channels:
                 user_channels.pop(self.sender)
+            if self.sender in player_paddles:
+                del player_paddles[self.sender]
             if self.sender in connected_users:
                 connected_users.remove(self.sender)
-            print("user disconnected send message to the other player to exit the game")
+            # print("user disconnected send message to the other player to exit the game")
             game_started = False
-            print("--------- after", user_channels , "**********")
+            # print("--------- after", user_channels , "**********")
             first_user, first_channel = next(iter(user_channels.items()))
-            print("first_user", first_user)
+            # print("first_user", first_user)
             await self.channel_layer.send(user_channels[first_user], {
                 "type": "game_over",
                 "message": "The other player has disconnected. Game over.",
@@ -272,25 +282,24 @@ class GameConsumer(AsyncWebsocketConsumer):
             print(f"Failed to send message: {e}")
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        if data["type"] == "key_press":
-            key = data["key"].lower()  # Convert to lowercase for consistency
-            if key == "w":
-                self.move_paddle("pleft", "up")
-            elif key == "s":
-                self.move_paddle("pleft", "down")
-            elif key == "arrowup":
-                self.move_paddle("pright", "up")
-            elif key == "arrowdown":
-                self.move_paddle("pright", "down")
+            data = json.loads(text_data)
+            if data["type"] == "key_press":
+                key = data["key"].lower()
+                if self.sender in player_paddles:
+                    paddle = player_paddles[self.sender]
+                    if paddle == "pleft" and key in ["w", "s"]:
+                        self.move_paddle("pleft", "up" if key == "w" else "down")
+                    elif paddle == "pright" and key in ["arrowup", "arrowdown"]:
+                        self.move_paddle("pright", "up" if key == "arrowup" else "down")
 
-        await self.channel_layer.group_send(
-            "game_room",
-            {
-                "type": "send_game_state",
-                "message": self.game_state.get_game_state(),
-            }
-        )
+            await self.channel_layer.group_send(
+                "game_room",
+                {
+                    "type": "send_game_state",
+                    "message": self.game_state.get_game_state(),
+                }
+            )
+
 
     def move_paddle(self, paddle, direction):
         if paddle == "pleft":
@@ -312,3 +321,4 @@ class GameConsumer(AsyncWebsocketConsumer):
                 self.game_state.pright["y"] += self.game_state.pright["speed"]
                 if self.game_state.pright["y"] + self.game_state.pright["height"] > self.game_state.canvas_height:
                     self.game_state.pright["y"] = self.game_state.canvas_height - self.game_state.pright["height"]
+

@@ -16,7 +16,7 @@ const RemotePong = ({ }) => {
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
   const [winner, setWinner] = useState(null);
 
-  const wsRef = useRef(null); 
+  const wsRef = useRef(null);
 
   const ballRef = useRef({
     x: 500,
