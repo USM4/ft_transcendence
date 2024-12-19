@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { GameSocketContext } from "./GameSocketContext"; 
 import WaitingOpponent from "./WaitingOpponent"; 
-import player1Image from "../../../public/skull.jpeg";
-import player2Image from "../../../public/realone.png";
+import player3Image from "../../../public/anonyme.png";
+
 import { UserDataContext } from "../../DashBoard/UserDataContext";
 
 const RemotePong = ({ }) => {
@@ -15,7 +15,6 @@ const RemotePong = ({ }) => {
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
   const [winner, setWinner] = useState(null);
-
 
   const wsRef = useRef(null); 
 
@@ -208,7 +207,6 @@ const RemotePong = ({ }) => {
         rightRacket.current.width,
         rightRacket.current.height
       );
-
       requestAnimationFrame(animate);
     };
 
@@ -248,7 +246,9 @@ const RemotePong = ({ }) => {
                 <span className="score">{scores.rightPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={player.avatar} alt="Player 2" />
+                {/* { console.log("player.name --------------->" ,player.name) } 
+                { console.log("player.avatar --------------->" ,player.avatar) }  */}
+                <img src={player.avatar || player3Image} alt="Player 2" />
                 <div className="glow-effect"></div>
               </div>
             </div>
