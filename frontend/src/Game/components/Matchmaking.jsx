@@ -12,10 +12,10 @@ const Matchmaking = () => {
     const navigate = useNavigate();
     const [isReady, setIsReady] = useState(false);
     const [countdown, setCountdown] = useState(3); // Countdown starts at 5
-    const { socket } = useContext(GameSocketContext);
+    const { socket, handlePlayerCredentials} = useContext(GameSocketContext);
     const [player, setPlayer] = useState('player');
     const [playerAvatar, setPlayerAvatar] = useState('');
-    const {user } = useContext(UserDataContext);
+    const { user } = useContext(UserDataContext);
 
     useEffect(() => {
         if (isReady) {
@@ -45,6 +45,7 @@ const Matchmaking = () => {
                     console.log( "$$$$$$$$$$$$$$$$" ,data.player)
                     setPlayer(data.player);
                     setPlayerAvatar(data.avatar || player2Image);
+                    handlePlayerCredentials(data.player, data.avatar);
                     console.log(`DATA KAMLA ------------> ${data}`);
                     setIsReady(true);
                 }
