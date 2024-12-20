@@ -21,6 +21,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
 from .consumers import user_channel_name
+from django.core.files.storage import default_storage
 
 class SignUpView(APIView):
     def post(self, request):
@@ -443,14 +444,17 @@ class UpdateUserInfos(APIView):
         avatar = request.data.get('avatar')
         address = request.data.get('address')
         phone = request.data.get('phone')
-        # new_image = request.FILES.get('avatar')
+        # print("==============> avatar from request ",avatar)
         avatar_file = request.FILES.get('avatar')
         if avatar_file:
-            file_name = Path(avatar_file.name).name
-            print("avatar_file name -----> ", file_name)
-            user.avatar = "/" + avatar_file.name
+            # print("==============> avatar_file =============================",avatar_file)
+            file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
+            file_url = request.build_absolute_uri(default_storage.url(file_path))  # generate absolute URL localhost:8000/... not localhost:5173/media/...
+            # print("==============> file url" ,file_url)
+            user.avatar = file_url
         else:
             print("No avatar file uploaded.")
+            user.avatar = None
         # Update other fields if provided
         if address:
             user.address = address
@@ -465,5 +469,5 @@ class UpdateUserInfos(APIView):
                     'id': user.id,
                     'email': user.email,
                     'username': user.username,
-                    'avatar': user.avatar if user.avatar else None,
+                    'avatar': user.avatar
             },})

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import player1Image from "../../../public/skull.jpeg";
 import player2Image from "../../../public/realone.png";
+import player3Image from "../../../public/anonyme.png";
 import { useContext } from "react";
 import { GameSocketContext } from "./GameSocketContext.jsx";
 import { UserDataContext } from "../../DashBoard/UserDataContext.jsx";
@@ -44,7 +45,7 @@ const Matchmaking = () => {
                 if  (data.type ==='game_start'){
                     console.log( "$$$$$$$$$$$$$$$$ " , data.avatar , " $$$$$$$$$$$$$$$$$$$$$$$$$$$")
                     setPlayer(data.player);
-                    setPlayerAvatar(data.avatar || player2Image);
+                    setPlayerAvatar(data.avatar || player3Image);
                     handlePlayerCredentials(data.player, data.avatar);
                     console.log(`DATA KAMLA ------------> ${data}`);
                     setIsReady(true);
@@ -77,7 +78,6 @@ const Matchmaking = () => {
             <div className="match-making-container">
                 <div className="current-player-card">
                     <div className="current-player-name">
-                        {console.log("user-----------------_>", user.username)}
                         <h2>{user?.username}</h2>
                     </div>
                     <div className="current-player-img">
@@ -102,7 +102,7 @@ const Matchmaking = () => {
                         <h2> {player} </h2>
                     </div>
                     <div className="current-player-img">
-                        <img src={playerAvatar || player1Image} alt="Player 2" />
+                        <img src={playerAvatar || player3Image} alt="Player 2" />
                         {isReady ? <div className="current-player-status status-ready">Ready</div> :
                             <div className="current-player-status status-not-ready">Not yet</div>
                         }
