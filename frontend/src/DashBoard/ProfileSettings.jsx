@@ -57,7 +57,6 @@ function ProfileSettings() {
   };
   const updateInfos = async () => {
     try {
-      // console.log("----------------->", formData.get('avatar'));
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",
@@ -65,7 +64,8 @@ function ProfileSettings() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("updated data",data.user);
+        console.log("******************** avatar url ******************** ",data.user.avatar);
+
         updateUser(data.user);
         toast.success(data.message);
       } else console.log("error");
@@ -200,8 +200,9 @@ function ProfileSettings() {
             <div className="update-avatar">
               <p> Update Avatar : </p>
               <div className="custom-file-upload">
-                <input type="file" accept="image/*" 
-                  // value={avatar}
+                <input 
+                  type="file"
+                  accept="image/*" 
                   onChange={(e) => setAvatar(e.target.files[0])} // Using files[0] to get the selected file
                 />
               </div>

@@ -154,7 +154,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             user2 = connected_users.popleft()
             connected_users_set.remove(user1)
             connected_users_set.remove(user2)
-            await self.assign_padles(user1, user2)
+            await self.assign_paddles(user1, user2)
             await self.notify_users(user1, user2)
         else:
             await self.send(text_data=json.dumps({
@@ -164,21 +164,20 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def notify_users(self, user1, user2):
         global game_started
-        # print("**************USERRR 1  , 2 ***********", user1, user2)
-            # print("sending message to user_channels[user1]", user_channels[user1
         if user1 in user_channels and user1 != self.sender:
+            print("**************USERRR --------> 1 ", user1)
             avatar_url = user2.avatar
-            print("avaaaaaaaaar", avatar_url)
+            # print("avaaaaaaaaar", avatar_url)
             await self.channel_layer.send(user_channels[user1], {
                 "type": "game_start",
                 "message": "The game is starting!",
                 "player": user2.username,
                 "avatar": avatar_url,
             })
- 
         if user2 in user_channels and user2 == self.sender:
+            print("**************USERRR ------> 2 ", user2)
             avatar_url = user1.avatar if user1.avatar else '/player1.jpeg'
-            print("avaaaaaaaaar----------->", avatar_url)
+            # print("avaaaaaaaaar----------->", avatar_url)
             await self.channel_layer.send(user_channels[user2], {
                 "type": "game_start",
                 "message": "The game is starting!",
@@ -192,7 +191,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             game_started = True
             asyncio.create_task(self.game_loop())
 
-    async def assign_padles(self, user1, user2):
+    async def assign_paddles(self, user1, user2):
         global player_paddles
         player_paddles[user1] = "pleft"
         player_paddles[user2] = "pright"
