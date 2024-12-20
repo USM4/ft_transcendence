@@ -22,6 +22,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 		await self.update_user_status(self.user, True)
 
 	async def disconnect(self, close_code):
+		print("WebSocket disconnected:", close_code)
 		await self.channel_layer.group_discard(
 			self.room_group_name,
 			self.channel_name
@@ -33,7 +34,9 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 			del user_channel_name[self.user.id]
 
 	async def update_user_status(self, user, is_online):
-		user.is_online = is_online
+		is_online = is_online
+		await sync_to_async(user.refresh_from_db)()
+		print(f"User {user.secret_key} 2FA: {user.is_2fa_enabled}")
 		await sync_to_async(user.save)()
 		# await database_sync_to_async(
 		# 	user.__class__.objects.filter(id=user.id).update

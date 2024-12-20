@@ -270,10 +270,10 @@ const PongGame = () => {
 
   useEffect(() => {
     if (winner) {
-      if (winner === "Player 1") {        
-        matche.winner = matche.Player1;
-      } else {
+      if (winner === "Player 1") {
         matche.winner = matche.Player2;
+      } else {
+        matche.winner = matche.Player1;
       }
       matche.score1 = scores.leftPlayer;
       matche.score2 = scores.rightPlayer;
