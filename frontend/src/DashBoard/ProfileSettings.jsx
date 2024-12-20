@@ -74,17 +74,13 @@ function ProfileSettings() {
 
 
   const getQRCode = async () => {
-    // console.log("get qr code");
     try {
-      console.log("WLD L(HBA DKHEEEELL__________________________");
       const response = await fetch("http://localhost:8000/auth/2fa/", {
         method: "GET",
         credentials: "include",
       });
       if (response.ok) {
         const data = await response.json();
-        // console.log(data);
-        // console.log(data.qrcode);
         setQrCodeUrl(data.qrcode);
       } else console.log("error");
     } catch (error) {

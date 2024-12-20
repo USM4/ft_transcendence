@@ -376,13 +376,14 @@ def generate_otp(username):
     user = Client.objects.get(username=username)
     user.secret_key = secret_key
     user.save()
-    # print("secret ------------> ",user.secret_key)
+    print("Generated secret ------------> ", user.secret_key)
     url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name=user.username, issuer_name="ft_transcendence")
     qrcode_directory = "media/qr_codes/"
     if not os.path.exists(qrcode_directory):
-        # print("directory not found")
         os.makedirs(qrcode_directory)
-    path = qrcode_directory + username + ".png"
+    path = os.path.join(qrcode_directory, f"{username}.png")
+    if os.path.exists(path):
+        os.remove(path)
     qrcode.make(url).save(path)
 
 
@@ -399,17 +400,23 @@ class QrCode(APIView):
 class Activate2FA(APIView):
     def post(self, request):
         otp = request.data.get('otp')
-        print("otp", otp)
-        print("request.user", request.user)
+        user = Client.objects.get(username=request.user.username)
+
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        print("------------------>",request.user.secret_key)
 
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
-        request.user.is_2fa_enabled = True
-        request.user.save()
+        user.is_2fa_enabled = True
+        user.save(update_fields=['is_2fa_enabled'])
+        # print("User saved successfully. New values:")
+        # print("is_2fa_enabled:", user.is_2fa_enabled)
+        # print("Checked secret_key:", user.secret_key)
+
+        user.refresh_from_db()
+        # print("Refreshed from DB:", request.user.is_2fa_enabled, request.user.secret_key)
+
         return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
 
 class CheckOtp(APIView):
@@ -426,18 +433,28 @@ class CheckOtp(APIView):
 class Disable2FA(APIView):
     def post(self, request):
         otp = request.data.get('otp')
-        print("otp", otp)
+        user = Client.objects.get(username=request.user.username)
+
         if not otp:
             return Response({'error': 'OTP is required for desabling'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        print("------------------>",request.user.secret_key)
+
 
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
-        request.user.is_2fa_enabled = False
-        request.user.secret_key = None
-        request.user.save()
-        print("User 2FA status updated:", request.user.is_2fa_enabled, request.user.secret_key)
+        user.is_2fa_enabled = False
+        user.secret_key = None
+        user.save(update_fields=['is_2fa_enabled', 'secret_key'])
+        print("User saved successfully. New values:", user)
+        print("is_2fa_enabled:", user.is_2fa_enabled)
+        print("Checked secret_key:", user.secret_key)
+
+        from django.db import connection
+        if connection.in_atomic_block:
+            connection.commit()
+    
+        # user.refresh_from_db()
+        print("User 2FA status updated:", user.is_2fa_enabled, user.secret_key)
         return Response({'message': '2FA disabled successfully', 'is_2fa_enabled': False})
 
 class UpdateUserInfos(APIView):
