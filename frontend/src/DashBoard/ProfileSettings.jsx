@@ -28,6 +28,7 @@ function ProfileSettings() {
   const saveCode = async (e) => {
     e.preventDefault();
     console.log("save code", code);
+    console.log("is enabled", isEnabled);
     const endpoint = isEnabled
     ? "http://localhost:8000/auth/activate2fa/"
     : "http://localhost:8000/auth/desactivate2fa/";
@@ -38,7 +39,7 @@ function ProfileSettings() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ otp: code }),
+        body: JSON.stringify({ 'code': code }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -89,8 +90,8 @@ function ProfileSettings() {
   };
 
   useEffect(() => {
-    console.log("is enabled", user?.twoFa);
-    console.log("is 2FA", user?.twoFa);
+    // console.log("is enabled", user?.twoFa);
+    // console.log("is 2FA", user?.twoFa);
     if (isEnabled && !user?.twoFa) getQRCode();
     else setQrCodeUrl(null);
   }, [isEnabled, user?.twoFa]);
@@ -136,7 +137,10 @@ function ProfileSettings() {
                 <div className="switch-toggle">
                   <Switch
                     checked={isEnabled}
-                    onChange={() => setIsEnabled((prev) => !prev)}
+                    onChange={() => {
+                      console.log("toggle is enabled", isEnabled);
+                      setIsEnabled((prev) => !prev)}
+                    }
                     color="secondary"
                   />
                 </div>
@@ -224,7 +228,7 @@ function ProfileSettings() {
         )}
         <div className="save-settings">
           {isTwoFactor ? (
-            <button onClick={saveCode}>Save</button>
+            user.twoFa || <button onClick={saveCode}>Save</button>
           ) : (
             <button onClick={updateInfos}>Save</button>
           )}

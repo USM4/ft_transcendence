@@ -397,28 +397,6 @@ class QrCode(APIView):
         # print('qrcode_url:', qrcode_url)
         return Response({'qrcode': qrcode_url})
 
-class Activate2FA(APIView):
-    def post(self, request):
-        otp = request.data.get('otp')
-        user = Client.objects.get(username=request.user.username)
-
-        if not otp:
-            return Response({'error': 'OTP is required'}, status=400)
-        totp = pyotp.totp.TOTP(request.user.secret_key)
-
-        if not totp.verify(otp):
-            return Response({'error': 'Invalid OTP'}, status=400)
-        user.is_2fa_enabled = True
-        user.save(update_fields=['is_2fa_enabled'])
-        # print("User saved successfully. New values:")
-        # print("is_2fa_enabled:", user.is_2fa_enabled)
-        # print("Checked secret_key:", user.secret_key)
-
-        user.refresh_from_db()
-        # print("Refreshed from DB:", request.user.is_2fa_enabled, request.user.secret_key)
-
-        return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
-
 class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
@@ -430,9 +408,31 @@ class CheckOtp(APIView):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
 
+class Activate2FA(APIView):
+    def post(self, request):
+        otp = request.data.get('code')
+        user = Client.objects.get(username=request.user.username)
+        print("user from get objs", user)
+        print("otp", otp)
+        print("request.user", request.user)
+        if not otp:
+            return Response({'error': 'OTP is required'}, status=400)
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+
+        # print("------------ Activate otp  --------------------",  totp.verify(otp))
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        user.is_2fa_enabled = True
+        user.save()
+        print("User saved successfully. New values:", user)
+        print("is_2fa_enabled:", user.is_2fa_enabled)
+        print("Checked secret_key:", user.secret_key)
+
+        return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
+
 class Disable2FA(APIView):
     def post(self, request):
-        otp = request.data.get('otp')
+        otp = request.data.get('code')
         user = Client.objects.get(username=request.user.username)
 
         if not otp:
@@ -444,7 +444,7 @@ class Disable2FA(APIView):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = False
         user.secret_key = None
-        user.save(update_fields=['is_2fa_enabled', 'secret_key'])
+        user.save()
         print("User saved successfully. New values:", user)
         print("is_2fa_enabled:", user.is_2fa_enabled)
         print("Checked secret_key:", user.secret_key)
