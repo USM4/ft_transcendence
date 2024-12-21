@@ -1,10 +1,11 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { GameSocketContext } from "./GameSocketContext"; 
+// import { GameSocketContext } from "./GameSocketContext"; 
 import WaitingOpponent from "./WaitingOpponent"; 
 import player3Image from "../../../public/anonyme.png";
 
 import { UserDataContext } from "../../DashBoard/UserDataContext";
+import { GameSocketContext } from "./GameSocketContext";
 
 const RemotePong = () => {
   const canvasRef = useRef(null);
@@ -12,10 +13,7 @@ const RemotePong = () => {
   if(localStorage.getItem("gameState") === null)
     localStorage.setItem("gameState", "Playing");
   const location = useLocation();
-  console.log("location.state", location.state);
-  const {socket, player} = location.state || {}; 
-
-  console.log("player --------------->", player);
+  const { player} = location.state || {};
   const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
@@ -23,7 +21,7 @@ const RemotePong = () => {
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
 
-  const wsRef = useRef(null);
+  const gameSocketRef = useContext(GameSocketContext);
 
   const ballRef = useRef({
     x: 500,
@@ -61,92 +59,65 @@ const RemotePong = () => {
     ArrowDown: false,
   });
 
-  useEffect(() => {
-    if (socket) {
+useEffect(() => {
+  if (gameSocketRef.current) {
+      const socket = gameSocketRef.current;
       
-      wsRef.current = socket;
-
-      wsRef.current.onopen = () => {
-        console.log(" WebSocket connection established for RemotePong.");
-      };
-
-      wsRef.current.onclose = () => {
-        console.log("WebSocket connection closed.for RemotePong.");
-      };
-
-      wsRef.current.onerror = (error) => {
-        console.error("WebSocket Error for RemotePong.:", error);
-      };
-
-      /*******************************--L3ROSA--***********************************************/
-      wsRef.current.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log("hererherhehrehrehreh-----------  ", data);
-        if (data.type === "connected") {
-          console.log("data  ", data);
-        }
-        if (data.type === "match_ready") {
-          console.log("data222  ", data);
-        }
-
-        if (data.type === "game_state_update") {
-          const gameState = data.message;
-          // console.log("Game state:", gameState);
-          // setPlayer1(gameState.pleft);
-          // setPlayer2(gameState.pright);
-          leftRacket.current = gameState.pleft;
-          rightRacket.current = gameState.pright;
-          console.log("---------------------> ",rightRacket.current)
-          console.log("---------------------> ",rightRacket.current)
-          setScore1(gameState.pleft.score);
-          ballRef.current = gameState.ball;
-          setScore2(gameState.pright.score);
-          // console.log("Game state: x BALL", gameState.ball.velocityX);
-          // console.log("Game state: Y BALL", gameState.ball.velocityY);
-            localStorage.setItem("gameState", "Playing");
-            setGameState("Playing");
-            setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
+      const handleGameMessage = (event) => {
+          const data = JSON.parse(event.data);
+          switch(data.type) {
+              case "game_state_update":
+                  const gameState = data.message;
+                  leftRacket.current = gameState.pleft;
+                  rightRacket.current = gameState.pright;
+                  ballRef.current = gameState.ball;
+                  localStorage.setItem("gameState", "Playing");
+                  setGameState("Playing");
+                  setScores({ 
+                      leftPlayer: gameState.pleft.score, 
+                      rightPlayer: gameState.pright.score 
+                  });
+                  break;
+                  
+              case "waiting_for_players":
+                  localStorage.setItem("gameState", "Waiting");
+                  setGameState("Waiting");
+                  break;
+                  
+              case "game_over":
+          
+                  localStorage.setItem("gameState", "Waiting");
+                  setGameState("Waiting");
+                  break;
+                  
+              default:
+          
           }
-          else if (data.type === "waiting-for-players")
-            {
-              localStorage.setItem("gameState", "Waiting");
-              setGameState("Waiting");
-            }
-            else if (data.type === "game_over")
-              {
-              console.log("Game Over ++++++++++++++++++");
-              localStorage.setItem("gameState", "Waiting");
-              setGameState("Waiting");
-            // setWinner(data.winner);
-          }
-            
-      /***************************************************************************************/
+      };
+
+      socket.addEventListener('message', handleGameMessage);
       
       return () => {
-        if (wsRef.current) {
-          console.log("WebSocket connection closed 5.");
-          wsRef.current.close();
-        }
-      };
-    }
-  }
-}, [socket]);
-
-
   
-  const handleKeyDown = (e) => {
-    const key = e.key.toLowerCase();
+          socket.removeEventListener('message', handleGameMessage);
+      };
+  }
+}, [gameSocketRef]);
 
+
+const handleKeyDown = (e) => {
+    const key = e.key.toLowerCase();
+    
     if (["w", "s", "arrowup", "arrowdown"].includes(key) &&!keyState.current[key]) {
       const message = {
         type: "key_press",
         key: key,
       };
 
-      
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+
+      if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
         // console.log("Sending key press:", message.key); 
-        wsRef.current.send(JSON.stringify(message)); 
+        gameSocketRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
         // keyState.current[key] = true
       } else {
@@ -154,21 +125,21 @@ const RemotePong = () => {
       }
     }
   };
-
+  
   const handleKeyUp = (e) => {
     const key = e.key.toLowerCase();
     // console.log("Key up:", key); 
-
+    
     if ( ["w", "s", "arrowup", "arrowdown"].includes(key) && keyState.current[key]) {
       const message = {
         type: "key_release",
         key: key,
       };
-
       
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      
+      if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
         // console.log("Sending key release:", message.key); 
-        wsRef.current.send(JSON.stringify(message)); 
+        gameSocketRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = false; 
       } else {
@@ -176,16 +147,17 @@ const RemotePong = () => {
       }
     }
   };
-
+  
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
-
+  
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
+
 
   useEffect(() => {
     const animate = () => {

@@ -1,10 +1,10 @@
 import React from "react";
-import { useState ,useEffect } from "react";
+import { useState , useRef,useEffect } from "react";
 import { useNavigate , useLocation} from "react-router-dom";
 import player1Image from "../../../public/skull.jpeg";
 import player2Image from "../../../public/realone.png";
 import player3Image from "../../../public/anonyme.png";
-import { useContext } from "react";
+import { useContext} from "react";
 import { GameSocketContext } from "./GameSocketContext.jsx";
 import { UserDataContext } from "../../DashBoard/UserDataContext.jsx";
 
@@ -14,10 +14,8 @@ const Matchmaking = () => {
     const navigate = useNavigate();
     const [isReady, setIsReady] = useState(false);
     const [countdown, setCountdown] = useState(3);
-    // const [, setPlayerAvatar] = useState('');
-    // const [socket, setSocket] = useState(null);
     const { user } = useContext(UserDataContext);
-    // const [playerName, setPlayerName] = useState("player");
+    const [dataOpponent, setDataOpponent] = useState({});
     const [player1, setPlayer1] = useState({
         username: "player1",
         avatar: player1Image,
@@ -26,75 +24,61 @@ const Matchmaking = () => {
         username: "player2",
         avatar: player2Image,
     });
-
-
     const location = useLocation();
     const pathname = location.pathname;
-  
-    let ws = null;
+
+    const gameSocketRef = useContext(GameSocketContext);
+
+    const isReadyRef = useRef(isReady);
+    const dataOpponentRef = useRef(dataOpponent);
+
     useEffect(() => {
-    
-        const establishConnection = () => {
-            ws = new WebSocket("ws://localhost:8000/ws/game/");
-            
-            ws.onopen = () => {
-                console.log("WebSocket connection established for matchmaking.");
-                // setSocket(ws);
-            };
-    
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log("WebSocket message received:", data);
-    
-                if (data.type === "connected") {
-                    console.log("-----------------------< ",data.data);
-                }
-                else if (data.type === "match_ready") {
-                    console.log("----------match ready -------------- ",data);
-                    if (data.user1.username === user.username)
-                        setPlayer2(data.user2);
-                    else
-                        setPlayer2(data.user1);
+        isReadyRef.current = isReady;
+        dataOpponentRef.current = dataOpponent;
+    }, [isReady, dataOpponent]);
+
+useEffect(() => {
+    if (gameSocketRef.current) {
+        const socket = gameSocketRef.current;
+        // console.log("Setting up Matchmaking message handler");
+        
+        const handleMatchmakingMessage = (event) => {
+            const data = JSON.parse(event.data);
+            // console.log("Matchmaking received message:", data);
+
+            switch(data.type) {
+                case "connected":
+                    // console.log("Player connected:", data.data);
+                    break;
+                    
+                case "match_ready":
+                    // console.log("Match ready:", data);
+                    if (data.user1.username === user.username) {
+                        setDataOpponent(data.user2);
+                    } else {
+                        setDataOpponent(data.user1);
+                    }
                     setIsReady(true);
-                 }
-                else if (data.type === "waiting_for_players") {
-                    console.log(data.message);
+                    break;
+                    
+                case "waiting_for_players":
+                    // console.log("Waiting for players:", data.message);
                     setIsReady(false);
-                }
-                //     console.log("Match is ready!");
-                // } else if (data.type === "game_start") {
-                //     console.log("Game is starting!");
-                //     setPlayer(data.player);
-                //     setPlayerAvatar(data.avatar || player3Image);
-                //     setIsReady(true);
-                // } else if (data.type === "game_over") {
-                //     console.log("Game over:", data.message);
-                // }
-            };
-    
-            ws.onerror = (error) => {
-                console.error("WebSocket error:", error);
-                // setSocket(null);
-            };
-    
-            ws.onclose = () => {
-                console.warn("WebSocket connection closed.");
-                // setSocket(null);
-            };
+                    break;
+                    
+                default:
+                    // console.log("Unhandled message type in Matchmaking:", data.type);
+            }
         };
-    
-        if (!ws && user && pathname !== "/signin" && pathname !== "/signup") {
-            console.log("ws", ws, "user", user, "pathname", pathname);
-            establishConnection();
-        }
-    
-        // return () => {
-        //     if (ws) {
-        //         ws.close();
-        //         setSocket(null);
-        //     }
-        // };
-    }, [pathname, user, ws]);
+
+        socket.addEventListener('message', handleMatchmakingMessage);
+        
+        return () => {
+            // console.log("Cleaning up Matchmaking message handler");
+            socket.removeEventListener('message', handleMatchmakingMessage);
+        };
+    }
+}, [gameSocketRef, user.username]);
     
     useEffect(() => {
         if (isReady) {
@@ -104,9 +88,10 @@ const Matchmaking = () => {
 
             const navigateTimeout = setTimeout(() => {
                 // ghaymchi l page online f 3 seconds ila kan ready
-                console.log("Navigating to online game...",  "player2", player2, "ws",ws);
-                navigate("/tournament/options/game/online", { state: { socket: ws, player: player2 } });
-
+                console.log("Navigating to online game...",  "player2", player2);
+                if (dataOpponent)
+                    navigate("/tournament/options/game/online", { state: { player: dataOpponent } });
+                
             }, 3000);
 
             // Cleanup intervals and timeouts
@@ -117,48 +102,6 @@ const Matchmaking = () => {
         }
     }, [isReady, navigate]);
 
-//     useEffect(() => {
-//         if (socket) {
-//             console.log("--------------{ socket }--------------", socket);
-//         //     socket.onmessage = (event) => {
-//         //         const data = JSON.parse(event.data);
-//         //         // console.log("socket from backend", data);
-                
-//         //         if (data.type === "connected") {
-//         //             console.log(data.message);
-//         //         }
-//         //         if (data.type === "match_ready") {
-                  
-//         //         }
-//         //         if  (data.type ==='game_start'){
-//         //             // console.log( "$$$$$$$$$$$$$$$$ " , data.avatar , " $$$$$$$$$$$$$$$$$$$$$$$$$$$")
-//         //             setPlayer(data.player);
-//         //             setPlayerAvatar(data.avatar || player3Image);
-//         //             // handlePlayerCredentials(data.player, data.avatar);
-//         //             // console.log(`DATA KAMLA ------------> ${data}`);
-//         //             setIsReady(true);
-//         //         }
-//         //         else if (data.type === 'waiting_for_players')
-//         //         {
-//         //             setIsReady(false);
-//         //             // console.log(data.message);
-//         //         }
-//         //         else if (data.type === 'game_over')
-//         //         {
-                    
-//         //             setGameState("Waiting");
-                    
-//         //         }
-//         //     socket.onerror = (error) => {
-//         //         console.error("WebSocket error:", error);
-//         //     };
-//         //     socket.onclose = () => {
-//         //         console.warn("WebSocket connection closed.");
-//         //     };
-//         // }
-//     }
-// }
-// , [socket]);
 
     return (
         <div className="match-making-global-component">

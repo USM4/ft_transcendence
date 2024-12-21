@@ -187,6 +187,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         print(self.channel_name)
         await self.accept()
         print(self.channel_name)
+        await self.channel_layer.group_add("game_room", self.channel_name)
+
     # Check if user is already in connected_users based on ID
         user_exists = any(user['id'] == self.player['id'] for user in connected_users)
     
@@ -250,10 +252,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             "user1": event["user1"],
             "user2": event["user2"],
         }))
-        # Start the game loop only once for the primary player
-        # print("game_started", game_started)
         if not game_started:
             game_started = True
+            # print("game_started -------------", game_started)
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
@@ -285,17 +286,17 @@ class GameConsumer(AsyncWebsocketConsumer):
         if self.player['id'] in player_paddles:
             del player_paddles[self.player['id']]
 
-    async def game_start(self, event):
-        # print(event["message"], event["player"])
-        await self.send(text_data=json.dumps({
-            "type": "game_start",
-            "message": event["message"],
-            "player": event["player"],
-            "avatar": event["avatar"],
-        }))
+    # async def game_start(self, event):
+    #     # print(event["message"], event["player"])
+    #     print("####################### event[""] ####################### ", event["message"])
+    #     await self.send(text_data=json.dumps({
+    #         "type": "game_start",
+    #         "message": event["message"],
+    #         "player": event["player"],
+    #         "avatar": event["avatar"],
+    #     }))
 
     async def game_over(self, event):
-        print("####################### event[""] ####################### ", event["message"])
 
         await self.send(text_data=json.dumps({
             "type": "game_over",
@@ -305,24 +306,20 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self):
         await asyncio.sleep(4)
-        # print('******* SENDER ********', self.sender)
-        # print("*************************Game loop started***************************")
+        # print("Game loop started")
         while True:
-            self.game_state.update_ball()
-            # print(self.sender, game_started)
-            if game_started == False:
-                await self.send(text_data=json.dumps({
-                    "type": "game_over",
-                    "message": "The other player has disconnected. Game over.",
-                    }))
-                # print("********* KHREEEJ WAHD ***********")
+            if not game_started:
+                print("Game loop ending - game not started")
                 break
-            # Broadcast the updated game state
+
+            self.game_state.update_ball()
+            game_state = self.game_state.get_game_state()
+            # print("Sending game state update")
             await self.channel_layer.group_send(
                 "game_room",
                 {
                     "type": "send_game_state",
-                    "message": self.game_state.get_game_state(),
+                    "message": game_state,
                 }
             )
             await asyncio.sleep(1 / 60)
@@ -330,6 +327,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def send_game_state(self, event):
         message = event["message"]
         try:
+            # print("********* HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAH SENDING GAME STATE HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAH ***********")
             await self.send(text_data=json.dumps({
                 "type": "game_state_update",
                 "message": message,
@@ -338,16 +336,25 @@ class GameConsumer(AsyncWebsocketConsumer):
             print(f"Failed to send message: {e}")
 
     async def receive(self, text_data):
-            data = json.loads(text_data)
-            if data["type"] == "key_press":
-                key = data["key"].lower()
-                if self.sender in player_paddles:
-                    paddle = player_paddles[self.sender]
-                    if paddle == "pleft" and key in ["w", "s"]:
-                        self.move_paddle("pleft", "up" if key == "w" else "down")
-                    elif paddle == "pright" and key in ["arrowup", "arrowdown"]:
-                        self.move_paddle("pright", "up" if key == "arrowup" else "down")
+        data = json.loads(text_data)
+        if data["type"] == "key_press":
+            key = data["key"].lower()
 
+            # Determine which player this is
+            if self.player["numberPlayer"] == "1":
+                # Player 1 controls (W/S)
+                if key == "w":
+                    self.move_paddle("pleft", "up")
+                elif key == "s":
+                    self.move_paddle("pleft", "down")
+            else:
+                # Player 2 controls (Arrow keys)
+                if key == "arrowup":
+                    self.move_paddle("pright", "up")
+                elif key == "arrowdown":
+                    self.move_paddle("pright", "down")
+
+            # Send updated game state
             await self.channel_layer.group_send(
                 "game_room",
                 {
@@ -355,7 +362,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                     "message": self.game_state.get_game_state(),
                 }
             )
-
 
     def move_paddle(self, paddle, direction):
         if paddle == "pleft":
