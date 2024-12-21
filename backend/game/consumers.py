@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q 
 from collections import deque
+from game.models import Game
 
 connected_users = deque()  # list of connected clients
 connected_users_set = set()  # set of connected clients
@@ -28,6 +29,7 @@ class GameState:
     }
 
     pleft = {
+        "id": 1,
         "x": 10,  # Left paddle
         "y": canvas_height / 2 - 50,
         "width": 10,
@@ -38,6 +40,7 @@ class GameState:
     }
 
     pright = {
+        "id": 2,
         "x": canvas_width - 20,  # Right paddle
         "y": canvas_height / 2 - 50,
         "width": 10,
@@ -96,6 +99,7 @@ class GameState:
             self.ball["x"] - self.ball["radius"] <= self.pleft["x"] + self.pleft["width"] and
             self.pleft["y"] <= self.ball["y"] <= self.pleft["y"] + self.pleft["height"]
         ):
+            
             self.ball["velocityX"] *= -1  # Reverse horizontal velocity
             self.ball["x"] = self.pleft["x"] + self.pleft["width"] + self.ball["radius"]
 
@@ -112,10 +116,19 @@ class GameState:
             self.pright["score"] += 1  # Right paddle scores
             self.reset_ball()
             self.reset_paddles()
+            print ("---------------------------------- Right paddle scores ----------------------------------", self.pright["score"]) 
+            # if self.pright["score"] >= 2:
+            #     # print ("---------------------------------- Left paddle scores ----------------------------------")
+            #     self.increase_score()
+
         elif self.ball["x"] + self.ball["radius"] >= self.canvas_width:
             self.pleft["score"] += 1  # Left paddle scores
             self.reset_ball()
             self.reset_paddles()
+            print ("---------------------------------- Left paddle scores ----------------------------------", self.pleft["score"]) 
+            # if self.pleft["score"] >= 2:
+            #     print ("---------------------------------- RIGHT paddle scores ----------------------------------")
+            #     self.increase_score()
     
     def reset_paddles(self):
         # Reset paddles to the center
@@ -128,105 +141,148 @@ class GameState:
         self.ball["y"] = self.canvas_height / 2
         self.ball["velocityX"] = 4  # Reverse horizontal direction
         self.ball["velocityY"] = 4  # Reset vertical velocity
+    
+    async def increase_score(self):
+        # Retrieve Client instances
+        player1 = await sync_to_async(Client.objects.get)(id=self.pleft["id"])
+        player2 = await sync_to_async(Client.objects.get)(id=self.pright["id"])
+
+        # Determine the winner
+        if self.pleft["score"] >= 2:
+            winner = player1
+            loser = player2
+        elif self.pright["score"] >= 2:
+            winner = player2
+            loser = player1
+        else:
+            return  # No winner yet
+
+        # Announce the winner and save game to the database
+        print(f"Winner: {winner.username}")
+        game = Game.objects.create(
+            player1_id=player1,
+            player2_id=player2,
+            winner=winner,
+            score_player1=self.pleft["score"],
+            score_player2=self.pright["score"],
+        )
+        await sync_to_async(game.save)()
+
+        # Return the winner's details
+        print(f"Winner: {winner.username}")
 
 
 class GameConsumer(AsyncWebsocketConsumer):
     game_state = GameState()
-
     async def connect(self):
         global game_started
-        # print("########## user ##############", self.scope.get('user'))
-        self.sender = self.scope.get('user')
+        self.player = {
+            "username": self.scope.get('user').username,
+            "avatar": self.scope.get('user').avatar,
+            "numberPlayer": "",
+            "id": self.scope.get('user').id,
+            "match_name": "",
+            "channel_name": self.channel_name,
+        }
+        print(self.channel_name)
         await self.accept()
-        # print(f"{self.sender} connected. Channel name: {self.channel_name}")
-        user_channels[self.sender] = self.channel_name
-        # print("user_channels", user_channels)
+        print(self.channel_name)
+    # Check if user is already in connected_users based on ID
+        user_exists = any(user['id'] == self.player['id'] for user in connected_users)
+    
+        if not user_exists:
+            # Determine player number
+            self.player["numberPlayer"] = "1" if len(connected_users) % 2 == 0 else "2"
+            connected_users.append(self.player)
 
-        if self.sender not in connected_users_set:
-            await self.channel_layer.group_add("game_room", self.channel_name)
-            connected_users.append(self.sender)
-            connected_users_set.add(self.sender)
-            # print(f"{self.sender} added. Connected users: {list(connected_users)}")
+            # Notify the frontend
+            await self.send(json.dumps({"type": "connected", "data": self.player}))
 
-        if len(connected_users) >= 2:
-            # print("**************USER: ", self.sender, "***********")
-            user1 = connected_users.popleft()
-            user2 = connected_users.popleft()
-            connected_users_set.remove(user1)
-            connected_users_set.remove(user2)
-            await self.assign_paddles(user1, user2)
-            await self.notify_users(user1, user2)
+            if len(connected_users) >= 2:
+                try:
+                    print(f"=========== connected_users ===========",  connected_users)
+                    user1 = connected_users.popleft()
+                    print(f"=========== user1 ===========",  user1)
+                    user2 = connected_users.popleft()
+                    print(f"=========== user2 ===========",  user2)
+                    # Make sure we're not matching a player with themselves
+                    if user1['id'] == user2['id']:
+                        print("Make sure we're not matching a player with themselves")
+                        # Put the first user back and wait for a different opponent
+                        connected_users.appendleft(user1)
+                        await self.send(json.dumps({
+                            "type": "waiting_for_players",
+                            "message": "Waiting for another player.",
+                        }))
+                        return
+
+                    match_name = f"{user1['username']}_vs_{user2['username']}"
+                    user1["match_name"] = match_name
+                    user2["match_name"] = match_name
+
+                    await self.channel_layer.group_add(match_name, user1["channel_name"])
+                    await self.channel_layer.group_add(match_name, user2["channel_name"])
+                    await self.channel_layer.group_send(match_name, {
+                        "type": "match_ready",
+                        "user1": user1,
+                        "user2": user2,
+                    })
+                except Exception as e:
+                    print(f"Error during matchmaking: {e}")
+            else:
+                await self.send(json.dumps({
+                    "type": "waiting_for_players",
+                    "message": "Waiting for another player.",
+                }))
         else:
-            await self.send(text_data=json.dumps({
-                "type": "waiting_for_players",
-                "message": "Waiting for another player to join.",
+            # If user is already connected, send an error message
+            await self.send(json.dumps({
+                "type": "error",
+                "message": "You are already connected in another window."
             }))
-
-    async def notify_users(self, user1, user2):
-        global game_started
-        if user1 in user_channels and user1 != self.sender:
-            print("**************USERRR --------> 1 ", user1)
-            avatar_url = user2.avatar
-            # print("avaaaaaaaaar", avatar_url)
-            await self.channel_layer.send(user_channels[user1], {
-                "type": "game_start",
-                "message": "The game is starting!",
-                "player": user2.username,
-                "avatar": avatar_url,
-            })
-        if user2 in user_channels and user2 == self.sender:
-            print("**************USERRR ------> 2 ", user2)
-            avatar_url = user1.avatar if user1.avatar else '/player1.jpeg'
-            # print("avaaaaaaaaar----------->", avatar_url)
-            await self.channel_layer.send(user_channels[user2], {
-                "type": "game_start",
-                "message": "The game is starting!",
-                "player": user1.username,
-                "avatar": avatar_url,
-            })
-
+            # Close this connection
+            await self.close()
+    
+    async def match_ready(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "match_ready",
+            "user1": event["user1"],
+            "user2": event["user2"],
+        }))
         # Start the game loop only once for the primary player
         # print("game_started", game_started)
-        if not game_started:
-            game_started = True
-            asyncio.create_task(self.game_loop())
-
-    async def assign_paddles(self, user1, user2):
-        global player_paddles
-        player_paddles[user1] = "pleft"
-        player_paddles[user2] = "pright"
-        print("player_paddles", player_paddles)
+        # if not game_started:
+        #     game_started = True
+        #     asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
         global game_started
         await self.channel_layer.group_discard("game_room", self.channel_name)
-        # print(f"{self.sender} disconnected. Channel name: {self.channel_name}")
-        print("DISCONNECTED BRA L IF", game_started, self.sender)
-        if game_started:
-            # print("DISCONNECTED fel IF")
-            print("---------before ", user_channels , "**********")
-            if self.sender in connected_users_set:
-                connected_users_set.remove(self.sender)
-            if self.sender in user_channels:
-                user_channels.pop(self.sender)
-            if self.sender in player_paddles:
-                del player_paddles[self.sender]
-            if self.sender in connected_users:
-                connected_users.remove(self.sender)
-            # print("user disconnected send message to the other player to exit the game")
-            game_started = False
-            # print("--------- after", user_channels , "**********")
-            first_user, first_channel = next(iter(user_channels.items()))
-            # print("first_user", first_user)
-            await self.channel_layer.send(user_channels[first_user], {
-                "type": "game_over",
-                "message": "The other player has disconnected. Game over.",
-            })
 
-        if self.sender in connected_users_set:
-            connected_users_set.remove(self.sender)
-            connected_users.remove(self.sender)
-            # print(f"{self.sender} removed. Connected users: {list(connected_users)}")
+        # Remove player from connected_users based on ID
+        for user in list(connected_users):  # Create a copy of the list to modify it
+            if user['id'] == self.player['id']:
+                connected_users.remove(user)
+                break
+
+        if game_started:
+            game_started = False
+            # Notify other players about disconnection
+            if user_channels:
+                try:
+                    first_user, first_channel = next(iter(user_channels.items()))
+                    await self.channel_layer.send(user_channels[first_user], {
+                        "type": "game_over",
+                        "message": "The other player has disconnected. Game over.",
+                    })
+                except Exception as e:
+                    print(f"Error notifying other players: {e}")
+
+        # Clean up other collections
+        if self.player['id'] in user_channels:
+            del user_channels[self.player['id']]
+        if self.player['id'] in player_paddles:
+            del player_paddles[self.player['id']]
 
     async def game_start(self, event):
         # print(event["message"], event["player"])
