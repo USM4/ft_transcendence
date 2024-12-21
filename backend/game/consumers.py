@@ -244,6 +244,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.close()
     
     async def match_ready(self, event):
+        global game_started
         await self.send(text_data=json.dumps({
             "type": "match_ready",
             "user1": event["user1"],
@@ -251,9 +252,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
         # Start the game loop only once for the primary player
         # print("game_started", game_started)
-        # if not game_started:
-        #     game_started = True
-        #     asyncio.create_task(self.game_loop())
+        if not game_started:
+            game_started = True
+            asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
         global game_started

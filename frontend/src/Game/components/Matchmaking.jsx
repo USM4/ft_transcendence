@@ -8,6 +8,7 @@ import { useContext } from "react";
 import { GameSocketContext } from "./GameSocketContext.jsx";
 import { UserDataContext } from "../../DashBoard/UserDataContext.jsx";
 
+
 const Matchmaking = () => {
     
     const navigate = useNavigate();
@@ -103,7 +104,9 @@ const Matchmaking = () => {
 
             const navigateTimeout = setTimeout(() => {
                 // ghaymchi l page online f 3 seconds ila kan ready
-                navigate("/tournament/options/game/online");
+                console.log("Navigating to online game...",  "player2", player2, "ws",ws);
+                navigate("/tournament/options/game/online", { state: { socket: ws, player: player2 } });
+
             }, 3000);
 
             // Cleanup intervals and timeouts
