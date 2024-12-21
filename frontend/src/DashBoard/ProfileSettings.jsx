@@ -64,7 +64,7 @@ function ProfileSettings() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log("******************** avatar url ******************** ",data.user.avatar);
+        // console.log("******************** avatar url ******************** ",data.user.avatar);
 
         updateUser(data.user);
         toast.success(data.message);
@@ -85,8 +85,8 @@ function ProfileSettings() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        console.log(data.qrcode);
+        // console.log(data);
+        // console.log(data.qrcode);
         setQrCodeUrl(data.qrcode);
       } else console.log("error");
     } catch (error) {

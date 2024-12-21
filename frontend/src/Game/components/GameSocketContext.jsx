@@ -28,7 +28,17 @@ export const GameSocketProvider = ({ children }) => {
         );
         setSocket(ws);
       };
-
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        // console.log("socket from backend", data);
+        // console.log("hererherhehrehrehreh-----------  ", data);
+        if (data.type === "connected") {
+          console.log("data  ", data);
+        }
+        if (data.type === "match_ready") {
+          console.log("data222  ", data);
+        }
+    }
       ws.onerror = (error) => {
         setSocket(null);
         console.error("Game Socket  connection error:", error);
@@ -41,7 +51,7 @@ export const GameSocketProvider = ({ children }) => {
     };
     // Only establish the WebSocket connection if user is logged in
     // and the pathname is not one of the ignored paths
-    console.log("pathname", pathname, "user", user, "socket", socket);
+    // console.log("pathname", pathname, "user", user, "socket", socket);
     if (
       pathname !== "/signin" &&
       pathname !== "/" &&
@@ -80,28 +90,6 @@ export const GameSocketProvider = ({ children }) => {
         console.log("WebSocket connection closed 3.");
         setSocket(null); // Clear socket state
     }
-
-    // return () => {
-      //   console.log("CLEANUP");
-      // //   if (socket) {
-        // //     socket.close(); // Ensure to close the socket when the component unmounts or on path changes
-    // //     console.log("WebSocket connection closed 4.");
-    // //     setSocket(null); // Cleanup the socket state
-    // //   }
-    // };
     
-  }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
-  const handlePlayerCredentials = (name, avatar) => {
-    setPlayer(
-      {
-        name: name,
-        avatar: avatar
-      }
-    );
-  }
-  return (
-    <GameSocketContext.Provider value={{ socket , handlePlayerCredentials, player}}>
-      {children}
-    </GameSocketContext.Provider>
-  );
+  }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state>
 };

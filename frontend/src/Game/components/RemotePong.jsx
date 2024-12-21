@@ -5,8 +5,7 @@ import player3Image from "../../../public/anonyme.png";
 
 import { UserDataContext } from "../../DashBoard/UserDataContext";
 
-const RemotePong = ({ }) => {
-  const { socket , player} = useContext(GameSocketContext); 
+const RemotePong = () => {
   const canvasRef = useRef(null);
   const { user } = useContext(UserDataContext);
   if(localStorage.getItem("gameState") === null)
@@ -15,6 +14,8 @@ const RemotePong = ({ }) => {
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
   const [winner, setWinner] = useState(null);
+  const [score1, setScore1] = useState(0);
+  const [score2, setScore2] = useState(0);
 
   const wsRef = useRef(null);
 
@@ -60,7 +61,7 @@ const RemotePong = ({ }) => {
       wsRef.current = socket;
 
       wsRef.current.onopen = () => {
-        console.log("WebSocket connection established.");
+        console.log(" WebSocket connection established for RemotePong.");
       };
 
       wsRef.current.onclose = () => {
@@ -74,7 +75,14 @@ const RemotePong = ({ }) => {
       /*******************************--L3ROSA--***********************************************/
       wsRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-      
+        console.log("hererherhehrehrehreh-----------  ", data);
+        if (data.type === "connected") {
+          console.log("data  ", data);
+        }
+        if (data.type === "match_ready") {
+          console.log("data222  ", data);
+        }
+
         if (data.type === "game_state_update") {
           const gameState = data.message;
           // console.log("Game state:", gameState);
@@ -82,7 +90,11 @@ const RemotePong = ({ }) => {
           // setPlayer2(gameState.pright);
           leftRacket.current = gameState.pleft;
           rightRacket.current = gameState.pright;
+          console.log("---------------------> ",rightRacket.current)
+          console.log("---------------------> ",rightRacket.current)
+          setScore1(gameState.pleft.score);
           ballRef.current = gameState.ball;
+          setScore2(gameState.pright.score);
           // console.log("Game state: x BALL", gameState.ball.velocityX);
           // console.log("Game state: Y BALL", gameState.ball.velocityY);
             localStorage.setItem("gameState", "Playing");
@@ -225,7 +237,7 @@ const RemotePong = ({ }) => {
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
-                <span className="score">{scores.leftPlayer}</span>
+                <span className="score">{score1}</span>
               </div>
               <div className="player-avatar">
                 <img src={user.avatar} alt="Player 1" />
@@ -243,7 +255,7 @@ const RemotePong = ({ }) => {
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
-                <span className="score">{scores.rightPlayer}</span>
+                <span className="score">{score2}</span>
               </div>
               <div className="player-avatar">
                 {/* { console.log("player.name --------------->" ,player.name) } 
