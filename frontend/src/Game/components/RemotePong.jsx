@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { GameSocketContext } from "./GameSocketContext"; 
 import WaitingOpponent from "./WaitingOpponent"; 
 import player3Image from "../../../public/anonyme.png";
@@ -10,6 +11,11 @@ const RemotePong = () => {
   const { user } = useContext(UserDataContext);
   if(localStorage.getItem("gameState") === null)
     localStorage.setItem("gameState", "Playing");
+  const location = useLocation();
+  console.log("location.state", location.state);
+  const {socket, player} = location.state || {}; 
+
+  console.log("player --------------->", player);
   const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
@@ -65,11 +71,11 @@ const RemotePong = () => {
       };
 
       wsRef.current.onclose = () => {
-        console.log("WebSocket connection closed.");
+        console.log("WebSocket connection closed.for RemotePong.");
       };
 
       wsRef.current.onerror = (error) => {
-        console.error("WebSocket Error:", error);
+        console.error("WebSocket Error for RemotePong.:", error);
       };
 
       /*******************************--L3ROSA--***********************************************/
@@ -251,7 +257,8 @@ const RemotePong = () => {
 
             <div className="player-card">
               <div className="player-name">
-                <h3>{player.name}</h3>
+                {/* {console.log("player --------------->", player)} */}
+                <h3>{player?.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
@@ -260,7 +267,7 @@ const RemotePong = () => {
               <div className="player-avatar">
                 {/* { console.log("player.name --------------->" ,player.name) } 
                 { console.log("player.avatar --------------->" ,player.avatar) }  */}
-                <img src={player.avatar || player3Image} alt="Player 2" />
+                <img src={player?.avatar || player3Image} alt="Player 2" />
                 <div className="glow-effect"></div>
               </div>
             </div>
