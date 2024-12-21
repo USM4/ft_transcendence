@@ -10,7 +10,7 @@ import Dashboard from './DashBoard/Dashboard.jsx';
 import Profile from './DashBoard/Profile.jsx'
 import ProfileSettings from'./DashBoard/ProfileSettings.jsx';
 import HomePage from './HomePage.jsx';
-import Features from './Features.jsx';
+import AboutSection from './About.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import UserDataProvider from './DashBoard/UserDataContext.jsx'
@@ -45,7 +45,7 @@ function App() {
             <Route path="/signin" element={<><Navbar /><SignIn /></>} />
             <Route path="/signup" element={<><Navbar /><SignUp /></>} />
             <Route path="/2fa" element={<><Navbar /><TwoFa /></>} />
-            <Route path="/features" element={<><Navbar /><Features /></>} />
+            <Route path="/about" element={<><Navbar /><AboutSection /></>} />
             <Route path="/howtoplay" element={<><Navbar /><HowToPlay /></>} />
 
             {/* Protected Routes */}

@@ -6,7 +6,7 @@
 
 .navigate,
 .container,
-.features,
+.about,
 .howtoplay {
   font-family: inherit;
   max-width: 1280px;
@@ -224,13 +224,67 @@ body {
   font-size: 14px;
   color: #bde052;
 }
-
-.features{
+/* ------------------------------------- ABOUT SECTION ------------------------------------------------- */
+.about{
+  display: flex;
+  flex-direction: column;
+  margin: auto;
   width: 100%;
   font-size: 25px;
-  color:rgb(247, 243, 130);
+  color: #ffcc66;
+  font-family: 'Shantell Sans', sans-serif;
+  border: 2px solid #cc9a2c;
+  border-radius: 30px;
+  padding: 20px;
+
+  background-color: #1a2b49;
 }
 
+.about-div{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about section{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px dashed #cc9a2c;
+  border-radius: 50px;
+  background-color: #1a2b49;
+}
+.about section p{
+  padding: 10px;
+  font-size: 20px;
+  color: #e1e4e8;
+}
+
+.about-list{
+  padding: 10px;
+  font-size: 25px;
+  color: #f8f9fa;
+  list-style: inside;
+  display: flex; 
+  flex-direction: column; 
+
+  gap: 10px; 
+}
+.about-items{
+  color: #f8f9fa;
+  width: 100%; 
+}
+
+.head-title {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ------------------------------------- ABOUT SECTION ------------------------------------------------- */
 
 .title-text{
   display: flex;
