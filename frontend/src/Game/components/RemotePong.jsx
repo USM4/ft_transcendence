@@ -65,6 +65,7 @@ useEffect(() => {
       
       const handleGameMessage = (event) => {
           const data = JSON.parse(event.data);
+          console.log("Received message:", data);
           switch(data.type) {
               case "game_state_update":
                   const gameState = data.message;
@@ -73,15 +74,6 @@ useEffect(() => {
                   ballRef.current = gameState.ball;
                   localStorage.setItem("gameState", "Playing");
                   setGameState("Playing");
-                  if (player.username === user.username) {
-                    console.log("player.username === user.username", player.username, user.username);
-                    setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
-                  }
-                  else if ((player.username == user.username)) {
-                    setScores({ leftPlayer: gameState.pright.score, rightPlayer: gameState.pleft.score });
-                    console.log("player.username !== user.username", player.username, user.username);
-                    
-                  }
                   break;
                   
               case "waiting_for_players":
@@ -89,10 +81,25 @@ useEffect(() => {
                   setGameState("Waiting");
                   break;
                   
+              case "score_update":
+                console.log("data.message.scorer", data.message.scorer);
+                if (data.message.scorer === user.username) {
+                    setScores({ leftPlayer: data.message.score.player1, rightPlayer: data.message.score.player2 })
+                }
+                else {
+                  setScores({ leftPlayer: data.message.score.player2 , rightPlayer: data.message.score.player1 });
+                  console.log("player.username !== user.username", player.username, user.username);
+                }
               case "game_over":
           
-                  localStorage.setItem("gameState", "Waiting");
-                  setGameState("Waiting");
+                  if (data.winner === user.username) {
+                      setWinner("You win!");
+                      alert("You win!");
+                    }
+                    else {
+                      setWinner("You lose!");
+                  }
+                  console.log("GameOver");
                   break;
                   
               default:
