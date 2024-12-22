@@ -9,7 +9,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 
 function DashboardChart() {
   const { user } = useContext(UserDataContext);
-  const matche = user.matchePlayed.map((match, index) => `Matche${index + 1}`);  
+  const matche = user.matchePlayed.map((matche, index) => `Matche${index + 1}`);
   const data = {
     labels: matche,
     datasets: [

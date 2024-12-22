@@ -164,8 +164,54 @@ class LogoutView(APIView):
         return response
 
 def get_game(user):
-    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)))
-    return game
+    player1 = Client.objects.get(id=1)
+    player2 = Client.objects.get(id=2)
+    game1 = Game.objects.create(
+        player1_id=player1,
+        player2_id=player2,
+        winner=player1,
+        score_player1=11,
+        score_player2=8,
+        xp_gained_player1=1762,
+        xp_gained_player2=1304
+    )
+
+    game2 = Game.objects.create(
+        player1_id=player1,
+        player2_id=player2,
+        winner=player2,
+        score_player1=9,
+        score_player2=11,
+        xp_gained_player1=1700,
+        xp_gained_player2=2600
+    )
+
+    game3 = Game.objects.create(
+        player1_id=player1,
+        player2_id=player2,
+        winner=player1,
+        score_player1=11,
+        score_player2=6,
+        xp_gained_player1=2540,
+        xp_gained_player2=450
+    )
+    game = [game1, game2, game3]
+    r = []
+    for g in game:
+        i = game.index(g)
+        r.append([
+            {
+                'id': i + 1,
+                'player1': {'username': g.player1_id.username, 'avatar': g.player1_id.avatar},
+                'player2': {'username': g.player2_id.username, 'avatar': g.player2_id.avatar},
+                'winner': g.winner.username,
+                'score_player1': g.score_player1,
+                'score_player2': g.score_player2,
+                'xp_gained_player1': g.xp_gained_player1,
+                'xp_gained_player2': g.xp_gained_player2
+            }
+        ])
+    return r
 
 class DashboardView(APIView):
     def get(self, request):
@@ -175,10 +221,10 @@ class DashboardView(APIView):
         game = get_game(user)
         xp = []
         for g in game:
-            if g.player1_id == user:
-                xp.append(g.xp_gained_player1)
+            if g[0]['player1'] == user:
+                xp.append(g[0]['xp_gained_player1'])
             else:
-                xp.append(g.xp_gained_player2)
+                xp.append(g[0]['xp_gained_player2'])
         return Response({
             'id': user.id,
             'email': user.email,
@@ -187,8 +233,8 @@ class DashboardView(APIView):
             'twoFa': user.is_2fa_enabled,
             'is_online': user.is_online,
             'matchePlayed': game,
-            'matcheWon': len([g for g in game if g.winner == user]),
-            'matcheLost': len([g for g in game if g.winner != user]),
+            'matcheWon': len([g for g in game if g[0]['winner'] == user.username]),
+            'matcheLost': len([g for g in game if g[0]['winner'] != user.username]),
             'xp': xp
         })
 

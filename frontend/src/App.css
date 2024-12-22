@@ -732,8 +732,21 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
   padding: 5px 7px;
+}
+
+.match-history-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.match-history-score{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
 }
 
 .match-history-container .match-history-item:hover{
