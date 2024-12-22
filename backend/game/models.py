@@ -8,7 +8,7 @@ class Game(models.Model):
     player1_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player1')
     player2_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player2')
     winner = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='winner')
-    
+
     # Score tracking
     score_player1 = models.IntegerField(default=0)
     score_player2 = models.IntegerField(default=0)

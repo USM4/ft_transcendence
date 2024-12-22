@@ -9,6 +9,7 @@ from .serializers import ClientSignUpSerializer , SearchSerializer
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from game.models import Game
 import requests
 import os
 from pathlib import Path
@@ -162,18 +163,33 @@ class LogoutView(APIView):
         response.delete_cookie('refresh')
         return response
 
+def get_game(user):
+    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)))
+    return game
+
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
         if not user.is_authenticated:
             return Response({'error': 'Unauthorized'}, status=401)
+        game = get_game(user)
+        xp = []
+        for g in game:
+            if g.player1_id == user:
+                xp.append(g.xp_gained_player1)
+            else:
+                xp.append(g.xp_gained_player2)
         return Response({
             'id': user.id,
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'twoFa': user.is_2fa_enabled,
-            'is_online': user.is_online
+            'is_online': user.is_online,
+            'matchePlayed': game,
+            'matcheWon': len([g for g in game if g.winner == user]),
+            'matcheLost': len([g for g in game if g.winner != user]),
+            'xp': xp
         })
 
 class SendFriendRequest(APIView):
