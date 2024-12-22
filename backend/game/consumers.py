@@ -16,6 +16,8 @@ game_started = False  # Shared flag to prevent multiple game loops
 player_paddles = {}  # Map of player to paddle
 
 class GameState:
+    def __init__(self, player=None):
+        self.player = player
     canvas_width = 1000
     canvas_height = 500
 
@@ -117,18 +119,18 @@ class GameState:
             self.reset_ball()
             self.reset_paddles()
             print ("---------------------------------- Right paddle scores ----------------------------------", self.pright["score"]) 
-            # if self.pright["score"] >= 2:
-            #     # print ("---------------------------------- Left paddle scores ----------------------------------")
-            #     self.increase_score()
+            if self.pright["score"] >= 2:
+                print ("---------------------------------- Left paddle scores ----------------------------------")
+                asyncio.create_task(self.increase_score())
+
 
         elif self.ball["x"] + self.ball["radius"] >= self.canvas_width:
             self.pleft["score"] += 1  # Left paddle scores
             self.reset_ball()
             self.reset_paddles()
-            print ("---------------------------------- Left paddle scores ----------------------------------", self.pleft["score"]) 
-            # if self.pleft["score"] >= 2:
-            #     print ("---------------------------------- RIGHT paddle scores ----------------------------------")
-            #     self.increase_score()
+            if self.pleft["score"] >= 2:
+                print ("---------------------------------- Left paddle scores ----------------------------------", self.pright["score"]) 
+            asyncio.create_task(self.increase_score())
     
     def reset_paddles(self):
         # Reset paddles to the center
@@ -141,21 +143,46 @@ class GameState:
         self.ball["y"] = self.canvas_height / 2
         self.ball["velocityX"] = 4  # Reverse horizontal direction
         self.ball["velocityY"] = 4  # Reset vertical velocity
-    
+
     async def increase_score(self):
+        print("------------- { increase_score  }-------------")
         # Retrieve Client instances
-        player1 = await sync_to_async(Client.objects.get)(id=self.pleft["id"])
-        player2 = await sync_to_async(Client.objects.get)(id=self.pright["id"])
+        player1 = await database_sync_to_async(Client.objects.get)(id=self.pleft["id"])
+        player2 = await database_sync_to_async(Client.objects.get)(id=self.pright["id"])
 
         # Determine the winner
         if self.pleft["score"] >= 2:
             winner = player1
-            loser = player2
+            print(f"Player 1 ({player1.username}) wins!")
         elif self.pright["score"] >= 2:
             winner = player2
-            loser = player1
+            print(f"Player 2 ({player2.username}) wins!")
         else:
-            return  # No winner yet
+            return
+
+        # Create and save the game
+        await database_sync_to_async(Game.objects.create)(
+            player1_id=player1,
+            player2_id=player2,
+            winner=winner,
+            score_player1=self.pleft["score"],
+            score_player2=self.pright["score"]
+        )
+        print(f"Game saved successfully. Winner: {winner.username}")
+
+        #  notify clients about game ends
+        # await self.player.channel_layer.group_send(
+        #     "game_room",
+        #     {
+        #         "type": "game_over",
+        #         "message": f"Game Over! {winner.username} wins!",
+        #         "winner": winner.username,
+        #         "final_score": {
+        #             "player1": self.pleft["score"],
+        #             "player2": self.pright["score"]
+        #         }
+        #     }
+        # )
 
         # Announce the winner and save game to the database
         print(f"Winner: {winner.username}")
@@ -171,6 +198,7 @@ class GameState:
         # Return the winner's details
         print(f"Winner: {winner.username}")
 
+    
 
 class GameConsumer(AsyncWebsocketConsumer):
     game_state = GameState()
@@ -188,7 +216,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
         print(self.channel_name)
         await self.channel_layer.group_add("game_room", self.channel_name)
-
+    
     # Check if user is already in connected_users based on ID
         user_exists = any(user['id'] == self.player['id'] for user in connected_users)
     
@@ -286,16 +314,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         if self.player['id'] in player_paddles:
             del player_paddles[self.player['id']]
 
-    # async def game_start(self, event):
-    #     # print(event["message"], event["player"])
-    #     print("####################### event[""] ####################### ", event["message"])
-    #     await self.send(text_data=json.dumps({
-    #         "type": "game_start",
-    #         "message": event["message"],
-    #         "player": event["player"],
-    #         "avatar": event["avatar"],
-    #     }))
-
     async def game_over(self, event):
 
         await self.send(text_data=json.dumps({
@@ -327,7 +345,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def send_game_state(self, event):
         message = event["message"]
         try:
-            # print("********* HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAH SENDING GAME STATE HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAH ***********")
             await self.send(text_data=json.dumps({
                 "type": "game_state_update",
                 "message": message,

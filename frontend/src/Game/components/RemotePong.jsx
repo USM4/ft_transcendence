@@ -18,8 +18,8 @@ const RemotePong = () => {
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
   const [winner, setWinner] = useState(null);
-  const [score1, setScore1] = useState(0);
-  const [score2, setScore2] = useState(0);
+  // const [score1, setScore1] = useState(0);
+  // const [score2, setScore2] = useState(0);
 
   const gameSocketRef = useContext(GameSocketContext);
 
@@ -73,10 +73,15 @@ useEffect(() => {
                   ballRef.current = gameState.ball;
                   localStorage.setItem("gameState", "Playing");
                   setGameState("Playing");
-                  setScores({ 
-                      leftPlayer: gameState.pleft.score, 
-                      rightPlayer: gameState.pright.score 
-                  });
+                  if (player.username === user.username) {
+                    console.log("player.username === user.username", player.username, user.username);
+                    setScores({ leftPlayer: gameState.pleft.score, rightPlayer: gameState.pright.score });
+                  }
+                  else if ((player.username == user.username)) {
+                    setScores({ leftPlayer: gameState.pright.score, rightPlayer: gameState.pleft.score });
+                    console.log("player.username !== user.username", player.username, user.username);
+                    
+                  }
                   break;
                   
               case "waiting_for_players":
@@ -158,7 +163,6 @@ const handleKeyDown = (e) => {
     };
   }, []);
 
-
   useEffect(() => {
     const animate = () => {
       if (canvasRef.current === null) {
@@ -211,14 +215,14 @@ const handleKeyDown = (e) => {
           <div className="player-profiles">
             <div className="player-card">
               <div className="player-name">
-                <h3>{user.username}</h3>
+                <h3>{user?.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
-                <span className="score">{score1}</span>
+                <span className="score">{scores.leftPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={user.avatar} alt="Player 1" />
+                <img src={user?.avatar || player3Image} alt="Player 1" />
                 <div className="glow-effect"></div>
               </div>
             </div>
@@ -234,7 +238,7 @@ const handleKeyDown = (e) => {
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
-                <span className="score">{score2}</span>
+                <span className="score">{scores.rightPlayer}</span>
               </div>
               <div className="player-avatar">
                 {/* { console.log("player.name --------------->" ,player.name) } 
