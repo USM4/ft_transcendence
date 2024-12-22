@@ -14,10 +14,11 @@ connected_users_set = set()  # set of connected clients
 user_channels = {} # map of user to channel name
 game_started = False  # Shared flag to prevent multiple game loops
 player_paddles = {}  # Map of player to paddle
+max_score = 2
 
 class GameState:
-    def __init__(self, player=None):
-        self.player = player
+    def __init__(self, consumer=None):
+        self.consumer = consumer
     canvas_width = 1000
     canvas_height = 500
 
@@ -85,6 +86,7 @@ class GameState:
         }
     def update_ball(self):
         # Update ball position
+        print("------------- { update_ball  }-------------")
         self.ball["x"] += self.ball["velocityX"]
         self.ball["y"] += self.ball["velocityY"]
 
@@ -114,24 +116,28 @@ class GameState:
             self.ball["x"] = self.pright["x"] - self.ball["radius"]
 
         # Check for scoring
+
         if self.ball["x"] - self.ball["radius"] <= 0:
-            self.pright["score"] += 1  # Right paddle scores
+            self.pright["score"] += 1
+            scoring_info = {
+                "scorer": "player2",
+                "scorer_id": self.pright["id"],
+            }
             self.reset_ball()
             self.reset_paddles()
-            print ("---------------------------------- Right paddle scores ----------------------------------", self.pright["score"]) 
-            if self.pright["score"] >= 2:
-                print ("---------------------------------- Left paddle scores ----------------------------------")
-                asyncio.create_task(self.increase_score())
-
-
+            asyncio.create_task(self.increase_score(scoring_info))
         elif self.ball["x"] + self.ball["radius"] >= self.canvas_width:
-            self.pleft["score"] += 1  # Left paddle scores
+            self.pleft["score"] += 1
+            scoring_info = {
+                "scorer": "player1",
+                "scorer_id": self.pleft["id"],
+            }
             self.reset_ball()
             self.reset_paddles()
-            if self.pleft["score"] >= 2:
-                print ("---------------------------------- Left paddle scores ----------------------------------", self.pright["score"]) 
-            asyncio.create_task(self.increase_score())
-    
+            asyncio.create_task(self.increase_score(scoring_info))
+            
+
+            
     def reset_paddles(self):
         # Reset paddles to the center
         self.pleft["y"] = self.canvas_height / 2 - self.pleft["height"] / 2
@@ -144,19 +150,40 @@ class GameState:
         self.ball["velocityX"] = 4  # Reverse horizontal direction
         self.ball["velocityY"] = 4  # Reset vertical velocity
 
-    async def increase_score(self):
+    async def increase_score(self, scoring_info):
+        print("------------- { increase_score  }-------------")
+        if not self.consumer:
+            print("Error: No consumer available")
+            return
         print("------------- { increase_score  }-------------")
         # Retrieve Client instances
         player1 = await database_sync_to_async(Client.objects.get)(id=self.pleft["id"])
         player2 = await database_sync_to_async(Client.objects.get)(id=self.pright["id"])
 
-        # Determine the winner
-        if self.pleft["score"] >= 2:
+        # Send scoring update to all players
+        print ("-------------player1.username-----------" ,player1.username)
+        print ("-------------player2.username-----------" ,player2.username)
+        await self.consumer.channel_layer.group_send(
+            "game_room",
+            {
+                "type": "score_update",
+                "message": {
+                    "scorer": player1.username if scoring_info["scorer"] == "player1" else player2.username,
+                    "scorer_id": scoring_info["scorer_id"],
+                    "score": {
+                        "player1": self.pleft["score"],
+                        "player2": self.pright["score"]
+                    }
+                }
+            }
+        )
+
+        if self.pleft["score"] == max_score:
             winner = player1
-            print(f"Player 1 ({player1.username}) wins!")
-        elif self.pright["score"] >= 2:
+            game_started = False
+        elif self.pright["score"] == max_score:
             winner = player2
-            print(f"Player 2 ({player2.username}) wins!")
+            game_started = False
         else:
             return
 
@@ -168,40 +195,25 @@ class GameState:
             score_player1=self.pleft["score"],
             score_player2=self.pright["score"]
         )
-        print(f"Game saved successfully. Winner: {winner.username}")
 
-        #  notify clients about game ends
-        # await self.player.channel_layer.group_send(
-        #     "game_room",
-        #     {
-        #         "type": "game_over",
-        #         "message": f"Game Over! {winner.username} wins!",
-        #         "winner": winner.username,
-        #         "final_score": {
-        #             "player1": self.pleft["score"],
-        #             "player2": self.pright["score"]
-        #         }
-        #     }
-        # )
-
-        # Announce the winner and save game to the database
-        print(f"Winner: {winner.username}")
-        game = Game.objects.create(
-            player1_id=player1,
-            player2_id=player2,
-            winner=winner,
-            score_player1=self.pleft["score"],
-            score_player2=self.pright["score"],
+        await self.consumer.channel_layer.group_send(
+            "game_room",
+            {
+                "type": "game_over",
+                "message": f"Game Over! {winner.username} wins!",
+                "winner": winner.username,
+                "final_score": {
+                    "player1": self.pleft["score"],
+                    "player2": self.pright["score"]
+                }
+            }
         )
-        await sync_to_async(game.save)()
-
-        # Return the winner's details
-        print(f"Winner: {winner.username}")
-
     
 
 class GameConsumer(AsyncWebsocketConsumer):
-    game_state = GameState()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.game_state = GameState(consumer=self)
     async def connect(self):
         global game_started
         self.player = {
@@ -318,7 +330,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         await self.send(text_data=json.dumps({
             "type": "game_over",
-            "message": event["message"],
+            "message": event["message", "winner": event["winner"], "final_score": event["final_score"]]
+        }))
+
+
+    async def score_update(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "score_update",
+            "message": event["message"]
         }))
 
 
