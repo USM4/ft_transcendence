@@ -65,9 +65,7 @@ useEffect(() => {
                     // console.log("Waiting for players:", data.message);
                     setIsReady(false);
                     break;
-                    
-                default:
-                    // console.log("Unhandled message type in Matchmaking:", data.type);
+
             }
         };
 
@@ -78,7 +76,7 @@ useEffect(() => {
             socket.removeEventListener('message', handleMatchmakingMessage);
         };
     }
-}, [gameSocketRef, user.username]);
+}, [gameSocketRef, user?.username]);
     
     useEffect(() => {
         if (isReady) {
@@ -131,10 +129,10 @@ useEffect(() => {
                 
                 <div className="current-player-card">
                     <div className="current-player-name">
-                        <h2> {player2.username} </h2>
+                        <h2> {dataOpponent.username || "Opponent"} </h2>
                     </div>
                     <div className="current-player-img">
-                        <img src={player2.avatar || player3Image} alt="Player 2" />
+                        <img src={dataOpponent.avatar || player3Image} alt="Player 2" />
                         {isReady ? <div className="current-player-status status-ready">Ready</div> :
                             <div className="current-player-status status-not-ready">Not yet</div>
                         }

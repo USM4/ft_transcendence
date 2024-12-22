@@ -15,6 +15,7 @@ function AppGame() {
           <Route path="matchMaking" element={<Matchmaking isAIEnabled={false} />} />
           <Route path="online" element={<RemotePong isAIEnabled={false} />} />
           <Route path="bot" element={<PongGame isAIEnabled={true} />} />
+
       </Routes>
   );
 }
