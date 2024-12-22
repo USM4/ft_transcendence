@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext} from "react";
+import { UserDataContext } from "./UserDataContext.jsx";
 import { Doughnut } from "react-chartjs-2";
 import { Radar } from 'react-chartjs-2';
 import {
@@ -14,16 +15,22 @@ import { colors } from "@mui/material";
 ChartJS.register( RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
 function DashboardDoghnuts() {
+    const { user } = useContext(UserDataContext);
+    const matches = user.matchePlayed.length;
 
+    const win = (user.matcheWon / matches) * 100;
+    const lose = (user.matcheLost / matches) * 100;
+    const matchedraw = matches - (user.matcheWon + user.matcheLost);
+    const draw = (matchedraw / matches) * 100;
     const data = {
         labels: [
           'Vistory',
-          'Defeat',
+          'Lose',
           'Draw'
         ],
         datasets: [{
-          label: 'Victory',
-          data: [100, 70, 99],
+          label: 'Matches',
+          data: [80, 20, 50],
           fill: true,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgb(255, 99, 132)',
@@ -31,42 +38,24 @@ function DashboardDoghnuts() {
           pointBorderColor: '#fff',
           pointHoverBackgroundColor: '#fff',
           pointHoverBorderColor: 'rgb(255, 99, 132)'
-        }, {
-          label: 'Defeat',
-          data: [20, 20, 0],
-          fill: true,
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgb(54, 162, 235)',
-          pointBackgroundColor: 'rgb(54, 162, 235)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(54, 162, 235)'
-        }
-        , 
-        {
-          label: 'Draw',
-          data: [0, 50, 40],
-          fill: true,
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgb(174, 255, 218)',
-          pointBackgroundColor: 'rgb(174, 255, 218)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(54, 162, 235)'
         }]
       };
       const options = {
         elements: {
           line: {
-            borderWidth: 3
+            borderWidth: 2
           }
         },
         scales: {
           r: {
-            suggestedMin: 50,
-            suggestedMax: 100,
+            angleLines: {
+              display: false
+            },
             ticks: {
-              stepSize: 50
+              display: false,
+              max: 100,
+              min: 0,
+              stepSize: 10,
             }
           }
         }
