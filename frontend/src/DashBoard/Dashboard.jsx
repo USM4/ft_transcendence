@@ -39,9 +39,6 @@ function Dashboard() {
                     <p> Match History </p>
                     <div className="match-history-container">
                         <MatchHistory/>
-                        <MatchHistory/>
-                        <MatchHistory/>
-                        <MatchHistory/>
                     </div>
                 </div>
                 <div className="dashboard-friends">
