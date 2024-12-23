@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useCallback,useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Canvas from './Canvas';
-import Ball from './Ball';
-import WinPage from './WinPage';
-import Racket from './Racket';
+
 import player1Image from '/pensioner.png';
 import player2Image from '/pensioner.png';
 
@@ -273,10 +270,10 @@ const PongGame = () => {
 
   useEffect(() => {
     if (winner) {
-      if (winner === "Player 1") {        
-        matche.winner = matche.Player1;
-      } else {
+      if (winner === "Player 1") {
         matche.winner = matche.Player2;
+      } else {
+        matche.winner = matche.Player1;
       }
       matche.score1 = scores.leftPlayer;
       matche.score2 = scores.rightPlayer;

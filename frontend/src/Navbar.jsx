@@ -12,8 +12,8 @@ function Navbar () {
             </Link>
           </li>
           <li>
-            <Link to="/features">
-              <button className="navbutton"> Features</button>
+            <Link to="/about">
+              <button className="navbutton"> About</button>
             </Link>
           </li>
           <li>

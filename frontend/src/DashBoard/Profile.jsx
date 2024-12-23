@@ -180,7 +180,7 @@ function Profile() {
     } else {
       setStranger(false);
     }
-  }, [username, user.username]);
+  }, [username, user?.username]);
   const switchUser = stranger ? stranger_data : user;
 
   return (

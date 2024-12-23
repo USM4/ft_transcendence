@@ -33,7 +33,8 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 			del user_channel_name[self.user.id]
 
 	async def update_user_status(self, user, is_online):
-		user.is_online = is_online
+		is_online = is_online
+		await sync_to_async(user.refresh_from_db)()
 		await sync_to_async(user.save)()
 		# await database_sync_to_async(
 		# 	user.__class__.objects.filter(id=user.id).update

@@ -1,9 +1,10 @@
 import React from "react";
 import { useContext, createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const UserDataContext = createContext();
 function UserDataProvider({ children }) {
+  const { pathname } = useLocation();
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -25,7 +26,7 @@ function UserDataProvider({ children }) {
       }
     };
     getData();
-  }, []);
+  }, [pathname]);
   
     const updateUser = (updatedUser) => {
       setUser(updatedUser);

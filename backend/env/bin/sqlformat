@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #!/goinfre/omahdiou/ft_transcendence/backend/env/bin/python3
+=======
+#!/Users/yrrhaibi/Desktop/ft_transcendence/backend/env/bin/python3
+>>>>>>> yahia
 # -*- coding: utf-8 -*-
 import re
 import sys

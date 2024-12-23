@@ -9,6 +9,7 @@ from .serializers import ClientSignUpSerializer , SearchSerializer
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from game.models import Game
 import requests
 import os
 from pathlib import Path
@@ -21,6 +22,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
 from .consumers import user_channel_name
+from django.core.files.storage import default_storage
 
 class SignUpView(APIView):
     def post(self, request):
@@ -162,18 +164,50 @@ class LogoutView(APIView):
         response.delete_cookie('refresh')
         return response
 
+def get_game(user):
+
+    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('start_time').reverse())
+    r = []
+    for g in game:
+        i = game.index(g)
+        r.append([
+            {
+                'id': g.game_id,
+                'player1': {'username': g.player1_id.username, 'avatar': g.player1_id.avatar},
+                'player2': {'username': g.player2_id.username, 'avatar': g.player2_id.avatar},
+                'winner': g.winner.username,
+                'score_player1': g.score_player1,
+                'score_player2': g.score_player2,
+                'xp_gained_player1': g.xp_gained_player1,
+                'xp_gained_player2': g.xp_gained_player2
+            }
+        ])
+    return r
+
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
         if not user.is_authenticated:
             return Response({'error': 'Unauthorized'}, status=401)
+        game = get_game(user)
+        xp = []
+        for g in game:
+            if g[0]['player1'] == user:
+                xp.append(g[0]['xp_gained_player1'])
+            else:
+                xp.append(g[0]['xp_gained_player2'])
+
         return Response({
             'id': user.id,
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
             'twoFa': user.is_2fa_enabled,
-            'is_online': user.is_online
+            'is_online': user.is_online,
+            'matchePlayed': game,
+            'matcheWon': len([g for g in game if g[0]['winner'] == user.username]),
+            'matcheLost': len([g for g in game if g[0]['winner'] != user.username]),
+            'xp': xp
         })
 
 class SendFriendRequest(APIView):
@@ -376,13 +410,14 @@ def generate_otp(username):
     user = Client.objects.get(username=username)
     user.secret_key = secret_key
     user.save()
-    # print("secret ------------> ",user.secret_key)
+    print("Generated secret ------------> ", user.secret_key)
     url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name=user.username, issuer_name="ft_transcendence")
     qrcode_directory = "media/qr_codes/"
     if not os.path.exists(qrcode_directory):
-        # print("directory not found")
         os.makedirs(qrcode_directory)
-    path = qrcode_directory + username + ".png"
+    path = os.path.join(qrcode_directory, f"{username}.png")
+    if os.path.exists(path):
+        os.remove(path)
     qrcode.make(url).save(path)
 
 
@@ -396,21 +431,6 @@ class QrCode(APIView):
         # print('qrcode_url:', qrcode_url)
         return Response({'qrcode': qrcode_url})
 
-class Activate2FA(APIView):
-    def post(self, request):
-        otp = request.data.get('otp')
-        print("otp", otp)
-        print("request.user", request.user)
-        if not otp:
-            return Response({'error': 'OTP is required'}, status=400)
-        totp = pyotp.totp.TOTP(request.user.secret_key)
-
-        if not totp.verify(otp):
-            return Response({'error': 'Invalid OTP'}, status=400)
-        request.user.is_2fa_enabled = True
-        request.user.save()
-        return Response({'message': '2FA enabled successfully'})
-
 class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
@@ -418,24 +438,58 @@ class CheckOtp(APIView):
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        # print("------------------>",totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         return Response({'message': 'OTP verified successfully'})
 
-class Disable2FA(APIView):
+class Activate2FA(APIView):
     def post(self, request):
-        otp = request.data.get('otp')
+        otp = request.data.get('code')
+        user = Client.objects.get(username=request.user.username)
+        print("user from get objs", user)
+        print("otp", otp)
+        print("request.user", request.user)
         if not otp:
-            return Response({'error': 'OTP is required for desabling'}, status=400)
-        print("request.user.secret_key",request.user.secret_key)
+            return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
+
+        # print("------------ Activate otp  --------------------",  totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
-        request.user.is_2fa_enabled = False
-        request.user.secret_key = None
-        request.user.save()
-        return Response({'message': '2FA disabled successfully'})
+        user.is_2fa_enabled = True
+        user.save()
+        print("User saved successfully. New values:", user)
+        print("is_2fa_enabled:", user.is_2fa_enabled)
+        print("Checked secret_key:", user.secret_key)
+
+        return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
+
+class Disable2FA(APIView):
+    def post(self, request):
+        otp = request.data.get('code')
+        user = Client.objects.get(username=request.user.username)
+
+        if not otp:
+            return Response({'error': 'OTP is required for desabling'}, status=400)
+        totp = pyotp.totp.TOTP(request.user.secret_key)
+
+
+        if not totp.verify(otp):
+            return Response({'error': 'Invalid OTP'}, status=400)
+        user.is_2fa_enabled = False
+        user.secret_key = None
+        user.save()
+        print("User saved successfully. New values:", user)
+        print("is_2fa_enabled:", user.is_2fa_enabled)
+        print("Checked secret_key:", user.secret_key)
+
+        from django.db import connection
+        if connection.in_atomic_block:
+            connection.commit()
+    
+        # user.refresh_from_db()
+        print("User 2FA status updated:", user.is_2fa_enabled, user.secret_key)
+        return Response({'message': '2FA disabled successfully', 'is_2fa_enabled': False})
 
 class UpdateUserInfos(APIView):
     def post(self, request):
@@ -443,14 +497,17 @@ class UpdateUserInfos(APIView):
         avatar = request.data.get('avatar')
         address = request.data.get('address')
         phone = request.data.get('phone')
-        # new_image = request.FILES.get('avatar')
+        # print("==============> avatar from request ",avatar)
         avatar_file = request.FILES.get('avatar')
         if avatar_file:
-            file_name = Path(avatar_file.name).name
-            print("avatar_file name -----> ", file_name)
-            user.avatar = "/" + avatar_file.name
+            # print("==============> avatar_file =============================",avatar_file)
+            file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
+            file_url = request.build_absolute_uri(default_storage.url(file_path))  # generate absolute URL localhost:8000/... not localhost:5173/media/...
+            # print("==============> file url" ,file_url)
+            user.avatar = file_url
         else:
             print("No avatar file uploaded.")
+            user.avatar = None
         # Update other fields if provided
         if address:
             user.address = address
@@ -465,5 +522,5 @@ class UpdateUserInfos(APIView):
                     'id': user.id,
                     'email': user.email,
                     'username': user.username,
-                    'avatar': user.avatar if user.avatar else None,
+                    'avatar': user.avatar
             },})

@@ -37,12 +37,7 @@ function Dashboard() {
             <div className="right-side-dashboard">
                 <div className="match-history">
                     <p> Match History </p>
-                    <div className="match-history-container">
                         <MatchHistory/>
-                        <MatchHistory/>
-                        <MatchHistory/>
-                        <MatchHistory/>
-                    </div>
                 </div>
                 <div className="dashboard-friends">
                     <p className="dashboard-friends-title">Online Friends</p>

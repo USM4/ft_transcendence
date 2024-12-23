@@ -248,7 +248,9 @@ const TournamentHearchy = () => {
 	
 	const resetTournament = () => {
 		navigate("/tournament/options/tournament-registration");
-		localStorage.clear()
+		localStorage.removeItem('tournamentState');
+		localStorage.removeItem('matche');
+		localStorage.removeItem('players');
 	};
 
 	return (
@@ -734,7 +736,7 @@ const TournamentHearchy = () => {
 			{winner && (
 				<div className="winner-display">
 					<h2>🏆 The Winner is {winner} 🎉</h2>
-					<button onClick={resetTournament}>Reset Tournament</button>
+					<button onClick={resetTournament}>Replay Tournament</button>
 				</div>
 			)}
 		</div>
