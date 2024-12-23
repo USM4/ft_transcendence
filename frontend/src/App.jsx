@@ -37,7 +37,7 @@ function App() {
       >
         <UserDataProvider>
         <SocketContextProvider>
-        <GameSocketProvider>
+        <GameSocketProvider>        
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             {/* Public Routes */}
@@ -109,7 +109,7 @@ function App() {
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </GameSocketProvider>
+          </GameSocketProvider>
         </SocketContextProvider>
         </UserDataProvider>
       </Router>

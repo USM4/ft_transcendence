@@ -9,13 +9,13 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 
 function DashboardChart() {
   const { user } = useContext(UserDataContext);
-  const matche = user.matchePlayed.map((matche, index) => `Matche${index + 1}`);
+  const matche = user?.matchePlayed.map((matche, index) => `Matche${index + 1}`);
   const data = {
     labels: matche,
     datasets: [
       {
-        label: `${user.username}'s activity`,
-        data: user.xp,
+        label: `${user?.username}'s activity`,
+        data: user?.xp,
         fill: false,
         backgroundColor: 'rgba(174, 255, 218,1)',
         borderColor: 'rgb(174, 255, 218) ',
@@ -35,8 +35,13 @@ function DashboardChart() {
       },
     },
   };
+  const isAllZero = data.datasets[0].data.every((value) => value === 0);
 
-  return <Line data={data} options={options} />;
+  return (
+    isAllZero ? <h1 className="data-chart-h1"> No data to display
+    </h1> :
+  <Line data={data} options={options} />
+)
 };
 
 export default DashboardChart;

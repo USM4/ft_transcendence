@@ -2,9 +2,8 @@ from django.db import models
 from authentification.models import Client
 
 class Game(models.Model):
-    game_id = models.AutoField(primary_key=True)
-    
     # Player fields
+    game_id = models.AutoField(primary_key=True)
     player1_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player1')
     player2_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player2')
     winner = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='winner')
