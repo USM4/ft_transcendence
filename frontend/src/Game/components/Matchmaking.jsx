@@ -15,7 +15,16 @@ const Matchmaking = () => {
     const [isReady, setIsReady] = useState(false);
     const [countdown, setCountdown] = useState(3);
     const { user } = useContext(UserDataContext);
-    const [dataOpponent, setDataOpponent] = useState({});
+    const [dataPlayers, setDataPlayers] = useState({
+        user1: {
+            username: user?.username,
+            avatar: user?.avatar,
+        },
+        user2: {
+            username: "Opponent",
+            avatar: player3Image,
+        },
+    });
     const [player1, setPlayer1] = useState({
         username: "player1",
         avatar: player1Image,
@@ -29,40 +38,23 @@ const Matchmaking = () => {
 
     const gameSocketRef = useContext(GameSocketContext);
 
-    const isReadyRef = useRef(isReady);
-    const dataOpponentRef = useRef(dataOpponent);
-
-    useEffect(() => {
-        isReadyRef.current = isReady;
-        dataOpponentRef.current = dataOpponent;
-    }, [isReady, dataOpponent]);
-
 useEffect(() => {
     if (gameSocketRef.current) {
         const socket = gameSocketRef.current;
-        // console.log("Setting up Matchmaking message handler");
         
         const handleMatchmakingMessage = (event) => {
             const data = JSON.parse(event.data);
-            // console.log("Matchmaking received message:", data);
 
             switch(data.type) {
                 case "connected":
-                    // console.log("Player connected:", data.data);
                     break;
                     
                 case "match_ready":
-                    // console.log("Match ready:", data);
-                    if (data.user1.username === user.username) {
-                        setDataOpponent(data.user2);
-                    } else {
-                        setDataOpponent(data.user1);
-                    }
+                    setDataPlayers(data);
                     setIsReady(true);
                     break;
                     
                 case "waiting_for_players":
-                    // console.log("Waiting for players:", data.message);
                     setIsReady(false);
                     break;
 
@@ -72,7 +64,6 @@ useEffect(() => {
         socket.addEventListener('message', handleMatchmakingMessage);
         
         return () => {
-            // console.log("Cleaning up Matchmaking message handler");
             socket.removeEventListener('message', handleMatchmakingMessage);
         };
     }
@@ -86,10 +77,9 @@ useEffect(() => {
 
             const navigateTimeout = setTimeout(() => {
                 // ghaymchi l page online f 3 seconds ila kan ready
-                console.log("Navigating to online game...",  "player2", player2);
-                if (dataOpponent)
-                    navigate("/tournament/options/game/online", { state: { player: dataOpponent } });
-                
+                if (dataPlayers) {
+                    navigate("/tournament/options/game/online", { state: { players: dataPlayers } });
+                }
             }, 3000);
 
             // Cleanup intervals and timeouts
@@ -129,10 +119,10 @@ useEffect(() => {
                 
                 <div className="current-player-card">
                     <div className="current-player-name">
-                        <h2> {dataOpponent.username || "Opponent"} </h2>
+                        <h2> {dataPlayers.user1.username === user?.username ? dataPlayers.user2.username : dataPlayers.user1.username} </h2>
                     </div>
                     <div className="current-player-img">
-                        <img src={dataOpponent.avatar || player3Image} alt="Player 2" />
+                        <img src={dataPlayers.user1.avatar === user?.avatar ? dataPlayers.user2.avatar : dataPlayers.user1.avatar } alt="Player 2" />
                         {isReady ? <div className="current-player-status status-ready">Ready</div> :
                             <div className="current-player-status status-not-ready">Not yet</div>
                         }

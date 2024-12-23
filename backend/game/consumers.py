@@ -11,47 +11,49 @@ from game.models import Game
 
 connected_users = deque()  # list of connected clients
 connected_users_set = set()  # set of connected clients
-user_channels = {} # map of user to channel name
-game_started = False  # Shared flag to prevent multiple game loops
-player_paddles = {}  # Map of player to paddle
+user_channels = {}  # map of user to channel name
+game_states = {}  # Dictionary to store GameState instances for each match
 max_score = 2
 
 class GameState:
-    def __init__(self, consumer=None):
+    def __init__(self, match_name, consumer=None):
         self.consumer = consumer
-    canvas_width = 1000
-    canvas_height = 500
+        self.match_name = match_name
+        self.is_active = False
+        self.canvas_width = 1000
+        self.canvas_height = 500
+        
+        # Initialize game objects for this specific match
+        self.ball = {
+            "x": self.canvas_width / 2,
+            "y": self.canvas_height / 2,
+            "velocityX": 4,
+            "velocityY": 4,
+            "radius": 10,
+            "color": "yellow",
+        }
 
-    ball = {
-        "x": canvas_width / 2,
-        "y": canvas_height / 2,
-        "velocityX": 4,
-        "velocityY": 4,
-        "radius": 10,
-        "color": "yellow",
-    }
+        self.pleft = {
+            "id": None,  # Will be set when players join
+            "x": 10,
+            "y": self.canvas_height / 2 - 50,
+            "width": 10,
+            "height": 100,
+            "speed": 20,
+            "score": 0,
+            "color": "blue",
+        }
 
-    pleft = {
-        "id": 1,
-        "x": 10,  # Left paddle
-        "y": canvas_height / 2 - 50,
-        "width": 10,
-        "height": 100,
-        "speed": 20,
-        "score": 0,
-        "color": "blue",
-    }
-
-    pright = {
-        "id": 2,
-        "x": canvas_width - 20,  # Right paddle
-        "y": canvas_height / 2 - 50,
-        "width": 10,
-        "height": 100,
-        "speed": 20,
-        "score": 0,
-        "color": "red",
-    }
+        self.pright = {
+            "id": None,  # Will be set when players join
+            "x": self.canvas_width - 20,
+            "y": self.canvas_height / 2 - 50,
+            "width": 10,
+            "height": 100,
+            "speed": 20,
+            "score": 0,
+            "color": "red",
+        }
 
     def get_game_state(self):
         return {
@@ -84,9 +86,15 @@ class GameState:
                 "color": self.pright["color"],
             },
         }
+    def set_player_ids(self, player1_id, player2_id):
+        self.pleft["id"] = player1_id
+        self.pright["id"] = player2_id
+
     def update_ball(self):
         # Update ball position
-        print("------------- { update_ball  }-------------")
+        # print("------------- {  self.consumer  }-------------", self.consumer.users)
+
+
         self.ball["x"] += self.ball["velocityX"]
         self.ball["y"] += self.ball["velocityY"]
 
@@ -95,7 +103,7 @@ class GameState:
         # Check for collisions with top and bottom walls
         if self.ball["y"] - self.ball["radius"] <= 0 or self.ball["y"] + self.ball["radius"] >= self.canvas_height:
             self.ball["velocityY"] *= -1  # Reverse vertical velocity
-        
+
 
         # Check for collisions with paddles
         # Left paddle collision
@@ -103,7 +111,7 @@ class GameState:
             self.ball["x"] - self.ball["radius"] <= self.pleft["x"] + self.pleft["width"] and
             self.pleft["y"] <= self.ball["y"] <= self.pleft["y"] + self.pleft["height"]
         ):
-            
+
             self.ball["velocityX"] *= -1  # Reverse horizontal velocity
             self.ball["x"] = self.pleft["x"] + self.pleft["width"] + self.ball["radius"]
 
@@ -135,7 +143,7 @@ class GameState:
             self.reset_ball()
             self.reset_paddles()
             asyncio.create_task(self.increase_score(scoring_info))
-            
+
 
             
     def reset_paddles(self):
@@ -150,21 +158,17 @@ class GameState:
         self.ball["velocityX"] = 4  # Reverse horizontal direction
         self.ball["velocityY"] = 4  # Reset vertical velocity
 
+    # ... rest of the GameState methods remain the same, but update group sends to use self.match_name ...
     async def increase_score(self, scoring_info):
-        print("------------- { increase_score  }-------------")
         if not self.consumer:
             print("Error: No consumer available")
             return
-        print("------------- { increase_score  }-------------")
-        # Retrieve Client instances
+
         player1 = await database_sync_to_async(Client.objects.get)(id=self.pleft["id"])
         player2 = await database_sync_to_async(Client.objects.get)(id=self.pright["id"])
 
-        # Send scoring update to all players
-        print ("-------------player1.username-----------" ,player1.username)
-        print ("-------------player2.username-----------" ,player2.username)
         await self.consumer.channel_layer.group_send(
-            "game_room",
+            self.match_name,  # Use match-specific group
             {
                 "type": "score_update",
                 "message": {
@@ -178,16 +182,15 @@ class GameState:
             }
         )
 
-        if self.pleft["score"] == max_score:
+        if self.pleft["score"] >= max_score:
             winner = player1
-            game_started = False
-        elif self.pright["score"] == max_score:
+            self.is_active = False
+        elif self.pright["score"] >= max_score:
             winner = player2
-            game_started = False
+            self.is_active = False
         else:
             return
 
-        # Create and save the game
         await database_sync_to_async(Game.objects.create)(
             player1_id=player1,
             player2_id=player2,
@@ -197,7 +200,7 @@ class GameState:
         )
 
         await self.consumer.channel_layer.group_send(
-            "game_room",
+            self.match_name,
             {
                 "type": "game_over",
                 "message": f"Game Over! {winner.username} wins!",
@@ -208,14 +211,14 @@ class GameState:
                 }
             }
         )
-    
 
 class GameConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.game_state = GameState(consumer=self)
+        self.match_name = None
+        self.game_state = None
+
     async def connect(self):
-        global game_started
         self.player = {
             "username": self.scope.get('user').username,
             "avatar": self.scope.get('user').avatar,
@@ -224,33 +227,22 @@ class GameConsumer(AsyncWebsocketConsumer):
             "match_name": "",
             "channel_name": self.channel_name,
         }
-        print(self.channel_name)
+        
         await self.accept()
-        print(self.channel_name)
-        await self.channel_layer.group_add("game_room", self.channel_name)
-    
-    # Check if user is already in connected_users based on ID
+        
         user_exists = any(user['id'] == self.player['id'] for user in connected_users)
-    
         if not user_exists:
-            # Determine player number
             self.player["numberPlayer"] = "1" if len(connected_users) % 2 == 0 else "2"
             connected_users.append(self.player)
-
-            # Notify the frontend
+            
             await self.send(json.dumps({"type": "connected", "data": self.player}))
 
             if len(connected_users) >= 2:
                 try:
-                    print(f"=========== connected_users ===========",  connected_users)
                     user1 = connected_users.popleft()
-                    print(f"=========== user1 ===========",  user1)
                     user2 = connected_users.popleft()
-                    print(f"=========== user2 ===========",  user2)
-                    # Make sure we're not matching a player with themselves
+                    
                     if user1['id'] == user2['id']:
-                        print("Make sure we're not matching a player with themselves")
-                        # Put the first user back and wait for a different opponent
                         connected_users.appendleft(user1)
                         await self.send(json.dumps({
                             "type": "waiting_for_players",
@@ -258,16 +250,25 @@ class GameConsumer(AsyncWebsocketConsumer):
                         }))
                         return
 
-                    match_name = f"{user1['username']}_vs_{user2['username']}"
-                    user1["match_name"] = match_name
-                    user2["match_name"] = match_name
+                    # Create match name and initialize game state
+                    self.match_name = f"{user1['username']}vs{user2['username']}"
+                    user1["match_name"] = self.match_name
+                    user2["match_name"] = self.match_name
 
-                    await self.channel_layer.group_add(match_name, user1["channel_name"])
-                    await self.channel_layer.group_add(match_name, user2["channel_name"])
-                    await self.channel_layer.group_send(match_name, {
+                    # Create new game state for this match
+                    game_states[self.match_name] = GameState(self.match_name, self)
+                    game_states[self.match_name].set_player_ids(user1['id'], user2['id'])
+                    self.game_state = game_states[self.match_name]
+
+                    # Add players to match-specific group
+                    await self.channel_layer.group_add(self.match_name, user1["channel_name"])
+                    await self.channel_layer.group_add(self.match_name, user2["channel_name"])
+                    
+                    await self.channel_layer.group_send(self.match_name, {
                         "type": "match_ready",
                         "user1": user1,
                         "user2": user2,
+                        "match_name": self.match_name
                     })
                 except Exception as e:
                     print(f"Error during matchmaking: {e}")
@@ -277,90 +278,56 @@ class GameConsumer(AsyncWebsocketConsumer):
                     "message": "Waiting for another player.",
                 }))
         else:
-            # If user is already connected, send an error message
             await self.send(json.dumps({
                 "type": "error",
                 "message": "You are already connected in another window."
             }))
-            # Close this connection
             await self.close()
-    
-    async def match_ready(self, event):
-        global game_started
-        await self.send(text_data=json.dumps({
-            "type": "match_ready",
-            "user1": event["user1"],
-            "user2": event["user2"],
-        }))
-        if not game_started:
-            game_started = True
-            # print("game_started -------------", game_started)
-            asyncio.create_task(self.game_loop())
-
-    async def disconnect(self, close_code):
-        global game_started
-        await self.channel_layer.group_discard("game_room", self.channel_name)
-
-        # Remove player from connected_users based on ID
-        for user in list(connected_users):  # Create a copy of the list to modify it
-            if user['id'] == self.player['id']:
-                connected_users.remove(user)
-                break
-
-        if game_started:
-            game_started = False
-            # Notify other players about disconnection
-            if user_channels:
-                try:
-                    first_user, first_channel = next(iter(user_channels.items()))
-                    await self.channel_layer.send(user_channels[first_user], {
-                        "type": "game_over",
-                        "message": "The other player has disconnected. Game over.",
-                    })
-                except Exception as e:
-                    print(f"Error notifying other players: {e}")
-
-        # Clean up other collections
-        if self.player['id'] in user_channels:
-            del user_channels[self.player['id']]
-        if self.player['id'] in player_paddles:
-            del player_paddles[self.player['id']]
-
-    async def game_over(self, event):
-
-        await self.send(text_data=json.dumps({
-            "type": "game_over",
-            "message": event["message", "winner": event["winner"], "final_score": event["final_score"]]
-        }))
-
 
     async def score_update(self, event):
         await self.send(text_data=json.dumps({
             "type": "score_update",
             "message": event["message"]
+        }))          
+    async def match_ready(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "match_ready",
+            "user1": event["user1"],
+            "user2": event["user2"],
         }))
 
+        if not self.game_state:
+            self.game_state = game_states[event["match_name"]]
+            self.match_name = event["match_name"]
+        if not self.game_state.is_active:
+            self.game_state.is_active = True
+            asyncio.create_task(self.game_loop())
+    async def disconnect(self, close_code):
+        if self.match_name:
+            if self.match_name in game_states:
+                game_states[self.match_name].is_active = False
+                del game_states[self.match_name]
+            await self.channel_layer.group_discard(self.match_name, self.channel_name)
+
+        for user in list(connected_users):
+            if user['id'] == self.player['id']:
+                connected_users.remove(user)
+                break
 
     async def game_loop(self):
         await asyncio.sleep(4)
-        # print("Game loop started")
-        while True:
-            if not game_started:
-                print("Game loop ending - game not started")
-                break
-
+        while self.game_state and self.game_state.is_active:
             self.game_state.update_ball()
             game_state = self.game_state.get_game_state()
-            # print("Sending game state update")
+            
             await self.channel_layer.group_send(
-                "game_room",
+                self.match_name,
                 {
                     "type": "send_game_state",
                     "message": game_state,
                 }
             )
             await asyncio.sleep(1 / 60)
-
     async def send_game_state(self, event):
         message = event["message"]
         try:
@@ -370,29 +337,27 @@ class GameConsumer(AsyncWebsocketConsumer):
             }))
         except Exception as e:
             print(f"Failed to send message: {e}")
-
     async def receive(self, text_data):
+        if not self.game_state:
+            return
+            
         data = json.loads(text_data)
         if data["type"] == "key_press":
             key = data["key"].lower()
 
-            # Determine which player this is
             if self.player["numberPlayer"] == "1":
-                # Player 1 controls (W/S)
                 if key == "w":
-                    self.move_paddle("pleft", "up")
+                   self.move_paddle("pleft", "up")
                 elif key == "s":
-                    self.move_paddle("pleft", "down")
+                   self.move_paddle("pleft", "down")
             else:
-                # Player 2 controls (Arrow keys)
                 if key == "arrowup":
-                    self.move_paddle("pright", "up")
+                   self.move_paddle("pright", "up")
                 elif key == "arrowdown":
-                    self.move_paddle("pright", "down")
+                   self.move_paddle("pright", "down")
 
-            # Send updated game state
             await self.channel_layer.group_send(
-                "game_room",
+                self.match_name,
                 {
                     "type": "send_game_state",
                     "message": self.game_state.get_game_state(),
