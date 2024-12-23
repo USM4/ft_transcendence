@@ -1,4 +1,5 @@
 import asyncio
+import random
 import json
 from authentification.models import Client
 from channels.db import database_sync_to_async
@@ -186,7 +187,7 @@ class GameState:
             winner = player1
             self.is_active = False
         elif self.pright["score"] >= max_score:
-            winner = player2
+            winner = player2   # Loser's XP range
             self.is_active = False
         else:
             return
@@ -196,7 +197,9 @@ class GameState:
             player2_id=player2,
             winner=winner,
             score_player1=self.pleft["score"],
-            score_player2=self.pright["score"]
+            score_player2=self.pright["score"],
+            xp_gained_player1=random.randint(100, 500) if winner.id == player2.id else random.randint(1000, 5000),
+            xp_gained_player2=random.randint(100, 500) if winner.id == player1.id else random.randint(1000, 5000),
         )
 
         await self.consumer.channel_layer.group_send(
