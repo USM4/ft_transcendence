@@ -16,11 +16,11 @@ ChartJS.register( RadialLinearScale, PointElement, LineElement, Filler, Tooltip,
 
 function DashboardDoghnuts() {
   const { user } = useContext(UserDataContext);
-  const matches = user.matchePlayed.length;
+  const matches = user?.matchePlayed.length;
   
-    const win = (user.matcheWon / matches) * 100;
-    const lose = (user.matcheLost / matches) * 100;
-    const matchedraw = matches - (user.matcheWon + user.matcheLost);
+    const win = (user?.matcheWon / matches) * 100;
+    const lose = (user?.matcheLost / matches) * 100;
+    const matchedraw = matches - (user?.matcheWon + user?.matcheLost);
     const draw = (matchedraw / matches) * 100;
     const data = {
         labels: [
@@ -30,7 +30,7 @@ function DashboardDoghnuts() {
         ],
         datasets: [{
           label: 'Matches',
-          data: [win, lose, draw],
+          data: [user?.matcheWon, user?.matcheLost, matchedraw],
           fill: true,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgb(255, 99, 132)',
@@ -43,6 +43,7 @@ function DashboardDoghnuts() {
       const options = {
         elements: {
           line: {
+            tension: 0.08,
             borderWidth: 2
           }
         },
@@ -53,9 +54,8 @@ function DashboardDoghnuts() {
             },
             ticks: {
               display: false,
-              max: 100,
+              stepSize: 1,
               min: 0,
-              stepSize: 10,
             },
             grid: {
               color: 'rgba(255, 99, 132, 0.2)',
@@ -64,7 +64,20 @@ function DashboardDoghnuts() {
           }
         }
       };
-    return<Radar data={data} options={options}/>
+
+    const isAllZero = data.datasets[0].data.every((value) => value === 0);
+
+    return(
+        <div>
+            {isAllZero ? (
+              <h1 className="data-chart-h1">No data to display</h1>
+            ) : (
+                <Radar data={data} options={options} />
+            )}
+        </div>
+        )
+
+
 }
 
 export default DashboardDoghnuts;

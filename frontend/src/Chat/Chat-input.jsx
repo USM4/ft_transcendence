@@ -36,7 +36,7 @@ export default function Chat_input({ selected }) {
                         placeholder="Type a message..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-
+                        
                     /></div>
                     <div className="button-area"><button onClick={() => handleSubmit()} type="submit"><SendRoundedIcon /></button></div></>)
                 : null}

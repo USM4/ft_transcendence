@@ -22,6 +22,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
 from .consumers import user_channel_name
+from django.core.files.storage import default_storage
 
 class SignUpView(APIView):
     def post(self, request):
@@ -164,44 +165,14 @@ class LogoutView(APIView):
         return response
 
 def get_game(user):
-    player1 = Client.objects.get(id=1)
-    player2 = Client.objects.get(id=2)
-    game1 = Game.objects.create(
-        player1_id=player1,
-        player2_id=player2,
-        winner=player1,
-        score_player1=11,
-        score_player2=8,
-        xp_gained_player1=1762,
-        xp_gained_player2=1304
-    )
 
-    game2 = Game.objects.create(
-        player1_id=player1,
-        player2_id=player2,
-        winner=player2,
-        score_player1=9,
-        score_player2=11,
-        xp_gained_player1=1700,
-        xp_gained_player2=2600
-    )
-
-    game3 = Game.objects.create(
-        player1_id=player1,
-        player2_id=player2,
-        winner=player1,
-        score_player1=11,
-        score_player2=6,
-        xp_gained_player1=2540,
-        xp_gained_player2=450
-    )
-    game = [game1, game2, game3]
+    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('start_time').reverse())
     r = []
     for g in game:
         i = game.index(g)
         r.append([
             {
-                'id': i + 1,
+                'id': g.game_id,
                 'player1': {'username': g.player1_id.username, 'avatar': g.player1_id.avatar},
                 'player2': {'username': g.player2_id.username, 'avatar': g.player2_id.avatar},
                 'winner': g.winner.username,
@@ -225,6 +196,7 @@ class DashboardView(APIView):
                 xp.append(g[0]['xp_gained_player1'])
             else:
                 xp.append(g[0]['xp_gained_player2'])
+
         return Response({
             'id': user.id,
             'email': user.email,
@@ -525,14 +497,17 @@ class UpdateUserInfos(APIView):
         avatar = request.data.get('avatar')
         address = request.data.get('address')
         phone = request.data.get('phone')
-        # new_image = request.FILES.get('avatar')
+        # print("==============> avatar from request ",avatar)
         avatar_file = request.FILES.get('avatar')
         if avatar_file:
-            file_name = Path(avatar_file.name).name
-            print("avatar_file name -----> ", file_name)
-            user.avatar = "/" + avatar_file.name
+            # print("==============> avatar_file =============================",avatar_file)
+            file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
+            file_url = request.build_absolute_uri(default_storage.url(file_path))  # generate absolute URL localhost:8000/... not localhost:5173/media/...
+            # print("==============> file url" ,file_url)
+            user.avatar = file_url
         else:
             print("No avatar file uploaded.")
+            user.avatar = None
         # Update other fields if provided
         if address:
             user.address = address
@@ -547,5 +522,5 @@ class UpdateUserInfos(APIView):
                     'id': user.id,
                     'email': user.email,
                     'username': user.username,
-                    'avatar': user.avatar if user.avatar else None,
+                    'avatar': user.avatar
             },})
