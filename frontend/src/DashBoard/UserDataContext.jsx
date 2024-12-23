@@ -1,11 +1,13 @@
 import React from "react";
 import { useContext, createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const UserDataContext = createContext();
 function UserDataProvider({ children }) {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
   useEffect(() => {
     const getData = async () => {
       try {
@@ -15,17 +17,22 @@ function UserDataProvider({ children }) {
         });
         if (response.ok) {
           const data = await response.json();
+          console.log("UserDataContext:--------------- ", data);
           setUser(data);
         
         }
-        else
+        else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/features' && pathname !== '/howtoplay')
+        {
+          console.log("galk yahia :--------------- ", pathname);
           navigate('signin/')
+        }
+
       } catch (error) {
         console.error('error getting data :', error);
       }
     };
     getData();
-  }, []);
+  }, [pathname]);
   
     const updateUser = (updatedUser) => {
       setUser(updatedUser);

@@ -12,6 +12,7 @@ export const GameSocketProvider = ({ children }) => {
 
     useEffect(() => {
         // Only create socket if it doesn't exist and we're on the correct paths
+        console.log("-----------------------------{ GameSocketProvider } ----------------------: ", user, pathname);
         if (!wsRef.current && user && 
             (pathname === "/tournament/options/game/matchMaking" || 
              pathname === "/tournament/options/game/online")) {

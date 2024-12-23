@@ -13,7 +13,8 @@ const RemotePong = () => {
   if(localStorage.getItem("gameState") === null)
     localStorage.setItem("gameState", "Playing");
   const location = useLocation();
-  const { player} = location.state || {};
+  const { players} = location.state || {
+  };
   const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
@@ -65,7 +66,6 @@ useEffect(() => {
       
       const handleGameMessage = (event) => {
           const data = JSON.parse(event.data);
-          console.log("Received message:", data);
           switch(data.type) {
               case "game_state_update":
                   const gameState = data.message;
@@ -82,14 +82,7 @@ useEffect(() => {
                   break;
                   
               case "score_update":
-                console.log("data.message.scorer", data.message.scorer);
-                if (data.message.scorer === user.username) {
-                    setScores({ leftPlayer: data.message.score.player1, rightPlayer: data.message.score.player2 })
-                }
-                else {
-                  setScores({ leftPlayer: data.message.score.player2 , rightPlayer: data.message.score.player1 });
-                  console.log("player.username !== user.username", player.username, user.username);
-                }
+                setScores({ leftPlayer: data.message.score.player1, rightPlayer: data.message.score.player2 })
               case "game_over":
           
                   if (data.winner === user.username) {
@@ -99,7 +92,6 @@ useEffect(() => {
                     else {
                       setWinner("You lose!");
                   }
-                  console.log("GameOver");
                   break;
                   
               default:
@@ -128,7 +120,6 @@ const handleKeyDown = (e) => {
 
 
       if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
-        // console.log("Sending key press:", message.key); 
         gameSocketRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
         // keyState.current[key] = true
@@ -140,7 +131,6 @@ const handleKeyDown = (e) => {
   
   const handleKeyUp = (e) => {
     const key = e.key.toLowerCase();
-    // console.log("Key up:", key); 
     
     if ( ["w", "s", "arrowup", "arrowdown"].includes(key) && keyState.current[key]) {
       const message = {
@@ -150,7 +140,6 @@ const handleKeyDown = (e) => {
       
       
       if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
-        // console.log("Sending key release:", message.key); 
         gameSocketRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = false; 
@@ -173,7 +162,6 @@ const handleKeyDown = (e) => {
   useEffect(() => {
     const animate = () => {
       if (canvasRef.current === null) {
-        // console.log("Canvas is null");
         return;
       }
       const canvas = canvasRef.current;
@@ -222,14 +210,14 @@ const handleKeyDown = (e) => {
           <div className="player-profiles">
             <div className="player-card">
               <div className="player-name">
-                <h3>{user?.username}</h3>
+                <h3>{players.user1.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.leftPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={user?.avatar || player3Image} alt="Player 1" />
+                <img src={players.user1.avatar || player3Image} alt="Player 1" />
                 <div className="glow-effect"></div>
               </div>
             </div>
@@ -240,17 +228,14 @@ const handleKeyDown = (e) => {
 
             <div className="player-card">
               <div className="player-name">
-                {/* {console.log("player --------------->", player)} */}
-                <h3>{player?.username}</h3>
+                <h3>{players.user2.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.rightPlayer}</span>
               </div>
               <div className="player-avatar">
-                {/* { console.log("player.name --------------->" ,player.name) } 
-                { console.log("player.avatar --------------->" ,player.avatar) }  */}
-                <img src={player?.avatar || player3Image} alt="Player 2" />
+                <img src={players.user2.avatar || player3Image} alt="Player 2" />
                 <div className="glow-effect"></div>
               </div>
             </div>
