@@ -19,8 +19,9 @@ function UserDataProvider({ children }) {
           setUser(data);
         
         }
-        else
+        else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/about' && pathname !== '/howtoplay' && pathname !== '/2fa') {
           navigate('signin/')
+        }
       } catch (error) {
         console.error('error getting data :', error);
       }
