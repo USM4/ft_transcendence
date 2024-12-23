@@ -13,45 +13,53 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         velocityX: 4,
         velocityY: 4,
         radius: 10,
-        color: '#fff',
+        color: 'yellow',
     });
 
     const [leftRacket, setLeftRacket] = useState({
-        x: 1,
+        x: 10,
         y: canvasHeight / 2 - 50,
         width: 10,
         height: 100,
-        color: '#0af3c8',
+        color: 'blue',
     });
 
     const [rightRacket, setRightRacket] = useState({
-        x: canvasWidth - 11,
+        x: canvasWidth - 20,
         y: canvasHeight / 2 - 50,
         width: 10,
         height: 100,
-        color: '#f39c12',
+        color: 'blue',
     });
 
     const [topRacket, setTopRacket] = useState({
         x: canvasWidth / 2 - 50,
-        y: 1,
+        y: 10,
         width: 100,
+        color: 'blue',
         height: 10,
-        color: '#e74c3c',
     });
 
     const [botRacket, setBotRacket] = useState({
         x: canvasWidth / 2 - 50,
-        y: canvasHeight - 11,
+        y: canvasHeight - 20,
         width: 100,
         height: 10,
-        color: '#9b59b6',
+        color: 'blue',
     });
 
-    const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0, topPlayer: 0, botPlayer: 0 });
+    const [scores, setScores] = useState({ leftPlayer: 5, rightPlayer: 5, topPlayer: 5, botPlayer: 5 });
     const [winner, setWinner] = useState(null);
 
     const [keys, setKeys] = useState({});
+
+    const [activePlayers, setActivePlayers] = useState({
+        left: true,
+        right: true,
+        top: true,
+        bottom: true,
+    });
+    
 
     const handleKeyDown = (event) => setKeys((prev) => ({ ...prev, [event.key]: true }));
     const handleKeyUp = (event) => setKeys((prev) => ({ ...prev, [event.key]: false }));
@@ -79,79 +87,98 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         setRightRacket((prev) => ({ ...prev, y: 250 }));
         setTopRacket((prev) => ({ ...prev, x: 250 }));
         setBotRacket((prev) => ({ ...prev, x: 250 }));
-        setScores({ leftPlayer: 0, rightPlayer: 0 });
+        setScores({ leftPlayer: 5, rightPlayer: 5, topPlayer: 5, botPlayer: 5 });
+        setBall(resetBall());
         setWinner(null);
       };
 
-    const updateRackets = () => {
+      const updateRackets = () => {
+        const cornerSquareSize = 30;
+        const corners = [
+            { x: 0, y: 0, width: cornerSquareSize, height: cornerSquareSize },
+            { x: canvasWidth - cornerSquareSize, y: 0, width: cornerSquareSize, height: cornerSquareSize },
+            { x: 0, y: canvasHeight - cornerSquareSize, width: cornerSquareSize, height: cornerSquareSize },
+            { x: canvasWidth - cornerSquareSize, y: canvasHeight - cornerSquareSize, width: cornerSquareSize, height: cornerSquareSize },
+        ];
+    
+        const checkSquareOverlap = (racket) => {
+            return corners.some((square) => 
+                racket.x < square.x + square.width &&
+                racket.x + racket.width > square.x &&
+                racket.y < square.y + square.height &&
+                racket.y + racket.height > square.y
+            );
+        };
+    
         setLeftRacket((prev) => {
             let newY = prev.y;
             if (keys['w'] && newY > 0) {
                 const newRacket = { ...prev, y: newY - racketSpeed };
-                if (!checkRacketOverlap(newRacket, rightRacket) && !checkRacketOverlap(newRacket, topRacket) && !checkRacketOverlap(newRacket, botRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newY -= racketSpeed;
                 }
             }
             if (keys['s'] && newY + prev.height < canvasHeight) {
                 const newRacket = { ...prev, y: newY + racketSpeed };
-                if (!checkRacketOverlap(newRacket, rightRacket) && !checkRacketOverlap(newRacket, topRacket) && !checkRacketOverlap(newRacket, botRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newY += racketSpeed;
                 }
             }
             return { ...prev, y: newY };
         });
-
+    
         setRightRacket((prev) => {
             let newY = prev.y;
             if (keys['o'] && newY > 0) {
                 const newRacket = { ...prev, y: newY - racketSpeed };
-                if (!checkRacketOverlap(newRacket, leftRacket) && !checkRacketOverlap(newRacket, topRacket) && !checkRacketOverlap(newRacket, botRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newY -= racketSpeed;
                 }
             }
             if (keys['l'] && newY + prev.height < canvasHeight) {
                 const newRacket = { ...prev, y: newY + racketSpeed };
-                if (!checkRacketOverlap(newRacket, leftRacket) && !checkRacketOverlap(newRacket, topRacket) && !checkRacketOverlap(newRacket, botRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newY += racketSpeed;
                 }
             }
             return { ...prev, y: newY };
         });
-
+    
         setTopRacket((prev) => {
             let newX = prev.x;
             if (keys['x'] && newX > 0) {
                 const newRacket = { ...prev, x: newX - racketSpeed };
-                if (!checkRacketOverlap(newRacket, rightRacket) && !checkRacketOverlap(newRacket, leftRacket) && !checkRacketOverlap(newRacket, botRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newX -= racketSpeed;
                 }
             }
             if (keys['c'] && newX + prev.width < canvasWidth) {
                 const newRacket = { ...prev, x: newX + racketSpeed };
-                if (!checkRacketOverlap(newRacket, rightRacket) && !checkRacketOverlap(newRacket, leftRacket) && !checkRacketOverlap(newRacket, botRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newX += racketSpeed;
                 }
             }
             return { ...prev, x: newX };
         });
-
+    
         setBotRacket((prev) => {
             let newX = prev.x;
             if (keys['n'] && newX > 0) {
                 const newRacket = { ...prev, x: newX - racketSpeed };
-                if (!checkRacketOverlap(newRacket, rightRacket) && !checkRacketOverlap(newRacket, leftRacket) && !checkRacketOverlap(newRacket, topRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newX -= racketSpeed;
                 }
             }
             if (keys['m'] && newX + prev.width < canvasWidth) {
                 const newRacket = { ...prev, x: newX + racketSpeed };
-                if (!checkRacketOverlap(newRacket, rightRacket) && !checkRacketOverlap(newRacket, leftRacket) && !checkRacketOverlap(newRacket, topRacket)) {
+                if (!checkSquareOverlap(newRacket)) {
                     newX += racketSpeed;
                 }
             }
             return { ...prev, x: newX };
         });
     };
+    
 
     const checkCollision = (ball, racket) => {
         return (
@@ -161,16 +188,53 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             ball.y - ball.radius < racket.y + racket.height
         );
     };
-
     const updateBall = () => {
         setBall((prevBall) => {
             let { x, y, velocityX, velocityY } = prevBall;
-
+    
             x += velocityX;
             y += velocityY;
-
+    
             const randomizeAngle = () => (Math.random() * Math.PI) / 6;
             const randomizeSpeed = () => 6;
+
+            const cornerSquareSize = 30;
+            const corners = [
+                { x: 0, y: 0, width: cornerSquareSize, height: cornerSquareSize },
+                { x: canvasWidth - cornerSquareSize, y: 0, width: cornerSquareSize, height: cornerSquareSize },
+                { x: 0, y: canvasHeight - cornerSquareSize, width: cornerSquareSize, height: cornerSquareSize },
+                { x: canvasWidth - cornerSquareSize, y: canvasHeight - cornerSquareSize, width: cornerSquareSize, height: cornerSquareSize },
+            ];
+
+            for (const corner of corners) {
+                if (
+                    x + ball.radius > corner.x &&
+                    x - ball.radius < corner.x + corner.width &&
+                    y + ball.radius > corner.y &&
+                    y - ball.radius < corner.y + corner.height
+                ) {
+                    const overlapX =
+                        x < corner.x
+                            ? x + ball.radius - corner.x
+                            : corner.x + corner.width - (x - ball.radius);
+                    const overlapY =
+                        y < corner.y
+                            ? y + ball.radius - corner.y
+                            : corner.y + corner.height - (y - ball.radius);
+    
+                    if (overlapX < overlapY) {
+                        velocityX = -velocityX;
+                        x = x < corner.x
+                            ? corner.x - ball.radius
+                            : corner.x + corner.width + ball.radius;
+                    } else {
+                        velocityY = -velocityY;
+                        y = y < corner.y
+                            ? corner.y - ball.radius
+                            : corner.y + corner.height + ball.radius;
+                    }
+                }
+            }
 
             if (checkCollision(prevBall, leftRacket)) {
                 const angle = randomizeAngle();
@@ -193,24 +257,43 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
                 velocityX += Math.sin(angle);
                 y = botRacket.y - ball.radius - 1;
             }
-
+    
             if (x - ball.radius <= 0) {
-                setScores((prevScores) => ({ ...prevScores, rightPlayer: prevScores.rightPlayer + 0.5 }));
+                handleScore('leftPlayer');
                 return resetBall();
             } else if (x + ball.radius >= canvasWidth) {
-                setScores((prevScores) => ({ ...prevScores, leftPlayer: prevScores.leftPlayer + 0.5 }));
+                handleScore('rightPlayer');
                 return resetBall();
             } else if (y - ball.radius <= 0) {
-                setScores((prevScores) => ({ ...prevScores, botPlayer: prevScores.botPlayer + 0.5 }));
+                handleScore('topPlayer');
                 return resetBall();
             } else if (y + ball.radius >= canvasHeight) {
-                setScores((prevScores) => ({ ...prevScores, topPlayer: prevScores.topPlayer + 0.5 }));
+                handleScore('botPlayer');
                 return resetBall();
             }
-
+    
             return { ...prevBall, x, y, velocityX, velocityY };
         });
     };
+
+    const handleScore = (player) => {
+        setScores((prevScores) => {
+            const newScores = { ...prevScores, [player]: prevScores[player] - 0.5 };
+    
+            if (newScores[player] <= 0) {
+                setActivePlayers((prev) => ({ ...prev, [player]: false }));
+
+                const scoresArray = Object.entries(newScores);
+                const maxScore = Math.max(...scoresArray.map(([_, score]) => score));
+                const winnerPlayer = scoresArray.find(([_, score]) => score === maxScore)?.[0];
+    
+                setWinner(winnerPlayer);
+            }
+    
+            return newScores;
+        });
+    };
+    
 
     const resetBall = () => {
         const angle = Math.random() * 2 * Math.PI;
@@ -222,7 +305,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             velocityX: Math.cos(angle) * speed,
             velocityY: Math.sin(angle) * speed,
             radius: 10,
-            color: '#fff',
+            color: 'yellow',
         };
     };
 
@@ -237,8 +320,21 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
     const draw = useCallback(
         (context) => {
             context.clearRect(0, 0, canvasWidth, canvasHeight);
-            context.fillStyle = '#326da4';
+            context.fillStyle = '#000';
             context.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            const cornerSquareSize = 30;
+            const corners = [
+                { x: 0, y: 0, color: 'red' },
+                { x: canvasWidth - cornerSquareSize, y: 0, color: 'red' },
+                { x: 0, y: canvasHeight - cornerSquareSize, color: 'red' },
+                { x: canvasWidth - cornerSquareSize, y: canvasHeight - cornerSquareSize, color: 'red' },
+            ];
+
+            corners.forEach((corner) => {
+                context.fillStyle = corner.color;
+                context.fillRect(corner.x, corner.y, cornerSquareSize, cornerSquareSize);
+            });
 
             context.beginPath();
             context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
@@ -265,13 +361,13 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
       }
 
     return (
-        <div className="FGame">
+        <div className="Game-render">
             <div className="score top-score">Top: {scores.topPlayer}</div>
-            <div className="canvas-containerF">
-                <div className="score left-score">Left: {scores.leftPlayer}</div>
-                <Canvas width={canvasWidth} height={canvasHeight} draw={draw} />
+            <div className="score left-score">Left: {scores.leftPlayer}</div>
+                <div className='canvas-container'>
+                    <Canvas width={canvasWidth} height={canvasHeight} draw={draw} />
+                </div>
                 <div className="score right-score">Right: {scores.rightPlayer}</div>
-            </div>
             <div className="score bottom-score">Bottom: {scores.botPlayer}</div>
         </div>
     );

@@ -20,7 +20,7 @@ const Canvas = ({ draw, width, height }) => {
   }, [draw]);
 
   return (
-      <canvas ref={canvasRef} width={width} height={height} />
+      <canvas className='canvas-game' ref={canvasRef} width={width} height={height} />
   );
 };
 
