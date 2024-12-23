@@ -7,7 +7,7 @@ import SignIn from './SignIn.jsx'
 import SignUp from './SignUp.jsx'
 import NavbarSideBar from './DashBoard/NavBarSideBar.jsx'
 import Dashboard from './DashBoard/Dashboard.jsx';
-import Profile from './Dashboard/Profile.jsx'
+import Profile from './DashBoard/Profile.jsx'
 import ProfileSettings from'./DashBoard/ProfileSettings.jsx';
 import HomePage from './HomePage.jsx';
 import Features from './Features.jsx';
@@ -22,13 +22,19 @@ import NotFound from './NotFound.jsx';
 import Tournament from './Tournament/Tournament.jsx';
 import OptionsPage from './Tournament/OptionsPage.jsx';
 import TournamentRegistration from './Tournament/TournamentRegistration.jsx';
-import PongGame from './Game/AppGame.jsx';
+import PongGame from './Tournament/TournametGame/PongGame.jsx';
 import AppGame from './Game/AppGame.jsx';
 
 function App() {
   return (
     <>
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
+        <UserDataProvider>
         <SocketContextProvider>
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
@@ -42,9 +48,9 @@ function App() {
 
             {/* Protected Routes */}
             <Route path="/dashboard" element={
-              <UserDataProvider>
-                <ProtectedRoute component={NavbarSideBar} />
-              </UserDataProvider>
+                <FriendDataProvider>
+                  <ProtectedRoute component={NavbarSideBar} />
+                </FriendDataProvider>
             }>
               <Route path="" element={
                 <FriendDataProvider>
@@ -60,9 +66,9 @@ function App() {
             </Route>
 
             <Route path="/Chat" element={
-              <UserDataProvider>
-                <ProtectedRoute component={NavbarSideBar} />
-              </UserDataProvider>
+                <FriendDataProvider>
+                  <ProtectedRoute component={NavbarSideBar} />
+                </FriendDataProvider>
             }>
               <Route path="" element={
                 <FriendDataProvider>
@@ -72,9 +78,7 @@ function App() {
             </Route>
 
             <Route path="/tournament/options" element={
-              <UserDataProvider>
                 <ProtectedRoute component={NavbarSideBar} />
-              </UserDataProvider>
             }>
               {/* Default OptionsPage for Tournament Options */}
               <Route path="" element={
@@ -83,19 +87,16 @@ function App() {
                 </FriendDataProvider>
               } />
               <Route path="play-tournament" element={
-                <UserDataProvider>
                   <ProtectedRoute component={Tournament} />
-                </UserDataProvider>
-              } />
+                } />
+                <Route path="pong-tournament" element={
+                  <ProtectedRoute component={PongGame} />
+                } />
               <Route path="tournament-registration" element={
-                <UserDataProvider>
                   <ProtectedRoute component={TournamentRegistration} />
-                </UserDataProvider>
               } />
                <Route path='game/*' element={
-              <UserDataProvider>
                 <ProtectedRoute component={AppGame} />
-              </UserDataProvider>
             }>
             <Route path='' element={
               <FriendDataProvider>
@@ -103,25 +104,11 @@ function App() {
               </FriendDataProvider>
             }/>
             </Route>
-              {/* Play vs Bot */}
-              {/* <Route path="play-vs-bot" element={
-                <UserDataProvider>
-                  <ProtectedRoute component={PlayVsBot} />
-                </UserDataProvider>
-              } /> */}
-              
-              {/* Play vs Friend */}
-              {/* <Route path="play-vs-friend" element={
-                <UserDataProvider>
-                  <ProtectedRoute component={PlayVsFriend} />
-                </UserDataProvider>
-              } /> */}
-              
-              {/* Play Tournament */}
             </Route>
-            {/* <Route path="*" element={<NotFound />} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </SocketContextProvider>
+        </UserDataProvider>
       </Router>
     </>
   );

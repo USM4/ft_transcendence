@@ -8,21 +8,19 @@ const Tournament = () => {
   const navigate = useNavigate();
   return (
     <div className="tournament-component">
-       <div className="return-icon">
-            <button
-              onClick={() => { navigate("/tournament/options"); }}>
-              <ArrowBackIcon fontSize="large" />
-            </button>
-        </div>
+      <div className="return-icon">
+        <button
+          onClick={() => { localStorage.clear(); navigate("/tournament/options/tournament-registration"); }}>
+          <ArrowBackIcon fontSize="large" />
+        </button>
+      </div>
       <div className="Tournament-Title">
         <h1> Smash Masters Championship </h1>
       </div>
       <div className="tournament-header">
-        <TournamentHearchy/>
+        <TournamentHearchy />
       </div>
-      <div className="start-tournament">
-        <button> <p> Start The Party 🔥 </p> </button>
-      </div>
+
     </div>
   );
 };

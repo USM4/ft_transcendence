@@ -1,34 +1,90 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Badge } from '@mui/material';
-
+import Swal from 'sweetalert2';
+import { ChatSocketContext } from './Chat.jsx'
+import { useContext } from 'react';
+import { Badge } from '@mui/material';
 
 export default function Chat_header({ selected }) {
     const [menu, setMenu] = useState(false);
     const navigate = useNavigate();
+    const socket = useContext(ChatSocketContext);
 
     function handleClick() {
         setMenu((prevState) => !prevState);
     }
 
-    function handleBlockClicked() {
-        // I STILL DON'T HAVE THE BLOCK STATUS
-        // NEED TO CHECK IF I CAN HANDLE IT WITH A REQUEST FROM THE BACK ELSE IT'S GONNA BE AN ARRAY OF NAMES BLOCKED
+    function handleBlock() {
+        selected.is_blocked = !selected.is_blocked;
+        socket.send(
+            JSON.stringify({
+                type: 'block',
+                flag: selected.is_blocked,
+                receiver: selected.id,
+                message: null,
+            })
+        )
 
-        {/* this.blocked.push(selected.name)*/ }
+    }
+
+
+    function handleBlockClicked() {
+        try {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this !?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Yes, proceed!",
+                confirmButtonColor: '#28a745',
+                cancelButtonText: "No, cancel",
+                cancelButtonColor: '#dc3545',
+                background: '#000',
+                color: '#fff',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    handleBlock();
+                    Swal.fire({
+                        title: selected.is_blocked ? 'Blocked!' : 'Unblocked!',
+                        text: selected.is_blocked ? 'This user has been blocked successfully' : 'This user has been unblocked successfully',
+                        icon: 'success',
+                        background: '#000',
+                        color: '#fff',
+                    })
+                }
+            })
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
     function handleProfileClicked() {
         navigate(`/dashboard/profile/${selected.username}`);
     }
     function handleGameClicked() {
-        {/* MUST HANDLE THE GAME INVITATION  BUTTON */ }
+        console.log('Game Invite Button Clicked');
     }
 
     return (
         <div className="chat-header">
             <div className="header-wraper">
                 <div className="avatar-header">
-                    <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.username}'s avatar`} />
+                    <Badge
+					sx={{
+						'& .MuiBadge-dot': {
+							backgroundColor: selected.is_online ? '#00ff00' : '#ff0000',
+						},
+					}}
+                        variant="dot"
+                        overlap="circular"
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                    >
+                        <img sx={{ width: 80, height: 80 }} src={selected.avatar} alt={`${selected.username}'s avatar`} />
+                    </Badge>
+
                 </div>
                 <div className="header-name">
                     <h2 >{selected.username}</h2>
@@ -42,14 +98,14 @@ export default function Chat_header({ selected }) {
                     {menu &&
                         <div className="menu-list block-box">
                             <li className="menu-content" onClick={handleBlockClicked}>
-                                <h2>⊘ BLOCK</h2>
+                                {selected.is_blocked ? (selected.blocker !== selected.username ? <h2>⊘ UNBLOCK</h2> : null) : <h2>⊘ BLOCK</h2>}
                             </li>
                             <li className="menu-content" onClick={handleProfileClicked}>
                                 <h2>👤 PROFILE</h2>
 
                             </li>
-                            <li className="menu-content" onClick={handleGameClicked}>
-                                <h2>🕹️ GAMEINVITE</h2>
+                            <li className="menu-content" onClick={!selected.is_blocked ? () => handleGameClicked(selected) : null}>
+                                {selected.is_blocked ? null : <h2>🕹️ GAMEINVITE</h2>}
                             </li>
                         </div>}
                 </ul>

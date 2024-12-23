@@ -16,4 +16,4 @@ class Messages(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"From {self.receiver}: {self.message[:50]}"
+        return f"Id: {self.id}: From {self.receiver}: {self.message[:50]}"

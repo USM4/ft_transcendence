@@ -8,6 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ReorderIcon from "@mui/icons-material/Reorder";
 import TextsmsIcon from '@mui/icons-material/Textsms';
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 function SideBar({username}) {
   const navigate = useNavigate();
   const SideBarData = [
@@ -34,20 +35,32 @@ function SideBar({username}) {
       link: `/dashboard/profile/${username}`,
     },
   ];
-    const handleLogout = async () =>{
-    alert('are you sure')
-    const response = await fetch( 'http://localhost:8000/auth/logout/',
-    {
-      method: 'POST',
-      credentials: 'include',
+      const handleLogout = async () => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this !?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: "Yes, proceed!",
+        confirmButtonColor: '#28a745',
+        cancelButtonText: "No, cancel",
+        cancelButtonColor: '#dc3545',
+        background: '#000',
+        color: '#fff',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch("http://localhost:8000/auth/logout/", {
+              method: "POST",
+              credentials: "include",
+            });
+            if (response.ok) navigate("/signin");
+          } catch (error) {
+            console.error("Error logging out :", error);
+          }
+        }
+      });
     }
-    )
-    if(response.ok)
-    {
-      const data = await response.json();
-      navigate('/signin')
-    }
-  }
   const logout = {
     title: "Logout",
     icon: <KeyboardReturnIcon />,

@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import Swal from "sweetalert2";
+import { FriendDataContext } from "./FriendDataContext.jsx";
 import {
   BrowserRouter,
   Outlet,
@@ -45,16 +47,33 @@ function DashboardNavbar() {
   };
 
   const handleLogout = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/auth/logout/", {
-        method: "POST",
-        credentials: "include",
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this !?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: "Yes, proceed!",
+        confirmButtonColor: '#28a745',
+        cancelButtonText: "No, cancel",
+        cancelButtonColor: 'red',
+        background: '#000',
+        color: '#fff',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch("http://localhost:8000/auth/logout/", {
+              method: "POST",
+              credentials: "include",
+            });
+            if (response.ok) navigate("/signin");
+          } catch (error) {
+            console.error("Error logging out :", error);
+          }
+        }
       });
-      if (response.ok) navigate("/signin");
-    } catch (error) {
-      console.error("Error logging out :", error);
-    }
-  };
+    } 
+
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -110,7 +129,7 @@ function DashboardNavbar() {
             <NotificationsIcon />
           </button>
           {showNotification && (
-            <div className="notifications-container">
+            <div className="notifications-container" ref={dropdownRef}>
               <NotificationsToggle displayNotification={showNotification} />
             </div>
           )}
@@ -131,12 +150,11 @@ function DashboardNavbar() {
               <button
                 className="dropdown-elements"
                 onClick={() => {
-                  navigate(`profile/${user.username}`);
+                  navigate(`/dashboard/profile/${user.username}`);
                 }}
               >
                 profile
               </button>
-              {/* <Link to='/dashboard/settings' >settings</Link> */}
               <button
                 onClick={() => {
                   navigate("/dashboard/settings");
@@ -155,5 +173,5 @@ function DashboardNavbar() {
       </div>
     </div>
   );
-}
+};
 export default DashboardNavbar;

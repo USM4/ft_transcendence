@@ -1,24 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ChatSocketContext } from './Chat.jsx'
+import BlockIcon from '@mui/icons-material/Block';
 
 
-export default function Chat_area({ selected }) {
+export default function Chat_area({ selected,chatroomMessages }) {
 
-  const [message, setMessage] = useState([]);
   const socket = useContext(ChatSocketContext);
 
-  useEffect(() => {
-    setMessage([])
-    
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.receiver == selected.id || data.sender == data.receiver || data.sender == selected.id)
-        setMessage((prevMessages) => [...prevMessages, data]);
-    };
-  }, [socket, selected])
-
-
-  const message_history = message.map((msg, index) => (
+  const message_history = chatroomMessages.map((msg, index) => (
     <div key={index}>
       {msg.receiver != selected.id
         ? (<div className="message-sent">{msg.message}</div>)
@@ -27,12 +16,16 @@ export default function Chat_area({ selected }) {
     </div>
   ))
 
-
   return (
     <div className="chat-area">
-      <div className="message-wrap">
-        {message_history}
-      </div>
+
+      {!selected.is_blocked 
+      ? (<div className="message-wrap">{message_history}</div> )
+      : (selected.blocker !== selected.username
+      ? (<div className="blocked">YOU HAVE BLOCKED THIS USER <BlockIcon fontSize='large' /></div>)
+      : (<div className="blocked">YOU ARE BLOCKED <BlockIcon fontSize='large' /></div>))
+}
+
     </div>
   );
 }

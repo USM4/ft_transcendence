@@ -12,7 +12,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 import os
 from pathlib import Path
-
+from django.db.models import Q
 import pyotp
 import qrcode
 from dotenv import load_dotenv
@@ -20,6 +20,7 @@ from django.shortcuts import redirect
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.conf import settings
+from .consumers import user_channel_name
 
 class SignUpView(APIView):
     def post(self, request):
@@ -78,7 +79,7 @@ class SignInView(APIView):
                 secure=True,
             )
             return response
-        return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
 class ExtractCodeFromIntraUrl(APIView):
     def get(self, request):
@@ -149,7 +150,6 @@ class ExtractCodeFromIntraUrl(APIView):
 class VerifyTokenView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        # print("User:", request.user)
         if request.user.is_authenticated:
             return Response({'authenticated': True}, status=200)
         return Response({'error': 'Unauthorized'}, status=401)
@@ -165,7 +165,7 @@ class LogoutView(APIView):
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
-        if user is None:
+        if not user.is_authenticated:
             return Response({'error': 'Unauthorized'}, status=401)
         return Response({
             'id': user.id,
@@ -195,12 +195,17 @@ class SendFriendRequest(APIView):
             return Response({'error': 'request already sent'}, status=400)
 
         # Create the friend request
-        FriendShip.objects.create(from_user=from_user, to_user=to_user)
+        if not FriendShip.objects.filter(from_user=to_user, to_user=from_user).exists():
+            FriendShip.objects.create(from_user=from_user, to_user=to_user)
+        else:
+            FriendShip.objects.filter(from_user=to_user, to_user=from_user).update(status='pending')
+
         # Check if a notification for this friend request already exists
         if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").exists():
             Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request ")
-            # call send_notification function and pass
-        return Response({'success': 'friend request sent successfully'})
+        else:
+            Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").update(is_read=False)
+        return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
     def get(self, request):
@@ -212,21 +217,67 @@ class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
         try:
-            friend_request = FriendShip.objects.get(id=request_id, status='pending')
+            user_id = Notification.objects.get(id=request_id).user.id
+            # print("user_id--------------->", user_id)
+            friend_request = FriendShip.objects.get(to_user=user_id, status='pending')
+            # print("accepeted friend request", friend_request)
             friend_request.status = 'accepted'
             friend_request.save()
+            # print("friend_request.status", friend_request.status)
             sender = friend_request.to_user
             receiver = friend_request.from_user
-            Friend.objects.create(user=sender, friend=receiver)
-            Friend.objects.create(user=receiver, friend=sender)
+            Friend.objects.create(user=sender, friend=receiver,blocker=None)
+            Friend.objects.create(user=receiver, friend=sender,blocker=None)
             Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+
+            #get the channel layer
+            channel_layer = get_channel_layer()
+            #get the channel name of the sender and receiver from the user_channel_name dictionary
+            sender_channel_name = user_channel_name.get(sender.id)
+            receiver_channel_name = user_channel_name.get(receiver.id)
+            #send a notification to the sender
+            #hada hwa li sift l add friend request
+            if receiver_channel_name:
+                for channel in receiver_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_request_accepted',
+                            'friend': {
+                                'id': sender.id,
+                                'username': sender.username,
+                                'avatar': sender.avatar if sender.avatar else '/player1.jpeg',
+                                # 'is_blocked': sender.is_blocked,
+                                'is_blocked': False,
+                                'is_online': sender.is_online
+                            },
+                        }
+                    )
+                # send a notification to the receiver
+            if sender_channel_name:
+                for channel in sender_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_request_accepted',
+                            'friend': {
+                                'id': receiver.id,
+                                'username': receiver.username,
+                                'avatar': receiver.avatar if receiver.avatar else '/player1.jpeg',
+                                # 'is_blocked': receiver.is_blocked,
+                                'is_blocked': False,
+                                'is_online': receiver.is_online
+                            },
+                        }
+                    )
+
+
             return Response({"message": "Friend request accepted "}, status=200)
         except FriendShip.DoesNotExist:
             return Response({"error": "Friend request not found "}, status=404)
 
 class FriendsList(APIView):
     permission_classes = [IsAuthenticated]
-    
     def get(self, request):
         user = request.user
         friends = Friend.objects.filter(user=user).select_related('friend')
@@ -234,7 +285,10 @@ class FriendsList(APIView):
             {
                 'id': friend.friend.id,
                 'username': friend.friend.username,
-                'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg'
+                'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg',
+                'is_blocked': friend.is_blocked,
+                'is_online': friend.friend.is_online,
+                'blocker': friend.blocker.username if friend.blocker else None
             }
             for friend in friends
         ]
@@ -256,15 +310,66 @@ class Search(APIView):
 class Profile(APIView):
     def get(self, request, *args, **kwargs):
         try:
+            # print("kwargs", kwargs)
             username = kwargs.get('username')
             user = Client.objects.get(username=username)
+            me = request.user
+            friendship_status = ''
+            is_friend = Friend.objects.filter(Q(user=me, friend=user) | Q(user=me, friend=user)).exists()
+            # print("is_friend---------------------------->", is_friend)
+            if is_friend:
+                friendship_status = 'friends'
+            else:
+                # the friendship object between the two users
+                friendship = FriendShip.objects.filter(from_user=me, to_user=user).first()
+                # check if the friendship is None before accessing  status
+                if friendship is None:
+                    friendship_status = 'not_friend'
+                else:
+                    friendship_status = 'pending' if friendship.status == 'pending' else 'not_friend'
+                    
         except Client.DoesNotExist:
             return Response({'error': 'User not found'}, status=404)
         return Response({
             'id': user.id,
             'username': user.username,
             'avatar': user.avatar if user.avatar else '/player1.jpeg',
+            'friendship_status': friendship_status,
+            'is_online': user.is_online,
         })
+
+class RemoveFriend(APIView):
+    def post(self, request):
+        friend_id = request.data.get('friend_id')
+        try:
+            friendship = FriendShip.objects.filter(
+                        Q(from_user=request.user, to_user=friend_id) 
+                        | Q(from_user=friend_id, to_user=request.user)).first()
+            if friendship:
+                friendship.delete()
+            else:
+                return Response({'error': 'Friendship not found'}, status=404)
+            
+            # remove the friend from the friends list
+            Friend.objects.filter(user=request.user, friend=friend_id).delete()
+            Friend.objects.filter(user=friend_id, friend=request.user).delete()
+            friend_channel_name = user_channel_name.get(friend_id)
+            channel_layer = get_channel_layer()
+            if friend_channel_name:
+                for channel in friend_channel_name:
+                    async_to_sync(channel_layer.send)(
+                        channel,
+                        {
+                            'type': 'friend_removed_you',
+                            'friend': {
+                                'id': request.user.id,
+                            },
+                        }
+                    )
+            return Response({'message': 'Friend removed successfully'}, status=200)
+
+        except Friend.DoesNotExist:
+            return Response({'error': 'Friend not found'}, status=404)
 
 def generate_otp(username):
     secret_key = pyotp.random_base32()

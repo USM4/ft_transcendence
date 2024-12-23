@@ -46,7 +46,7 @@ function ProfileSettings() {
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
-        setIsEnabled(false);
+        setIsEnabled(true);
       } else {
         toast.error(data.error);
         console.log(data);
@@ -57,6 +57,7 @@ function ProfileSettings() {
   };
   const updateInfos = async () => {
     try {
+      // console.log("----------------->", formData.get('avatar'));
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",
@@ -73,9 +74,6 @@ function ProfileSettings() {
     }
   };
 
-  // useEffect(() => {
-  //   updateInfos();
-  // }, []);
 
 
   const getQRCode = async () => {
@@ -192,7 +190,7 @@ function ProfileSettings() {
                   </div>
               </div>
                 ) : (
-                  <div>2FA IS DISABLED</div>
+                  <></>
                 )
               )}
             </div>
@@ -229,8 +227,11 @@ function ProfileSettings() {
           </>
         )}
         <div className="save-settings">
-        <button onClick={() => isTwoFactor ? saveCode() : updateInfos()}
-        >Save</button>
+          {isTwoFactor ? (
+            <button onClick={saveCode}>Save</button>
+          ) : (
+            <button onClick={updateInfos}>Save</button>
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import Swal from "sweetalert2";
 import DashboardNavbar from "./DashboardNavbar";
 import HomeIcon from "@mui/icons-material/Home";
 import SendIcon from "@mui/icons-material/Send";
@@ -21,19 +21,62 @@ import { FriendDataContext } from "./FriendDataContext.jsx";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 import { SocketContext } from "./SocketContext.jsx";
+import toast from "react-hot-toast";
 function Profile() {
+
   const {socket} = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
-  const { friends } = useContext(FriendDataContext);
+  const { friends, setFriends} = useContext(FriendDataContext);
   const { username } = useParams();
-  const [pending, setPending] = useState(false);
-  const isFriend = friends.some((friend) => friend.username);
+
+  // console.log("----------------------SALAAAAMO3ALIKOM----------------------------")
+  // console.log("HADA RAH L USR", user.username);
+  // console.log("USER IS:", user)
+  // useEffect(() => {
+  //   if(socket === null) return;
+  //   socket.onmessage = (e) => {
+  //     const data = JSON.parse(e.data);
+  //     console.log("data", data);
+  //     if (data.type === "friend_request_accepted") {
+  //       setFriends((prevFriends) => [...prevFriends, data.friend]);
+  //     } else if (data.type === "friend_removed_you") {
+  //       setFriends((prevFriends   ) =>
+  //         prevFriends.filter((friend) => friend.id !== data.friend.id)
+  //       );
+  //     }
+  //   }
+  // }, [socket]);
+  useEffect(() => {
+    if (socket === null) return;
+    
+    socket.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      console.log("data", data);
+  
+      if (data.type === "friend_request_accepted") {
+        // Prevent adding duplicates
+        setFriends((prevFriends) => {
+          if (!prevFriends.some(friend => friend.id === data.friend.id)) {
+            return [...prevFriends, data.friend];  // Add only if friend is not already in the list
+          }
+          return prevFriends;  // Return the same list if friend already exists
+        });
+      } else if (data.type === "friend_removed_you") {
+        // Remove the friend if they are in the list
+        setFriends((prevFriends) => {
+          return prevFriends.filter((friend) => friend.id !== data.friend.id);
+        });
+      }
+    };
+  
+  }, [socket]);
+  
+
 
   const sendFriendRequest = async (to_user) => {
-    setPending(true);
     const response = await fetch(
       "http://localhost:8000/auth/send_friend_request/",
       {
@@ -47,41 +90,71 @@ function Profile() {
     );
     const data = await response.json();
     if (response.ok) {
-      console.log("The request has been sent", data);
-      console.log("data", data);
-    } else {
-      console.log("something wrong", data);
-    }
+      toast.success(data.message);
+      setStrangerData((prevData) => ({
+        ...prevData,
+        friendship_status: "pending",
+      }));
+    } else toast.error(data.error);
   };
-  // const sendFriendRequest = async (to_user) => {
-  //   setPending(true);
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.send(JSON.stringify({
-  //       type: "friend_request",
-  //       to_user: to_user,
-  //       from_user: user.id,
-  //     }));
-  //   }
-  // };
 
-  // const sendFriendRequest = async (to_user) => {
-  //   setPending(true);
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.send(JSON.stringify({
-  //       type: "friend_request",
-  //       to_user: to_user,
-  //       from_user: user.id,
-  //     }
-  //   ));
-  //   }
-  //   else {
-  //     console.error('WebSocket not connected');
-  //   }
-  // };
+  const getButtonText = () => {
+    if (switchUser.friendship_status === "pending") return "Pending";
+    else if (switchUser.friendship_status === "friends") return "Remove Friend";
+    else return "Add Friend";
+  };
+
+  const removeFriend = async (to_user) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to remove friend !?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, proceed!",
+      confirmButtonColor: "#28a745",
+      cancelButtonText: "No, cancel",
+      cancelButtonColor: "#dc3545",
+      background: "#000",
+      color: "#fff",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await fetch(
+          "http://localhost:8000/auth/remove_friend/",
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ friend_id: to_user }),
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message);
+          setStrangerData((prevData) => ({
+            ...prevData,
+            friendship_status: "not_friend",
+          }));
+        } else toast.error(data.error);
+      }
+    });
+  };
+  const handleFriendShip = async () => {
+    if (switchUser.friendship_status === "friends")
+    {
+      await removeFriend(switchUser.id);
+      setFriends((prevFriends) =>
+        prevFriends.filter((friend) => friend.id !== switchUser.id)
+      );
+    }
+    else if (switchUser.friendship_status === "pending")
+      toast.error("Friendship request already sent");
+    else sendFriendRequest(switchUser.id);
+  };
 
   useEffect(() => {
     if (username !== user.username) {
-      console.log("straaaaaaanger", stranger_data);
       const fetchStranger = async () => {
         const response = await fetch(
           `http://localhost:8000/auth/profile/${username}/`,
@@ -94,22 +167,22 @@ function Profile() {
         if (response.ok) {
           setStranger(true);
           setStrangerData(data);
+          console.log("stranger-------->", data);
         } else {
           setStranger(false);
-          console.log("something wrong", data);
+          navigate("/dashboard");
+          toast.error("User not found");
+          return;
         }
       };
+      getButtonText();
       fetchStranger();
     } else {
       setStranger(false);
     }
   }, [username, user.username]);
   const switchUser = stranger ? stranger_data : user;
-  const getButtonText = () => {
-    if (pending) return "Pending";
-    else if (isFriend) return "Remove Friend";
-    else return "Add Friend";
-  };
+
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -124,9 +197,7 @@ function Profile() {
         </div>
         {stranger ? (
           <div className="add-friend-btn">
-            <button onClick={() => sendFriendRequest(switchUser.id)}>
-              {getButtonText()}
-            </button>
+            <button onClick={handleFriendShip}>{getButtonText()}</button>
           </div>
         ) : (
           <div className="profile-settings-icon">
@@ -137,29 +208,27 @@ function Profile() {
         )}
       </div>
       <div className="bottom-side-prfl">
-        {
-          !stranger ? (
-              <div className="left-prfl-component">
-                <div className="friends-list-title">Friends List</div>
-                <div className="prfl-friend-list-container">
-                  {!stranger && friends && friends.length > 0 ? (
-                    friends.map((friend) => (
-                      <ProfileFriendList
-                        key={friend.id}
-                        id={friend.id}
-                        username={friend.username}
-                        avatar={friend.avatar}
-                      />
-                    ))
-                  ) : (
-                    <p>No friends yet</p>
-                  )}
-                </div>
-              </div>
-          ) : (
-            <></>
-          )
-        }
+        {!stranger ? (
+          <div className="left-prfl-component">
+            <div className="friends-list-title">Friends List</div>
+            <div className="prfl-friend-list-container">
+              {!stranger && friends && friends.length > 0 ? (
+                friends.map((friend) => (
+                  <ProfileFriendList
+                    key={friend.id}
+                    id={friend.id}
+                    username={friend.username}
+                    avatar={friend.avatar}
+                  />
+                ))
+              ) : (
+                <p>No friends yet</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
         <div className="right-prfl-component">
           <div className="prfl-chart">
             <div className="prfl-chart-title"> Statistics </div>
