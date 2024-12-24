@@ -17,13 +17,13 @@ function UserDataProvider({ children }) {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log("UserDataContext:--------------- ", data);
+          // console.log("UserDataContext:--------------- ", data);
           setUser(data);
         
         }
-        else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/features' && pathname !== '/howtoplay')
+        else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay' )
         {
-          console.log("galk yahia :--------------- ", pathname);
+          // console.log("galk yahia :--------------- ", pathname);
           navigate('signin/')
         }
 

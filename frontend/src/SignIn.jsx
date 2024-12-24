@@ -60,13 +60,13 @@ function SignIn() {
                         placeholder="email or username"
                         value ={login}
                         onChange={(e) => setLogin(e.target.value)}
+                        style={{backgroundColor: "black", color: "white", border: "1px dashed #cc9a2c" , borderRadius: "5px", outline: "none"}}
                         />
                 <input  type="password"
-                        className="signInPassword"
                         placeholder="password"
                         value = {password}
-                        onChange={(e) => setPassword(e.target.value)
-                        }
+                        onChange={(e) => setPassword(e.target.value)}
+                        style={{backgroundColor: "black", color: "white", border: "1px dashed #cc9a2c" , borderRadius: "5px", outline: "none"}}
                         />
                 <p className="forgotPasswordSignIn">Forgot password ?</p>
                 <button className="signinbutton" type="submit" onClick={handleSignInClick}>

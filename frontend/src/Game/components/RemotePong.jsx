@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // import { GameSocketContext } from "./GameSocketContext"; 
+import Swal from "sweetalert2";
 import WaitingOpponent from "./WaitingOpponent"; 
 import player3Image from "../../../public/anonyme.png";
 
@@ -21,6 +22,7 @@ const RemotePong = () => {
   const [winner, setWinner] = useState(null);
   // const [score1, setScore1] = useState(0);
   // const [score2, setScore2] = useState(0);
+  const navigate = useNavigate();
 
   const gameSocketRef = useContext(GameSocketContext);
 
@@ -87,13 +89,27 @@ useEffect(() => {
           
                   if (data.winner === user.username) {
                       setWinner("You win!");
-                      alert("You win!");
                     }
                     else {
                       setWinner("You lose!");
                   }
                   break;
-                  
+              case "player_disconnected":
+                Swal.fire({
+                  title: 'Ooops!',
+                  text: "Your opponent has disconnected !",
+                  icon: 'warning',
+                  showCancelButton: false,
+                  confirmButtonText: "Find another opponent",
+                  confirmButtonColor: '#28a745',
+                  cancelButtonColor: '#dc3545',
+                  background: '#000',
+                  color: '#fff',
+                }).then(async (result) => {
+                  if (result.isConfirmed) {
+                    navigate("/tournament/options/game");
+                  }
+                });
               default:
           
           }

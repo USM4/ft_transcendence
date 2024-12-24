@@ -4,10 +4,11 @@ import { useContext, createContext, useState, useEffect} from 'react';
 export const FriendDataContext = React.createContext();
 
 function FriendDataProvider ({ children }) {
-  console.log("WAAAHMEDDDDD: ");
+  const { pathname } = window.location;
   const [friends, setFriends] = React.useState([]);
-
+  
   useEffect(() => {
+    console.log("WAAAHMEDDDDD: ");
       const fetchFriendList = async () => {
         const response = await fetch('http://localhost:8000/auth/friends/',
         {
@@ -17,14 +18,13 @@ function FriendDataProvider ({ children }) {
         if(response.ok){
             const responseData = await response.json();
             setFriends(responseData.data);
-            // console.log(responseData.data);
         }
         else{
           console.log('something went wrong');
         }
       }
       fetchFriendList();
-    }, []);
+    }, [pathname]);
   return (
     <FriendDataContext.Provider value={{ friends, setFriends}}>
       {children}

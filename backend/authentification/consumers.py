@@ -8,6 +8,8 @@ user_channel_name = {}
 class OnlineStatusConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.user = self.scope['user']
+		if not self.user.is_authenticated:
+			await self.close()
 		self.room_group_name = f'online_status_{self.user.id}'
 		if self.user.id in user_channel_name:
 			user_channel_name[self.user.id].append(self.channel_name)
@@ -22,18 +24,27 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 		await self.update_user_status(self.user, True)
 
 	async def disconnect(self, close_code):
+		print("disconnect--------------------------------------")
 		await self.channel_layer.group_discard(
 			self.room_group_name,
 			self.channel_name
 		)
-		if self.channel_name in user_channel_name[self.user.id]:
-	   		user_channel_name[self.user.id].remove(self.channel_name)
-		if not user_channel_name[self.user.id]:
-			await self.update_user_status(self.user, False)
-			del user_channel_name[self.user.id]
+		if self.user.id in user_channel_name:
+			if self.channel_name in user_channel_name[self.user.id]:
+				user_channel_name[self.user.id].remove(self.channel_name)
+
+	        # If there are no channels left for this user, update their status and remove from the dictionary
+			if not user_channel_name[self.user.id]:
+				await self.update_user_status(self.user, False)
+				del user_channel_name[self.user.id]
+		else:
+			# Log a warning for unexpected behavior
+			print(f"Warning: user {self.user.id} not found in user_channel_name during disconnect.")
+
 
 	async def update_user_status(self, user, is_online):
-		user.is_online = is_online
+		is_online = is_online
+		await sync_to_async(user.refresh_from_db)()
 		await sync_to_async(user.save)()
 		# await database_sync_to_async(
 		# 	user.__class__.objects.filter(id=user.id).update
