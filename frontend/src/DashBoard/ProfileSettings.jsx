@@ -27,26 +27,25 @@ function ProfileSettings() {
 
   const saveCode = async (e) => {
     e.preventDefault();
+    console.log("save code", code);
+    console.log("is enabled", isEnabled);
     const endpoint = isEnabled
     ? "http://localhost:8000/auth/activate2fa/"
     : "http://localhost:8000/auth/desactivate2fa/";
     try {
-      console.log("save code", code);
-      console.log(
-        isEnabled
-      );
       const response = await fetch(`${endpoint}`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ otp: code }),
+        body: JSON.stringify({ 'code': code }),
       });
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
-        setIsEnabled(true);
+        setIsEnabled(data.is_2fa_enabled);
+        updateUser((prevUser) => ({ ...prevUser, twoFa: data.is_2fa_enabled }));
       } else {
         toast.error(data.error);
         console.log(data);
@@ -77,7 +76,6 @@ function ProfileSettings() {
 
 
   const getQRCode = async () => {
-    // console.log("get qr code");
     try {
       const response = await fetch("http://localhost:8000/auth/2fa/", {
         method: "GET",
@@ -85,19 +83,19 @@ function ProfileSettings() {
       });
       if (response.ok) {
         const data = await response.json();
-        // console.log(data);
-        // console.log(data.qrcode);
         setQrCodeUrl(data.qrcode);
       } else console.log("error");
     } catch (error) {
       console.log(error);
     }
   };
+
   useEffect(() => {
-    console.log("use effect", user?.twoFa);
+    // console.log("is enabled", user?.twoFa);
+    // console.log("is 2FA", user?.twoFa);
     if (isEnabled && !user?.twoFa) getQRCode();
     else setQrCodeUrl(null);
-  }, [isEnabled]);
+  }, [isEnabled, user?.twoFa]);
 
   return (
     <div className="settings-component">
@@ -140,7 +138,10 @@ function ProfileSettings() {
                 <div className="switch-toggle">
                   <Switch
                     checked={isEnabled}
-                    onChange={() => setIsEnabled(!isEnabled)}
+                    onChange={() => {
+                      console.log("toggle is enabled", isEnabled);
+                      setIsEnabled((prev) => !prev)}
+                    }
                     color="secondary"
                   />
                 </div>
@@ -229,7 +230,7 @@ function ProfileSettings() {
         )}
         <div className="save-settings">
           {isTwoFactor ? (
-            <button onClick={saveCode}>Save</button>
+            user.twoFa || <button onClick={saveCode}>Save</button>
           ) : (
             <button onClick={updateInfos}>Save</button>
           )}

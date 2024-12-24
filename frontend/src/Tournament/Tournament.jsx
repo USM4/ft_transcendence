@@ -10,7 +10,11 @@ const Tournament = () => {
     <div className="tournament-component">
       <div className="return-icon">
         <button
-          onClick={() => { localStorage.clear(); navigate("/tournament/options/tournament-registration"); }}>
+          onClick={() => { 
+            localStorage.removeItem('tournamentState');
+            localStorage.removeItem('players');
+             navigate("/tournament/options/tournament-registration"); 
+            }}>
           <ArrowBackIcon fontSize="large" />
         </button>
       </div>

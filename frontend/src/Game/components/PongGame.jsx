@@ -336,7 +336,7 @@ const PongGame = ({ isAIEnabled }) => {
         
         <div className="player-card">
           <div className="player-name">
-            <h3>{isAIEnabled ? "AI" : "Player 2"}</h3>
+            <h3>{isAIEnabled ? "MJININA hh" : "Player 2"}</h3>
             <span className="status-dot active"></span>
           </div>
           <div className="score-container">

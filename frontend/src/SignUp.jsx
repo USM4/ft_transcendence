@@ -47,23 +47,27 @@ function SignUp() {
                         placeholder="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        style={{backgroundColor: "black", color: "white", border: "1px dashed #cc9a2c" , borderRadius: "5px", outline: "none"}}
                         />
                 <input  type="email"
                         placeholder="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        style={{backgroundColor: "black", color: "white", border: "1px dashed #cc9a2c" , borderRadius: "5px", outline: "none"}}
                         />
                 <input  type="password"
                         className="signInPassword"
                         placeholder="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        style={{backgroundColor: "black", color: "white", border: "1px dashed #cc9a2c" , borderRadius: "5px", outline: "none"}}
                         />
                 <input  type="password"
                         className="signInPassword"
                         placeholder="confirm your password"
                         value={newpassword}
                         onChange={(e) => setNewPassword(e.target.value)}
+                        style={{backgroundColor: "black", color: "white", border: "1px dashed #cc9a2c" , borderRadius: "5px", outline: "none"}}
                         />
                 <button className="signinbutton" type="submit">
                     Sign Up

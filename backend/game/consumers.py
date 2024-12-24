@@ -224,7 +224,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.player = {
             "username": self.scope.get('user').username,
-            "avatar": self.scope.get('user').avatar,
+            "avatar": self.scope.get('user').avatar if self.scope.get('user').avatar else "http://localhost:8000/media/avatars/anonyme.png",
             "numberPlayer": "",
             "id": self.scope.get('user').id,
             "match_name": "",
@@ -291,7 +291,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "type": "score_update",
             "message": event["message"]
-        }))          
+        })) 
+
     async def match_ready(self, event):
         await self.send(text_data=json.dumps({
             "type": "match_ready",
@@ -305,17 +306,45 @@ class GameConsumer(AsyncWebsocketConsumer):
         if not self.game_state.is_active:
             self.game_state.is_active = True
             asyncio.create_task(self.game_loop())
+
     async def disconnect(self, close_code):
         if self.match_name:
             if self.match_name in game_states:
                 game_states[self.match_name].is_active = False
                 del game_states[self.match_name]
             await self.channel_layer.group_discard(self.match_name, self.channel_name)
+        print (
+            f"Player {self.player['username']} disconnected. Match: {self.match_name}"
+            f"Connected users: {connected_users}"
+            f"Connected users set: {game_states}"
+        )
 
+        await self.channel_layer.group_send(
+            self.match_name,
+            {
+                "type": "player_disconnected",
+                "message": "Player disconnected",
+            }
+        )
         for user in list(connected_users):
             if user['id'] == self.player['id']:
                 connected_users.remove(user)
                 break
+
+    async def game_over(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "game_over",
+            "message": event["message"],
+            "winner": event["winner"],
+            "user1": event["final_score"]["player1"],
+            "user2": event["final_score"]["player2"],
+        }))
+
+    async def player_disconnected(self, event):
+        await self.send(text_data=json.dumps({
+            "type": "player_disconnected",
+            "message": event["message"],
+        }))
 
     async def game_loop(self):
         await asyncio.sleep(4)
