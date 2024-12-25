@@ -38,7 +38,7 @@ function DashboardChart() {
       },
     },
   };
-  const isAllZero = data.datasets[0].data.every((value) => value === 0);
+  const isAllZero = data?.datasets[0].data.every((value) => value === 0);
 
   return (
     isAllZero ? <h1 className="data-chart-h1"> No data to display

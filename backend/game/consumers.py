@@ -264,7 +264,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
                     # Add players to match-specific group
                     if user1 and user2:
-                        print("###########################################################################################################")
                         await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
                         await self.channel_layer.group_add(self.match_name, user2["channel_name"])
                         await self.channel_layer.group_send(self.match_name, {
@@ -273,11 +272,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                                 "user2": user2,
                                 "match_name": self.match_name
                         })
-                        print("sendi")
                 except Exception as e:
                     print(f"Error during matchmaking: {e}")
             else:
-                print("((((((((((((((((((((()))))))))))))))))))))")
                 await self.send(json.dumps({
                     "type": "waiting_for_players",
                     "message": "Waiting for another player.",
