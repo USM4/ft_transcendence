@@ -1,6 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Canvas from './Canvas';
 import WinPage from './WinPage';
+import player1Image from "../../../public/skull.jpeg";
+import player2Image from "../../../public/realone.png";
 
 const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
     const racketSpeed = 6;
@@ -361,14 +363,72 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
       }
 
     return (
-        <div className="Game-render">
-            <div className="score top-score">Top: {scores.topPlayer}</div>
-            <div className="score left-score">Left: {scores.leftPlayer}</div>
-                <div className='canvas-container'>
+        <div className="FGame-render">
+            <div className='top-row'>
+                <div className="player-profiles">
+                    <div className="player-card">
+                      <div className="player-name">
+                        <h3>leftPlayer</h3>
+                        <span className="status-dot active"></span>
+                      </div>
+                      <div className="score-container">
+                        <span className="score">{scores.leftPlayer}</span>
+                      </div>
+                      <div className="player-avatar">
+                        <img src={player1Image} alt="Player 1" />
+                        <div className="glow-effect"></div>
+                      </div>
+                    </div>
+
+                    <div className="player-card">
+                      <div className="player-name">
+                        <h3>topPlayer</h3>
+                        <span className="status-dot active"></span>
+                      </div>
+                      <div className="score-container">
+                        <span className="score">{scores.topPlayer}</span>
+                      </div>
+                      <div className="player-avatar">
+                        <img src={player1Image} alt="Player 1" />
+                        <div className="glow-effect"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+                <div className='Fcanvas-container'>
                     <Canvas width={canvasWidth} height={canvasHeight} draw={draw} />
                 </div>
-                <div className="score right-score">Right: {scores.rightPlayer}</div>
-            <div className="score bottom-score">Bottom: {scores.botPlayer}</div>
+        <div className='bot-row'>
+            <div className="player-profiles">
+                <div className="player-card">
+                  <div className="player-name">
+                    <h3>botPlayer</h3>
+                    <span className="status-dot active"></span>
+                  </div>
+                  <div className="score-container">
+                    <span className="score">{scores.botPlayer}</span>
+                  </div>
+                  <div className="player-avatar">
+                    <img src={player1Image} alt="Player 1" />
+                    <div className="glow-effect"></div>
+                  </div>
+                </div>
+
+                <div className="player-card">
+                  <div className="player-name">
+                    <h3>rightPlayer</h3>
+                    <span className="status-dot active"></span>
+                  </div>
+                  <div className="score-container">
+                    <span className="score">{scores.rightPlayer}</span>
+                  </div>
+                  <div className="player-avatar">
+                    <img src={player2Image} alt="Player 2" />
+                    <div className="glow-effect"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
         </div>
     );
 };

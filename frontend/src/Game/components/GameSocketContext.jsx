@@ -11,12 +11,10 @@ export const GameSocketProvider = ({ children }) => {
     const pathname = location.pathname;
 
     useEffect(() => {
-        // Only create socket if it doesn't exist and we're on the correct paths
         if (!wsRef.current && user && 
             (pathname === "/tournament/options/game/matchMaking" || 
              pathname === "/tournament/options/game/online")) {
-            
-            // console.log("Creating new WebSocket connection");
+
             const socket = new WebSocket("ws://localhost:8000/ws/game/");
             
             socket.onopen = () => {
@@ -36,7 +34,6 @@ export const GameSocketProvider = ({ children }) => {
         }
 
         return () => {
-            // Only close if we're navigating away from game pages
             if (wsRef.current && 
                 !pathname.includes("/tournament/options/game")) {
                 console.log("Closing WebSocket connection");
