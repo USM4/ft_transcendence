@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 from django.db.models import Q
 import pyotp
+from django.db.models import Count
 import qrcode
 from dotenv import load_dotenv
 from django.shortcuts import redirect
@@ -167,14 +168,27 @@ class LogoutView(APIView):
 class GameLeaderboard(APIView):
 
     def get(self, request):
-        game = list(Game.objects.order_by('xp_gained_player1').reverse())
-        xp = []
+        game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2'))
+        player_xp = {}
         for g in game:
-            if len(xp) > 4:
-                break
-            xp.append(g.xp_gained_player1 if g.xp_gained_player1 > g.xp_gained_player2 else g.xp_gained_player2)
+            if g['player1_id'] not in player_xp:
+                player_xp[g['player1_id']] = 0
+            if g['player2_id'] not in player_xp:
+                player_xp[g['player2_id']] = 0
+            player_xp[g['player1_id']] += g['xp_gained_player1']
+            player_xp[g['player2_id']] += g['xp_gained_player2']
+        sorted_xp = dict(sorted(player_xp.items(), key=lambda item: item[1], reverse=True))
+        data = []
+        for player_id, xp in sorted_xp.items():
+            player = Client.objects.get(id=player_id)
+            data.append({
+                'id': player_id,
+                'username': player.username,
+                'avatar': player.avatar if player.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                'xp': xp
+            })
 
-        return Response({'game_xp': xp}, status=200)
+        return Response({'game_xp': data[:5]}, status=200)
 
 def get_game(user):
 
@@ -186,8 +200,8 @@ def get_game(user):
         r.append([
             {
                 'id': g.game_id,
-                'player1': {'username': player1.username, 'avatar': player1.avatar},
-                'player2': {'username': player2.username, 'avatar': player2.avatar},
+                'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
                 'winner': g.winner.username,
                 'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
                 'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,

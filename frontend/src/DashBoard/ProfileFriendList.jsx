@@ -4,8 +4,6 @@ import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import { useNavigate } from "react-router-dom";
 
 
-
-
 function ProfileFriendList({ username, avatar,id }) {
     const navigate = useNavigate();
     const friend = {id: id,username: username, avatar: avatar };

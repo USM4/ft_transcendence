@@ -45,6 +45,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 	async def update_user_status(self, user, is_online):
 		is_online = is_online
 		await sync_to_async(user.refresh_from_db)()
+		user.is_online = is_online
 		await sync_to_async(user.save)()
 		# await database_sync_to_async(
 		# 	user.__class__.objects.filter(id=user.id).update
