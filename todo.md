@@ -1,8 +1,15 @@
-> 1 - update image should be on the server not just the name of the image (DONE)
-> change game socket  (DONE)
-> 4 - fix waiting for opponent w l match making  (DONE)
-> 2 - ghanchof score li rbe7 n savih f database w ndiro howa l winner (WORKING ON IT ) 
-> 3 - match history (fetch from the database)
-> 5 -  invite friend from chat w from dashboard hta hya
+****************Yahia******************
+> online status
+> recheck charts fetching
+> profile charts
+>leaderboard
+
+**************Oussama********************
+> game over display (DONE)
+>invite friend from chat w from dashboard hta hya 
+> match details (calculate the start and the end , and the game counter)
+> disconnection fl match making
+
+
+
 > add postgress (minor module)
-> 

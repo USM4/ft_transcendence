@@ -7,11 +7,12 @@ import player3Image from "../../../public/anonyme.png";
 import { useContext} from "react";
 import { GameSocketContext } from "./GameSocketContext.jsx";
 import { UserDataContext } from "../../DashBoard/UserDataContext.jsx";
-
+import toast from "react-hot-toast";
 
 const Matchmaking = () => {
     
     const navigate = useNavigate();
+
     const [isReady, setIsReady] = useState(false);
     const [countdown, setCountdown] = useState(3);
     const { user } = useContext(UserDataContext);
@@ -44,7 +45,7 @@ useEffect(() => {
         
         const handleMatchmakingMessage = (event) => {
             const data = JSON.parse(event.data);
-
+            console.log("+++++++++++++DATA+++++++++++++++++", data)
             switch(data.type) {
                 case "connected":
                     break;
@@ -54,6 +55,9 @@ useEffect(() => {
                     setIsReady(true);
                     break;
                     
+                case "player_disconnected":
+                    toast.error("player_disconnected play again")
+                    navigate('/tournament/options/game')
                 case "waiting_for_players":
                     setIsReady(false);
                     break;

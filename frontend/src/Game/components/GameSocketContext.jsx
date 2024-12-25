@@ -16,7 +16,7 @@ export const GameSocketProvider = ({ children }) => {
             (pathname === "/tournament/options/game/matchMaking" || 
             pathname === "/tournament/options/game/online")) {
                 
-            console.log("-----------------------------{ GameSocketProvider } ----------------------: ", user, pathname);
+            // console.log("-----------------------------{ GameSocketProvider } ----------------------: ", user, pathname);
             // console.log("Creating new WebSocket connection");
             const socket = new WebSocket("ws://localhost:8000/ws/game/");
             
