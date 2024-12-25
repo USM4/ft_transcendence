@@ -456,7 +456,7 @@ body {
 }
 
 .notification:hover {
-  transform: translateX(5px);
+  transform: translateX(-150px);
 }
 .swal2-popup {
   border: 2px solid red;
@@ -2571,7 +2571,7 @@ body {
 
 .win-page h1 {
   margin-bottom: 20px;
-  color: #333;
+  color: #ff0101;
   font-size: 3rem;
   margin-bottom: 2rem;
   font-weight: bold;
@@ -2583,19 +2583,21 @@ body {
   padding: 10px 20px;
   font-size: 1rem;
   background-color: transparent;
-  color: #FFAA39;
-  border: 3px solid #FFAA39;
-  border-color: #FFAA39;
+  color: #FFD700;
+  border: 3px solid #FFD700;
+  border-color: #FFD700;
   border-radius: 5px;
   cursor: pointer;
+  font-family: inherit;
   transition: background-color 0.3s;
 }
 
 .win-page button:hover {
-  background-color: #FFAA39;
+  background-color: #FFD700;
   color: #33332D;
   transform: scale(1.1);
 }
+
 
 
 .canvas-container {

@@ -93,12 +93,10 @@ const PongGame = ({ isAIEnabled }) => {
   };
 
   const resetPositions = () => {
-    // setLeftRacket((prev) => ({
     leftRacket.current = {
       ...leftRacket.current,
       y: 200,
     };
-    // }));
 
     rightRacket.current = {
       ...rightRacket.current,
@@ -279,7 +277,7 @@ const PongGame = ({ isAIEnabled }) => {
         rightRacket.current.height
       );
       requestAnimationFrame(animate);
-      // if (winner) return;
+      if (winner) return;
     };
     animate();
     return () => {
@@ -301,17 +299,17 @@ const PongGame = ({ isAIEnabled }) => {
   //   return () => clearInterval(gameInterval);
   // }, [updateBallPosition, moveAIRacket, winner, isAIEnabled]);
 
-  // const draw = useCallback(
-  //   (context) => {
-  //   },
-  //   [ball, leftRacket, rightRacket]
-  // );
+  const draw = useCallback(
+    (context) => {
+    },
+    [ballRef.current, leftRacket.current, rightRacket.current]
+  );
 
-  // if (winner) {
-  //   console.log("Winner is", winner);
-  //   console.log("Scores", scores);
-  //   return <WinPage winner={winner} resetGame={resetGame} />;
-  // }
+  if (winner) {
+    console.log("Winner is", winner);
+    console.log("Scores", scores);
+    return <WinPage winner={winner} resetGame={resetGame} />;
+  }
 
   return (
     <div className="Game-render">

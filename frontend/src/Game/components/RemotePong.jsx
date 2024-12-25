@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import WinPage from "./WinPage";
+import Loser from "./Loser";
 // import { GameSocketContext } from "./GameSocketContext"; 
 import Swal from "sweetalert2";
 import WaitingOpponent from "./WaitingOpponent"; 
@@ -19,9 +21,8 @@ const RemotePong = () => {
   const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
-  const [winner, setWinner] = useState(null);
-  // const [score1, setScore1] = useState(0);
-  // const [score2, setScore2] = useState(0);
+  const [winner, setWinner] = useState(false);
+  const [loser , setLoser] = useState(false);
   const navigate = useNavigate();
 
   const gameSocketRef = useContext(GameSocketContext);
@@ -66,8 +67,10 @@ useEffect(() => {
   if (gameSocketRef.current) {
       const socket = gameSocketRef.current;
       
+      //console.log("+++++++++++++DATA+++++++++++++++++") 
       const handleGameMessage = (event) => {
           const data = JSON.parse(event.data);
+          //console.log("+++++++++++++DATA+++++++++++++++++", data)
           switch(data.type) {
               case "game_state_update":
                   const gameState = data.message;
@@ -86,13 +89,21 @@ useEffect(() => {
               case "score_update":
                 setScores({ leftPlayer: data.message.score.player1, rightPlayer: data.message.score.player2 })
               case "game_over":
-          
-                  if (data.winner === user.username) {
-                      setWinner("You win!");
-                    }
-                    else {
-                      setWinner("You lose!");
+                  console.log("--------------game over data-------------",data);
+                  const resetGame = () => {
+                    navigate('tournament/options/game');
                   }
+                  if (data.winner === user.username)
+                  {
+                      setWinner(true);
+                      console.log("Winner is", data.winner);
+                    }
+                    else if(data.loser === user.username)
+                    {
+                      setLoser(true);
+                      console.log("Loser is", data.loser);
+                      // return <Loser loser={data.loser}/>;
+                    }
                   break;
               case "player_disconnected":
                 Swal.fire({
@@ -220,6 +231,21 @@ const handleKeyDown = (e) => {
 
   return (
     <div className="Game-render">
+      {winner && (
+        <WinPage
+          winner={user.username}
+          resetGame={() => {
+            navigate("/tournament/options/game");
+          }}
+        />
+      )}
+      {loser && (
+        <Loser
+          loser={user.username}
+        />
+      )}
+    
+              
       {localStorage.getItem("gameState") === "Waiting" && <WaitingOpponent isVisible={true} />}
       {localStorage.getItem("gameState") === "Playing" && (
         <>

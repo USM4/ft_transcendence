@@ -208,6 +208,7 @@ class GameState:
                 "type": "game_over",
                 "message": f"Game Over! {winner.username} wins!",
                 "winner": winner.username,
+                "loser": player1.username if winner.id == player2.id else player2.username,
                 "final_score": {
                     "player1": self.pleft["score"],
                     "player2": self.pright["score"]
@@ -239,7 +240,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             connected_users.append(self.player)
             
             await self.send(json.dumps({"type": "connected", "data": self.player}))
-
             if len(connected_users) >= 2:
                 try:
                     user1 = connected_users.popleft()
@@ -252,7 +252,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                             "message": "Waiting for another player.",
                         }))
                         return
-
                     # Create match name and initialize game state
                     self.match_name = f"{user1['username']}vs{user2['username']}"
                     user1["match_name"] = self.match_name
@@ -264,18 +263,21 @@ class GameConsumer(AsyncWebsocketConsumer):
                     self.game_state = game_states[self.match_name]
 
                     # Add players to match-specific group
-                    await self.channel_layer.group_add(self.match_name, user1["channel_name"])
-                    await self.channel_layer.group_add(self.match_name, user2["channel_name"])
-                    
-                    await self.channel_layer.group_send(self.match_name, {
-                        "type": "match_ready",
-                        "user1": user1,
-                        "user2": user2,
-                        "match_name": self.match_name
-                    })
+                    if user1 and user2:
+                        print("###########################################################################################################")
+                        await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
+                        await self.channel_layer.group_add(self.match_name, user2["channel_name"])
+                        await self.channel_layer.group_send(self.match_name, {
+                                "type": "match_ready",
+                                "user1": user1,
+                                "user2": user2,
+                                "match_name": self.match_name
+                        })
+                        print("sendi")
                 except Exception as e:
                     print(f"Error during matchmaking: {e}")
             else:
+                print("((((((((((((((((((((()))))))))))))))))))))")
                 await self.send(json.dumps({
                     "type": "waiting_for_players",
                     "message": "Waiting for another player.",
@@ -310,32 +312,36 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         if self.match_name:
             if self.match_name in game_states:
+                if not game_states[self.match_name].is_active:
+                    del game_states[self.match_name]
+                    return
                 game_states[self.match_name].is_active = False
                 del game_states[self.match_name]
             await self.channel_layer.group_discard(self.match_name, self.channel_name)
-        print (
-            f"Player {self.player['username']} disconnected. Match: {self.match_name}"
-            f"Connected users: {connected_users}"
-            f"Connected users set: {game_states}"
-        )
-
-        await self.channel_layer.group_send(
-            self.match_name,
-            {
-                "type": "player_disconnected",
-                "message": "Player disconnected",
-            }
-        )
-        for user in list(connected_users):
-            if user['id'] == self.player['id']:
-                connected_users.remove(user)
-                break
+            # print (
+            #     f"Player {self.player['username']} disconnected. Match: {self.match_name}"
+            #     f"Connected users: {connected_users}"
+            #     f"Connected users set: {game_states}"
+            # )
+            await self.channel_layer.group_send(
+                self.match_name,
+                {
+                    "type": "player_disconnected",
+                    "message": "Player disconnected",
+                }
+            )
+            for user in list(connected_users):
+                if user['id'] == self.player['id']:
+                    connected_users.remove(user)
+                    break
+            
 
     async def game_over(self, event):
         await self.send(text_data=json.dumps({
             "type": "game_over",
             "message": event["message"],
             "winner": event["winner"],
+            "loser": event["loser"],
             "user1": event["final_score"]["player1"],
             "user2": event["final_score"]["player2"],
         }))
@@ -360,6 +366,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             )
             await asyncio.sleep(1 / 60)
+
     async def send_game_state(self, event):
         message = event["message"]
         try:
