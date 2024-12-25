@@ -5,7 +5,7 @@ const Loser = ({ loser, resetGame }) => {
   const navigate = useNavigate();
   return (
     <div className="win-page">
-      <h1>{loser} Lost!</h1>
+      <h1>{loser} Dahya hh!</h1>
       <button onClick={() => navigate("/tournament/options")}>Back to home</button>
       <button onClick={() => navigate('/tournament/options/game')}>
         Play Again

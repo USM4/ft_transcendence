@@ -456,7 +456,7 @@ body {
 }
 
 .notification:hover {
-  transform: translateX(-150px);
+  transform: translateX(5px);
 }
 .swal2-popup {
   border: 2px solid red;

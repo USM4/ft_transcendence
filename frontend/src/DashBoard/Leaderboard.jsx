@@ -28,7 +28,7 @@ function Leaderboard() {
         };
         getData();
     }, [pathname]);
-    console.log(game_xp)
+    // console.log(game_xp)
 
     return (
         <div className="dashboard-leaderboard-item">
