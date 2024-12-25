@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import skull from '../../public/skull.jpeg'
+import anonyme from '../../public/anonyme.png'
 import { UserDataContext } from "./UserDataContext.jsx";
 
 
@@ -17,7 +17,7 @@ function MatchHistory() {
                         <div key={match[0].id} className="match-history-item">
                             <div className="match-history-info">
                                 <img
-                                    src={player1.avatar || skull}
+                                    src={player1.avatar || anonyme}
                                     alt={`${player1.username}'s avatar`}
                                     className="img-player"
                                 />
@@ -29,7 +29,7 @@ function MatchHistory() {
                             <div className="match-history-info">
                                 {player2.username}
                                 <img
-                                    src={player2.avatar || skull}
+                                    src={player2.avatar || anonyme}
                                     alt={`${player2.username}'s avatar`}
                                     className="img-player2"
                                 />

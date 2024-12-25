@@ -5,8 +5,6 @@ import { FriendDataContext } from "./FriendDataContext";
 function DashboardFriends() {
     const { friend } = useContext(FriendDataContext);
 
-
-
     return (
         <>
             {friend?.map((friend) => {

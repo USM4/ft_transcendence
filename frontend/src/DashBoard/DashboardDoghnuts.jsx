@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {act, useContext} from "react";
 import { UserDataContext } from "./UserDataContext.jsx";
 import { Doughnut } from "react-chartjs-2";
 import { Radar } from 'react-chartjs-2';
@@ -30,6 +30,7 @@ function DashboardDoghnuts() {
         ],
         datasets: [{
           label: 'Matches',
+          active: false,
           data: [user?.matcheWon, user?.matcheLost, matchedraw],
           fill: true,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
@@ -41,6 +42,11 @@ function DashboardDoghnuts() {
         }]
       };
       const options = {
+        plugins: {
+          legend: {
+            onClick: null,
+          },
+        },
         elements: {
           line: {
             tension: 0.08,
