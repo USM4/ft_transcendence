@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import WinPage from "./WinPage";
 import Loser from "./Loser";
-// import { GameSocketContext } from "./GameSocketContext"; 
+// import { GameSocketContext } from "./GameSocketContext";
 import Swal from "sweetalert2";
 import WaitingOpponent from "./WaitingOpponent"; 
 import player3Image from "../../../public/anonyme.png";
@@ -62,6 +62,22 @@ const RemotePong = () => {
     ArrowUp: false,
     ArrowDown: false,
   });
+
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSeconds(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainingSeconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
 
 useEffect(() => {
   if (gameSocketRef.current) {
@@ -228,6 +244,8 @@ const handleKeyDown = (e) => {
 
     animate();
   }, []);
+  
+
 
   return (
     <div className="Game-render">
@@ -289,7 +307,9 @@ const handleKeyDown = (e) => {
               width={1000}
               height={500}
             />
-            <div className="match-timer">00:00</div>
+            <div className="match-timer">
+            {formatTime(seconds)}
+            </div>
           </div>
         </>
       )}
