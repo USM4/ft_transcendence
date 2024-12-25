@@ -1,364 +1,192 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import WinPage from "./WinPage";
-import Racket from "./Racket";
-import player1Image from "../../../public/skull.jpeg";
+import React, { useCallback, useState, useEffect } from 'react';
+import Canvas from './Canvas';
+import WinPage from './WinPage';
 import player2Image from "../../../public/realone.png";
+import player1Image from "../../../public/skull.jpeg";
 
-const PongGame = ({ isAIEnabled }) => {
-  let start_time = Date.now();
-  const navigate = useNavigate();
-  const canvasRef = useRef(null);
-  const keys = {};
-  const ballRef = useRef({
-    x: 500,
-    y: 250,
-    velocityX: 2,
-    velocityY: 2,
-    radius: 10,
-    color: "yellow",
-  });
+const PongGame = ({ canvasWidth = 1000, canvasHeight = 500 }) => {
+    const racketSpeed = 6;
+    const maxScore = 5;
 
-  const leftRacket = useRef({
-    x: 10,
-    y: 200,
-    width: 10,
-    height: 100,
-    color: "blue",
-    velocity: 13,
-  });
+    const [ball, setBall] = useState({
+        x: canvasWidth / 2,
+        y: canvasHeight / 2,
+        velocityX: 6,
+        velocityY: 6,
+        radius: 10,
+        color: 'yellow',
+    });
 
-  const rightRacket = useRef({
-    x: 980,
-    y: 200,
-    width: 10,
-    height: 100,
-    color: "red",
-    velocity: isAIEnabled ?  13  : 13,
-    y_ball: isAIEnabled ?  ballRef.current.y : -1 ,
-  });
+    const [leftRacket, setLeftRacket] = useState({
+        x: 10,
+        y: canvasHeight / 2 - 50,
+        width: 10,
+        height: 100,
+        color: 'blue',
+    });
 
-  const [keysPressed, setKeysPressed] = useState({
-    w: false,
-    s: false,
-    o: false,
-    l: false,
-  });
+    const [rightRacket, setRightRacket] = useState({
+        x: canvasWidth - 20,
+        y: canvasHeight / 2 - 50,
+        width: 10,
+        height: 100,
+        color: 'red',
+    });
 
-  const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
-  const [winner, setWinner] = useState(null);
+    const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
+    const [winner, setWinner] = useState(null);
+    const [keys, setKeys] = useState({});
 
-  const resetGame = () => {
-    ballRef.current = {
-      x: 500,
-      y: 250,
-      velocityX: 4,
-      velocityY: 4,
-      radius: 10,
-      color: "yellow",
-    };
-    // setLeftRacket((prev) => ({ ...prev, y: 200 }));
-    // setRightRacket((prev) => ({ ...prev, y: 200 }));
-    setScores({ leftPlayer: 0, rightPlayer: 0 });
-    setWinner(null);
-    canvasRef.current = null;
-  };
+    const handleKeyDown = (event) => setKeys((prev) => ({ ...prev, [event.key]: true }));
+    const handleKeyUp = (event) => setKeys((prev) => ({ ...prev, [event.key]: false }));
 
-  const moveAIRacket = () => {
-    let another_date = Date.now();
-    if (ballRef.current.velocityX < 0) return;
-    let diff = another_date - start_time;
-    if (diff >= 1000)
-    {
-      const direction =
-      ballRef.current.y > rightRacket.current.y + rightRacket.current.height / 2
-      ? 1
-      : -1;
-      let newY = rightRacket.current.y + direction * rightRacket.current.velocity;
-      newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
-      rightRacket.current = { ...rightRacket.current, y: newY };
-      start_time = Date.now();
-      rightRacket.current.y_ball = ballRef.current.y;
-    }
-    else
-    {
-      const direction =
-      rightRacket.current.y_ball > rightRacket.current.y + rightRacket.current.height / 2
-      ? 1
-        : -1;
-      let newY = rightRacket.current.y + direction * rightRacket.current.velocity;
-      newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
-      rightRacket.current = { ...rightRacket.current, y: newY };
-    }
-  };
-
-  const resetPositions = () => {
-    // setLeftRacket((prev) => ({
-    leftRacket.current = {
-      ...leftRacket.current,
-      y: 200,
-    };
-    // }));
-
-    rightRacket.current = {
-      ...rightRacket.current,
-      y: 200,
-    };
-  };
-
-  const updateBallPosition = useCallback(() => {
-    // setBall((prevBall) => {
-    let { x, y, velocityX, velocityY } = ballRef.current;
-    x += velocityX + Math.random() * 0.5;
-    y += velocityY + Math.random() * 0.5;
-
-    if (y - ballRef.current.radius <= 0) {
-      y = ballRef.current.radius;
-      velocityY = -velocityY;
-    }
-    if (y + ballRef.current.radius >= 500) {
-      y = 500 - ballRef.current.radius;
-      velocityY = -velocityY;
-    }
-
-    if (
-      x - ballRef.current.radius <=
-        leftRacket.current.x + leftRacket.current.width &&
-      y >= leftRacket.current.y &&
-      y <= leftRacket.current.y + leftRacket.current.height
-    ) {
-      velocityX = Math.abs(velocityX);
-      x =
-        leftRacket.current.x +
-        leftRacket.current.width +
-        ballRef.current.radius;
-    }
-
-    if (
-      x + ballRef.current.radius >= rightRacket.current.x &&
-      y >= rightRacket.current.y &&
-      y <= rightRacket.current.y + rightRacket.current.height
-    ) {
-      velocityX = -Math.abs(velocityX);
-      x = rightRacket.current.x - ballRef.current.radius;
-    }
-    ballRef.current = {
-      ...ballRef.current,
-      x: x,
-      y: y,
-      velocityX: velocityX,
-      velocityY: velocityY,
-    };
-
-    if (x - ballRef.current.radius <= 0) {
-      setScores((prevScores) => {
-        if (prevScores.rightPlayer + 1 === 5) {
-          setWinner("Player 1");
-        }
-        return {
-          ...prevScores,
-          rightPlayer: prevScores.rightPlayer + 1,
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
         };
-      });
-      resetPositions();
-      ballRef.current = {
-        ...ballRef.current,
-        x: 500,
-        y: 250,
-      };
-    } else if (x + ballRef.current.radius >= 1000) {
-      setScores((prevScores) => {
-        if (prevScores.leftPlayer + 1 === 5) {
-          setWinner("Player 2");
-        }
-        return {
-          ...prevScores,
-          leftPlayer: prevScores.leftPlayer + 1,
-        };
-      });
-      resetPositions();
-      ballRef.current = {
-        ...ballRef.current,
-        x: 500,
-        y: 250,
-      };
+    }, []);
+
+    const updateRackets = () => {
+        setLeftRacket((prev) => {
+            let newY = prev.y;
+            if (keys['w'] && newY > 0) newY -= racketSpeed;
+            if (keys['s'] && newY + prev.height < canvasHeight) newY += racketSpeed;
+            return { ...prev, y: newY };
+        });
+
+        setRightRacket((prev) => {
+            let newY = prev.y;
+            if (keys['ArrowUp'] && newY > 0) newY -= racketSpeed;
+            if (keys['ArrowDown'] && newY + prev.height < canvasHeight) newY += racketSpeed;
+            return { ...prev, y: newY };
+        });
+    };
+
+    const checkCollision = (ball, racket) => {
+        return (
+            ball.x + ball.radius > racket.x &&
+            ball.x - ball.radius < racket.x + racket.width &&
+            ball.y + ball.radius > racket.y &&
+            ball.y - ball.radius < racket.y + racket.height
+        );
+    };
+
+    const updateBall = () => {
+        setBall((prevBall) => {
+            let { x, y, velocityX, velocityY } = prevBall;
+
+            x += velocityX;
+            y += velocityY;
+
+            if (checkCollision(prevBall, leftRacket)) {
+                velocityX = Math.abs(velocityX);
+            } else if (checkCollision(prevBall, rightRacket)) {
+                velocityX = -Math.abs(velocityX);
+            }
+
+            if (y - ball.radius <= 0 || y + ball.radius >= canvasHeight) {
+                velocityY = -velocityY;
+            }
+
+            if (x - ball.radius <= 0) {
+                setScores((prevScores) => ({ ...prevScores, rightPlayer: prevScores.rightPlayer + 0.5 }));
+                return resetBall();
+            } else if (x + ball.radius >= canvasWidth) {
+                setScores((prevScores) => ({ ...prevScores, leftPlayer: prevScores.leftPlayer + 0.5 }));
+                return resetBall();
+            }
+
+            return { ...prevBall, x, y, velocityX, velocityY };
+        });
+    };
+
+    const resetBall = () => ({
+        x: canvasWidth / 2,
+        y: canvasHeight / 2,
+        velocityX: Math.random() > 0.5 ? 4 : -4,
+        velocityY: Math.random() > 0.5 ? 4 : -4,
+        radius: 10,
+        color: '#fff',
+    });
+
+    const checkWinner = () => {
+        if (scores.leftPlayer >= maxScore) setWinner('Left Player');
+        if (scores.rightPlayer >= maxScore) setWinner('Right Player');
+    };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            updateRackets();
+            updateBall();
+            checkWinner();
+        }, 16);
+        return () => clearInterval(interval);
+    });
+
+    const draw = useCallback(
+        (context) => {
+            context.clearRect(0, 0, canvasWidth, canvasHeight);
+            context.fillStyle = 'black';
+            context.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            context.beginPath();
+            context.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            context.fillStyle = ball.color;
+            context.fill();
+
+            context.fillStyle = leftRacket.color;
+            context.fillRect(leftRacket.x, leftRacket.y, leftRacket.width, leftRacket.height);
+
+            context.fillStyle = rightRacket.color;
+            context.fillRect(rightRacket.x, rightRacket.y, rightRacket.width, rightRacket.height);
+        },
+        [ball, leftRacket, rightRacket]
+    );
+
+    if (winner) {
+        return <WinPage winner={winner} resetGame={() => window.location.reload()} />;
     }
-    // setScores(updatedScores);
-  });
 
-  // useEffect(() => {
-  //   window.addEventListener('keydown', handleKeyDown);
-  //   window.addEventListener('keyup', handleKeyUp);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //     window.removeEventListener('keyup', handleKeyUp);
-  //   };
-  // }, []);
+    return (
+        <div className="Game-render">
+          <div className="player-profiles">
+            <div className="player-card">
+              <div className="player-name">
+                <h3>Player 1</h3>
+                <span className="status-dot active"></span>
+              </div>
+              <div className="score-container">
+                <span className="score">{scores.leftPlayer}</span>
+              </div>
+              <div className="player-avatar">
+                <img src={player1Image} alt="Player 1" />
+                <div className="glow-effect"></div>
+              </div>
+            </div>
 
-  useEffect(() => {
-    const moveLeftRacket = (direction) => {
-      // setLeftRacket((prev) => {
-      let newY = leftRacket.current.y + direction * leftRacket.current.velocity;
-      newY = Math.max(0, Math.min(newY, 500 - leftRacket.current.height));
-      leftRacket.current = { ...leftRacket.current, y: newY };
-      // });
-    };
-
-    const moveRightRacket = (direction) => {
-      // setRightRacket((prev) => {
-      let newY =
-        rightRacket.current.y + direction * rightRacket.current.velocity;
-      newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
-      rightRacket.current = { ...rightRacket.current, y: newY };
-      // });
-    };
-    const handleKeyDown = (e) => {
-      keys[e.key] = true; // Set the key state to true when pressed
-      if (keys["w"] || keys["W"]) {
-        moveLeftRacket(-1);
-      }
-      if (keys["s"] || keys["S"]) {
-        moveLeftRacket(1);
-      }
-      if (!isAIEnabled) {
-        if (keys["ArrowUp"]) {
-          moveRightRacket(-1);
-        }
-        if (keys["ArrowDown"]) {
-          moveRightRacket(1);
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    const handleKeyUp = (e) => {
-      keys[e.key] = false;
-    };
-    window.addEventListener("keyup", handleKeyUp);
-
-    const animate = () => {
-      if (canvasRef.current === null) {
-        // console.log("Canvas is null");
-        return;
-      }
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      context.clearRect(0, 0, 1000, 500);
-      context.fillStyle = "#000000";
-      context.fillRect(0, 0, 1000, 500);
-
-      if (isAIEnabled) {
-        moveAIRacket();
-      }
-
-      updateBallPosition();
-      context.beginPath();
-      context.fillStyle = ballRef.current.color;
-      context.arc(
-        ballRef.current.x,
-        ballRef.current.y,
-        ballRef.current.radius,
-        0,
-        Math.PI * 2
-      );
-      context.fill();
-
-      context.fillStyle = leftRacket.current.color;
-      context.fillRect(
-        leftRacket.current.x,
-        leftRacket.current.y,
-        leftRacket.current.width,
-        leftRacket.current.height
-      );
-
-      context.fillStyle = rightRacket.current.color;
-      context.fillRect(
-        rightRacket.current.x,
-        rightRacket.current.y,
-        rightRacket.current.width,
-        rightRacket.current.height
-      );
-      requestAnimationFrame(animate);
-      // if (winner) return;
-    };
-    animate();
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [canvasRef.current]);
-
-  // useEffect(() => {
-  //   const gameInterval = setInterval(() => {
-  //     if (!winner) {
-  //       updateBallPosition();
-  //       if (isAIEnabled) {
-  //         moveAIRacket();
-  //       }
-  //     }
-  //   }, 1);
-
-  //   return () => clearInterval(gameInterval);
-  // }, [updateBallPosition, moveAIRacket, winner, isAIEnabled]);
-
-  // const draw = useCallback(
-  //   (context) => {
-  //   },
-  //   [ball, leftRacket, rightRacket]
-  // );
-
-  if (winner) {
-    console.log("Winner is", winner);
-    console.log("Scores", scores);
-    return <WinPage winner={winner} resetGame={resetGame} />;
-  }
-
-  return (
-    <div className="Game-render">
-      <div className="player-profiles">
-        <div className="player-card">
-          <div className="player-name">
-            <h3>Player 1</h3>
-            <span className="status-dot active"></span>
+            <div className="player-card">
+              <div className="player-name">
+                <h3>Player 2</h3>
+                <span className="status-dot active"></span>
+              </div>
+              <div className="score-container">
+                <span className="score">{scores.rightPlayer}</span>
+              </div>
+              <div className="player-avatar">
+                <img src={player2Image} alt="Player 2" />
+                <div className="glow-effect"></div>
+              </div>
+            </div>
           </div>
-          <div className="score-container">
-            <span className="score">{scores.leftPlayer}</span>
-          </div>
-          <div className="player-avatar">
-            <img src={player1Image} alt="Player 1" />
-            <div className="glow-effect"></div>
-          </div>
+
+          <div className='canvas-container'><Canvas width={canvasWidth} height={canvasHeight} draw={draw} /></div>
+          <h3>Player 1: W to go up, S to go down</h3>
+          <h3>Player 2: Up arrow to go up, Down arrow to go down</h3>
         </div>
-        
-        <div className="vs-container">
-          <span className="vs-text">VS</span>
-        </div>
-        
-        <div className="player-card">
-          <div className="player-name">
-            <h3>{isAIEnabled ? "AI" : "Player 2"}</h3>
-            <span className="status-dot active"></span>
-          </div>
-          <div className="score-container">
-            <span className="score">{scores.rightPlayer}</span>
-          </div>
-          <div className="player-avatar">
-            <img src={player2Image} alt="Player 2" />
-            <div className="glow-effect"></div>
-          </div>
-        </div>
-      </div>
-      <div className="canvas-container">
-        <canvas
-          className="canvas-game"
-          ref={canvasRef}
-          width={1000}
-          height={500}
-        />
-        <div className="match-timer">00:00</div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default PongGame;

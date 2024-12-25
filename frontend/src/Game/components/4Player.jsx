@@ -371,6 +371,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
                         <h3>leftPlayer</h3>
                         <span className="status-dot active"></span>
                       </div>
+                        <h3>UP: W DWN: S</h3>
                       <div className="score-container">
                         <span className="score">{scores.leftPlayer}</span>
                       </div>
@@ -385,6 +386,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
                         <h3>topPlayer</h3>
                         <span className="status-dot active"></span>
                       </div>
+                        <h3>LT: X RT: C</h3>
                       <div className="score-container">
                         <span className="score">{scores.topPlayer}</span>
                       </div>
@@ -405,6 +407,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
                     <h3>botPlayer</h3>
                     <span className="status-dot active"></span>
                   </div>
+                    <h3>LT: N RT: M</h3>
                   <div className="score-container">
                     <span className="score">{scores.botPlayer}</span>
                   </div>
@@ -419,6 +422,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
                     <h3>rightPlayer</h3>
                     <span className="status-dot active"></span>
                   </div>
+                    <h3>UP: O DWN: L</h3>
                   <div className="score-container">
                     <span className="score">{scores.rightPlayer}</span>
                   </div>
