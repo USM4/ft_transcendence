@@ -99,7 +99,7 @@ function Profile() {
   };
 
   const getButtonText = () => {
-    if (switchUser.friendship_status === "pending") return "Pending";
+    if (switchUser?.friendship_status === "pending") return "Pending";
     else if (switchUser.friendship_status === "friends") return "Remove Friend";
     else return "Add Friend";
   };
@@ -154,7 +154,7 @@ function Profile() {
   };
 
   useEffect(() => {
-    if (username !== user.username) {
+    if (username !== user?.username) {
       const fetchStranger = async () => {
         const response = await fetch(
           `http://localhost:8000/auth/profile/${username}/`,
@@ -189,7 +189,7 @@ function Profile() {
         <div className="profile-img-name">
           <img src={switchUser?.avatar || player} alt="" />
           <div className="profile-infos">
-            <div className="profile-name"> {switchUser.username}</div>
+            <div className="profile-name"> {switchUser?.username}</div>
             <div className="profile-bio">
               ag1hegoat is the greatest man a live, the king , the only
             </div>

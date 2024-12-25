@@ -19,6 +19,7 @@ from authentification.views import Disable2FA
 from authentification.views import UpdateUserInfos
 from authentification.views import RemoveFriend
 from authentification.views import GameLeaderboard
+from authentification.views import NotificationGameInvite
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework_simplejwt.views import (
@@ -49,4 +50,5 @@ urlpatterns = [
     path("update_infos/", UpdateUserInfos.as_view(), name='update_infos'),
     path("remove_friend/", RemoveFriend.as_view(), name='remove_friend'),
     path("game_leaderboard/", GameLeaderboard.as_view(), name='game_leaderboard'),
+    path("game_invite/", NotificationGameInvite.as_view(), name='game_invite'),
 ]
