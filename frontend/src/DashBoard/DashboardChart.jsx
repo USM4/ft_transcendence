@@ -1,5 +1,6 @@
 import React, {useContext} from "react";
 import { Line } from 'react-chartjs-2';
+import { Scatter } from 'react-chartjs-2';
 import { colors } from "@mui/material";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend } from 'chart.js';
 import { UserDataContext } from "./UserDataContext.jsx";
@@ -10,6 +11,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 function DashboardChart() {
   const { user } = useContext(UserDataContext);
   const matche = user?.matchePlayed.map((matche, index) => `Matche${index + 1}`);
+
   const data = {
     labels: matche,
     datasets: [
@@ -28,6 +30,7 @@ function DashboardChart() {
     responsive: true,
     plugins: {
       legend: {
+        onClick: null,
         position: 'bottom',
         labels: {
             color: 'rgb(0, 191, 255)',
