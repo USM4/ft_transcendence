@@ -24,12 +24,12 @@ import { SocketContext } from "./SocketContext.jsx";
 import toast from "react-hot-toast";
 function Profile() {
 
-  const {socket} = useContext(SocketContext);
+  const { socket } = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
-  const { friends, setFriends} = useContext(FriendDataContext);
+  const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
 
   // console.log("----------------------SALAAAAMO3ALIKOM----------------------------")
@@ -51,11 +51,11 @@ function Profile() {
   // }, [socket]);
   useEffect(() => {
     if (socket === null) return;
-    
+
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data);
       console.log("data", data);
-  
+
       if (data.type === "friend_request_accepted") {
         // Prevent adding duplicates
         setFriends((prevFriends) => {
@@ -71,9 +71,9 @@ function Profile() {
         });
       }
     };
-  
+
   }, [socket]);
-  
+
 
 
   const sendFriendRequest = async (to_user) => {
@@ -141,8 +141,7 @@ function Profile() {
     });
   };
   const handleFriendShip = async () => {
-    if (switchUser.friendship_status === "friends")
-    {
+    if (switchUser.friendship_status === "friends") {
       await removeFriend(switchUser.id);
       setFriends((prevFriends) =>
         prevFriends.filter((friend) => friend.id !== switchUser.id)
@@ -241,9 +240,9 @@ function Profile() {
             <div className="prfl-match-history">
               <div className="prfl-history-title">
                 <p>Match History</p>
-                <div className="prfl-match-history-results">
-                  <ProfileMatchHistory />
-                </div>
+              </div>
+              <div className="prfl-match-history-results">
+                <ProfileMatchHistory />
               </div>
             </div>
             <div className="prfl-radar">

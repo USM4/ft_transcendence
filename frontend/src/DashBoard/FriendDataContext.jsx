@@ -6,9 +6,10 @@ export const FriendDataContext = React.createContext();
 function FriendDataProvider ({ children }) {
   const { pathname } = window.location;
   const [friends, setFriends] = React.useState([]);
+  console.log("------------------",pathname);
   
   useEffect(() => {
-    console.log("WAAAHMEDDDDD: ");
+      console.log('fetching friends');
       const fetchFriendList = async () => {
         const response = await fetch('http://localhost:8000/auth/friends/',
         {

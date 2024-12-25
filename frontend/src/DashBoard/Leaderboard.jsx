@@ -1,10 +1,10 @@
-import React ,{useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 
 function Leaderboard() {
-    
-    const [game_xp, setGame_XP] = useState(null);
+
+    const [game_xp, setGame_XP] = useState();
 
     const location = useLocation();
     const pathname = location.pathname;
@@ -28,16 +28,18 @@ function Leaderboard() {
         };
         getData();
     }, [pathname]);
-    console.log(game_xp)
 
     return (
         <div className="dashboard-leaderboard-item">
-            <div className="leaderboard-info">
-                <img src="skull.jpeg" alt="" />
-                <p> #1 </p>
-                <p>Oussama Redoine </p>
-                <p> 19090 Xp </p>
-            </div>
+            {game_xp?.game_xp.map((game, index) => {
+                return(<div key={game.id} className="leaderboard-info">
+                    <img src={game.avatar} alt={`${game.username}'s avatar`} />
+                    <p> {'#' + (index + 1)} </p>
+                    <p>{game.username} </p>
+                    <p className="xp">{`${game.xp} XP`} </p>
+                </div>)
+            }
+            )}
         </div>
     )
 }
