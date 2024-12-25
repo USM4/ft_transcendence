@@ -164,22 +164,35 @@ class LogoutView(APIView):
         response.delete_cookie('refresh')
         return response
 
+class GameLeaderboard(APIView):
+
+    def get(self, request):
+        game = list(Game.objects.order_by('xp_gained_player1').reverse())
+        xp = []
+        for g in game:
+            if len(xp) > 4:
+                break
+            xp.append(g.xp_gained_player1 if g.xp_gained_player1 > g.xp_gained_player2 else g.xp_gained_player2)
+
+        return Response({'game_xp': xp}, status=200)
+
 def get_game(user):
 
-    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('start_time').reverse())
+    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('game_id'))
     r = []
     for g in game:
-        i = game.index(g)
+        player1 = g.player1_id if g.player1_id == user else g.player2_id
+        player2 = g.player2_id if g.player2_id != user else g.player1_id
         r.append([
             {
                 'id': g.game_id,
-                'player1': {'username': g.player1_id.username, 'avatar': g.player1_id.avatar},
-                'player2': {'username': g.player2_id.username, 'avatar': g.player2_id.avatar},
+                'player1': {'username': player1.username, 'avatar': player1.avatar},
+                'player2': {'username': player2.username, 'avatar': player2.avatar},
                 'winner': g.winner.username,
-                'score_player1': g.score_player1,
-                'score_player2': g.score_player2,
-                'xp_gained_player1': g.xp_gained_player1,
-                'xp_gained_player2': g.xp_gained_player2
+                'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
+                'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
+                'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
+                'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
             }
         ])
     return r
@@ -190,12 +203,10 @@ class DashboardView(APIView):
         if not user.is_authenticated:
             return Response({'error': 'Unauthorized'}, status=401)
         game = get_game(user)
+
         xp = []
         for g in game:
-            if g[0]['player1'] == user:
-                xp.append(g[0]['xp_gained_player1'])
-            else:
-                xp.append(g[0]['xp_gained_player2'])
+            xp.append(g[0]['xp_gained_player1'])
 
         return Response({
             'id': user.id,
