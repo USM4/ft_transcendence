@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import SideBar from "./SideBar.jsx";
 import DashboardNavbar from "./DashboardNavbar.jsx";
@@ -11,9 +11,12 @@ import DashboardDoghnuts from "./DashboardDoghnuts.jsx";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SearchIcon from "@mui/icons-material/Search";
 import "../App.css";
+import { FriendDataContext } from "./FriendDataContext.jsx";
 
 
 function Dashboard() {
+
+
     return(
         <div className="dashboard-components">
             <div className="dashboard-stats">
@@ -27,9 +30,7 @@ function Dashboard() {
                 <div className="leaderboard-title"><p>Leaderboard</p></div>
                 <div className="leaderboard-subcomponent">
                     <Leaderboard/>
-                    <Leaderboard/>
-                    <Leaderboard/>
-                    <Leaderboard/>
+
                 </div>
                 </div>
             </div>
@@ -42,10 +43,6 @@ function Dashboard() {
                 <div className="dashboard-friends">
                     <p className="dashboard-friends-title">Online Friends</p>
                     <div className="friends-container">
-                        <DashboardFriends/>
-                        <DashboardFriends/>
-                        <DashboardFriends/>
-                        <DashboardFriends/>
                         <DashboardFriends/>
                     </div>
                 </div>

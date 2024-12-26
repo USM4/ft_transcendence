@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 
-
-
 function ProfileFriendList({ username, avatar,id }) {
     const navigate = useNavigate();
     const friend = {id: id,username: username, avatar: avatar };
