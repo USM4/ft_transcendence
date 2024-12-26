@@ -36,16 +36,30 @@ const Matchmaking = () => {
     });
     const location = useLocation();
     const pathname = location.pathname;
+    const target = location.state?.target || 'default_value';
 
     const gameSocketRef = useContext(GameSocketContext);
+    if (target !== "default_value")
+    {
+        const message = {
+            type: "invite_accepted",
+            key: null,
+          };
+        if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
+            gameSocketRef.current.send(JSON.stringify(message)); 
+          } else {
+            console.error("WebSocket is not open, message not sent");
+          }
+    }
 
 useEffect(() => {
     if (gameSocketRef.current) {
+        console.log("gameSocketRef current is not empty")
         const socket = gameSocketRef.current;
         
         const handleMatchmakingMessage = (event) => {
+            console.log("new messge form socket");
             const data = JSON.parse(event.data);
-            console.log("+++++++++++++DATA+++++++++++++++++", data)
             switch(data.type) {
                 case "connected":
                     break;
@@ -71,6 +85,8 @@ useEffect(() => {
             socket.removeEventListener('message', handleMatchmakingMessage);
         };
     }
+    else
+        console.log("gameSocketRef current is empty")
 }, [gameSocketRef, user?.username]);
     
     useEffect(() => {

@@ -244,7 +244,7 @@ body {
 .data-chart-h1{
   display: flex;
 
-  font-family: 'Shantell Sans', sans-serif;
+  font-family: inherit;
   color: rgb(174, 255, 218, 0.8);
 
 }
@@ -256,7 +256,7 @@ body {
   width: 100%;
   font-size: 25px;
   color: #ffcc66;
-  font-family: 'Shantell Sans', sans-serif;
+  font-family: inherit;
   border: 2px solid #cc9a2c;
   border-radius: 30px;
   padding: 20px;

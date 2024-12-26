@@ -241,6 +241,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             
             await self.send(json.dumps({"type": "connected", "data": self.player}))
             if len(connected_users) >= 2:
+                print("len(connected_users) >= 2 .............")
                 try:
                     user1 = connected_users.popleft()
                     user2 = connected_users.popleft()
@@ -264,8 +265,13 @@ class GameConsumer(AsyncWebsocketConsumer):
 
                     # Add players to match-specific group
                     if user1 and user2:
+                        print("self.match_name", self.match_name)
                         await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
                         await self.channel_layer.group_add(self.match_name, user2["channel_name"])
+                        print("user1[channel_name]", user1["channel_name"])
+                        print("user2[channel_name]", user2["channel_name"])
+                        print("user1[username]", user1["username"])
+                        print("user2[username]", user2["username"])
                         await self.channel_layer.group_send(self.match_name, {
                                 "type": "match_ready",
                                 "user1": user1,
@@ -293,6 +299,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         })) 
 
     async def match_ready(self, event):
+        print("send msg to ", event["user1"])
         await self.send(text_data=json.dumps({
             "type": "match_ready",
             "user1": event["user1"],
@@ -374,6 +381,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Failed to send message: {e}")
     async def receive(self, text_data):
+
         if not self.game_state:
             return
             
