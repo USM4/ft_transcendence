@@ -12,6 +12,8 @@ export const GameSocketProvider = ({ children }) => {
     const pathname = location.pathname;
     const [isReady, setIsReady] = useState(false);
     const [message, setMessage] = useState(null);
+    const { target, type, opponent} = location.state || {
+    };
     const [dataPlayers, setDataPlayers] = useState({
       user1: {
           username: user?.username,
@@ -31,8 +33,6 @@ export const GameSocketProvider = ({ children }) => {
             pathname !== "/tournament/options/game/matchMaking" &&
             pathname !== "/tournament/options/game/online") {
             console.log("wsRef.current", wsRef.current);
-            console.log("pathname", pathname);
-            console.log("haaad close");
             wsRef.current.close();
             wsRef.current = null;
             setMessage(null);
@@ -41,7 +41,13 @@ export const GameSocketProvider = ({ children }) => {
             (pathname === "/tournament/options/game/matchMaking" || 
             pathname === "/tournament/options/game/online")) {
                 
-            const socket = new WebSocket("ws://localhost:8000/ws/game/");
+            let socket = null 
+            if (type && type === "game_invite")
+                socket = new WebSocket(`ws://localhost:8000/ws/game/?type=invite&opponent=${opponent}`);
+            else if (target)
+                socket = new WebSocket(`ws://localhost:8000/ws/game/?type=invited&opponent=${target}`);
+            else
+                socket = new WebSocket("ws://localhost:8000/ws/game/?type=random");
             
             socket.onopen = () => {
                 console.log("WebSocket connection established for Game.");
@@ -55,7 +61,6 @@ export const GameSocketProvider = ({ children }) => {
             };
             socket.onmessage = (event) =>{
               const data = JSON.parse(event.data)
-              console.log("+++++++++++++DATA+++++++++++++++++", data)
               setMessage(data)
             }
             socket.onerror = (error) => {
