@@ -73,7 +73,7 @@ function NotificationsToggle({ displayNotification }) {
     } else if (notification.notification_type === 'game_invite') {
       console.log("Game invite accepted----------->", notification);
 
-      navigate('/tournament/options/game/matchMaking', { state: { target: notification.sender} })
+      navigate('/tournament/options/game/matchMaking', { state: { target: notification.sender_id} })
     }
     setNotification((prevNotifications) =>
       prevNotifications.filter((n) => n.id !== notification.id)

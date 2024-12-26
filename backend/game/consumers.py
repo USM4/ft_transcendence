@@ -9,12 +9,15 @@ from django.db import models
 from django.db.models import Q 
 from collections import deque
 from game.models import Game
+from urllib.parse import parse_qs
 
 connected_users = deque()  # list of connected clients
+invited_users = deque()  # list of connected clients
 connected_users_set = set()  # set of connected clients
 user_channels = {}  # map of user to channel name
 game_states = {}  # Dictionary to store GameState instances for each match
 max_score = 2
+
 
 class GameState:
     def __init__(self, match_name, consumer=None):
@@ -221,6 +224,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.match_name = None
         self.game_state = None
+        self.stored_player1 = None
+        self.stored_player2 = None
 
     async def connect(self):
         self.player = {
@@ -231,22 +236,45 @@ class GameConsumer(AsyncWebsocketConsumer):
             "match_name": "",
             "channel_name": self.channel_name,
         }
+        query_string = self.scope['query_string'].decode()
+        query_params = parse_qs(query_string)
+        game_type = query_params.get('type', [None])[0]
+        opponent = query_params.get('opponent', [None])[0]
         
         await self.accept()
         
         user_exists = any(user['id'] == self.player['id'] for user in connected_users)
-        print("-------------", connected_users)
-        print("*************************", user_exists)
         if not user_exists:
             self.player["numberPlayer"] = "1" if len(connected_users) % 2 == 0 else "2"
-            connected_users.append(self.player)
-            print("-------------", connected_users)
+            if (game_type == "invite"):
+                player = await database_sync_to_async(Client.objects.get)(username=opponent)
+                invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else "http://localhost:8000/media/avatars/anonyme.png",
+                                                                            "numberPlayer": "",
+                                                                            "id": player.id,
+                                                                            "match_name": "",
+                                                                            "channel_name": ""}})
+            elif (game_type == "invited"):
+                player = await database_sync_to_async(Client.objects.get)(id=opponent)
+                for invitation in invited_users:
+                    if (invitation["player1"]['username'] == self.player['username'] and invitation["player2"]['username'] == player.username) or \
+                       (invitation["player1"]['username'] == player.username and invitation["player2"]['username'] == self.player['username']):
+                        # Match found
+                        # You can retrieve the stored players here
+                        invitation["player2"]['channel_name'] = self.channel_name
+                        self.stored_player1 = invitation["player1"]
+                        self.stored_player2 = invitation["player2"]
+                        break
+            else:
+                connected_users.append(self.player)
             await self.send(json.dumps({"type": "connected", "data": self.player}))
-            if len(connected_users) >= 2:
+            if len(connected_users) >= 2 or (self.stored_player1 and self.stored_player2):
                 try:
-                    user1 = connected_users.popleft()
-                    user2 = connected_users.popleft()
-                    
+                    if (self.stored_player1):
+                        user1 = self.stored_player1
+                        user2 = self.stored_player2
+                    else:
+                        user1 = connected_users.popleft()
+                        user2 = connected_users.popleft()
                     if user1['id'] == user2['id']:
                         connected_users.appendleft(user1)
                         await self.send(json.dumps({
@@ -268,6 +296,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                     if user1 and user2:
                         await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
                         await self.channel_layer.group_add(self.match_name, user2["channel_name"])
+                        print("user1[channel_name]", user1["channel_name"])
+                        print("user2[channel_name]", user2["channel_name"])
                         await self.channel_layer.group_send(self.match_name, {
                                 "type": "match_ready",
                                 "user1": user1,
@@ -282,7 +312,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                     "message": "Waiting for another player.",
                 }))
         else:
-            print("ConectedUsers------------------", connected_users)
             await self.send(json.dumps({
                 "type": "error",
                 "message": "You are already connected in another window."
@@ -296,6 +325,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         })) 
 
     async def match_ready(self, event):
+        print("zaba -------", event["user1"],event["user2"], event["match_name"])
+        print("chta saba ***********", self.player['username'], self.match_name)
         await self.send(text_data=json.dumps({
             "type": "match_ready",
             "user1": event["user1"],
@@ -312,7 +343,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         print("in disconnect", self.player)
         if self.match_name:
-            print("in ---------------------", self.match_name)
             if self.match_name in game_states:
                 if not game_states[self.match_name].is_active:
                     del game_states[self.match_name]
