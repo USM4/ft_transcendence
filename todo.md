@@ -1,8 +1,6 @@
 ****************Yahia******************
-> online status
-> recheck charts fetching
-> profile charts
->leaderboard
+> profile charts (Ongoing)
+
 
 **************Oussama********************
 > game over display (DONE)

@@ -31,7 +31,7 @@ function ProfileRadar() {
                 label: "Player Skills",
                 data: [80, 80, 100, 80, 100, 70, 100],
                 fill: true,
-                backgroundColor: 'rgba(255, 111, 97, 0.5)', // Adjust alpha for transparency as needed
+                backgroundColor: 'rgba(255, 111, 97, 0.5)',
                 borderColor: 'rgba(255, 111, 97, 1)',
                 pointBackgroundColor: 'rgba(255, 111, 97, 1)',
                 pointBorderColor: '#fff',
