@@ -25,7 +25,7 @@ const RemotePong = () => {
   const [loser , setLoser] = useState(false);
   const navigate = useNavigate();
 
-  const gameSocketRef = useContext(GameSocketContext);
+  const {wsRef, message} = useContext(GameSocketContext);
 
   const ballRef = useRef({
     x: 500,
@@ -80,12 +80,11 @@ const RemotePong = () => {
   };
 
 useEffect(() => {
-  if (gameSocketRef.current) {
-      const socket = gameSocketRef.current;
+  if (wsRef.current && message) {
+      const socket = wsRef.current;
       
       //console.log("+++++++++++++DATA+++++++++++++++++") 
-      const handleGameMessage = (event) => {
-          const data = JSON.parse(event.data);
+          const data = message;
           //console.log("+++++++++++++DATA+++++++++++++++++", data)
           switch(data.type) {
               case "game_state_update":
@@ -140,16 +139,8 @@ useEffect(() => {
               default:
           
           }
-      };
-
-      socket.addEventListener('message', handleGameMessage);
-      
-      return () => {
-  
-          socket.removeEventListener('message', handleGameMessage);
-      };
   }
-}, [gameSocketRef]);
+}, [wsRef, message]);
 
 
 const handleKeyDown = (e) => {
@@ -162,8 +153,8 @@ const handleKeyDown = (e) => {
       };
 
 
-      if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
-        gameSocketRef.current.send(JSON.stringify(message)); 
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
         // keyState.current[key] = true
       } else {
@@ -182,8 +173,8 @@ const handleKeyDown = (e) => {
       };
       
       
-      if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
-        gameSocketRef.current.send(JSON.stringify(message)); 
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = false; 
       } else {

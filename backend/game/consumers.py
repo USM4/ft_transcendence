@@ -235,10 +235,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
         
         user_exists = any(user['id'] == self.player['id'] for user in connected_users)
+        print("-------------", connected_users)
+        print("*************************", user_exists)
         if not user_exists:
             self.player["numberPlayer"] = "1" if len(connected_users) % 2 == 0 else "2"
             connected_users.append(self.player)
-            
+            print("-------------", connected_users)
             await self.send(json.dumps({"type": "connected", "data": self.player}))
             if len(connected_users) >= 2:
                 try:
@@ -280,6 +282,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     "message": "Waiting for another player.",
                 }))
         else:
+            print("ConectedUsers------------------", connected_users)
             await self.send(json.dumps({
                 "type": "error",
                 "message": "You are already connected in another window."
@@ -307,13 +310,16 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
+        print("in disconnect", self.player)
         if self.match_name:
+            print("in ---------------------", self.match_name)
             if self.match_name in game_states:
                 if not game_states[self.match_name].is_active:
                     del game_states[self.match_name]
                     return
                 game_states[self.match_name].is_active = False
                 del game_states[self.match_name]
+            print("remove", self.channel_name, "from", self.match_name)
             await self.channel_layer.group_discard(self.match_name, self.channel_name)
             # print (
             #     f"Player {self.player['username']} disconnected. Match: {self.match_name}"
@@ -327,10 +333,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                     "message": "Player disconnected",
                 }
             )
-            for user in list(connected_users):
-                if user['id'] == self.player['id']:
-                    connected_users.remove(user)
-                    break
+        for user in list(connected_users):
+            if user['id'] == self.player['id']:
+                connected_users.remove(user)
+                break
             
 
     async def game_over(self, event):
@@ -344,6 +350,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def player_disconnected(self, event):
+        print("inside player_disconnected")
         await self.send(text_data=json.dumps({
             "type": "player_disconnected",
             "message": event["message"],
