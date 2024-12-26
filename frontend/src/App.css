@@ -1145,6 +1145,24 @@ body {
   gap: 10px;
 }
 
+.profile-matches{
+  display: flex;
+
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.profile-match-history-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  cursor: pointer;
+}
+
 .prfl-match-history-results .profile-match-history-item{
   width: 100%;
   display: flex;
@@ -1152,7 +1170,7 @@ body {
   cursor: pointer;
 }
 
-.prfl-match-history-results .profile-match-history-item:hover{
+.prfl-match-history-results .profile-matches:hover{
   background-color: #bde052;
   color: #000;
 }
@@ -1175,20 +1193,20 @@ body {
 
 .profile-match-history-item .details-icon{
   display: flex;
+  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  gap: 30px;
 }
 
-.profile-match-history-item .details-icon button{
+.profile-match-history-item .profile-matches button{
   border: none;
   background-color: transparent;
   color:#D4FCB5;
-  padding: 0 20px;
   cursor: pointer;
   
 }
 
-.profile-match-history-item .details-icon button:hover{
+.profile-match-history-item .profile-matches button:hover{
   color: #000;
 }
 .profile-match-history-item .profile-match-history-score{
