@@ -37,15 +37,14 @@ const Matchmaking = () => {
     const location = useLocation();
     const pathname = location.pathname;
 
-    const gameSocketRef = useContext(GameSocketContext);
+    const {wsRef, message} = useContext(GameSocketContext);
 
 useEffect(() => {
-    if (gameSocketRef.current) {
-        const socket = gameSocketRef.current;
+    if (wsRef.current && message) {
+        const socket = wsRef.current;
+        console.log("in matchMaking", message);
         
-        const handleMatchmakingMessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log("+++++++++++++DATA+++++++++++++++++", data)
+            const data = message;
             switch(data.type) {
                 case "connected":
                     break;
@@ -63,15 +62,8 @@ useEffect(() => {
                     break;
 
             }
-        };
-
-        socket.addEventListener('message', handleMatchmakingMessage);
-        
-        return () => {
-            socket.removeEventListener('message', handleMatchmakingMessage);
-        };
     }
-}, [gameSocketRef, user?.username]);
+}, [wsRef, user?.username, message]);
     
     useEffect(() => {
         if (isReady) {

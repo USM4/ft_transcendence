@@ -30,6 +30,7 @@ function ProfileFriendList({ username, avatar,id }) {
         const data = await response.json();
         if (response.ok) {
             toast.success(data.message);
+            navigate("/tournament/options/game/matchMaking");
         }
         else {
             toast.error(data.error);
