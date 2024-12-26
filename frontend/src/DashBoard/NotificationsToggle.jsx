@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CheckIcon from '@mui/icons-material/Check';
 import { SocketContext } from "./SocketContext.jsx";
 import Swal from "sweetalert2";
@@ -6,8 +7,8 @@ import Swal from "sweetalert2";
 function NotificationsToggle({ displayNotification }) {
   const [notifications, setNotification] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
-  // const { socket } = useContext(SocketContext);
   const [notif, setNotif] = useState(false);
+  const navigate = useNavigate();
 
   const handleNotification = async () => {
     try {
@@ -63,16 +64,29 @@ function NotificationsToggle({ displayNotification }) {
     }
   };
 
+
+  const handleNotificationsSwitch = (notification) => {
+    console.log("Notification received:", notification);
+    if (notification.notification_type === 'friend_request') {
+      acceptFriendRequest(notification.id);
+      console.log("friend request accepted");
+    } else if (notification.notification_type === 'game_invite') {
+      console.log("Game invite accepted----------->", notification);
+
+      navigate('/tournament/options/game/matchMaking', { state: { target: notification.sender_id} })
+    }
+    setNotification((prevNotifications) =>
+      prevNotifications.filter((n) => n.id !== notification.id)
+    );
+  };
+
   useEffect(() => {
     handleNotification();
-    // console.log("Notification:", notif);
   }, [notif]);
 
   return (
     <div className="notif-invitation-text">
-      {/* {console.log("Current notifications:", notifications)} */}
       <div className="notifications-compo">
-        {/* {console.log("length ..................... :", notifications.length)} */}
         {notifications.length === 0 ? (
           <div style={{ color: "white" }}> No Notifications </div>
         ) : (
@@ -83,7 +97,7 @@ function NotificationsToggle({ displayNotification }) {
                 {notification.message}
               </div>
               <div className="notification-accept">
-                <button onClick={() => acceptFriendRequest(notification.id)}>
+                <button onClick={() => handleNotificationsSwitch(notification)}>
                   <CheckIcon style={{color: 'green'}}/>
                 </button>
               </div>
@@ -94,4 +108,5 @@ function NotificationsToggle({ displayNotification }) {
     </div>
   );
 }
+
 export default NotificationsToggle;

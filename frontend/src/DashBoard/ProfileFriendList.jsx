@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SmsIcon from '@mui/icons-material/Sms';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 function ProfileFriendList({ username, avatar,id }) {
@@ -11,6 +12,30 @@ function ProfileFriendList({ username, avatar,id }) {
     function handleSms() {
         navigate(`/chat`, { state: { friend } })
     };
+
+    const  inviteFriendToGame = async () => {
+        console.log("invite friend to game");
+        const response = await fetch("http://localhost:8000/auth/game_invite/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                to_user: friend.id,
+            }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            toast.success(data.message);
+            navigate("/tournament/options/game/matchMaking", {state: { type: "game_invite", opponent: username}});
+        }
+        else {
+            toast.error(data.error);
+        }
+    }
+
+
     return (
         <div className="profile-friend-item" >
             <div className="profile-friend-info" >
@@ -22,7 +47,10 @@ function ProfileFriendList({ username, avatar,id }) {
             </div>
             <div className="dm-friend">               
                 <button onClick={handleSms} className="invite-btn"><SmsIcon /></button>
-                <button className="invite-btn"><SportsKabaddiIcon /></button>
+                <button className="invite-btn"
+                    onClick={inviteFriendToGame}>
+                    <SportsKabaddiIcon />
+                </button>
             </div>
         </div >
     );

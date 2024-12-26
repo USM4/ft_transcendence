@@ -260,34 +260,55 @@ class SendFriendRequest(APIView):
             FriendShip.objects.filter(from_user=to_user, to_user=from_user).update(status='pending')
 
         # Check if a notification for this friend request already exists
-        if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").exists():
-            Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request ")
+        print("waaaaaa3")
+        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ").exists():
+            print("create new notif")
+            Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a friend request ", notification_type='friend_request', receiver=to_user)
         else:
-            Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").update(is_read=False)
+            print("notif already exist")
+            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ").update(is_read=False)
         return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
     def get(self, request):
-        notifications = Notification.objects.filter(user=request.user, is_read=False)
-        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
+        notifications = Notification.objects.filter(receiver=request.user, is_read=False)
+        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at, 'notification_type': n.notification_type, 'sender_id': n.sender_id} for n in notifications]
         return Response(data)
+
+class NotificationGameInvite(APIView):
+    def post(self, request):
+        from_user = request.user
+        to_user = request.data.get('to_user')
+        print("from_user", from_user)
+        print("to_user", to_user)
+        try:
+            to_user = Client.objects.get(id=to_user)
+        except Client.DoesNotExist:
+            return Response({'error': 'Recipient user not found'}, status=status.HTTP_404_NOT_FOUND)
+        if not to_user:
+            return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ").exists():
+            Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a game invite ", notification_type='game_invite', receiver=to_user)
+        else:
+            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ").update(is_read=False)
+        return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
     def post(self, request):
         request_id = request.data.get('request_id')
         try:
-            user_id = Notification.objects.get(id=request_id).user.id
-            # print("user_id--------------->", user_id)
-            friend_request = FriendShip.objects.get(to_user=user_id, status='pending')
+            user_id = Notification.objects.get(id=request_id).sender.id
+            print("user_id--------------->", user_id)
+            friend_request = FriendShip.objects.get(from_user=user_id, status='pending')
             # print("accepeted friend request", friend_request)
             friend_request.status = 'accepted'
             friend_request.save()
             # print("friend_request.status", friend_request.status)
-            sender = friend_request.to_user
-            receiver = friend_request.from_user
+            sender = friend_request.from_user
+            receiver = friend_request.to_user
             Friend.objects.create(user=sender, friend=receiver,blocker=None)
             Friend.objects.create(user=receiver, friend=sender,blocker=None)
-            Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+            Notification.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
 
             #get the channel layer
             channel_layer = get_channel_layer()
