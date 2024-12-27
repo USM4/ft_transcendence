@@ -11,7 +11,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 function DashboardChart() {
   const { user } = useContext(UserDataContext);
 
-  console.log ("#################USERRR#######################", user)
+  // console.log ("#################USERRR#######################", user)
   const matche = user?.matchePlayed.map((matche, index) => `Matche${index + 1}`);
 
   const data = {
