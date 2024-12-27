@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import CheckIcon from '@mui/icons-material/Check';
 import { SocketContext } from "./SocketContext.jsx";
 import Swal from "sweetalert2";
@@ -9,6 +9,8 @@ function NotificationsToggle({ displayNotification }) {
   const [showNotification, setShowNotification] = useState(false);
   const [notif, setNotif] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   const handleNotification = async () => {
     try {
@@ -77,7 +79,7 @@ function NotificationsToggle({ displayNotification }) {
     } else if (notification.notification_type === 'game_invite') {
       console.log("Game invite accepted----------->", notification);
       acceptFriendRequest(notification);
-      navigate('/tournament/options/game/matchMaking', { state: { target: notification.sender_id} })
+      navigate('/tournament/options/game/matchMaking', { state: { target: notification.sender_id, old_pathname: pathname} })
     }
     setNotification((prevNotifications) =>
       prevNotifications.filter((n) => n.id !== notification.id)
