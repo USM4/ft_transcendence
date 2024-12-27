@@ -91,7 +91,7 @@ class GameState:
             },
         }
     def set_player_ids(self, player1_id, player2_id):
-        print("user1['id'], user2['id']----------------->",  player1_id, player2_id)
+        # print("user1['id'], user2['id']----------------->",  player1_id, player2_id)
         self.pleft["id"] = player1_id
         self.pright["id"] = player2_id
 
@@ -245,33 +245,50 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
         
         user_exists = any(user['id'] == self.player['id'] for user in connected_users)
-        if not user_exists:
-            if (game_type == "invite"):
-                self.player["numberPlayer"] = "1"
-                player = await database_sync_to_async(Client.objects.get)(username=opponent)
-                invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else "http://localhost:8000/media/avatars/anonyme.png",
-                                                                            "numberPlayer": "2",
-                                                                            "id": player.id,
-                                                                            "match_name": "",
-                                                                            "channel_name": ""}})
-            elif (game_type == "invited"):
-                player = await database_sync_to_async(Client.objects.get)(id=opponent)
-                invitation_to_remove = None
-                for invitation in invited_users:
-                    if (invitation["player1"]['username'] == self.player['username'] and invitation["player2"]['username'] == player.username) or \
-                       (invitation["player1"]['username'] == player.username and invitation["player2"]['username'] == self.player['username']):
-                        # Match found
-                        invitation["player2"]['channel_name'] = self.channel_name
-                        self.stored_player1 = invitation["player1"]
-                        self.stored_player2 = invitation["player2"]
-                        invitation_to_remove = invitation
-                        print ("invitation", invitation)
-                        break
-                if invitation_to_remove:
-                    invited_users.remove(invitation_to_remove)
+        if (game_type == "invite"):
+            self.player["numberPlayer"] = "1"
+            player = await database_sync_to_async(Client.objects.get)(username=opponent)
+            invitation_to_remove = None
+            for invitation in invited_users:
+                if (invitation["player1"]['username'] == self.player['username'] and invitation["player2"]['username'] == player.username) or \
+                    (invitation["player1"]['username'] == player.username and invitation["player2"]['username'] == self.player['username']):
+                    # Match found
+                    invitation["player2"]['channel_name'] = self.channel_name
+                    self.stored_player1 = invitation["player1"]
+                    self.stored_player2 = invitation["player2"]
+                    invitation_to_remove = invitation
+                    break
+            if invitation_to_remove:
+                invited_users.remove(invitation_to_remove)
+                print ("invitation", invitation)
+
             else:
+                invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else "http://localhost:8000/media/avatars/anonyme.png",
+                                                                        "numberPlayer": "2",
+                                                                        "id": player.id,
+                                                                        "match_name": "",
+                                                                        "channel_name": ""}})
+        elif (game_type == "invited"):
+            player = await database_sync_to_async(Client.objects.get)(id=opponent)
+            invitation_to_remove = None
+            for invitation in invited_users:
+                if (invitation["player1"]['username'] == self.player['username'] and invitation["player2"]['username'] == player.username) or \
+                    (invitation["player1"]['username'] == player.username and invitation["player2"]['username'] == self.player['username']):
+                    # Match found
+                    invitation["player2"]['channel_name'] = self.channel_name
+                    self.stored_player1 = invitation["player1"]
+                    self.stored_player2 = invitation["player2"]
+                    invitation_to_remove = invitation
+                    print ("invitation", invitation)
+                    break
+            if invitation_to_remove:
+                invited_users.remove(invitation_to_remove)
+        if not user_exists:
+            if not (game_type == "invited" or game_type == "invite"):
                 self.player["numberPlayer"] = "1" if len(connected_users) % 2 == 0 else "2"
                 connected_users.append(self.player)
+            print("~~~ connected_users", connected_users)
+            print("~~~ invited_users", invited_users)
             await self.send(json.dumps({"type": "connected", "data": self.player}))
             if len(connected_users) >= 2 or (self.stored_player1 and self.stored_player2):
                 try:
@@ -303,11 +320,11 @@ class GameConsumer(AsyncWebsocketConsumer):
 
                     # Add players to match-specific group
                     if user1 and user2:
-                        print("self.match_name", self.match_name)
+                        # print("self.match_name", self.match_name)
                         await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
                         await self.channel_layer.group_add(self.match_name, user2["channel_name"])
-                        print("user1[channel_name]", user1["channel_name"])
-                        print("user2[channel_name]", user2["channel_name"])
+                        # print("user1[channel_name]", user1["channel_name"])
+                        # print("user2[channel_name]", user2["channel_name"])
                         await self.channel_layer.group_send(self.match_name, {
                                 "type": "match_ready",
                                 "user1": user1,
@@ -428,16 +445,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         if data["type"] == "key_press":
             key = data["key"].lower()
-            print ("key################", key)
-            print ("self.player[""]", self.player["username"])
-            print ("self.player[""]", self.player["numberPlayer"])
             if self.player["numberPlayer"] == "1":
                 if key == "w":
                    self.move_paddle("pleft", "up")
                 elif key == "s":
                    self.move_paddle("pleft", "down")
             else:
-                # print ("+++++++ARROWS+++++++")
                 if key == "arrowup":
                    self.move_paddle("pright", "up")
                 elif key == "arrowdown":
@@ -452,8 +465,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             )
 
     def move_paddle(self, paddle, direction):
-        print ("paddle" , paddle)
-        # print ("self" , self)
         if paddle == "pleft":
             if direction == "up":
                 self.game_state.pleft["y"] -= self.game_state.pleft["speed"]

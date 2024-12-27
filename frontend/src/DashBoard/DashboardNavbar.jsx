@@ -71,14 +71,14 @@ function DashboardNavbar() {
           }
         }
       });
-    } 
-
+    }
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setProfileToggle(false);
         setSearchToggle(false);
+        setShowNotification(false)
       }
     };
 
@@ -130,11 +130,11 @@ function DashboardNavbar() {
           </button>
           {showNotification && (
             <div className="notifications-container" ref={dropdownRef}>
-              <NotificationsToggle displayNotification={showNotification} />
+              <NotificationsToggle displayNotification={showNotification}/>
             </div>
           )}
         </div>
-        <div className="profile">
+        <div className="profile" ref={dropdownRef}>
           <button
             onClick={() => setProfileToggle(!profileToggle)}
             className="profile-btn"
