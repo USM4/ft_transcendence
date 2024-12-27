@@ -9,6 +9,7 @@ import player3Image from "../../../public/anonyme.png";
 
 import { UserDataContext } from "../../DashBoard/UserDataContext";
 import { GameSocketContext } from "./GameSocketContext";
+import toast from "react-hot-toast";
 
 const RemotePong = () => {
   const canvasRef = useRef(null);
@@ -16,8 +17,7 @@ const RemotePong = () => {
   if(localStorage.getItem("gameState") === null)
     localStorage.setItem("gameState", "Playing");
   const location = useLocation();
-  const { players} = location.state || {
-  };
+  const { players} = location.state || {};
   const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
@@ -27,6 +27,14 @@ const RemotePong = () => {
 
   const {wsRef, message} = useContext(GameSocketContext);
 
+  // if (!players)
+  // {
+  //   navigate("/tournament/options/game");
+  //   console.log("no players to play");
+  //   toast.error("Players Troubleshooting");
+  // }
+
+  const gameSocketRef = useContext(GameSocketContext);
   const ballRef = useRef({
     x: 500,
     y: 250,
@@ -104,7 +112,6 @@ useEffect(() => {
               case "score_update":
                 setScores({ leftPlayer: data.message.score.player1, rightPlayer: data.message.score.player2 })
               case "game_over":
-                  console.log("--------------game over data-------------",data);
                   const resetGame = () => {
                     navigate('tournament/options/game');
                   }

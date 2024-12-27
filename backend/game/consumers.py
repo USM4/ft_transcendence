@@ -294,6 +294,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
                     # Add players to match-specific group
                     if user1 and user2:
+                        print("self.match_name", self.match_name)
                         await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
                         await self.channel_layer.group_add(self.match_name, user2["channel_name"])
                         print("user1[channel_name]", user1["channel_name"])
@@ -411,6 +412,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Failed to send message: {e}")
     async def receive(self, text_data):
+
         if not self.game_state:
             return
             

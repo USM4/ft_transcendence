@@ -36,6 +36,7 @@ const Matchmaking = () => {
     });
     const location = useLocation();
     const pathname = location.pathname;
+    const target = location.state?.target || 'default_value';
 
     const {wsRef, message} = useContext(GameSocketContext);
 
