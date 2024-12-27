@@ -7,7 +7,6 @@
 
 **************Oussama********************
 >invite friend from chat w from dashboard hta hya 
-
 > paddles in the match making
 > pictures and names of the players in the local and the bot
 > dashboard user undefined in the dashboard  after updating the picture matlan
