@@ -1,13 +1,13 @@
+> add postgress (minor module)
 ****************Yahia******************
 > profile charts (Ongoing)
-
+> broadcast the message in the empty cnv
+> online(setinterval online friends )
+> update info profile katkhwr retrieve dluser fchat (block)
 
 **************Oussama********************
-> game over display (DONE)
-> disconnection fl match making (DONE)
-> the game counter (DONE)
 >invite friend from chat w from dashboard hta hya 
-> match details (calculate the start and the end )
 
-
-> add postgress (minor module)
+> paddles in the match making invite
+> pictures and names of the players in the local and the bot
+> dashboard user undefined in the dashboard  after updating the picture matlan
