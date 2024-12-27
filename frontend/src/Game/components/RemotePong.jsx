@@ -161,8 +161,8 @@ const handleKeyDown = (e) => {
 
 
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify(message)); 
-        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
+        wsRef.current.send(JSON.stringify(message));
+        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = true
       } else {
         console.error("WebSocket is not open, message not sent");
@@ -172,7 +172,6 @@ const handleKeyDown = (e) => {
   
   const handleKeyUp = (e) => {
     const key = e.key.toLowerCase();
-    
     if ( ["w", "s", "arrowup", "arrowdown"].includes(key) && keyState.current[key]) {
       const message = {
         type: "key_release",

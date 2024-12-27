@@ -64,8 +64,7 @@ function ProfileSettings() {
       if (response.ok) {
         const data = await response.json();
         // console.log("******************** avatar url ******************** ",data.user.avatar);
-
-        updateUser(data.user);
+        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.username}));
         toast.success(data.message);
       } else console.log("error");
     } catch (error) {
