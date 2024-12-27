@@ -91,19 +91,16 @@ class GameState:
             },
         }
     def set_player_ids(self, player1_id, player2_id):
-        # print("user1['id'], user2['id']----------------->",  player1_id, player2_id)
         self.pleft["id"] = player1_id
         self.pright["id"] = player2_id
 
     def update_ball(self):
         # Update ball position
-        # print("------------- {  self.consumer  }-------------", self.consumer.users)
 
 
         self.ball["x"] += self.ball["velocityX"]
         self.ball["y"] += self.ball["velocityY"]
 
-        # print(f"Ball position: ({self.ball['x']}, {self.ball['y']})")
 
         # Check for collisions with top and bottom walls
         if self.ball["y"] - self.ball["radius"] <= 0 or self.ball["y"] + self.ball["radius"] >= self.canvas_height:
@@ -166,7 +163,6 @@ class GameState:
     # ... rest of the GameState methods remain the same, but update group sends to use self.match_name ...
     async def increase_score(self, scoring_info):
         if not self.consumer:
-            print("Error: No consumer available")
             return
 
         player1 = await database_sync_to_async(Client.objects.get)(id=self.pleft["id"])
@@ -229,11 +225,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.stored_player2 = None
 
     async def game_init(self, game_type, opponent):
-        print("opponent", opponent)
-        print("game_type", game_type)
-        print("self.player", self.player)
         if (game_type == "invite"):
-            self.player["numberPlayer"] = "1"
             player = await database_sync_to_async(Client.objects.get)(username=opponent)
             invitation_to_remove = None
             for invitation in invited_users:
@@ -247,15 +239,18 @@ class GameConsumer(AsyncWebsocketConsumer):
                     break
             if invitation_to_remove:
                 invited_users.remove(invitation_to_remove)
+                self.player["numberPlayer"] = "2" 
 
 
             else:
+                self.player["numberPlayer"] = "1" 
                 invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else "http://localhost:8000/media/avatars/anonyme.png",
                                                                         "numberPlayer": "2",
                                                                         "id": player.id,
                                                                         "match_name": "",
                                                                         "channel_name": ""}})
         elif (game_type == "invited"):
+            self.player["numberPlayer"] = "2"
             player = await database_sync_to_async(Client.objects.get)(id=opponent)
             invitation_to_remove = None
             for user in list(connected_users):
@@ -290,8 +285,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                     else:
                         user1 = connected_users.popleft()
                         user2 = connected_users.popleft()
-                        print("print usr 1 _----->", user1)
-                        print("print usr 2 ------------>", user2)
                     if user1['id'] == user2['id']:
                         connected_users.appendleft(user1)
                         await self.send(json.dumps({
@@ -301,23 +294,18 @@ class GameConsumer(AsyncWebsocketConsumer):
                         return
                     # Create match name and initialize game state
                     self.match_name = f"{user1['username']}vs{user2['username']}"
-                    print("create match_name", self.match_name)
                     user1["match_name"] = self.match_name
                     user2["match_name"] = self.match_name
 
                     # Create new game state for this match
-                    # print("user1['id'], user2['id']", user1['id'], user2['id'])
                     game_states[self.match_name] = GameState(self.match_name, self)
                     game_states[self.match_name].set_player_ids(user1['id'], user2['id'])
                     self.game_state = game_states[self.match_name]
 
                     # Add players to match-specific group
                     if user1 and user2:
-                        print("adding user to self.match_name", self.match_name)
                         await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
                         await self.channel_layer.group_add(self.match_name, user2["channel_name"])
-                        print("user1[channel_name]", user1["channel_name"])
-                        print("user2[channel_name]", user2["channel_name"])
 
                         await self.channel_layer.group_send(self.match_name, {
                                 "type": "match_ready",
@@ -326,7 +314,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                                 "match_name": self.match_name
                         })
                 except Exception as e:
-                    print(f"Error during matchmaking: {e}")
             else:
                 await self.send(json.dumps({
                     "type": "waiting_for_players",
@@ -339,7 +326,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             }))
             await self.close()
     async def connect(self):
-        print(self.scope.get('user').username ,"**********************************enter to connect-------------------------------- with channel name", self.channel_name)
         self.player = {
             "username": self.scope.get('user').username,
             "avatar": self.scope.get('user').avatar if self.scope.get('user').avatar else "http://localhost:8000/media/avatars/anonyme.png",
@@ -353,9 +339,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         query_params = parse_qs(query_string)
         game_type = query_params.get('type', [None])[0]
         opponent = query_params.get('opponent', [None])[0]
-        print("before game init call")
         await self.accept()
-        print("after game init call")
         await self.game_init(game_type, opponent)
     
 
@@ -366,10 +350,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         })) 
 
     async def match_ready(self, event):
-        # print("zaba -------", event["user1"],event["user2"], event["match_name"])
-        # print("chta saba ***********", self.player['username'], self.match_name)
-        print("self.match_name", self.match_name)
-        print("self.usename", self.player['username'])
         await self.send(text_data=json.dumps({
             "type": "match_ready",
             "user1": event["user1"],
@@ -384,7 +364,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.game_loop())
 
     async def disconnect(self, close_code):
-        print("in disconnect", self.player)
         if self.match_name:
             if self.match_name in game_states:
                 if not game_states[self.match_name].is_active:
@@ -392,15 +371,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                     return
                 game_states[self.match_name].is_active = False
                 del game_states[self.match_name]
-            # print("remove", self.channel_name, "from", self.match_name)
             await self.channel_layer.group_discard(self.match_name, self.channel_name)
-            # print (
             #     f"Player {self.player['username']} disconnected. Match: {self.match_name}"
             #     f"Connected users: {connected_users}"
             #     f"Connected users set: {game_states}"
             # )
             if close_code != 4000:
-                print("send player_disconnected------------------------------", close_code)
                 await self.channel_layer.group_send(
                     self.match_name,
                     {
@@ -412,9 +388,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             if user['id'] == self.player['id']:
                 connected_users.remove(user)
                 break
-
-            
-
+        for invitation in invited_users:
+            if (invitation["player1"]['username'] == self.player['username']):
+                invited_users.remove(invitation)
     async def game_over(self, event):
         await self.send(text_data=json.dumps({
             "type": "game_over",
@@ -426,7 +402,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def player_disconnected(self, event):
-        # print("inside player_disconnected")
         await self.send(text_data=json.dumps({
             "type": "player_disconnected",
             "message": event["message"],
@@ -455,19 +430,17 @@ class GameConsumer(AsyncWebsocketConsumer):
                 "message": message,
             }))
         except Exception as e:
-            print(f"Failed to send message: {e}")
 
     async def receive(self, text_data):
-        print("in receive", text_data)
         data = json.loads(text_data)
-        print("data[type]", data.get("type"))
-        print("data[messge]", data.get("message"))
         if (data.get("type") == "invited"):
             await self.game_init(data.get("type"),data.get("message"))
+            return
         if not self.game_state:
             return
         data = json.loads(text_data)
         if data["type"] == "key_press":
+            
             key = data["key"].lower()
             if self.player["numberPlayer"] == "1":
                 if key == "w":
