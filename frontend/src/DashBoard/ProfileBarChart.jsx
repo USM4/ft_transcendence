@@ -9,7 +9,6 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, Tooltip, L
 function ProfileBarChart({ profile,is_user}) {
   let { user } = useContext(UserDataContext);
   const {friends, setFriends} = useContext(FriendDataContext);
-  const [durations, setDurations] = useState([]);
   if (is_user)
     friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
   

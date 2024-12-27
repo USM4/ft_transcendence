@@ -204,18 +204,12 @@ def get_game(user):
         else:
             time_difference = g.end_time - g.start_time
 
-        print(f"Time difference: {time_difference}")
-
         # Convert the difference to seconds and then to minutes
         seconds_spent = time_difference.total_seconds()
         minutes_spent = seconds_spent / 60
         milliseconds_spent = seconds_spent * 1000
 
-        if seconds_spent < 1:
-            print(f"Time difference is very small: {milliseconds_spent:.3f} milliseconds")
-        else:
-            print(f"Seconds spent: {seconds_spent:.2f}")
-            print(f"Minutes spent: {minutes_spent:.2f}")
+
         r.append([
             {
                 'id': g.game_id,
@@ -252,7 +246,10 @@ class DashboardView(APIView):
             'matchePlayed': game,
             'matcheWon': len([g for g in game if g[0]['winner'] == user.username]),
             'matcheLost': len([g for g in game if g[0]['winner'] != user.username]),
-            'xp': xp
+            'xp': xp,
+            'win_rate': len([g for g in game if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
+            'total_xp': sum(xp),
+            'average_xp': sum(xp) / len(xp) if len(xp) > 0 else 0
         })
 
 class SendFriendRequest(APIView):

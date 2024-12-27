@@ -18,10 +18,8 @@ function DashboardDoghnuts() {
   const { user } = useContext(UserDataContext);
   const matches = user?.matchePlayed.length;
   
-    const win = (user?.matcheWon / matches) * 100;
-    const lose = (user?.matcheLost / matches) * 100;
-    const matchedraw = matches - (user?.matcheWon + user?.matcheLost);
-    const draw = (matchedraw / matches) * 100;
+  const matchedraw = matches - (user?.matcheWon + user?.matcheLost);
+
     const data = {
         labels: [
           'Victory',
