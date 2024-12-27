@@ -1,11 +1,15 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import WinPage from "./WinPage";
 import Racket from "./Racket";
 import player1Image from "../../../public/skull.jpeg";
 import player2Image from "../../../public/realone.png";
+import { UserDataContext } from "../../DashBoard/UserDataContext.jsx";
 
 const PongGame = ({ isAIEnabled }) => {
+
+  const {user} = useContext(UserDataContext);
+
   let start_time = Date.now();
   const navigate = useNavigate();
   const canvasRef = useRef(null);
@@ -151,7 +155,7 @@ const PongGame = ({ isAIEnabled }) => {
     if (x - ballRef.current.radius <= 0) {
       setScores((prevScores) => {
         if (prevScores.rightPlayer + 1 === 5) {
-          setWinner("Player 1");
+          setWinner("Player 2");
         }
         return {
           ...prevScores,
@@ -167,7 +171,7 @@ const PongGame = ({ isAIEnabled }) => {
     } else if (x + ballRef.current.radius >= 1000) {
       setScores((prevScores) => {
         if (prevScores.leftPlayer + 1 === 5) {
-          setWinner("Player 2");
+          setWinner(user?.username);
         }
         return {
           ...prevScores,
@@ -181,34 +185,21 @@ const PongGame = ({ isAIEnabled }) => {
         y: 250,
       };
     }
-    // setScores(updatedScores);
   });
-
-  // useEffect(() => {
-  //   window.addEventListener('keydown', handleKeyDown);
-  //   window.addEventListener('keyup', handleKeyUp);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //     window.removeEventListener('keyup', handleKeyUp);
-  //   };
-  // }, []);
 
   useEffect(() => {
     const moveLeftRacket = (direction) => {
-      // setLeftRacket((prev) => {
+    
       let newY = leftRacket.current.y + direction * leftRacket.current.velocity;
       newY = Math.max(0, Math.min(newY, 500 - leftRacket.current.height));
       leftRacket.current = { ...leftRacket.current, y: newY };
-      // });
     };
 
     const moveRightRacket = (direction) => {
-      // setRightRacket((prev) => {
       let newY =
         rightRacket.current.y + direction * rightRacket.current.velocity;
       newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
       rightRacket.current = { ...rightRacket.current, y: newY };
-      // });
     };
     const handleKeyDown = (e) => {
       keys[e.key] = true; // Set the key state to true when pressed
@@ -286,19 +277,6 @@ const PongGame = ({ isAIEnabled }) => {
     };
   }, [canvasRef.current]);
 
-  // useEffect(() => {
-  //   const gameInterval = setInterval(() => {
-  //     if (!winner) {
-  //       updateBallPosition();
-  //       if (isAIEnabled) {
-  //         moveAIRacket();
-  //       }
-  //     }
-  //   }, 1);
-
-  //   return () => clearInterval(gameInterval);
-  // }, [updateBallPosition, moveAIRacket, winner, isAIEnabled]);
-
   const draw = useCallback(
     (context) => {
     },
@@ -316,14 +294,14 @@ const PongGame = ({ isAIEnabled }) => {
       <div className="player-profiles">
         <div className="player-card">
           <div className="player-name">
-            <h3>Player 1</h3>
+            <h3> {user?.username}</h3>
             <span className="status-dot active"></span>
           </div>
           <div className="score-container">
             <span className="score">{scores.leftPlayer}</span>
           </div>
           <div className="player-avatar">
-            <img src={player1Image} alt="Player 1" />
+            <img src={user?.avatar} alt="Player 1" />
             <div className="glow-effect"></div>
           </div>
         </div>

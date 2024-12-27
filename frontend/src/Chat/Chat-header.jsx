@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { ChatSocketContext } from './Chat.jsx'
 import { useContext } from 'react';
 import { Badge } from '@mui/material';
+import toast from 'react-hot-toast';
 
 export default function Chat_header({ selected }) {
     const [menu, setMenu] = useState(false);
@@ -61,8 +62,27 @@ export default function Chat_header({ selected }) {
     function handleProfileClicked() {
         navigate(`/dashboard/profile/${selected.username}`);
     }
-    function handleGameClicked() {
-        console.log('Game Invite Button Clicked');
+
+    const handleGameClicked = async () => {
+        console.log("invite selected to game", selected.username);
+        const response = await fetch("http://localhost:8000/auth/game_invite/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                to_user: selected.id,
+            }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            toast.success(data.message);
+            navigate("/tournament/options/game/matchMaking", {state: { type: "game_invite", opponent: selected.username}});
+        }
+        else {
+            toast.error(data.error);
+        }
     }
 
     return (
