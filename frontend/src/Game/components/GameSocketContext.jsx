@@ -7,6 +7,8 @@ export const GameSocketContext = createContext();
 
 export const GameSocketProvider = ({ children }) => {
     const wsRef = useRef(null);
+    const navigate = useNavigate();
+    const [countdown, setCountdown] = useState(3);
     const { user } = useContext(UserDataContext);
     const location = useLocation();
     const pathname = location.pathname;
@@ -24,8 +26,6 @@ export const GameSocketProvider = ({ children }) => {
           avatar: player3Image,
       },
   });
-  const navigate = useNavigate();
-
     useEffect(() => {
         // Only create socket if it doesn't exist and we're on the correct paths
         console.log("pathname outside", pathname);
@@ -52,6 +52,14 @@ export const GameSocketProvider = ({ children }) => {
             socket.onopen = () => {
                 console.log("WebSocket connection established for Game.");
             };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data)
+                console.log("data from onmessage",  data);
+                if (data.type === "match_ready")
+                    setIsReady(true)
+                    setDataPlayers(data)
+            }
 
             socket.onclose = () => {
                 console.log("WebSocket connection closed for Game.");
