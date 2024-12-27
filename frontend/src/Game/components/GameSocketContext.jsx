@@ -57,7 +57,6 @@ export const GameSocketProvider = ({ children }) => {
             socket.onmessage = (event) => {
                 const data = JSON.parse(event.data)
                 setMessage(data)
-                console.log("data from onmessage",  data);
                 if (data.type === "match_ready")
                     setIsReady(true)
                     setDataPlayers(data)
