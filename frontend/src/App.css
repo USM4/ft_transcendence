@@ -746,25 +746,87 @@ body {
   border-radius: 10px ;
 }
 
+.match-history-details-items:hover{
+  background-color: #115102;
+  color: #000;
+}
+.match-history-details-items section{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  gap: 10px;
+  color: #D4FCB5;
+}
+.match-history-details-items{
+  width: 100%;
+  color: #2dcf09;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  gap: 10px;
+  cursor: pointer;
+  font-family: fantasy;
+  font-size: 25px;
+}
 .match-history-details{
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  height: 100%;
+  gap: 20px;
+  width: 30%;
+  height: 40%;
   padding: 10px;
   overflow-y: auto;
   list-style: none;
-  color: rgb(238, 172, 93);
-}
-/* .match-history-details-menu{
   opacity: 0.9;
   display: flex;
-  border: 1px solid rgb(174, 255, 218);
+  border: 1px dashed rgb(6, 247, 42);
   border-radius: 5px;
   backdrop-filter: blur(10px);
-  background: black;
-} */
+  justify-content: center;
+}
+.match-history-details-info button:hover{
+  background-color: #02a810;
+  color: #000;
+  border-radius: 5px;
+}
+.match-history-details-info button{
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: transparent;
+  color: #2dcf09;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.3s;
+}
+.match-history-details-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000;
+  text-align: center;
+  gap: 10px;
+}
+.match-history-details-info {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  cursor: default;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
 .match-history-container{
   width: 100%;
   height: 100%;
@@ -1217,7 +1279,7 @@ body {
   align-items: center;
 }
 
-.profile-match-history-item .profile-matches button{
+.profile-match-history-item .profile-matches-button{
   border: none;
   background-color: transparent;
   color:#D4FCB5;

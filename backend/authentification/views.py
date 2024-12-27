@@ -197,6 +197,25 @@ def get_game(user):
     for g in game:
         player1 = g.player1_id if g.player1_id == user else g.player2_id
         player2 = g.player2_id if g.player2_id != user else g.player1_id
+
+        # Calculate the difference
+        if g.start_time > g.end_time:
+            time_difference = g.start_time - g.end_time
+        else:
+            time_difference = g.end_time - g.start_time
+
+        print(f"Time difference: {time_difference}")
+
+        # Convert the difference to seconds and then to minutes
+        seconds_spent = time_difference.total_seconds()
+        minutes_spent = seconds_spent / 60
+        milliseconds_spent = seconds_spent * 1000
+
+        if seconds_spent < 1:
+            print(f"Time difference is very small: {milliseconds_spent:.3f} milliseconds")
+        else:
+            print(f"Seconds spent: {seconds_spent:.2f}")
+            print(f"Minutes spent: {minutes_spent:.2f}")
         r.append([
             {
                 'id': g.game_id,
@@ -207,6 +226,7 @@ def get_game(user):
                 'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
                 'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
                 'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
+                'duration': milliseconds_spent,
             }
         ])
     return r
@@ -361,6 +381,18 @@ class FriendsList(APIView):
     def get(self, request):
         user = request.user
         friends = Friend.objects.filter(user=user).select_related('friend')
+        for friend in friends:
+            friend.friend.is_online = friend.friend.is_online
+
+        game = {}
+        for friend in friends:
+            game[friend.friend.id] = get_game(friend.friend)
+        xp = {}
+        for friend in friends:
+            xp[friend.friend.id] = []
+            for g in game[friend.friend.id]:
+                xp[friend.friend.id].append(g[0]['xp_gained_player1'])
+
         data = [
             {
                 'id': friend.friend.id,
@@ -368,7 +400,11 @@ class FriendsList(APIView):
                 'avatar': friend.friend.avatar if friend.friend.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
                 'is_blocked': friend.is_blocked,
                 'is_online': friend.friend.is_online,
-                'blocker': friend.blocker.username if friend.blocker else None
+                'blocker': friend.blocker.username if friend.blocker else None,
+                'matchePlayed': game[friend.friend.id],
+                'matcheWon': len([g for g in game[friend.friend.id] if g[0]['winner'] == friend.friend.username]),
+                'matcheLost': len([g for g in game[friend.friend.id] if g[0]['winner'] != friend.friend.username]),
+                'xp': xp[friend.friend.id]
             }
             for friend in friends
         ]

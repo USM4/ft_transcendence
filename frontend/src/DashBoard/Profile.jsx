@@ -181,6 +181,7 @@ function Profile() {
     }
   }, [username, user?.username]);
   const switchUser = stranger ? stranger_data : user;
+  console.log("SWITCH USER", stranger);
 
   return (
     <div className="profile-component">
@@ -232,8 +233,7 @@ function Profile() {
           <div className="prfl-chart">
             <div className="prfl-chart-title"> Statistics </div>
             <div className="profile-barchart">
-              {" "}
-              <ProfileBarChart />{" "}
+              <ProfileBarChart profile={switchUser} is_user={stranger}/>
             </div>
           </div>
           <div className="history-and-radar">
@@ -242,13 +242,13 @@ function Profile() {
                 <p>Match History</p>
               </div>
               <div className="prfl-match-history-results">
-                <ProfileMatchHistory />
+                <ProfileMatchHistory profile={switchUser} is_user={stranger}/>
               </div>
             </div>
             <div className="prfl-radar">
               <div className="prfl-radar-title">Skills</div>
               <div className="prfl-radar-component">
-                <ProfileRadar />
+                <ProfileRadar profile={switchUser} is_user={stranger}/>
               </div>
             </div>
           </div>

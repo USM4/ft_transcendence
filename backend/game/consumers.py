@@ -10,7 +10,7 @@ from django.db.models import Q
 from collections import deque
 from game.models import Game
 from urllib.parse import parse_qs
-
+from datetime import datetime
 connected_users = deque()  # list of connected clients
 invited_users = deque()  # list of connected clients
 connected_users_set = set()  # set of connected clients
@@ -203,6 +203,7 @@ class GameState:
             score_player2=self.pright["score"],
             xp_gained_player1=random.randint(100, 500) if winner.id == player2.id else random.randint(1000, 5000),
             xp_gained_player2=random.randint(100, 500) if winner.id == player1.id else random.randint(1000, 5000),
+            end_time=datetime.now(),
         )
 
         await self.consumer.channel_layer.group_send(
