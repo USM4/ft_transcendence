@@ -181,7 +181,7 @@ function Profile() {
     }
   }, [username, user?.username]);
   const switchUser = stranger ? stranger_data : user;
-  console.log("SWITCH USER", stranger);
+
 
   return (
     <div className="profile-component">

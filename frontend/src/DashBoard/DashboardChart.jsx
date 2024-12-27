@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import { Line } from 'react-chartjs-2';
 import { Scatter } from 'react-chartjs-2';
 import { colors } from "@mui/material";
@@ -10,7 +10,9 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 
 function DashboardChart() {
   const { user } = useContext(UserDataContext);
+  let isAllZero = false;
   const matche = user?.matchePlayed.map((matche, index) => `Matche${index + 1}`);
+
 
   const data = {
     labels: matche,
@@ -38,7 +40,8 @@ function DashboardChart() {
       },
     },
   };
-  const isAllZero = data?.datasets[0].data.every((value) => value === 0);
+  if (data?.datasets[0])
+    isAllZero = data.datasets[0].data.every((element) => element === 0);
 
   return (
     isAllZero ? <h1 className="data-chart-h1"> No data to display

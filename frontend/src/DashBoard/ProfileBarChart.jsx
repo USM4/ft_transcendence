@@ -15,10 +15,11 @@ function ProfileBarChart({ profile,is_user}) {
   
   const matche = user?.matchePlayed.map((matche, index) => {
     const name = `Matche${index + 1}`
-    return name;
+    const duration = matche[0]['duration'];
+    return [name, duration];
   });
   const data = {
-    labels: matche,
+    labels: matche.map((match) => match[0]),
     datasets: [
       {
         label: `${user?.username}'s activity`,
@@ -29,7 +30,7 @@ function ProfileBarChart({ profile,is_user}) {
       },
       {
         label: 'Duration',
-        data: [65, 100, 30, 66, 55, 90, 200],
+        data: matche.map((match) => match[1]),
         fill: false,
         backgroundColor: '#D4FCB5',
         borderColor: 'rgb(0, 191, 255) ',
@@ -43,7 +44,7 @@ function ProfileBarChart({ profile,is_user}) {
       legend: {
         position: 'bottom',
         labels: {
-            color: 'rgb(0, 0, 128)',
+          color: 'rgb(0, 191, 255)',
           },
       },
     },
