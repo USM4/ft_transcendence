@@ -1,11 +1,37 @@
 import React, { useContext } from "react";
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import { FriendDataContext } from "./FriendDataContext";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function DashboardFriends() {
     const { friends, setFriends } = useContext(FriendDataContext);
+    const navigate = useNavigate()
+    
+    const handleClick = (friendId, friendUsername) => () => {
+        handleDashboardGameInvite(friendId, friendUsername);
+    };
+    const handleDashboardGameInvite = async (friendId, friendUsername) => {
+            console.log("invite friend to game");
+            const response = await fetch("http://localhost:8000/auth/game_invite/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    to_user: friendId,
+                }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(data.message);
+                navigate("/tournament/options/game/matchMaking", {state: { type: "game_invite", opponent: friendUsername}});
+            }
+            else
+                toast.error(data.error);
+    };
 
-    console.log("FRIENDS", friends);
     return (
         <>
             {friends?.map((friend) => {
@@ -19,7 +45,10 @@ function DashboardFriends() {
                                         <p> {friend?.username} </p>
                                     </div>
                                     <div className="friend-invite">
-                                        <button className="invite-btn"><SportsKabaddiIcon /></button>
+                                        <button className="invite-btn"
+                                            onClick={handleClick(friend.id, friend.username)}
+                                         ><SportsKabaddiIcon />
+                                        </button>
                                     </div>
                                 </>
                             )

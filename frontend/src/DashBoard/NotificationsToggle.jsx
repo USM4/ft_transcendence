@@ -30,7 +30,7 @@ function NotificationsToggle({ displayNotification }) {
     }
   };
   
-  const acceptFriendRequest = async (requestId) => {
+  const acceptFriendRequest = async (notificationItem) => {
     try {
       const response = await fetch(
         "http://localhost:8000/auth/accept_friend_request/",
@@ -40,19 +40,23 @@ function NotificationsToggle({ displayNotification }) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ request_id: requestId }),
+          body: JSON.stringify({ request_id: notificationItem.id ,
+            type: notificationItem.notification_type,
+
+          }),
         }
       );
       if (response.ok) {
+        const data = await response.json();
         setNotification((prevNotifications) =>
           prevNotifications.filter(
-            (notification) => notification.id !== requestId
+            (notification) => notification.id !== notificationItem.id
           )
         );
         Swal.fire({
           position: "top-end",
           icon: "success",
-          title: "You are friends now !",
+          title: data.message,
           showConfirmButton: false,
           timer: 1500,
           background: '#000',
@@ -68,11 +72,11 @@ function NotificationsToggle({ displayNotification }) {
   const handleNotificationsSwitch = (notification) => {
     console.log("Notification received:", notification);
     if (notification.notification_type === 'friend_request') {
-      acceptFriendRequest(notification.id);
+      acceptFriendRequest(notification);
       console.log("friend request accepted");
     } else if (notification.notification_type === 'game_invite') {
       console.log("Game invite accepted----------->", notification);
-
+      acceptFriendRequest(notification);
       navigate('/tournament/options/game/matchMaking', { state: { target: notification.sender_id} })
     }
     setNotification((prevNotifications) =>

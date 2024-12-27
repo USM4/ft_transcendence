@@ -28,11 +28,11 @@ export const GameSocketProvider = ({ children }) => {
   });
     useEffect(() => {
         // Only create socket if it doesn't exist and we're on the correct paths
-        console.log("pathname outside", pathname);
+        // console.log("pathname outside", pathname);
         if (wsRef.current && 
             pathname !== "/tournament/options/game/matchMaking" &&
             pathname !== "/tournament/options/game/online") {
-            console.log("wsRef.current", wsRef.current);
+            // console.log("wsRef.current", wsRef.current);
             wsRef.current.close();
             wsRef.current = null;
             setMessage(null);
@@ -69,6 +69,7 @@ export const GameSocketProvider = ({ children }) => {
             };
             socket.onmessage = (event) =>{
               const data = JSON.parse(event.data)
+            //   console.log("message context", data);
               setMessage(data)
             }
             socket.onerror = (error) => {
