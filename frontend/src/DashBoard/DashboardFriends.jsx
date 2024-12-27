@@ -8,7 +8,7 @@ function DashboardFriends() {
     console.log("FRIENDS", friends);
     return (
         <>
-            {friends?.map((friend) => {
+            {friends?.map((friend) => {console.log(friend);
                 return (
                     <div key={friend?.id} className="dashboard-friend-item">
                         {
