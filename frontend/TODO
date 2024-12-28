@@ -1,2 +1,13 @@
-PROBLEMS:
--> when you enter  http://localhost:5173/dashboard/settings and not logged in should protect if the user in not None
+
+
+
+#ag1hegoat
+
+- the friend accept the invation the pendding status still visible
+- open chat page then remove friendship on the other user you can still send messages
+- optional ==> send message when ENTER
+- add something to tell that there is a notification
+- when block should remove the friend from the friend list on the dashboard
+- should not access blocked user profile by typing his URL
+- sometime even if you block someone you still be able to send directs (sometimes)
+- dakchii li kain flgame

@@ -23,8 +23,9 @@ function ProfileMatchHistory({ profile,is_user}) {
     
     return (
         <div className="profile-match-history-item">
-            {(user?.matchePlayed && user?.matchePlayed.length === 0) && <h1 className="data-chart-h1">No matches played yet</h1>}
-            {user?.matchePlayed.map((match, index) => {
+            {(!user?.matchePlayed || user?.matchePlayed.length === 0) ? <h1 className="data-chart-h1">No matches played yet</h1>
+                :
+            (user?.matchePlayed.map((match, index) => {
                 const player1 = match[0]['player1'];
                 const player2 = match[0]['player2'];
                 return (
@@ -73,7 +74,9 @@ function ProfileMatchHistory({ profile,is_user}) {
                         }
                     </div>
                 );
-            })}
+            }
+            ))
+            }
         </div>
     );
 

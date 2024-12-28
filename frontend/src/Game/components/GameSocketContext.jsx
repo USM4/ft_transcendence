@@ -14,7 +14,7 @@ export const GameSocketProvider = ({ children }) => {
     const pathname = location.pathname;
     const [isReady, setIsReady] = useState(false);
     const [message, setMessage] = useState(null);
-    const { target, type, opponent} = location.state || {
+    const { target, type, opponent, old_pathname} = location.state || {
     };
     const [dataPlayers, setDataPlayers] = useState({
       user1: {
@@ -28,11 +28,12 @@ export const GameSocketProvider = ({ children }) => {
   });
     useEffect(() => {
         // Only create socket if it doesn't exist and we're on the correct paths
-        console.log("pathname outside", pathname);
+        // console.log("pathname outside", pathname);
         if (wsRef.current && 
             pathname !== "/tournament/options/game/matchMaking" &&
             pathname !== "/tournament/options/game/online") {
-            console.log("wsRef.current", wsRef.current);
+            // console.log("wsRef.current", wsRef.current);
+            console.log("wsRef.current &&  pathname !== /tournament/options/game/matchMaking && pathname !== /tournament/options/game/online");
             wsRef.current.close();
             wsRef.current = null;
             setMessage(null);
@@ -55,7 +56,7 @@ export const GameSocketProvider = ({ children }) => {
 
             socket.onmessage = (event) => {
                 const data = JSON.parse(event.data)
-                console.log("data from onmessage",  data);
+                setMessage(data)
                 if (data.type === "match_ready")
                     setIsReady(true)
                     setDataPlayers(data)
@@ -67,29 +68,41 @@ export const GameSocketProvider = ({ children }) => {
                 //   wsRef.current.close();
                 wsRef.current = null;
             };
-            socket.onmessage = (event) =>{
-              const data = JSON.parse(event.data)
-              setMessage(data)
-            }
+            // socket.onmessage = (event) =>{
+            //   const data = JSON.parse(event.data)
+            // //   console.log("message context", data);
+            // }
             socket.onerror = (error) => {
                 console.error("WebSocket error:", error);
             };
 
             wsRef.current = socket;
         }
-
+        console.log("in context old_pathname", old_pathname);
+        console.log("in context pathname", pathname);
+        if (old_pathname === "/tournament/options/game/matchMaking" && pathname === "/tournament/options/game/matchMaking")
+          {
+              console.log("send to the backend");
+              wsRef.current.send(
+                  JSON.stringify({
+                      type: 'invited',
+                      message: `${target}`,
+                  })
+              )
+          }
         return () => {
             // Only close if we're navigating away from game pages
 
             if (wsRef.current && 
                 !pathname.includes("/tournament/options/game/")) {
                 console.log("Closing WebSocket connection");
+                console.log("in return of the useEffect");
                 wsRef.current.close();
                 wsRef.current = null;
                 setMessage(null);
             }
         };
-    }, [user, pathname]);
+    }, [user, pathname, old_pathname]);
     useEffect(() => {
       if (isReady) {
 

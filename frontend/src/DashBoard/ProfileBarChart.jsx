@@ -12,11 +12,11 @@ function ProfileBarChart({ profile,is_user}) {
   if (is_user)
     friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
   
-  const matche = user?.matchePlayed.map((matche, index) => {
+  const matche = user?.matchePlayed ? user?.matchePlayed.map((matche, index) => {
     const name = `Matche${index + 1}`
     const duration = matche[0]['duration'];
     return [name, duration];
-  });
+  }) : [];
   const data = {
     labels: matche.map((match) => match[0]),
     datasets: [

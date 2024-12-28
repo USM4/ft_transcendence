@@ -34,17 +34,11 @@ const Matchmaking = () => {
         username: "player2",
         avatar: player2Image,
     });
-    const location = useLocation();
-    const pathname = location.pathname;
-    const target = location.state?.target || 'default_value';
-
     const {wsRef, message} = useContext(GameSocketContext);
 
 useEffect(() => {
     if (wsRef.current && message) {
-        const socket = wsRef.current;
         console.log("in matchMaking", message);
-        
             const data = message;
             switch(data.type) {
                 case "connected":
