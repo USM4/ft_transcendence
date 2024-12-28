@@ -34,15 +34,13 @@ function ProfileRadar({ profile,is_user}) {
             'Total Games Played',
             'Games Won',
             'Win Rate',
-            'Average Score',
-            'Total XP Gained',
-            
+            'Total Minutes Spent',
         ],
         datasets: 
         [
             {
                 label: "Player Skills",
-                data: [user?.matchePlayed ? user?.matchePlayed.length : 0, user?.matcheWon, user?.win_rate, user?.average_xp, user?.total_xp],
+                data: [user?.matchePlayed ? user?.matchePlayed.length : 0, user?.matcheWon, user?.win_rate,  user?.total_time_spent],
                 fill: true,
                 backgroundColor: 'rgba(255, 111, 97, 0.5)',
                 borderColor: 'rgba(255, 111, 97, 1)',

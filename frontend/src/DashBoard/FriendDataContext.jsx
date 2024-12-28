@@ -27,6 +27,15 @@ function FriendDataProvider ({ children }) {
         }
       }
       fetchFriendList();
+
+      const timer = setInterval(() => {
+        console.log("Fetching friends (via timer)");
+        fetchFriendList();
+      }, 20000); 
+  
+      return () => {
+        clearInterval(timer);
+      };
   }, [pathname]);
   return (
     <FriendDataContext.Provider value={{ friends, setFriends}}>
