@@ -198,17 +198,18 @@ def get_game(user):
         player1 = g.player1_id if g.player1_id == user else g.player2_id
         player2 = g.player2_id if g.player2_id != user else g.player1_id
 
-        # Calculate the difference
-        if g.start_time > g.end_time:
-            time_difference = g.start_time - g.end_time
+
+        if g.end_time:
+            time_difference = abs(g.end_time - g.start_time)
         else:
-            time_difference = g.end_time - g.start_time
+            time_difference = timedelta(seconds=0)
 
-        # Convert the difference to seconds and then to minutes
-        seconds_spent = time_difference.total_seconds()
-        minutes_spent = seconds_spent / 60
-        milliseconds_spent = seconds_spent * 1000
+        total_seconds = time_difference.total_seconds()
+        hours = int(total_seconds // 3600)
+        minutes = int((total_seconds % 3600) // 60)
+        seconds = int(total_seconds % 60)
 
+        formatted_duration = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
 
         r.append([
             {
@@ -220,7 +221,8 @@ def get_game(user):
                 'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
                 'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
                 'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
-                'duration': milliseconds_spent,
+                'duration': formatted_duration,
+                'total_seconds': total_seconds,
             }
         ])
     return r
@@ -248,8 +250,8 @@ class DashboardView(APIView):
             'matcheLost': len([g for g in game if g[0]['winner'] != user.username]),
             'xp': xp,
             'win_rate': len([g for g in game if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
-            'total_xp': sum(xp),
-            'average_xp': sum(xp) / len(xp) if len(xp) > 0 else 0
+            'average_xp': sum(xp) / len(xp) if len(xp) > 0 else 0,
+            'total_time_spent': int(sum([g[0]['total_seconds'] for g in game]) // 3600) if int(sum([g[0]['total_seconds'] for g in game])) // 3600 > 0 else (sum([g[0]['total_seconds'] for g in game]) % 3600) // 60,
         })
 
 class SendFriendRequest(APIView):
@@ -407,8 +409,8 @@ class FriendsList(APIView):
                 'matcheLost': len([g for g in game[friend.friend.id] if g[0]['winner'] != friend.friend.username]),
                 'xp': xp[friend.friend.id],
                 'win_rate': len([g for g in game[friend.friend.id] if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
-                'total_xp': sum(xp[friend.friend.id]) if len(xp[friend.friend.id]) > 0 else 0,
-                'average_xp': sum(xp[friend.friend.id]) / len(xp[friend.friend.id]) if len(xp[friend.friend.id]) > 0 else 0
+                'average_xp': sum(xp[friend.friend.id]) / len(xp[friend.friend.id]) if len(xp[friend.friend.id]) > 0 else 0,
+                'total_time_spent': int(sum([g[0]['total_seconds'] for g in game[friend.friend.id]]) // 3600) if int(sum([g[0]['total_seconds'] for g in game[friend.friend.id]])) // 3600 > 0 else int((sum([g[0]['total_seconds'] for g in game[friend.friend.id]]) % 3600) // 60),
             }
             for friend in friends
         ]
