@@ -278,12 +278,12 @@ class SendFriendRequest(APIView):
 
         # Check if a notification for this friend request already exists
         print("waaaaaa3")
-        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ").exists():
+        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", receiver=to_user).exists():
             print("create new notif")
             Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a friend request ", notification_type='friend_request', receiver=to_user)
         else:
             print("notif already exist")
-            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ").update(is_read=False)
+            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", receiver=to_user).update(is_read=False)
         return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
@@ -304,17 +304,21 @@ class NotificationGameInvite(APIView):
             return Response({'error': 'Recipient user not found'}, status=status.HTTP_404_NOT_FOUND)
         if not to_user:
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
-        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ").exists():
+        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).exists():
             Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a game invite ", notification_type='game_invite', receiver=to_user)
         else:
-            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ").update(is_read=False)
+            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
         return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
     def post(self, request):
+        request_type = request.data.get('type')
         request_id = request.data.get('request_id')
+        user_id = Notification.objects.get(id=request_id).sender.id
         try:
-            user_id = Notification.objects.get(id=request_id).sender.id
+            if request_type == "game_invite":
+                isread = Notification.objects.filter(id=request_id).update(is_read=True)
+                return Response({'message': 'game invite accepted'},  status=200)
             print("user_id--------------->", user_id)
             friend_request = FriendShip.objects.get(from_user=user_id, status='pending')
             # print("accepeted friend request", friend_request)
@@ -401,7 +405,10 @@ class FriendsList(APIView):
                 'matchePlayed': game[friend.friend.id],
                 'matcheWon': len([g for g in game[friend.friend.id] if g[0]['winner'] == friend.friend.username]),
                 'matcheLost': len([g for g in game[friend.friend.id] if g[0]['winner'] != friend.friend.username]),
-                'xp': xp[friend.friend.id]
+                'xp': xp[friend.friend.id],
+                'win_rate': len([g for g in game[friend.friend.id] if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
+                'total_xp': sum(xp[friend.friend.id]) if len(xp[friend.friend.id]) > 0 else 0,
+                'average_xp': sum(xp[friend.friend.id]) / len(xp[friend.friend.id]) if len(xp[friend.friend.id]) > 0 else 0
             }
             for friend in friends
         ]

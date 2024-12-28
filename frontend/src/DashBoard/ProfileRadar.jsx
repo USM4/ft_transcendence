@@ -42,7 +42,7 @@ function ProfileRadar({ profile,is_user}) {
         [
             {
                 label: "Player Skills",
-                data: [user.matchePlayed.length, user?.matcheWon, user?.win_rate, user?.average_xp, user?.total_xp],
+                data: [user?.matchePlayed ? user?.matchePlayed.length : 0, user?.matcheWon, user?.win_rate, user?.average_xp, user?.total_xp],
                 fill: true,
                 backgroundColor: 'rgba(255, 111, 97, 0.5)',
                 borderColor: 'rgba(255, 111, 97, 1)',
@@ -61,11 +61,10 @@ function ProfileRadar({ profile,is_user}) {
         }
     },
     scales: {
-        
         r: {
-            // beginAtZero: true,
+            beginAtZero: true,
             ticks: {
-                stepSize: 1,
+                stepSize: 10,
                 color: 'black',
                 backdropColor: 'rgba(0, 0, 0, 0)',
             }
