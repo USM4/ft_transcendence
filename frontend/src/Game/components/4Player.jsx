@@ -283,12 +283,11 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
             const newScores = { ...prevScores, [player]: prevScores[player] - 0.5 };
     
             if (newScores[player] <= 0) {
-                setActivePlayers((prev) => ({ ...prev, [player]: false }));
 
                 const scoresArray = Object.entries(newScores);
-                const maxScore = Math.max(...scoresArray.map(([_, score]) => score));
+                const maxScore = Math.min(...scoresArray.map(([_, score]) => score));
                 const winnerPlayer = scoresArray.find(([_, score]) => score === maxScore)?.[0];
-    
+
                 setWinner(winnerPlayer);
             }
     
@@ -359,7 +358,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
     );
 
     if (winner) {
-        return <WinPage winner={winner} resetGame={resetGame} />;
+        return <WinPage winner={winner} text={"lose!"} resetGame={resetGame} />;
       }
 
     return (

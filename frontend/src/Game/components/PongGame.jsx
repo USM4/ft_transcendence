@@ -147,7 +147,7 @@ const PongGame = ({ canvasWidth = 1000, canvasHeight = 500 }) => {
     );
 
     if (winner) {
-        return <WinPage winner={winner} resetGame={() => window.location.reload()} />;
+        return <WinPage winner={winner} text={"wins!"} resetGame={() => window.location.reload()} />;
     }
 
     return (
