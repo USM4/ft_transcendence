@@ -11,7 +11,7 @@ export default function Chat() {
 
   useEffect(() => {
     const establishConnection = () => {
-      const socket = new WebSocket(`ws://localhost:8000/ws/chat/`);
+      const socket = new WebSocket(`wss://localhost:443/ws/chat/`);
       socket.onopen = () => {
         setChatsocket(socket);
         console.log("Chat connection established.")

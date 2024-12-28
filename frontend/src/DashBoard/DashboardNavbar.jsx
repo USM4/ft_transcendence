@@ -35,7 +35,7 @@ function DashboardNavbar() {
     }
     
     try {
-      const response = await fetch(`http://localhost:8000/auth/search/${e.target.value}`);
+      const response = await fetch(`https://localhost:443/auth/search/${e.target.value}`);
       const results = await response.json();
       setSearchResults(results);
       setSearchToggle(true);
@@ -61,7 +61,7 @@ function DashboardNavbar() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const response = await fetch("http://localhost:8000/auth/logout/", {
+            const response = await fetch("https://localhost:443/auth/logout/", {
               method: "POST",
               credentials: "include",
             });

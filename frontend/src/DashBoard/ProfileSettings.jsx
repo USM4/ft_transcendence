@@ -30,8 +30,8 @@ function ProfileSettings() {
     console.log("save code", code);
     console.log("is enabled", isEnabled);
     const endpoint = isEnabled
-    ? "http://localhost:8000/auth/activate2fa/"
-    : "http://localhost:8000/auth/desactivate2fa/";
+    ? "https://localhost:443/auth/activate2fa/"
+    : "https://localhost:443/auth/desactivate2fa/";
     try {
       const response = await fetch(`${endpoint}`, {
         method: "POST",
@@ -56,7 +56,7 @@ function ProfileSettings() {
   };
   const updateInfos = async () => {
     try {
-      const response = await fetch("http://localhost:8000/auth/update_infos/", {
+      const response = await fetch("https://localhost:443/auth/update_infos/", {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -76,7 +76,7 @@ function ProfileSettings() {
 
   const getQRCode = async () => {
     try {
-      const response = await fetch("http://localhost:8000/auth/2fa/", {
+      const response = await fetch("https://localhost:443/auth/2fa/", {
         method: "GET",
         credentials: "include",
       });

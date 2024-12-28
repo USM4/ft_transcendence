@@ -11,7 +11,7 @@ COPY . .
 
 # Copy project files
 
-EXPOSE 5173
+# EXPOSE 5173
 
 CMD ["./setup.sh"]
 # CMD ["sleep", "infinity"]

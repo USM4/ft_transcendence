@@ -12,7 +12,7 @@ function UserDataProvider({ children }) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await fetch("http://localhost:8000/auth/dashboard/", {
+        const response = await fetch("https://localhost:443/auth/dashboard/", {
           method: "GET",
           credentials: "include",
         });

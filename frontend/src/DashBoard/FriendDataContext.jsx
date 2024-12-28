@@ -11,7 +11,7 @@ function FriendDataProvider ({ children }) {
   useEffect(() => {
       console.log('fetching friends');
       const fetchFriendList = async () => {
-        const response = await fetch('http://localhost:8000/auth/friends/',
+        const response = await fetch('https://localhost:443/auth/friends/',
         {
             method: 'GET',
             credentials: 'include',

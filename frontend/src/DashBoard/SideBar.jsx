@@ -50,7 +50,7 @@ function SideBar({username}) {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const response = await fetch("http://localhost:8000/auth/logout/", {
+            const response = await fetch("https://localhost:443/auth/logout/", {
               method: "POST",
               credentials: "include",
             });

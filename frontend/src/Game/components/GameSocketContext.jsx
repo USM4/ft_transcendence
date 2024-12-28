@@ -44,11 +44,11 @@ export const GameSocketProvider = ({ children }) => {
                 
             let socket = null 
             if (type && type === "game_invite")
-                socket = new WebSocket(`ws://localhost:8000/ws/game/?type=invite&opponent=${opponent}`);
+                socket = new WebSocket(`wss://localhost:443/ws/game/?type=invite&opponent=${opponent}`);
             else if (target)
-                socket = new WebSocket(`ws://localhost:8000/ws/game/?type=invited&opponent=${target}`);
+                socket = new WebSocket(`wss://localhost:443/ws/game/?type=invited&opponent=${target}`);
             else
-                socket = new WebSocket("ws://localhost:8000/ws/game/?type=random");
+                socket = new WebSocket("wss://localhost:443/ws/game/?type=random");
             
             socket.onopen = () => {
                 console.log("WebSocket connection established for Game.");

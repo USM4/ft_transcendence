@@ -78,7 +78,7 @@ function Profile() {
 
   const sendFriendRequest = async (to_user) => {
     const response = await fetch(
-      "http://localhost:8000/auth/send_friend_request/",
+      "https://localhost:443/auth/send_friend_request/",
       {
         method: "POST",
         credentials: "include",
@@ -119,7 +119,7 @@ function Profile() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const response = await fetch(
-          "http://localhost:8000/auth/remove_friend/",
+          "https://localhost:443/auth/remove_friend/",
           {
             method: "POST",
             credentials: "include",
@@ -156,7 +156,7 @@ function Profile() {
     if (username !== user?.username) {
       const fetchStranger = async () => {
         const response = await fetch(
-          `http://localhost:8000/auth/profile/${username}/`,
+          `https://localhost:443/auth/profile/${username}/`,
           {
             method: "GET",
             credentials: "include",

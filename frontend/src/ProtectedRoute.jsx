@@ -8,7 +8,7 @@ const ProtectedRoute = ({ component: Component }) => {
     const verifyToken = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8000/auth/verify_token/",
+          "https://localhost:443/auth/verify_token/",
           {
             method: "GET",
             credentials: "include",

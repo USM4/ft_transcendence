@@ -15,7 +15,7 @@ function NotificationsToggle({ displayNotification }) {
   const handleNotification = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8000/auth/notifications/",
+        "https://localhost:443/auth/notifications/",
         {
           method: "GET",
           credentials: "include",
@@ -35,7 +35,7 @@ function NotificationsToggle({ displayNotification }) {
   const acceptFriendRequest = async (notificationItem) => {
     try {
       const response = await fetch(
-        "http://localhost:8000/auth/accept_friend_request/",
+        "https://localhost:443/auth/accept_friend_request/",
         {
           method: "POST",
           credentials: "include",

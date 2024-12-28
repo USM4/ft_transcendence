@@ -184,7 +184,7 @@ class GameLeaderboard(APIView):
             data.append({
                 'id': player_id,
                 'username': player.username,
-                'avatar': player.avatar if player.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                'avatar': player.avatar if player.avatar else 'https://localhost:443/media/avatars/anonyme.png',
                 'xp': xp
             })
 
@@ -213,8 +213,8 @@ def get_game(user):
         r.append([
             {
                 'id': g.game_id,
-                'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
-                'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'https://localhost:443/media/avatars/anonyme.png'},
+                'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'https://localhost:443/media/avatars/anonyme.png'},
                 'winner': g.winner.username,
                 'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
                 'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
@@ -240,7 +240,7 @@ class DashboardView(APIView):
             'id': user.id,
             'email': user.email,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+            'avatar': user.avatar if user.avatar else 'https://localhost:443/media/avatars/anonyme.png',
             'twoFa': user.is_2fa_enabled,
             'is_online': user.is_online,
             'matchePlayed': game,
@@ -347,7 +347,7 @@ class AcceptFriendRequest(APIView):
                             'friend': {
                                 'id': sender.id,
                                 'username': sender.username,
-                                'avatar': sender.avatar if sender.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                                'avatar': sender.avatar if sender.avatar else 'https://localhost:443/media/avatars/anonyme.png',
                                 # 'is_blocked': sender.is_blocked,
                                 'is_blocked': False,
                                 'is_online': sender.is_online
@@ -364,7 +364,7 @@ class AcceptFriendRequest(APIView):
                             'friend': {
                                 'id': receiver.id,
                                 'username': receiver.username,
-                                'avatar': receiver.avatar if receiver.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                                'avatar': receiver.avatar if receiver.avatar else 'https://localhost:443/media/avatars/anonyme.png',
                                 # 'is_blocked': receiver.is_blocked,
                                 'is_blocked': False,
                                 'is_online': receiver.is_online
@@ -398,7 +398,7 @@ class FriendsList(APIView):
             {
                 'id': friend.friend.id,
                 'username': friend.friend.username,
-                'avatar': friend.friend.avatar if friend.friend.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                'avatar': friend.friend.avatar if friend.friend.avatar else 'https://localhost:443/media/avatars/anonyme.png',
                 'is_blocked': friend.is_blocked,
                 'is_online': friend.friend.is_online,
                 'blocker': friend.blocker.username if friend.blocker else None,
@@ -418,7 +418,7 @@ class Search(APIView):
             {
                 'id': c.id,
                 'username': c.username,
-                'avatar': c.avatar if c.avatar else 'http://localhost:8000/media/avatars/anonyme.png'
+                'avatar': c.avatar if c.avatar else 'https://localhost:443/media/avatars/anonyme.png'
             }
             for c in clients
         ]
@@ -450,7 +450,7 @@ class Profile(APIView):
         return Response({
             'id': user.id,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+            'avatar': user.avatar if user.avatar else 'https://localhost:443/media/avatars/anonyme.png',
             'friendship_status': friendship_status,
             'is_online': user.is_online,
         })

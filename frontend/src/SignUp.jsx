@@ -16,7 +16,7 @@ function SignUp() {
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-        const response = await fetch('http://localhost:8000/auth/signup/',{
+        const response = await fetch('https://localhost:443/auth/signup/',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ function SocketContextProvider({ children }) {
 
         const establishConnection = () => {
             console.log("Establishing WebSocket connection... socketa dyal online status");
-            const ws = new WebSocket('ws://localhost:8000/ws/online_status/');
+            const ws = new WebSocket('wss://localhost:443/ws/online_status/');
 
             ws.onopen = () => {
                 console.log("---------{ WebSocket connection established }--------------");

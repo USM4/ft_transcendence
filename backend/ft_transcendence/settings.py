@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-w@)mu=t95zxg_&mu1l13+4d$rd9$4g0i65^1y8b&woqlvlk7st
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '0.0.0.0']
 
 # Application definition
 
@@ -53,8 +53,8 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = 'ft_transcendence.asgi.application'
 
 MIDDLEWARE = [
-    'authentification.middleware.JWTAuthFromCookieMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'authentification.middleware.JWTAuthFromCookieMiddleware',
     'authentification.middleware.RefreshTokenMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -164,6 +164,12 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost',
 ]
 
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+    'http://localhost'
+]
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -190,7 +196,7 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-SESSION_COOKIE_SAMESITE = None
-CSRF_COOKIE_SAMESITE = None 
+CSRF_COOKIE_SECURE = False    
+SESSION_COOKIE_SECURE = False    
+SESSION_COOKIE_SAMESITE = None    
+CSRF_COOKIE_SAMESITE = None

@@ -245,7 +245,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 			else:
 				self.player["numberPlayer"] = "1" 
-				invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else "http://localhost:8000/media/avatars/anonyme.png",
+				invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else "https://localhost:443/media/avatars/anonyme.png",
 																		"numberPlayer": "2",
 																		"id": player.id,
 																		"match_name": "",
@@ -330,7 +330,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = {
 			"username": self.scope.get('user').username,
-			"avatar": self.scope.get('user').avatar if self.scope.get('user').avatar else "http://localhost:8000/media/avatars/anonyme.png",
+			"avatar": self.scope.get('user').avatar if self.scope.get('user').avatar else "https://localhost:443/media/avatars/anonyme.png",
 			"numberPlayer": "",
 			"id": self.scope.get('user').id,
 			"match_name": "",

@@ -13,7 +13,7 @@ function DashboardFriends() {
     };
     const handleDashboardGameInvite = async (friendId, friendUsername) => {
             console.log("invite friend to game");
-            const response = await fetch("http://localhost:8000/auth/game_invite/", {
+            const response = await fetch("https://localhost:443/auth/game_invite/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

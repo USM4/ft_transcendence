@@ -9,7 +9,7 @@ function TwoFa() {
   const checkOtp = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/auth/check_otp/", {
+      const response = await fetch("https://localhost:443/auth/check_otp/", {
         method: "POST",
         credentials: "include",
         headers: {
