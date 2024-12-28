@@ -7,6 +7,7 @@ const ProtectedRoute = ({ component: Component }) => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
+        console.log("###############################----------------Setup complete. The environment is ready!---------------#######################################");
         const response = await fetch(
           "https://localhost:443/auth/verify_token/",
           {
@@ -28,7 +29,7 @@ const ProtectedRoute = ({ component: Component }) => {
 
   if (isAuthenticated === null) return <>Loading ... </>;
 
-  if (!isAuthenticated) return <Navigate to="/signin" />;
+  if (!isAuthenticated) return <Navigate to="/signin"/>;
 
   return <Component />;
 };

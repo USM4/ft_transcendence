@@ -53,8 +53,8 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = 'ft_transcendence.asgi.application'
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'authentification.middleware.JWTAuthFromCookieMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'authentification.middleware.RefreshTokenMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -114,7 +114,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
-    'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
+    'AUTH_COOKIE_SECURE': False,  # Use secure cookies in production
     'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HttpOnly
     'AUTH_COOKIE_PATH': '/',  # Available throughout the site
     'AUTH_COOKIE_SAMESITE': 'None',

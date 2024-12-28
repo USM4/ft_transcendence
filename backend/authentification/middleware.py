@@ -24,7 +24,7 @@ class RefreshTokenMiddleware(MiddlewareMixin):
         except Exception:
             # Access token is expired or invalid ghanrefreshih
             if refresh_token:
-                refresh_url = 'http://localhost:8000/auth/refresh/'
+                refresh_url = 'https://localhost:443/auth/refresh/'
                 headers = {'Content-Type': 'application/json'}
                 refresh_data = {'refresh': refresh_token}
                 # get a new access token from the refresh token

@@ -97,7 +97,8 @@ class ExtractCodeFromIntraUrl(APIView):
         print("SECRET ID :", SECRET_ID)
         client_id = CLIENT_ID
         client_secret = SECRET_ID
-        redirect_uri = 'http://localhost:8000/accounts/42school/login/callback/'
+        
+        redirect_uri = 'https://localhost/accounts/42school/login/callback/'
         # json li aytseft f request
         json_data = {
             'grant_type': 'authorization_code',
@@ -132,22 +133,22 @@ class ExtractCodeFromIntraUrl(APIView):
         access = str(refresh.access_token)
         if user.is_2fa_enabled:
             response = redirect('https://localhost/2fa')
-        else:       
+        else:
             response = redirect('https://localhost/dashboard')
-        response.set_cookie(
-            'client',
-            access,
-            httponly=True,
-            samesite='None',
-            secure=True,
-        )
-        response.set_cookie(
-            'refresh',
-            str(refresh),
-            httponly=True,
-            samesite='None',
-            secure=True,
-        )
+            response.set_cookie(
+                'client',
+                access,
+                httponly=True,
+                samesite='None',
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],  # Use secure setting
+            )
+            response.set_cookie(
+                'refresh',
+                str(refresh),
+                httponly=True,
+                samesite='None',
+                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],  # Use secure setting
+            )
         return response
 
 class VerifyTokenView(APIView):
@@ -164,7 +165,7 @@ class LogoutView(APIView):
         response.delete_cookie('client')
         response.delete_cookie('refresh')
         return response
-
+  
 class GameLeaderboard(APIView):
 
     def get(self, request):
@@ -228,8 +229,9 @@ def get_game(user):
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
+        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$user", user)
         if not user.is_authenticated:
-            return Response({'error': 'Unauthorized'}, status=401)
+            return Response({'error': 'Unauthorized', }, status=401)
         game = get_game(user)
 
         xp = []

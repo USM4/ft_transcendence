@@ -16,7 +16,7 @@ function SignIn() {
         const client_id=import.meta.env.VITE_CLIENT_ID;
         const auth_url = 'https://api.intra.42.fr/oauth/authorize';
         const response_type = 'code';
-        const redirectUri='https://localhost:443/accounts/42school/login/callback/';
+        const redirectUri='https://localhost/accounts/42school/login/callback/';
         const auth_url_concatinated = `${auth_url}?client_id=${client_id}&redirect_uri=${redirectUri}&response_type=${response_type}`;
         console.log("aaaaaaaauth --------> ",auth_url_concatinated);
         window.location.href = auth_url_concatinated;

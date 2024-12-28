@@ -11,3 +11,16 @@
 - should not access blocked user profile by typing his URL
 - sometime even if you block someone you still be able to send directs (sometimes)
 - dakchii li kain flgame
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+https://localhost/accounts/42school/login/callback/?code=599ee75fcd207a12390a686b5c5c792f6d4a61ba102229dc2382317b4ec1dd04
+&redirect_uri=https://localhost:443/accounts/42school/login/callback/&response_type=code
+https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-46620b10f52c5ce61ca3a1eb1489ddb91158b60176dffa7b142e8078c0a73100
