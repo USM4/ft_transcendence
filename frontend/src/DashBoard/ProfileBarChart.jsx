@@ -11,6 +11,11 @@ function ProfileBarChart({ profile,is_user}) {
   const {friends, setFriends} = useContext(FriendDataContext);
   if (is_user)
     friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
+  if (is_user && user.username !== profile.username)
+    return (
+        <div className="profile-match-history-item">
+            <h1 className="data-chart-h1">You can't see this player's Stats</h1>
+            </div>);
   
   const matche = user?.matchePlayed ? user?.matchePlayed.map((matche, index) => `Match ${index + 1}`) : [];
   const data = {
