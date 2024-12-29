@@ -78,6 +78,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         messages_data = await self.convert_messages_to_dict(self.messages["messages"])
                         if not self.messages["messages"]:
                             await self.send(text_data=json.dumps({
+                                'type': 'history',
                                 "chat_room": 'no_messages',
                             }))
 
