@@ -96,7 +96,7 @@ function DashboardNavbar() {
             onChange={handleSearch}
           />
           <button className="search-icon">
-            <SearchIcon />
+            <SearchIcon color="primary" />
           </button>
             {searchToggle && searchResults.length > 0 && (
               <div className="search-results" ref={dropdownRef}>
@@ -125,7 +125,7 @@ function DashboardNavbar() {
             onClick={() => setShowNotification(!showNotification)}
             className="notification-icon"
           >
-            <NotificationsIcon />
+            <NotificationsIcon color="primary"/>
           </button>
           {showNotification && (
             <div className="notifications-container" ref={dropdownRef}>
