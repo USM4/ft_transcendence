@@ -1,31 +1,36 @@
 version: '3.8'
 services:
   backend:
-    build: ./backend
-    # expose:
-    #   - "8000:8000"
-    volumes:
-      - ./backend:/app
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     depends_on:
-      - frontend
-    
+      - postgres
+
   frontend:
-    build: ./frontend
-    # ports:
-    #   - "5173:5173"
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - ./backend/.env
     volumes:
-      - ./frontend:/app
-    logging:
-      driver: "none"
-  
+      - ft_transcendence_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   nginx:
-    build: ./nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     ports:
       - "443:443"
     depends_on:
       - backend
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./nginx/ssl:/etc/nginx/ssl
-    logging:
-      driver: "none"
+      - frontend
+
+volumes:
+  ft_transcendence_postgres_data:

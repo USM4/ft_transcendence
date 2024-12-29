@@ -25,6 +25,8 @@ pip install qrcode
 
 pip install PyJWT
 
+pip install psycopg2-binary
+
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"
 python manage.py makemigrations authentification chat
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"

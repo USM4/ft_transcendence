@@ -186,7 +186,7 @@ class GameLeaderboard(APIView):
                 data.append({
                     'id': player_id,
                     'username': player.username,
-                    'avatar': player.avatar if player.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                    'avatar': player.avatar if player.avatar else 'https://localhost:443/media/avatars/anonyme.png',
                     'xp': xp
                 })
 
@@ -218,8 +218,8 @@ def get_game(user):
             r.append([
                 {
                     'id': g.game_id,
-                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
-                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'https://localhost:443 /media/avatars/anonyme.png'},
+                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'https://localhost:443/media/avatars/anonyme.png'},
                     'winner': g.winner.username,
                     'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
                     'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
