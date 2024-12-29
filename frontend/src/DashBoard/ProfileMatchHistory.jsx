@@ -6,10 +6,6 @@ import { UserDataContext } from "./UserDataContext.jsx";
 import CancelIcon from '@mui/icons-material/Cancel';
 import { FriendDataContext } from "./FriendDataContext.jsx";
 
-/* profile-score-collection
-profile-match-history-score
-details-icon
-*/
 function ProfileMatchHistory({ profile,is_user}) {
 
     const {friends, setFriends} = useContext(FriendDataContext);
@@ -20,12 +16,15 @@ function ProfileMatchHistory({ profile,is_user}) {
     const [matchDetails, setMatchDetails] = useState(null);
     if (is_user)
         friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
-    
+
     return (
         <div className="profile-match-history-item">
             {(!user?.matchePlayed || user?.matchePlayed.length === 0) ? <h1 className="data-chart-h1">No matches played yet</h1>
                 :
-            (user?.matchePlayed.map((match, index) => {
+            (user?.matchePlayed
+                .slice()
+                .reverse()
+                .map((match, index) => {
                 const player1 = match[0]['player1'];
                 const player2 = match[0]['player2'];
                 return (

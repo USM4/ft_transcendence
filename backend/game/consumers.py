@@ -64,7 +64,6 @@ class GameState:
 		asyncio.create_task(self.create_game())
 
 	async def create_game(self):
-		print("-------------------------Creating game object-------------------------")
 		self.game_object = await database_sync_to_async(Game.objects.create)(
 			player1_id=None,
 			player2_id=None,
@@ -208,7 +207,6 @@ class GameState:
 			self.is_active = False
 		else:
 			return
-		print(self.game_object)
 		self.game_object.player1_id = player1
 		self.game_object.player2_id = player2
 		self.game_object.winner = winner
@@ -218,18 +216,6 @@ class GameState:
 		self.game_object.xp_gained_player2 = random.randint(100, 500) if winner.id == player1.id else random.randint(1000, 5000)
 		self.game_object.end_time = datetime.now()
 		await database_sync_to_async(self.game_object.save)()
-
-
-		# await database_sync_to_async(Game.objects.create)(
-		# 	player1_id=player1,
-		# 	player2_id=player2,
-		# 	winner=winner,
-		# 	score_player1=self.pleft["score"],
-		# 	score_player2=self.pright["score"],
-		# 	xp_gained_player1=random.randint(100, 500) if winner.id == player2.id else random.randint(1000, 5000),
-		# 	xp_gained_player2=random.randint(100, 500) if winner.id == player1.id else random.randint(1000, 5000),
-		# 	end_time=datetime.now()
-		# )
 
 		await self.consumer.channel_layer.group_send(
 			self.match_name,

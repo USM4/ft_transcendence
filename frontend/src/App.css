@@ -685,17 +685,22 @@ body {
   width: 100%;
   flex-direction: column;
   display: flex;
-  gap: 5px;
+  gap: 10px;
   align-items: center;
   justify-content: center;
   padding: 5px;
 }
+
 .dashboard-leaderboard-item .leaderboard-info{
   width: 100%;
   display: flex;
   justify-content: space-around;
   align-items: center;
   gap: 10px;
+}
+.leaderboard-info:hover{
+  background-color: #181815;
+  border-radius: 10px;
 }
 .dashboard-leaderboard-item .leaderboard-info img{
   width: 50px;
@@ -881,6 +886,7 @@ body {
 
 .match-history-container .match-history-item:hover{
   background-color:#181815;
+  border-radius: 10px;
 }
 
 .match-history-item .img-user1 ,
@@ -920,6 +926,11 @@ body {
   padding: 10px 0;
   overflow-y: auto;
   font-size: 18px;
+  scrollbar-width: none;
+  gap: 5px;
+}
+.friends-container::-webkit-scrollbar {
+  display: none;
 }
 
 .friends-container .dashboard-friend-item{
@@ -944,6 +955,7 @@ body {
 }
 .friends-container .dashboard-friend-item:hover{
   background-color: #181815;
+  border-radius: 10px;
 }
 
 .friend-info{
@@ -957,7 +969,7 @@ body {
   width: 50px;
   height: 50px;
   border-radius: 50px;
-  border: 2px solid rgb(0, 0, 128);
+  border: 2px solid rgb(0, 128, 38);
 }
 
 .friends-container .invite-btn{
@@ -1094,8 +1106,14 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 5px;
+  gap: 10px;
   overflow-y: auto;
+  scrollbar-width: none;
+
+}
+.prfl-friend-list-container::-webkit-scrollbar {
+  display: none;
 }
 
 .prfl-friend-list-container .profile-friend-item{
@@ -1135,7 +1153,7 @@ body {
 
 .profile-friend-item .dm-friend{
   display: flex;
-  gap: 30px;
+  gap: 10px;
 }
 
 .dm-friend .invite-btn{
@@ -1147,6 +1165,7 @@ body {
 
 .prfl-friend-list-container .profile-friend-item:hover{
   background-color: #bde052;
+  border-radius: 10px;
   color: #000;
 }
 
@@ -1207,6 +1226,7 @@ body {
   border: 2px solid #D4FCB5;
   padding: 10px;
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .prfl-match-history .prfl-history-title{
@@ -1261,6 +1281,12 @@ body {
   padding: 5px;
   gap: 10px;
   width: 100%;
+  scrollbar-width: none;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+}
+.profile-match-history-item::-webkit-scrollbar {
+  display: none;
 }
 .profile-match-history-item .profile-score-collection{
   padding: 0 20px;
@@ -1400,32 +1426,29 @@ body {
 .settings-options .edit-and-twofa{
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
-  /* width: 100%; */
   height: 40%;
   gap: 30px;
+  width: 100%;
+  padding: 0 5px;
 
 }
 
 .settings-options .general-profile-settings button, .two-fa-settings button{
-  width: 500px;
-  height: 60px;
+  width: 100%;
+  height: 100%;
   font-size: 19px;
+  padding: 10px;
   font-family: inherit;
   background-color: transparent;
   border: 2px solid rgb(178, 188, 239);
+  border-radius: 10px;
   cursor: pointer;
-  
+  color: #ffffff;
 }
 .settings-options .general-profile-settings button:hover, .two-fa-settings button:hover{
   background-color: rgb(178, 187, 240);
   color: #000;
 }
-
-/* .settings-options  button{
-  width: 500px;
-  height: 60px;
-} */
 
 
 .settings-component .profile-edit-settings{

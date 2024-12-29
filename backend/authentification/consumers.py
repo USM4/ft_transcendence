@@ -15,7 +15,6 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 			user_channel_name[self.user.id].append(self.channel_name)
 		else:
 			user_channel_name[self.user.id] = [self.channel_name]
-		# print(f"++++++++++ {user_channel_name}")
 		await self.channel_layer.group_add(
 			self.room_group_name,
 			self.channel_name
@@ -24,7 +23,6 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
 		await self.update_user_status(self.user, True)
 
 	async def disconnect(self, close_code):
-		print("disconnect--------------------------------------")
 		await self.channel_layer.group_discard(
 			self.room_group_name,
 			self.channel_name
