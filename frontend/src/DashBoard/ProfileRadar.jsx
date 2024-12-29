@@ -21,6 +21,11 @@ function ProfileRadar({ profile,is_user}) {
     let { user } = useContext(UserDataContext);
     if (is_user)
         friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
+    if (is_user && user.username !== profile.username)
+        return (
+            <div className="profile-match-history-item">
+                <h1 className="data-chart-h1">You can't see this player's Radar</h1>
+                </div>);
 
     const data = {
         labels: [

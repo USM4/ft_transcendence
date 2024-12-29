@@ -55,7 +55,8 @@ useEffect(() => {
                 case "waiting_for_players":
                     setIsReady(false);
                     break;
-
+                case "error":
+                    toast.error(data.message);
             }
     }
 }, [wsRef, user?.username, message]);
