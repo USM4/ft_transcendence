@@ -26,6 +26,7 @@ class GameState:
 		self.is_active = False
 		self.canvas_width = 1000
 		self.canvas_height = 500
+
 		
 		# Initialize game objects for this specific match
 		self.ball = {
@@ -59,6 +60,20 @@ class GameState:
 			"color": "red",
 		}
 
+		self.game_object = None
+		asyncio.create_task(self.create_game())
+
+	async def create_game(self):
+		self.game_object = await database_sync_to_async(Game.objects.create)(
+			player1_id=None,
+			player2_id=None,
+			winner=None,
+			score_player1=0,
+			score_player2=0,
+			xp_gained_player1=0,
+			xp_gained_player2=0,
+			start_time=datetime.now()
+		)
 	def get_game_state(self):
 		return {
 			"canvas_width": self.canvas_width,
@@ -90,6 +105,7 @@ class GameState:
 				"color": self.pright["color"],
 			},
 		}
+
 	def set_player_ids(self, player1_id, player2_id):
 		self.pleft["id"] = player1_id
 		self.pright["id"] = player2_id
@@ -191,17 +207,15 @@ class GameState:
 			self.is_active = False
 		else:
 			return
-
-		await database_sync_to_async(Game.objects.create)(
-			player1_id=player1,
-			player2_id=player2,
-			winner=winner,
-			score_player1=self.pleft["score"],
-			score_player2=self.pright["score"],
-			xp_gained_player1=random.randint(100, 500) if winner.id == player2.id else random.randint(1000, 5000),
-			xp_gained_player2=random.randint(100, 500) if winner.id == player1.id else random.randint(1000, 5000),
-			end_time=datetime.now(),
-		)
+		self.game_object.player1_id = player1
+		self.game_object.player2_id = player2
+		self.game_object.winner = winner
+		self.game_object.score_player1 = self.pleft["score"]
+		self.game_object.score_player2 = self.pright["score"]
+		self.game_object.xp_gained_player1 = random.randint(100, 500) if winner.id == player2.id else random.randint(1000, 5000)
+		self.game_object.xp_gained_player2 = random.randint(100, 500) if winner.id == player1.id else random.randint(1000, 5000)
+		self.game_object.end_time = datetime.now()
+		await database_sync_to_async(self.game_object.save)()
 
 		await self.consumer.channel_layer.group_send(
 			self.match_name,

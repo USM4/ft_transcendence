@@ -16,7 +16,7 @@ ChartJS.register( RadialLinearScale, PointElement, LineElement, Filler, Tooltip,
 
 function DashboardDoghnuts() {
   const { user } = useContext(UserDataContext);
-  const matches = user?.matchePlayed.length;
+  const matches = user?.matchePlayed ? user?.matchePlayed.length : 0;
   
   const matchedraw = matches - (user?.matcheWon + user?.matcheLost);
 

@@ -14,7 +14,7 @@ function ProfileFriendList({ username, avatar,id }) {
     };
 
     const  inviteFriendToGame = async () => {
-        console.log("invite friend to game");
+
         const response = await fetch("http://localhost:8000/auth/game_invite/", {
             method: "POST",
             headers: {

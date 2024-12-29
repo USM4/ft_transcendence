@@ -12,7 +12,6 @@ import {
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NotificationsToggle from "./NotificationsToggle.jsx";
 import SearchIcon from "@mui/icons-material/Search";
-// import oredoine from "../../public/oredoine.jpeg";
 import { UserDataContext } from "./UserDataContext.jsx";
 import "../App.css";
 
@@ -97,7 +96,7 @@ function DashboardNavbar() {
             onChange={handleSearch}
           />
           <button className="search-icon">
-            <SearchIcon />
+            <SearchIcon color="primary" />
           </button>
             {searchToggle && searchResults.length > 0 && (
               <div className="search-results" ref={dropdownRef}>
@@ -126,7 +125,7 @@ function DashboardNavbar() {
             onClick={() => setShowNotification(!showNotification)}
             className="notification-icon"
           >
-            <NotificationsIcon />
+            <NotificationsIcon color="primary"/>
           </button>
           {showNotification && (
             <div className="notifications-container" ref={dropdownRef}>
