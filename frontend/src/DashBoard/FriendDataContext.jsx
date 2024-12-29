@@ -11,7 +11,6 @@ function FriendDataProvider ({ children }) {
   const [friends, setFriends] = useState([]);
   
   useEffect(() => {
-      console.log('fetching friends');
       const fetchFriendList = async () => {
         const response = await fetch('http://localhost:8000/auth/friends/',
         {
@@ -29,9 +28,8 @@ function FriendDataProvider ({ children }) {
       fetchFriendList();
 
       const timer = setInterval(() => {
-        console.log("Fetching friends (via timer)");
         fetchFriendList();
-      }, 20000); 
+      }, 30000); 
   
       return () => {
         clearInterval(timer);

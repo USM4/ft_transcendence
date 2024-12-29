@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
-  const { user, updateUser} = useContext(UserDataContext);
+  const { user, updateUser } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
   const [code, setCode] = useState("");
   const [isEnabled, setIsEnabled] = useState(user?.twoFa);
@@ -30,8 +30,8 @@ function ProfileSettings() {
     console.log("save code", code);
     console.log("is enabled", isEnabled);
     const endpoint = isEnabled
-    ? "http://localhost:8000/auth/activate2fa/"
-    : "http://localhost:8000/auth/desactivate2fa/";
+      ? "http://localhost:8000/auth/activate2fa/"
+      : "http://localhost:8000/auth/desactivate2fa/";
     try {
       const response = await fetch(`${endpoint}`, {
         method: "POST",
@@ -56,17 +56,20 @@ function ProfileSettings() {
   };
   const updateInfos = async () => {
     try {
+      console.log("update infos", formData);
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",
         body: formData,
       });
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
-        // console.log("******************** avatar url ******************** ",data.user.avatar);
-        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.username}));
+        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.username }));
         toast.success(data.message);
-      } else console.log("error");
+      } else {
+        toast.error(data.error);
+        console.log(data);
+      };
     } catch (error) {
       console.log(error);
     }
@@ -113,7 +116,7 @@ function ProfileSettings() {
               <button>Edit Profile Informations</button>
             </div>
             <div className="two-fa-settings" onClick={() => setisTwoFactor(true)}>
-              <button> 
+              <button>
                 Two Factor Settings
               </button>
             </div>
@@ -139,7 +142,8 @@ function ProfileSettings() {
                     checked={isEnabled}
                     onChange={() => {
                       console.log("toggle is enabled", isEnabled);
-                      setIsEnabled((prev) => !prev)}
+                      setIsEnabled((prev) => !prev)
+                    }
                     }
                     color="secondary"
                   />
@@ -176,19 +180,19 @@ function ProfileSettings() {
                 <div>2FA IS ENABLED</div>
               ) : (
                 user.twoFa ? (
-                <div className="disable-component">
+                  <div className="disable-component">
                     <p>ENTER THE CODE TO DISABLE 2FA</p>
-                  <div className="desable-input">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={code}
-                      placeholder="Enter the code"
-                      onChange={(e) => setCode(e.target.value)}
-                    />
-                    <div className="disable-btn"><button onClick={saveCode}> disable </button></div>
+                    <div className="desable-input">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={code}
+                        placeholder="Enter the code"
+                        onChange={(e) => setCode(e.target.value)}
+                      />
+                      <div className="disable-btn"><button onClick={saveCode}> disable </button></div>
+                    </div>
                   </div>
-              </div>
                 ) : (
                   <></>
                 )
@@ -200,27 +204,27 @@ function ProfileSettings() {
             <div className="update-avatar">
               <p> Update Avatar : </p>
               <div className="custom-file-upload">
-                <input 
+                <input
                   type="file"
-                  accept="image/*" 
+                  accept="image/*"
                   onChange={(e) => setAvatar(e.target.files[0])} // Using files[0] to get the selected file
                 />
               </div>
             </div>
             <div className="update-nickname">
               <p>Update Address : </p>
-              <input 
+              <input
                 type="text"
                 placeholder="Enter your new address"
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}              
+                onChange={(e) => setAddress(e.target.value)}
               />
             </div>
             <div className="update-nickname">
               <p>Update Phone number : </p>
-              <input 
-                type="text" 
-                placeholder="Enter your new phone" 
+              <input
+                type="text"
+                placeholder="Enter your new phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />

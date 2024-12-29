@@ -22,13 +22,6 @@ function ProfileRadar({ profile,is_user}) {
     if (is_user)
         friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
 
-//     Total Games Played
-// Games Won
-// Win Rate (calculated as games won / total games played)
-// Average Score (average score per game)
-// Total XP Gained
-
-
     const data = {
         labels: [
             'Total Games Played',
