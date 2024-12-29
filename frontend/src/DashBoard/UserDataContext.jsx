@@ -24,7 +24,7 @@ function UserDataProvider({ children }) {
         else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay' )
         {
           // console.log("galk yahia :--------------- ", pathname);
-          navigate('signin/')
+          // navigate('signin/')
         }
 
       } catch (error) {

@@ -53,8 +53,8 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = 'ft_transcendence.asgi.application'
 
 MIDDLEWARE = [
-    'authentification.middleware.JWTAuthFromCookieMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'authentification.middleware.JWTAuthFromCookieMiddleware',
     'authentification.middleware.RefreshTokenMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -114,7 +114,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
-    'AUTH_COOKIE_SECURE': False,  # Use secure cookies in production
+    'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
     'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HttpOnly
     'AUTH_COOKIE_PATH': '/',  # Available throughout the site
     'AUTH_COOKIE_SAMESITE': 'None',
@@ -159,9 +159,9 @@ CHANNEL_LAYERS = {
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
     'https://localhost',
     'http://localhost',
+    'http://localhost:5173',
 ]
 
 
@@ -196,7 +196,7 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CSRF_COOKIE_SECURE = False    
-SESSION_COOKIE_SECURE = False    
-SESSION_COOKIE_SAMESITE = None    
-CSRF_COOKIE_SAMESITE = None
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'

@@ -98,7 +98,7 @@ class ExtractCodeFromIntraUrl(APIView):
         client_id = CLIENT_ID
         client_secret = SECRET_ID
         
-        redirect_uri = 'https://localhost/accounts/42school/login/callback/'
+        redirect_uri = 'https://localhost:443/accounts/42school/login/callback/'
         # json li aytseft f request
         json_data = {
             'grant_type': 'authorization_code',
@@ -135,19 +135,20 @@ class ExtractCodeFromIntraUrl(APIView):
             response = redirect('https://localhost/2fa')
         else:
             response = redirect('https://localhost/dashboard')
+            print("dkheeeeeeeeeeeeeel")
             response.set_cookie(
                 'client',
                 access,
                 httponly=True,
                 samesite='None',
-                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],  # Use secure setting
+                secure=True
             )
             response.set_cookie(
                 'refresh',
                 str(refresh),
                 httponly=True,
                 samesite='None',
-                secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],  # Use secure setting
+                secure=True
             )
         return response
 
