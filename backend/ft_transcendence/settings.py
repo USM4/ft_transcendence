@@ -90,21 +90,6 @@ WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DB_NAME = "ft_transcendence"
-# DB_USER = "oredoine"
-# DB_PASSWORD = "pwd43210"
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': DB_NAME,
-#         'USER': DB_USER,
-#         'PASSWORD': DB_PASSWORD,
-#         'PORT': '5432',
-#     }
-# }
-
-# djangos documentation
-
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 POSTGRES_DB = os.getenv('POSTGRES_DB', 'mydabatayz')
@@ -184,13 +169,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "capacity": 1000,  # Increase the capacity to handle more messages
+            "hosts": [("redis", 6379)],  # match Redis hostname and port as defined docker setup.
         },
-    }
+    },
 }
-
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [

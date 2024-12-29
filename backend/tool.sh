@@ -27,6 +27,8 @@ pip install PyJWT
 
 pip install psycopg2-binary
 
+pip install channels channels-redis
+
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"
 python manage.py makemigrations authentification chat
 echo "###############################----------------Setup complete. The environment is ready!---------------#######################################"
