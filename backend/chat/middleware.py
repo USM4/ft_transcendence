@@ -34,10 +34,10 @@ class QueryAuthMiddleware:
                 else:
                     scope['user'] = AnonymousUser()
             except jwt.ExpiredSignatureError:
-                print("Token has expired.")
+
                 scope['user'] = AnonymousUser()
             except jwt.InvalidTokenError:
-                print("Invalid token.")
+
                 scope['user'] = AnonymousUser()
         else:
             scope['user'] = AnonymousUser()

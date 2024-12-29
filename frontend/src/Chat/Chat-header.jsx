@@ -125,7 +125,7 @@ export default function Chat_header({ selected }) {
 
                             </li>
                             <li className="menu-content" onClick={!selected.is_blocked ? () => handleGameClicked(selected) : null}>
-                                {selected.is_blocked ? null : <h2>🕹️ GAMEINVITE</h2>}
+                                <h2>🕹️ GAMEINVITE</h2>
                             </li>
                         </div>}
                 </ul>

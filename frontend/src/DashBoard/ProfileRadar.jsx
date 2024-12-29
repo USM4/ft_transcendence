@@ -22,27 +22,18 @@ function ProfileRadar({ profile,is_user}) {
     if (is_user)
         friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
 
-//     Total Games Played
-// Games Won
-// Win Rate (calculated as games won / total games played)
-// Average Score (average score per game)
-// Total XP Gained
-
-
     const data = {
         labels: [
             'Total Games Played',
             'Games Won',
             'Win Rate',
-            'Average Score',
-            'Total XP Gained',
-            
+            'Total Minutes Spent',
         ],
         datasets: 
         [
             {
                 label: "Player Skills",
-                data: [user.matchePlayed.length, user?.matcheWon, user?.win_rate, user?.average_xp, user?.total_xp],
+                data: [user?.matchePlayed ? user?.matchePlayed.length : 0, user?.matcheWon, user?.win_rate,  user?.total_time_spent],
                 fill: true,
                 backgroundColor: 'rgba(255, 111, 97, 0.5)',
                 borderColor: 'rgba(255, 111, 97, 1)',
@@ -61,11 +52,10 @@ function ProfileRadar({ profile,is_user}) {
         }
     },
     scales: {
-        
         r: {
-            // beginAtZero: true,
+            beginAtZero: true,
             ticks: {
-                stepSize: 1,
+                stepSize: 10,
                 color: 'black',
                 backdropColor: 'rgba(0, 0, 0, 0)',
             }

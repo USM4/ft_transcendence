@@ -11,7 +11,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 function DashboardChart() {
   const { user } = useContext(UserDataContext);
   let isAllZero = false;
-  const matche = user?.matchePlayed.map((matche, index) => `Matche${index + 1}`);
+  const matche =  user?.matchePlayed ?  user?.matchePlayed.map((matche, index) => `Matche${index + 1}`) : [];
 
 
   const data = {

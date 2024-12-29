@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ChatSocketContext } from './Chat.jsx'
 import BlockIcon from '@mui/icons-material/Block';
-
+import { UserDataContext } from '../DashBoard/UserDataContext.jsx';
 
 export default function Chat_area({ selected,chatroomMessages }) {
 
-  const socket = useContext(ChatSocketContext);
+  const { user } = useContext(UserDataContext);
 
+  console.log("selected",selected.id);
   const message_history = chatroomMessages.map((msg, index) => (
+    console.log("msg-----------",msg),
     <div key={index}>
-      {msg.receiver != selected.id
-        ? (<div className="message-sent">{msg.message}</div>)
-        : (<div className="message"><p className="message-received">{msg.message}</p></div>)
-      }
+      {msg.receiver == selected.id && <div className="message"><p className="message-received">{msg.message}</p></div>}
+      {msg.receiver == user.id && (<div className="message-sent">{msg.message}</div>)}
     </div>
   ))
 

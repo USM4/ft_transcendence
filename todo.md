@@ -1,8 +1,9 @@
 > add postgress (minor module)
 ****************Yahia******************
 > profile charts (Ongoing)
-> broadcast the message in the empty cnv
+
 > online(setinterval online friends )
+
 > update info profile katkhwr retrieve dluser fchat (block)
 
 **************Oussama********************

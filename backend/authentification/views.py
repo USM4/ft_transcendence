@@ -50,8 +50,7 @@ class SignInView(APIView):
     def post(self, request):
         parse_login = request.data.get('login')
         password = request.data.get('password')
-        print(f"\nparse login : {parse_login}\n")
-        print(f"\npassword : {password}\n")
+
         if '@' in parse_login and '.' in parse_login:
             try:
                 client = Client.objects.get(email=parse_login)
@@ -66,7 +65,6 @@ class SignInView(APIView):
             access = str(refresh.access_token)
             redirect_url = client.is_2fa_enabled and '/2fa' or '/dashboard'
             response = Response({'success': 'Logged in successfully', 'redirect_url': redirect_url}, status=status.HTTP_200_OK)
-            # print(f"Setting cookies with access token: {access}")
             response.set_cookie(
                 'client',
                 access,
@@ -94,7 +92,6 @@ class ExtractCodeFromIntraUrl(APIView):
         load_dotenv()
         CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-id')
         SECRET_ID = os.getenv('SECRET_ID')
-        print("SECRET ID :", SECRET_ID)
         client_id = CLIENT_ID
         client_secret = SECRET_ID
         
@@ -170,62 +167,71 @@ class LogoutView(APIView):
 class GameLeaderboard(APIView):
 
     def get(self, request):
-        game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2'))
-        player_xp = {}
-        for g in game:
-            if g['player1_id'] not in player_xp:
-                player_xp[g['player1_id']] = 0
-            if g['player2_id'] not in player_xp:
-                player_xp[g['player2_id']] = 0
-            player_xp[g['player1_id']] += g['xp_gained_player1']
-            player_xp[g['player2_id']] += g['xp_gained_player2']
-        sorted_xp = dict(sorted(player_xp.items(), key=lambda item: item[1], reverse=True))
-        data = []
-        for player_id, xp in sorted_xp.items():
-            player = Client.objects.get(id=player_id)
-            data.append({
-                'id': player_id,
-                'username': player.username,
-                'avatar': player.avatar if player.avatar else 'https://localhost:443/media/avatars/anonyme.png',
-                'xp': xp
-            })
+        try:
+            game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2', 'winner', 'score_player1', 'score_player2', 'start_time', 'end_time'))
+            player_xp = {}
+            for g in game:
+                if g['player1_id'] not in player_xp:
+                    player_xp[g['player1_id']] = 0
+                if g['player2_id'] not in player_xp:
+                    player_xp[g['player2_id']] = 0
+                player_xp[g['player1_id']] += g['xp_gained_player1']
+                player_xp[g['player2_id']] += g['xp_gained_player2']
+            sorted_xp = dict(sorted(player_xp.items(), key=lambda item: item[1], reverse=True))
+            data = []
+            for player_id, xp in sorted_xp.items():
+                if not player_id:
+                    continue
+                player = Client.objects.get(id=player_id)
+                data.append({
+                    'id': player_id,
+                    'username': player.username,
+                    'avatar': player.avatar if player.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                    'xp': xp
+                })
 
-        return Response({'game_xp': data[:5]}, status=200)
+            return Response({'game_xp': data[:5]}, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
 
 def get_game(user):
-
-    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('game_id'))
-    r = []
-    for g in game:
-        player1 = g.player1_id if g.player1_id == user else g.player2_id
-        player2 = g.player2_id if g.player2_id != user else g.player1_id
-
-        # Calculate the difference
-        if g.start_time > g.end_time:
-            time_difference = g.start_time - g.end_time
-        else:
-            time_difference = g.end_time - g.start_time
-
-        # Convert the difference to seconds and then to minutes
-        seconds_spent = time_difference.total_seconds()
-        minutes_spent = seconds_spent / 60
-        milliseconds_spent = seconds_spent * 1000
+    try:
+        game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('game_id'))
+        r = []
+        for g in game:
+            player1 = g.player1_id if g.player1_id == user else g.player2_id
+            player2 = g.player2_id if g.player2_id != user else g.player1_id
 
 
-        r.append([
-            {
-                'id': g.game_id,
-                'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'https://localhost:443/media/avatars/anonyme.png'},
-                'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'https://localhost:443/media/avatars/anonyme.png'},
-                'winner': g.winner.username,
-                'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
-                'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
-                'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
-                'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
-                'duration': milliseconds_spent,
-            }
-        ])
-    return r
+            if g.end_time:
+                time_difference = abs(g.end_time - g.start_time)
+            else:
+                time_difference = timedelta(seconds=0)
+
+            total_seconds = time_difference.total_seconds()
+            hours = int(total_seconds // 3600)
+            minutes = int((total_seconds % 3600) // 60)
+            seconds = int(total_seconds % 60)
+
+            formatted_duration = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
+
+            r.append([
+                {
+                    'id': g.game_id,
+                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                    'winner': g.winner.username,
+                    'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
+                    'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
+                    'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
+                    'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
+                    'duration': formatted_duration,
+                    'total_seconds': total_seconds,
+                }
+            ])
+        return r
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
 class DashboardView(APIView):
     def get(self, request):
@@ -251,17 +257,16 @@ class DashboardView(APIView):
             'matcheLost': len([g for g in game if g[0]['winner'] != user.username]),
             'xp': xp,
             'win_rate': len([g for g in game if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
-            'total_xp': sum(xp),
-            'average_xp': sum(xp) / len(xp) if len(xp) > 0 else 0
+            'average_xp': sum(xp) / len(xp) if len(xp) > 0 else 0,
+            'total_time_spent': int(sum([g[0]['total_seconds'] for g in game]) // 3600) if int(sum([g[0]['total_seconds'] for g in game])) // 3600 > 0 else (sum([g[0]['total_seconds'] for g in game]) % 3600) // 60,
         })
 
 class SendFriendRequest(APIView):
     def post(self, request):
         from_user = request.user
-        print("dataaaaaa :", request.data)
+
         to_user = request.data.get('to_user')
-        print("from_user", from_user)
-        print('to_id_user', to_user)
+
         if not to_user:
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -280,12 +285,11 @@ class SendFriendRequest(APIView):
             FriendShip.objects.filter(from_user=to_user, to_user=from_user).update(status='pending')
 
         # Check if a notification for this friend request already exists
-        print("waaaaaa3")
+
         if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", receiver=to_user).exists():
-            print("create new notif")
+
             Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a friend request ", notification_type='friend_request', receiver=to_user)
         else:
-            print("notif already exist")
             Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", receiver=to_user).update(is_read=False)
         return Response({'message': 'friend request sent successfully'})
 
@@ -299,8 +303,6 @@ class NotificationGameInvite(APIView):
     def post(self, request):
         from_user = request.user
         to_user = request.data.get('to_user')
-        print("from_user", from_user)
-        print("to_user", to_user)
         try:
             to_user = Client.objects.get(id=to_user)
         except Client.DoesNotExist:
@@ -322,12 +324,12 @@ class AcceptFriendRequest(APIView):
             if request_type == "game_invite":
                 isread = Notification.objects.filter(id=request_id).update(is_read=True)
                 return Response({'message': 'game invite accepted'},  status=200)
-            print("user_id--------------->", user_id)
+
             friend_request = FriendShip.objects.get(from_user=user_id, status='pending')
-            # print("accepeted friend request", friend_request)
+
             friend_request.status = 'accepted'
             friend_request.save()
-            # print("friend_request.status", friend_request.status)
+
             sender = friend_request.from_user
             receiver = friend_request.to_user
             Friend.objects.create(user=sender, friend=receiver,blocker=None)
@@ -408,7 +410,10 @@ class FriendsList(APIView):
                 'matchePlayed': game[friend.friend.id],
                 'matcheWon': len([g for g in game[friend.friend.id] if g[0]['winner'] == friend.friend.username]),
                 'matcheLost': len([g for g in game[friend.friend.id] if g[0]['winner'] != friend.friend.username]),
-                'xp': xp[friend.friend.id]
+                'xp': xp[friend.friend.id],
+                'win_rate': len([g for g in game[friend.friend.id] if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
+                'average_xp': sum(xp[friend.friend.id]) / len(xp[friend.friend.id]) if len(xp[friend.friend.id]) > 0 else 0,
+                'total_time_spent': int(sum([g[0]['total_seconds'] for g in game[friend.friend.id]]) // 3600) if int(sum([g[0]['total_seconds'] for g in game[friend.friend.id]])) // 3600 > 0 else int((sum([g[0]['total_seconds'] for g in game[friend.friend.id]]) % 3600) // 60),
             }
             for friend in friends
         ]
@@ -430,19 +435,19 @@ class Search(APIView):
 class Profile(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            # print("kwargs", kwargs)
+
             username = kwargs.get('username')
             user = Client.objects.get(username=username)
             me = request.user
             friendship_status = ''
             is_friend = Friend.objects.filter(Q(user=me, friend=user) | Q(user=me, friend=user)).exists()
-            # print("is_friend---------------------------->", is_friend)
+
             if is_friend:
                 friendship_status = 'friends'
             else:
-                # the friendship object between the two users
+
                 friendship = FriendShip.objects.filter(from_user=me, to_user=user).first()
-                # check if the friendship is None before accessing  status
+
                 if friendship is None:
                     friendship_status = 'not_friend'
                 else:
@@ -496,7 +501,7 @@ def generate_otp(username):
     user = Client.objects.get(username=username)
     user.secret_key = secret_key
     user.save()
-    print("Generated secret ------------> ", user.secret_key)
+
     url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name=user.username, issuer_name="ft_transcendence")
     qrcode_directory = "media/qr_codes/"
     if not os.path.exists(qrcode_directory):
@@ -510,17 +515,14 @@ def generate_otp(username):
 class QrCode(APIView):
     def get(self, request):
         generate_otp(username=request.user.username)
-        # define the path to the QR code in the media directory
         qrcode_path = os.path.join(settings.MEDIA_ROOT, 'qr_codes', f'{request.user.username}.png')
-         # creating  the media URL for the frontend to access
         qrcode_url = request.build_absolute_uri(settings.MEDIA_URL + f'qr_codes/{request.user.username}.png')
-        # print('qrcode_url:', qrcode_url)
+
         return Response({'qrcode': qrcode_url})
 
 class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
-        print("otp", otp)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
@@ -532,21 +534,14 @@ class Activate2FA(APIView):
     def post(self, request):
         otp = request.data.get('code')
         user = Client.objects.get(username=request.user.username)
-        print("user from get objs", user)
-        print("otp", otp)
-        print("request.user", request.user)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
 
-        # print("------------ Activate otp  --------------------",  totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = True
         user.save()
-        print("User saved successfully. New values:", user)
-        print("is_2fa_enabled:", user.is_2fa_enabled)
-        print("Checked secret_key:", user.secret_key)
 
         return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
 
@@ -565,16 +560,12 @@ class Disable2FA(APIView):
         user.is_2fa_enabled = False
         user.secret_key = None
         user.save()
-        print("User saved successfully. New values:", user)
-        print("is_2fa_enabled:", user.is_2fa_enabled)
-        print("Checked secret_key:", user.secret_key)
+
 
         from django.db import connection
         if connection.in_atomic_block:
             connection.commit()
     
-        # user.refresh_from_db()
-        print("User 2FA status updated:", user.is_2fa_enabled, user.secret_key)
         return Response({'message': '2FA disabled successfully', 'is_2fa_enabled': False})
 
 class UpdateUserInfos(APIView):
@@ -583,18 +574,12 @@ class UpdateUserInfos(APIView):
         avatar = request.data.get('avatar')
         address = request.data.get('address')
         phone = request.data.get('phone')
-        # print("==============> avatar from request ",avatar)
         avatar_file = request.FILES.get('avatar')
         if avatar_file:
-            # print("==============> avatar_file =============================",avatar_file)
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
-            file_url = request.build_absolute_uri(default_storage.url(file_path))  # generate absolute URL localhost:8000/... not localhost:5173/media/...
-            # print("==============> file url" ,file_url)
+            file_url = request.build_absolute_uri(default_storage.url(file_path))
             user.avatar = file_url
-        else:
-            print("No avatar file uploaded.")
-            user.avatar = None
-        # Update other fields if provided
+
         if address:
             user.address = address
         if phone:

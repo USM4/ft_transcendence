@@ -9,8 +9,12 @@ function MatchHistory() {
     return (
         <div className="match-history-container" style={{ justifyContent: user?.matchePlayed.length === 0 ? 'center' : undefined }}>
             <div className="match-history-result">
-                {user?.matchePlayed.length === 0 && <h1 className="data-chart-h1">No matches played yet</h1>}
-                {user?.matchePlayed.map((match) => {
+                {(!user?.matchePlayed || user?.matchePlayed.length === 0) ? <h1 className="data-chart-h1">No matches played yet</h1>
+                    :
+                (user?.matchePlayed
+                    .slice()
+                    .reverse()
+                    .map((match) => {
                     const player1 = match[0]['player1'];
                     const player2 = match[0]['player2'];
                     return (
@@ -36,7 +40,8 @@ function MatchHistory() {
                             </div>
                         </div>
                     );
-                })}
+                }))
+                }
             </div>
         </div>
     );

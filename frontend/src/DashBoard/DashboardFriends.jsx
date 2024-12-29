@@ -34,7 +34,7 @@ function DashboardFriends() {
 
     return (
         <>
-            {friends?.map((friend) => {console.log(friend);
+            {friends?.map((friend) => {
                 return (
                     <div key={friend?.id} className="dashboard-friend-item">
                         {

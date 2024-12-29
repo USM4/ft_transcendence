@@ -8,7 +8,7 @@ function UserDataProvider({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
-  console.log("pathname", pathname);
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -18,13 +18,12 @@ function UserDataProvider({ children }) {
         });
         if (response.ok) {
           const data = await response.json();
-          // console.log("UserDataContext:--------------- ", data);
           setUser(data);
         }
         else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay' )
         {
           // console.log("galk yahia :--------------- ", pathname);
-          // navigate('signin/')
+          navigate('signin/')
         }
 
       } catch (error) {

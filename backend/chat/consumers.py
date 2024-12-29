@@ -47,7 +47,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             try:
                 chat_room = await self.get_or_create_room(self.sender.id, receiver)
 
-                # Save the message to the database
                 await self.save_message(message, chat_room, receiver)
 
                 await self.channel_layer.group_send(
@@ -55,7 +54,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "type": "sendMessage",
                         "message": message,
                         "receiver": receiver,
-                        "sender": self.sender.id,
+                        "sender": chat_room.sender_id if chat_room.sender_id != receiver else chat_room.receiver_id,
                         "chat_room": chat_room.id,
                     })
                 await self.channel_layer.group_send(
@@ -63,7 +62,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "type": "sendMessage",
                         "message": message,
                         "receiver": receiver,
-                        "sender": self.sender.id,
+                        "sender": chat_room.sender_id if chat_room.sender_id != receiver else chat_room.receiver_id,
                         "chat_room": chat_room.id,
                     })
             except Exception as e:
@@ -77,10 +76,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             self.messages.clear()
                         self.messages = await self.get_messages(chat_room.id)
                         messages_data = await self.convert_messages_to_dict(self.messages["messages"])
+                        if not self.messages["messages"]:
+                            await self.send(text_data=json.dumps({
+                                'type': 'history',
+                                "chat_room": 'no_messages',
+                            }))
+
                         for msg in self.messages["messages"]:
                             if not msg.message:
                                 continue
                             await self.send(text_data=json.dumps({
+                                'type': 'history',
                                 'message_id': msg.id,
                                 'message': msg.message,
                                 'receiver': msg.receiver,

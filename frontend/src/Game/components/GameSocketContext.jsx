@@ -78,8 +78,7 @@ export const GameSocketProvider = ({ children }) => {
 
             wsRef.current = socket;
         }
-        console.log("in context old_pathname", old_pathname);
-        console.log("in context pathname", pathname);
+
         if (old_pathname === "/tournament/options/game/matchMaking" && pathname === "/tournament/options/game/matchMaking")
           {
               console.log("send to the backend");

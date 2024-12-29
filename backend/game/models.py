@@ -4,9 +4,9 @@ from authentification.models import Client
 class Game(models.Model):
     # Player fields
     game_id = models.AutoField(primary_key=True)
-    player1_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player1')
-    player2_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player2')
-    winner = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='winner')
+    player1_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
+    player2_id = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
+    winner = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='winner', null=True, blank=True)
 
     # Score tracking
     score_player1 = models.IntegerField(default=0)

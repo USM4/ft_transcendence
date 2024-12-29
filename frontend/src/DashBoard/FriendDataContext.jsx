@@ -1,15 +1,16 @@
 import React from "react";
 import { useContext, createContext, useState, useEffect} from 'react';
+import { useLocation } from "react-router-dom";
 
-export const FriendDataContext = React.createContext();
+export const FriendDataContext = createContext();
 
 function FriendDataProvider ({ children }) {
-  const { pathname } = window.location;
-  const [friends, setFriends] = React.useState([]);
-  console.log("------------------",pathname);
+  
+  const location  = useLocation();
+  const pathname = location.pathname;
+  const [friends, setFriends] = useState([]);
   
   useEffect(() => {
-      console.log('fetching friends');
       const fetchFriendList = async () => {
         const response = await fetch('https://localhost:443/auth/friends/',
         {
@@ -25,7 +26,15 @@ function FriendDataProvider ({ children }) {
         }
       }
       fetchFriendList();
-    }, [pathname]);
+
+      const timer = setInterval(() => {
+        fetchFriendList();
+      }, 30000); 
+  
+      return () => {
+        clearInterval(timer);
+      };
+  }, [pathname]);
   return (
     <FriendDataContext.Provider value={{ friends, setFriends}}>
       {children}
