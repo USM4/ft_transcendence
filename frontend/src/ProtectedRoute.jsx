@@ -7,9 +7,9 @@ const ProtectedRoute = ({ component: Component }) => {
   useEffect(() => {
     const verifyToken = async () => {
       try {
-        console.log("###############################----------------Setup complete. The environment is ready!---------------#######################################");
+        const host=import.meta.env.VITE_HOST_URL;
         const response = await fetch(
-          "https://localhost:443/auth/verify_token/",
+          `${host}/auth/verify_token/`,
           {
             method: "GET",
             credentials: "include",

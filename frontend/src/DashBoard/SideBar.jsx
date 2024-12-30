@@ -50,7 +50,8 @@ function SideBar({username}) {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const response = await fetch("https://localhost:443/auth/logout/", {
+            const host=import.meta.env.VITE_HOST_URL;
+            const response = await fetch(`${host}/auth/logout/`, {
               method: "POST",
               credentials: "include",
             });

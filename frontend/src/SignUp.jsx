@@ -16,7 +16,8 @@ function SignUp() {
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-        const response = await fetch('https://localhost:443/auth/signup/',{
+        const host=import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/signup/`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

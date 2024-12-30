@@ -14,19 +14,21 @@ function SignIn() {
 
     const handle42Intra = () =>{
         const client_id=import.meta.env.VITE_CLIENT_ID;
-        const auth_url = 'https://api.intra.42.fr/oauth/authorize';
+        const auth_url=import.meta.env.VITE_INTRA_API;
+        const host=import.meta.env.VITE_HOST_URL;
         const response_type = 'code';
-        const redirectUri='https://localhost:443/accounts/42school/login/callback/';
+        const redirectUri=`${host}/accounts/42school/login/callback/`;
+        console.log ("-----------------------------------", redirectUri);
         const auth_url_concatinated = `${auth_url}?client_id=${client_id}&redirect_uri=${redirectUri}&response_type=${response_type}`;
-        console.log("aaaaaaaauth --------> ",auth_url_concatinated);
         window.location.href = auth_url_concatinated;
     };
     const handleSignInClick = async(e) => {
         e.preventDefault();
         setErrorMessages([]);
         setSuccessMessages([]);
+        const host = import.meta.env.VITE_HOST_URL;
         try {
-            const response = await fetch('https://localhost:443/auth/signin/', {
+            const response = await fetch(`${host}/auth/signin/`, {
                 method: 'POST',
                 headers: {
                         'Content-Type': 'application/json',

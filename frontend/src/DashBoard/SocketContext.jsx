@@ -16,7 +16,8 @@ function SocketContextProvider({ children }) {
 
         const establishConnection = () => {
             console.log("Establishing WebSocket connection... socketa dyal online status");
-            const ws = new WebSocket('wss://localhost:443/ws/online_status/');
+            const socket_var=import.meta.env.VITE_WSS_URL
+            const ws = new WebSocket(`${socket_var}/ws/online_status/`);
 
             ws.onopen = () => {
                 console.log("---------{ WebSocket connection established }--------------");

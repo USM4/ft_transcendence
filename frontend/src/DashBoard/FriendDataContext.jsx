@@ -12,7 +12,8 @@ function FriendDataProvider ({ children }) {
   
   useEffect(() => {
       const fetchFriendList = async () => {
-        const response = await fetch('https://localhost:443/auth/friends/',
+        const host=import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/friends/`,
         {
             method: 'GET',
             credentials: 'include',

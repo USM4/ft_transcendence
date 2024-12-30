@@ -43,12 +43,13 @@ export const GameSocketProvider = ({ children }) => {
             pathname === "/tournament/options/game/online")) {
                 
             let socket = null 
+            const socket_var=import.meta.env.VITE_WSS_URL
             if (type && type === "game_invite")
-                socket = new WebSocket(`wss://localhost:443/ws/game/?type=invite&opponent=${opponent}`);
+                socket = new WebSocket(`${socket_var}/ws/game/?type=invite&opponent=${opponent}`);
             else if (target)
-                socket = new WebSocket(`wss://localhost:443/ws/game/?type=invited&opponent=${target}`);
+                socket = new WebSocket(`${socket_var}/ws/game/?type=invited&opponent=${target}`);
             else
-                socket = new WebSocket("wss://localhost:443/ws/game/?type=random");
+                socket = new WebSocket(`${socket_var}/ws/game/?type=random`);
             
             socket.onopen = () => {
                 console.log("WebSocket connection established for Game.");

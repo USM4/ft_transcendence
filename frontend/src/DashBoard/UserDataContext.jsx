@@ -12,7 +12,8 @@ function UserDataProvider({ children }) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await fetch("https://localhost:443/auth/dashboard/", {
+        const host=import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/dashboard/`, {
           method: "GET",
           credentials: "include",
         });
@@ -22,7 +23,6 @@ function UserDataProvider({ children }) {
         }
         else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay' )
         {
-          // console.log("galk yahia :--------------- ", pathname);
           navigate('signin/')
         }
 

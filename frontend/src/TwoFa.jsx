@@ -9,7 +9,8 @@ function TwoFa() {
   const checkOtp = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://localhost:443/auth/check_otp/", {
+      const host=import.meta.env.VITE_HOST_URL;
+      const response = await fetch(`${host}/auth/check_otp/`, {
         method: "POST",
         credentials: "include",
         headers: {

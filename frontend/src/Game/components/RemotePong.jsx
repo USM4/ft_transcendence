@@ -267,14 +267,14 @@ const handleKeyDown = (e) => {
           <div className="player-profiles">
             <div className="player-card">
               <div className="player-name">
-                <h3>{players.user1.username}</h3>
+                <h3>{players?.user1.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.leftPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={players.user1.avatar || player3Image} alt="Player 1" />
+                <img src={players?.user1.avatar || player3Image} alt="Player 1" />
                 <div className="glow-effect"></div>
               </div>
             </div>
@@ -285,14 +285,14 @@ const handleKeyDown = (e) => {
 
             <div className="player-card">
               <div className="player-name">
-                <h3>{players.user2.username}</h3>
+                <h3>{players?.user2.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.rightPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={players.user2.avatar || player3Image} alt="Player 2" />
+                <img src={players?.user2.avatar || player3Image} alt="Player 2" />
                 <div className="glow-effect"></div>
               </div>
             </div>

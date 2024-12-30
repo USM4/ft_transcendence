@@ -16,6 +16,12 @@ from dotenv import load_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+
+
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # STATIC_URL = '/static/'
@@ -31,7 +37,9 @@ SECRET_KEY = 'django-insecure-w@)mu=t95zxg_&mu1l13+4d$rd9$4g0i65^1y8b&woqlvlk7st
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '0.0.0.0']
+HOST_URL = os.getenv('HOST_URL', 'https://localhost')
+
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -89,8 +97,6 @@ WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 POSTGRES_DB = os.getenv('POSTGRES_DB', 'mydabatayz')
 POSTGRES_USER = os.getenv('POSTGRES_USER', 'oussama')
@@ -176,16 +182,18 @@ CHANNEL_LAYERS = {
     },
 }
 
+print("----------------------------HOST_URL----------------------------", HOST_URL)
+
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://localhost',
+    HOST_URL,
     'http://localhost',
-    'http://localhost:5173',
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://localhost",
+    HOST_URL,
     'http://localhost'
 ]
 

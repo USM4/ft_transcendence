@@ -32,23 +32,6 @@ function Profile() {
   const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
 
-  // console.log("----------------------SALAAAAMO3ALIKOM----------------------------")
-  // console.log("HADA RAH L USR", user.username);
-  // console.log("USER IS:", user)
-  // useEffect(() => {
-  //   if(socket === null) return;
-  //   socket.onmessage = (e) => {
-  //     const data = JSON.parse(e.data);
-  //     console.log("data", data);
-  //     if (data.type === "friend_request_accepted") {
-  //       setFriends((prevFriends) => [...prevFriends, data.friend]);
-  //     } else if (data.type === "friend_removed_you") {
-  //       setFriends((prevFriends   ) =>
-  //         prevFriends.filter((friend) => friend.id !== data.friend.id)
-  //       );
-  //     }
-  //   }
-  // }, [socket]);
   useEffect(() => {
     if (socket === null) return;
 
@@ -77,8 +60,9 @@ function Profile() {
 
 
   const sendFriendRequest = async (to_user) => {
+    const host=import.meta.env.VITE_HOST_URL;
     const response = await fetch(
-      "https://localhost:443/auth/send_friend_request/",
+      `${host}/auth/send_friend_request/`,
       {
         method: "POST",
         credentials: "include",
@@ -118,8 +102,9 @@ function Profile() {
       color: "#fff",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        const host=import.meta.env.VITE_HOST_URL;
         const response = await fetch(
-          "https://localhost:443/auth/remove_friend/",
+          `${host}/auth/remove_friend/`,
           {
             method: "POST",
             credentials: "include",
@@ -155,8 +140,9 @@ function Profile() {
   useEffect(() => {
     if (username !== user?.username) {
       const fetchStranger = async () => {
+        const host=import.meta.env.VITE_HOST_URL;
         const response = await fetch(
-          `https://localhost:443/auth/profile/${username}/`,
+          `${host}/auth/profile/${username}/`,
           {
             method: "GET",
             credentials: "include",

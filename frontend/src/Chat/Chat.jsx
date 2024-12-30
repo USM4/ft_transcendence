@@ -10,7 +10,8 @@ export default function Chat() {
 
   useEffect(() => {
     const establishConnection = () => {
-      const socket = new WebSocket(`wss://localhost:443/ws/chat/`);
+      const socket_var=import.meta.env.VITE_WSS_URL
+      const socket = new WebSocket(`${socket_var}/ws/chat/`);
       socket.onopen = () => {
         setChatsocket(socket);
         console.log("Chat connection established.")

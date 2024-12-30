@@ -27,11 +27,10 @@ function ProfileSettings() {
 
   const saveCode = async (e) => {
     e.preventDefault();
-    console.log("save code", code);
-    console.log("is enabled", isEnabled);
+    const host=import.meta.env.VITE_HOST_URL;
     const endpoint = isEnabled
-    ? "https://localhost:443/auth/activate2fa/"
-    : "https://localhost:443/auth/desactivate2fa/";
+    ? `${host}/auth/activate2fa/`
+    : `${host}/auth/desactivate2fa/`;
     try {
       const response = await fetch(`${endpoint}`, {
         method: "POST",
@@ -48,7 +47,6 @@ function ProfileSettings() {
         updateUser((prevUser) => ({ ...prevUser, twoFa: data.is_2fa_enabled }));
       } else {
         toast.error(data.error);
-        console.log(data);
       }
     } catch (error) {
       console.log(error);
@@ -56,7 +54,8 @@ function ProfileSettings() {
   };
   const updateInfos = async () => {
     try {
-      const response = await fetch("https://localhost:443/auth/update_infos/", {
+      const host=import.meta.env.VITE_HOST_URL;
+      const response = await fetch(`${host}/auth/update_infos/`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -78,7 +77,8 @@ function ProfileSettings() {
 
   const getQRCode = async () => {
     try {
-      const response = await fetch("https://localhost:443/auth/2fa/", {
+      const host=import.meta.env.VITE_HOST_URL;
+      const response = await fetch(`${host}/auth/2fa/`, {
         method: "GET",
         credentials: "include",
       });
@@ -92,8 +92,6 @@ function ProfileSettings() {
   };
 
   useEffect(() => {
-    // console.log("is enabled", user?.twoFa);
-    // console.log("is 2FA", user?.twoFa);
     if (isEnabled && !user?.twoFa) getQRCode();
     else setQrCodeUrl(null);
   }, [isEnabled, user?.twoFa]);

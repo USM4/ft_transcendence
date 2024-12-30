@@ -14,5 +14,8 @@
 > dashboard user undefined in the dashboard  after updating the picture matlan (DONE ...
 )
 
-
-> added an ai game code still have to rea
+***********************
+> sign in with an intra username with empty password 
+something went wrong FriendDataContext.jsx:25:18
+XHRPOST
+https://localhost/auth/signin/

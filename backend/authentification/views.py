@@ -25,6 +25,12 @@ from django.conf import settings
 from .consumers import user_channel_name
 from django.core.files.storage import default_storage
 
+
+load_dotenv()
+HOST_URL = os.getenv('HOST_URL', '')
+DEFAULT_AVATAR = os.getenv('DEFAULT_AVATAR', '')
+INTRA_TARGET = os.getenv('INTRA_TARGET', '')
+
 class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
@@ -95,7 +101,7 @@ class ExtractCodeFromIntraUrl(APIView):
         client_id = CLIENT_ID
         client_secret = SECRET_ID
         
-        redirect_uri = 'https://localhost:443/accounts/42school/login/callback/'
+        redirect_uri = f'{HOST_URL}/accounts/42school/login/callback/'
         # json li aytseft f request
         json_data = {
             'grant_type': 'authorization_code',
@@ -112,7 +118,7 @@ class ExtractCodeFromIntraUrl(APIView):
         data = response.json()
         access_token = data.get('access_token')
         # nakhod l user info bl  access token li jebt mn 3end intra
-        user_url_intra = 'https://api.intra.42.fr/v2/me'
+        user_url_intra = INTRA_TARGET
         user_info_response = requests.get(user_url_intra, headers={
             'Authorization': f'Bearer {access_token}'
         })
@@ -129,9 +135,9 @@ class ExtractCodeFromIntraUrl(APIView):
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
         if user.is_2fa_enabled:
-            response = redirect('https://localhost/2fa')
+            response = redirect(f'{HOST_URL}/2fa')
         else:
-            response = redirect('https://localhost/dashboard')
+            response = redirect(f'{HOST_URL}/dashboard')
             print("dkheeeeeeeeeeeeeel")
             response.set_cookie(
                 'client',
@@ -186,7 +192,7 @@ class GameLeaderboard(APIView):
                 data.append({
                     'id': player_id,
                     'username': player.username,
-                    'avatar': player.avatar if player.avatar else 'https://localhost:443/media/avatars/anonyme.png',
+                    'avatar': player.avatar if player.avatar else DEFAULT_AVATAR,
                     'xp': xp
                 })
 
@@ -218,8 +224,8 @@ def get_game(user):
             r.append([
                 {
                     'id': g.game_id,
-                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'https://localhost:443 /media/avatars/anonyme.png'},
-                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'https://localhost:443/media/avatars/anonyme.png'},
+                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else DEFAULT_AVATAR},
+                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else DEFAULT_AVATAR},
                     'winner': g.winner.username,
                     'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
                     'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
@@ -249,7 +255,7 @@ class DashboardView(APIView):
             'id': user.id,
             'email': user.email,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else 'https://localhost:443/media/avatars/anonyme.png',
+            'avatar': user.avatar if user.avatar else DEFAULT_AVATAR,
             'twoFa': user.is_2fa_enabled,
             'is_online': user.is_online,
             'matchePlayed': game,
@@ -352,7 +358,7 @@ class AcceptFriendRequest(APIView):
                             'friend': {
                                 'id': sender.id,
                                 'username': sender.username,
-                                'avatar': sender.avatar if sender.avatar else 'https://localhost:443/media/avatars/anonyme.png',
+                                'avatar': sender.avatar if sender.avatar else DEFAULT_AVATAR,
                                 # 'is_blocked': sender.is_blocked,
                                 'is_blocked': False,
                                 'is_online': sender.is_online
@@ -369,7 +375,7 @@ class AcceptFriendRequest(APIView):
                             'friend': {
                                 'id': receiver.id,
                                 'username': receiver.username,
-                                'avatar': receiver.avatar if receiver.avatar else 'https://localhost:443/media/avatars/anonyme.png',
+                                'avatar': receiver.avatar if receiver.avatar else DEFAULT_AVATAR,
                                 # 'is_blocked': receiver.is_blocked,
                                 'is_blocked': False,
                                 'is_online': receiver.is_online
@@ -403,7 +409,7 @@ class FriendsList(APIView):
             {
                 'id': friend.friend.id,
                 'username': friend.friend.username,
-                'avatar': friend.friend.avatar if friend.friend.avatar else 'https://localhost:443/media/avatars/anonyme.png',
+                'avatar': friend.friend.avatar if friend.friend.avatar else DEFAULT_AVATAR,
                 'is_blocked': friend.is_blocked,
                 'is_online': friend.friend.is_online,
                 'blocker': friend.blocker.username if friend.blocker else None,
@@ -426,7 +432,7 @@ class Search(APIView):
             {
                 'id': c.id,
                 'username': c.username,
-                'avatar': c.avatar if c.avatar else 'https://localhost:443/media/avatars/anonyme.png'
+                'avatar': c.avatar if c.avatar else DEFAULT_AVATAR
             }
             for c in clients
         ]
@@ -458,7 +464,7 @@ class Profile(APIView):
         return Response({
             'id': user.id,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else 'https://localhost:443/media/avatars/anonyme.png',
+            'avatar': user.avatar if user.avatar else DEFAULT_AVATAR,
             'friendship_status': friendship_status,
             'is_online': user.is_online,
         })
@@ -516,8 +522,7 @@ class QrCode(APIView):
     def get(self, request):
         generate_otp(username=request.user.username)
         qrcode_path = os.path.join(settings.MEDIA_ROOT, 'qr_codes', f'{request.user.username}.png')
-        qrcode_url = request.build_absolute_uri(settings.MEDIA_URL + f'qr_codes/{request.user.username}.png')
-
+        qrcode_url = qrcode_url = request.build_absolute_uri(settings.MEDIA_URL + f'qr_codes/{request.user.username}.png').replace("http://", "https://")
         return Response({'qrcode': qrcode_url})
 
 class CheckOtp(APIView):
@@ -578,6 +583,8 @@ class UpdateUserInfos(APIView):
         if avatar_file:
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
             file_url = request.build_absolute_uri(default_storage.url(file_path))
+            file_url = file_url.replace("http://", "https://")
+            file_url = file_url.replace(":80", ":443")
             user.avatar = file_url
 
         if address:

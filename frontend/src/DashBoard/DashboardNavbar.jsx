@@ -34,7 +34,8 @@ function DashboardNavbar() {
     }
     
     try {
-      const response = await fetch(`https://localhost:443/auth/search/${e.target.value}`);
+      const host=import.meta.env.VITE_HOST_URL;
+      const response = await fetch(`${host}/auth/search/${e.target.value}`);
       const results = await response.json();
       setSearchResults(results);
       setSearchToggle(true);
@@ -60,7 +61,8 @@ function DashboardNavbar() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const response = await fetch("https://localhost:443/auth/logout/", {
+            const host=import.meta.env.VITE_HOST_URL;
+            const response = await fetch(`${host}/auth/logout/`, {
               method: "POST",
               credentials: "include",
             });

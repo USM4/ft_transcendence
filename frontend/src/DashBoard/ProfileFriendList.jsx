@@ -14,8 +14,8 @@ function ProfileFriendList({ username, avatar,id }) {
     };
 
     const  inviteFriendToGame = async () => {
-        console.log("invite friend to game");
-        const response = await fetch("https://localhost:443/auth/game_invite/", {
+        const host=import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/game_invite/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
