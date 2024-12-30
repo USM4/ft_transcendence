@@ -38,8 +38,8 @@ const Matchmaking = () => {
 
 useEffect(() => {
     if (wsRef.current && message) {
-        console.log("in matchMaking", message);
             const data = message;
+            console.log("data", data);
             switch(data.type) {
                 case "connected":
                     break;
@@ -55,7 +55,6 @@ useEffect(() => {
                 case "waiting_for_players":
                     setIsReady(false);
                     break;
-
             }
     }
 }, [wsRef, user?.username, message]);

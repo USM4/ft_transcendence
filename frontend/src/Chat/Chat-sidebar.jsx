@@ -35,7 +35,6 @@ export default function Chat_sidebar() {
 			const { chat_room, message, message_id } = data;
 
 			if (data.type !== 'online')
-				console.log("data", data);
 			if (data.type === 'history') {
 				if (chat_room === 'no_messages')
 					setChatroom(null);
@@ -48,7 +47,6 @@ export default function Chat_sidebar() {
 					const chatMessage = prevMessage[chat_room] || [];
 					const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
 
-					console.log('messageExists', messageExists);
 					if (!messageExists) {
 						return {
 							...prevMessage,
@@ -111,7 +109,6 @@ export default function Chat_sidebar() {
 		setFriendsList([...friends]);
 	}, [friends, socket]);
 	const chatroomMessages = chatroom ? message[chatroom] : [];
-	console.log("chatroomMessages", chatroom)
 
 
 

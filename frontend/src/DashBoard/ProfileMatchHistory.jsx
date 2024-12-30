@@ -16,6 +16,15 @@ function ProfileMatchHistory({ profile,is_user}) {
     const [matchDetails, setMatchDetails] = useState(null);
     if (is_user)
         friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
+    if (is_user && user.username !== profile.username)
+        return (
+            <div className="profile-match-history-item" style={{justifyContent: "center"}}>
+                <h1 className="data-chart-h1">You can't see this player's Match History</h1>
+                </div>);
+
+    console.log("user", user);
+    console.log("profile", profile);
+    console.log("is_user", is_user);
 
     return (
         <div className="profile-match-history-item">

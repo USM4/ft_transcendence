@@ -11,29 +11,30 @@ function UserDataProvider({ children }) {
 
   useEffect(() => {
     const getData = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/auth/dashboard/", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
+      if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay') {
+
+        try {
+          const response = await fetch("http://localhost:8000/auth/dashboard/", {
+            method: "GET",
+            credentials: "include",
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setUser(data);
+          }
+        } catch (error) {
+          console.error('error getting data :', error);
         }
-        else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay' )
-          navigate('signin/')
-      } catch (error) {
-        console.error('error getting data :', error);
       }
     };
     getData();
   }, [pathname]);
-  
-    const updateUser = (updatedUser) => {
-      setUser(updatedUser);
+
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
   };
   return (
-    <UserDataContext.Provider value={{ user, updateUser}}>
+    <UserDataContext.Provider value={{ user, updateUser }}>
       {children}
     </UserDataContext.Provider>
   );

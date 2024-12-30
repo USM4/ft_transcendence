@@ -51,6 +51,9 @@ class SignInView(APIView):
         parse_login = request.data.get('login')
         password = request.data.get('password')
 
+        if not parse_login or not password:
+            return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+
         if '@' in parse_login and '.' in parse_login:
             try:
                 client = Client.objects.get(email=parse_login)
@@ -284,10 +287,9 @@ class SendFriendRequest(APIView):
         # Check if a notification for this friend request already exists
 
         if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", receiver=to_user).exists():
-
             Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a friend request ", notification_type='friend_request', receiver=to_user)
         else:
-            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", receiver=to_user).update(is_read=False)
+            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", notification_type='friend_request', receiver=to_user).update(is_read=False)
         return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
@@ -317,12 +319,13 @@ class AcceptFriendRequest(APIView):
         request_type = request.data.get('type')
         request_id = request.data.get('request_id')
         user_id = Notification.objects.get(id=request_id).sender.id
+        to_user_id = Notification.objects.get(id=request_id).receiver.id
         try:
             if request_type == "game_invite":
                 isread = Notification.objects.filter(id=request_id).update(is_read=True)
                 return Response({'message': 'game invite accepted'},  status=200)
 
-            friend_request = FriendShip.objects.get(from_user=user_id, status='pending')
+            friend_request = FriendShip.objects.get(from_user=user_id, to_user=to_user_id,status='pending')
 
             friend_request.status = 'accepted'
             friend_request.save()
@@ -331,7 +334,7 @@ class AcceptFriendRequest(APIView):
             receiver = friend_request.to_user
             Friend.objects.create(user=sender, friend=receiver,blocker=None)
             Friend.objects.create(user=receiver, friend=sender,blocker=None)
-            Notification.objects.filter(receiver=request.user, is_read=False).update(is_read=True)
+            Notification.objects.filter(receiver=request.user, sender=user_id, is_read=False).update(is_read=True)
 
             #get the channel layer
             channel_layer = get_channel_layer()
