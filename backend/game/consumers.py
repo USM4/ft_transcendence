@@ -216,6 +216,8 @@ class GameState:
 		self.game_object.xp_gained_player2 = random.randint(100, 500) if winner.id == player1.id else random.randint(1000, 5000)
 		self.game_object.end_time = datetime.now()
 		await database_sync_to_async(self.game_object.save)()
+		connected_users_set.discard(self.pleft["id"])
+		connected_users_set.discard(self.pright["id"])
 
 		await self.consumer.channel_layer.group_send(
 			self.match_name,
@@ -285,8 +287,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 					break
 			if invitation_to_remove:
 				invited_users.remove(invitation_to_remove)
+		
 		user_exists = any(user['id'] == self.player['id'] for user in connected_users)
-		if not user_exists:
+		player_exists = False
+		for user in connected_users_set:
+			if user == self.player['id']:
+				player_exists = True
+				break
+		if not user_exists and not player_exists:
 			if not (game_type == "invited" or game_type == "invite"):
 				self.player["numberPlayer"] = "1" if len(connected_users) % 2 == 0 else "2"
 				connected_users.append(self.player)
@@ -377,21 +385,21 @@ class GameConsumer(AsyncWebsocketConsumer):
 			self.match_name = event["match_name"]
 		if not self.game_state.is_active:
 			self.game_state.is_active = True
+			connected_users_set.add(self.game_state.pleft["id"])
+			connected_users_set.add(self.game_state.pright["id"])
 			asyncio.create_task(self.game_loop())
 
 	async def disconnect(self, close_code):
 		if self.match_name:
 			if self.match_name in game_states:
+				connected_users_set.discard(self.game_state.pleft["id"])
+				connected_users_set.discard(self.game_state.pright["id"])
 				if not game_states[self.match_name].is_active:
 					del game_states[self.match_name]
 					return
 				game_states[self.match_name].is_active = False
 				del game_states[self.match_name]
 			await self.channel_layer.group_discard(self.match_name, self.channel_name)
-			#     f"Player {self.player['username']} disconnected. Match: {self.match_name}"
-			#     f"Connected users: {connected_users}"
-			#     f"Connected users set: {game_states}"
-			# )
 			if close_code != 4000:
 				await self.channel_layer.group_send(
 					self.match_name,
@@ -407,6 +415,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 		for invitation in invited_users:
 			if (invitation["player1"]['username'] == self.player['username']):
 				invited_users.remove(invitation)
+				break
+		
 	async def game_over(self, event):
 		await self.send(text_data=json.dumps({
 			"type": "game_over",

@@ -40,7 +40,7 @@ function DashboardFriends() {
                         {
                             friend?.is_online && (
                                 <>
-                                    <div className="friend-info">
+                                    <div className="friend-info" onClick={() => navigate(`/dashboard/profile/${friend?.username}`)}>
                                         <img src={friend?.avatar} alt={`${friend?.username}'s avatar`} />
                                         <p> {friend?.username} </p>
                                     </div>

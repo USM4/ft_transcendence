@@ -11,6 +11,7 @@ function UserDataProvider({ children }) {
 
   useEffect(() => {
     const getData = async () => {
+      if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay') {
       try {
         const host=import.meta.env.VITE_HOST_URL;
         const response = await fetch(`${host}/auth/dashboard/`, {
@@ -29,15 +30,16 @@ function UserDataProvider({ children }) {
       } catch (error) {
         console.error('error getting data :', error);
       }
-    };
+    }
+  };
     getData();
   }, [pathname]);
-  
-    const updateUser = (updatedUser) => {
-      setUser(updatedUser);
+
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
   };
   return (
-    <UserDataContext.Provider value={{ user, updateUser}}>
+    <UserDataContext.Provider value={{ user, updateUser }}>
       {children}
     </UserDataContext.Provider>
   );

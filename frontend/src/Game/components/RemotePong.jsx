@@ -27,12 +27,6 @@ const RemotePong = () => {
 
   const {wsRef, message} = useContext(GameSocketContext);
 
-  // if (!players)
-  // {
-  //   navigate("/tournament/options/game");
-  //   console.log("no players to play");
-  //   toast.error("Players Troubleshooting");
-  // }
 
   const gameSocketRef = useContext(GameSocketContext);
   const ballRef = useRef({
@@ -91,9 +85,7 @@ useEffect(() => {
   if (wsRef.current && message) {
       const socket = wsRef.current;
       
-      //console.log("+++++++++++++DATA+++++++++++++++++") 
           const data = message;
-          //console.log("+++++++++++++DATA+++++++++++++++++", data)
           switch(data.type) {
               case "game_state_update":
                   const gameState = data.message;
@@ -105,8 +97,7 @@ useEffect(() => {
                   break;
                   
               case "waiting_for_players":
-                  localStorage.setItem("gameState", "Waiting");
-                  setGameState("Waiting");
+                  navigate("/tournament/options/game");
                   break;
                   
               case "score_update":
@@ -267,14 +258,14 @@ const handleKeyDown = (e) => {
           <div className="player-profiles">
             <div className="player-card">
               <div className="player-name">
-                <h3>{players?.user1.username}</h3>
+                <h3>{players?.user1 && players?.user1.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.leftPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={players?.user1.avatar || player3Image} alt="Player 1" />
+                <img src={players?.user1 && players?.user1.avatar || player3Image} alt="Player 1" />
                 <div className="glow-effect"></div>
               </div>
             </div>
@@ -285,14 +276,14 @@ const handleKeyDown = (e) => {
 
             <div className="player-card">
               <div className="player-name">
-                <h3>{players?.user2.username}</h3>
+                <h3>{players?.user1 && players?.user2.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.rightPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={players?.user2.avatar || player3Image} alt="Player 2" />
+                <img src={players?.user1 && players?.user2.avatar || player3Image} alt="Player 2" />
                 <div className="glow-effect"></div>
               </div>
             </div>

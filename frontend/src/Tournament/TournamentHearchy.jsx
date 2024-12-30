@@ -273,7 +273,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche1.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="87"
@@ -291,7 +291,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche1.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="87"
@@ -309,7 +309,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche2.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="87"
@@ -327,7 +327,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche2.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="87"
@@ -353,7 +353,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 0)"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche3.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche3.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche3.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche3.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1263"
@@ -372,7 +372,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 94)"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche3.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche3.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche3.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche3.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1263"
@@ -391,7 +391,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 367)"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche4.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche4.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche4.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche4.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1263"
@@ -410,7 +410,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1350 273)"
-					stroke={(tournamentState.ongoing.Player1 == tournamentState.players.matche4.Player1 && tournamentState.ongoing.Player2 == tournamentState.players.matche4.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.players.matche4.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.players.matche4.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1263"
@@ -434,7 +434,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche1.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="330"
@@ -452,7 +452,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche1.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche1.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche1.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="330"
@@ -472,7 +472,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1108 230)"
-					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche2.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1020"
@@ -491,7 +491,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 1108 136)"
-					stroke={(tournamentState.semi_players && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche2.Player1 && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.semi_players && tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.semi_players.matche2.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.semi_players.matche2.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="1020"
@@ -530,7 +530,7 @@ const TournamentHearchy = () => {
 					width="147"
 					height="54"
 					rx="14.5"
-					stroke={(tournamentState.final_players && tournamentState.ongoing.Player1 == tournamentState.final_players.matche.Player1 && tournamentState.ongoing.Player2 == tournamentState.final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.final_players && tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.final_players.matche.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="535"
@@ -549,7 +549,7 @@ const TournamentHearchy = () => {
 					height="54"
 					rx="14.5"
 					transform="matrix(-1 0 0 1 866 183)"
-					stroke={(tournamentState.final_players && tournamentState.ongoing.Player1 == tournamentState.final_players.matche.Player1 && tournamentState.ongoing.Player2 == tournamentState.final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
+					stroke={(tournamentState.final_players && tournamentState.ongoing && tournamentState.ongoing.Player1 == tournamentState.final_players.matche.Player1 && tournamentState.ongoing && tournamentState.ongoing.Player2 == tournamentState.final_players.matche.Player2) ? "#388e3c" : "#FFD700"}
 				/>
 				<text
 					x="815"
