@@ -51,6 +51,9 @@ class SignInView(APIView):
         parse_login = request.data.get('login')
         password = request.data.get('password')
 
+        if not parse_login or not password:
+            return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+
         if '@' in parse_login and '.' in parse_login:
             try:
                 client = Client.objects.get(email=parse_login)

@@ -435,7 +435,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 	async def game_loop(self):
 		await asyncio.sleep(4)
-		print("*************************", connected_users_set)
 		while self.game_state and self.game_state.is_active:
 			self.game_state.update_ball()
 			game_state = self.game_state.get_game_state()
