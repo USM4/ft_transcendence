@@ -9,7 +9,7 @@ export default function Chat_area({ selected,chatroomMessages }) {
 
   const message_history = chatroomMessages.map((msg, index) => (
     <div key={index}>
-      {msg.receiver == selected.id && <div className="message"><p className="message-sent">{msg.message}</p></div>}
+      {(selected && msg.receiver == selected.id) && <div className="message"><p className="message-sent">{msg.message}</p></div>}
       {msg.receiver == user.id && (<div className="message-received">
         <p className='my-message'> {msg.message}</p>
         </div>)}
@@ -19,11 +19,12 @@ export default function Chat_area({ selected,chatroomMessages }) {
   return (
     <div className="chat-area">
 
-      {!selected.is_blocked 
+      {selected &&
+      (!selected.is_blocked 
       ? (<div className="message-wrap">{message_history}</div> )
       : (selected.blocker !== selected.username
       ? (<div className="blocked">YOU HAVE BLOCKED THIS USER <BlockIcon fontSize='large' /></div>)
-      : (<div className="blocked">YOU ARE BLOCKED <BlockIcon fontSize='large' /></div>))
+      : (<div className="blocked">YOU ARE BLOCKED <BlockIcon fontSize='large' /></div>)))
 }
 
     </div>

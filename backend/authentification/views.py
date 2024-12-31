@@ -29,10 +29,18 @@ class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
         if not serializer.is_valid():
+            if ('username' in serializer.errors):
+                return Response({'error': 'username: ' + serializer.errors['username'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('email' in serializer.errors):
+                return Response({'error': 'email: ' + serializer.errors['email'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('password' in serializer.errors):
+                return Response({'error': 'password: ' + serializer.errors['password'][0]}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"error": "Invalid data format "}, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')
+        if not password.isalnum() or len(password) < 6:
+            return Response({"error": "Password must be at least 8 characters and contain at least one letter and one number"}, status=status.HTTP_400_BAD_REQUEST)
         newpassword = request.data.get('newpassword', '')
         if password != newpassword:
             return Response({"error": "Passwords do not match "}, status=status.HTTP_400_BAD_REQUEST)
