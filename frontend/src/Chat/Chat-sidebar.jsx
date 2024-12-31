@@ -125,6 +125,8 @@ export default function Chat_sidebar() {
 			if (updatedFriend) {
 				setSelectedFriend(updatedFriend);
 			}
+			else 
+				setSelectedFriend(null);
 		}
 	}, [friendsList]);
 
