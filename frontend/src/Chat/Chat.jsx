@@ -19,7 +19,7 @@ export default function Chat() {
         console.log("Chat connection closed.")
       };
     }
-    if (pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/features' && pathname !== '/howtoplay')
+    if (pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/about' && pathname !== '/howtoplay')
       establishConnection();
   }, [])
 
