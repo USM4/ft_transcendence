@@ -319,8 +319,15 @@ class NotificationGameInvite(APIView):
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
         if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).exists():
             Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a game invite ", notification_type='game_invite', receiver=to_user)
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
         else:
-            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
+            else:
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
         return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
