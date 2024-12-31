@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {act, useContext} from "react";
 import { UserDataContext } from "./UserDataContext.jsx";
 import { Doughnut } from "react-chartjs-2";
 import { Radar } from 'react-chartjs-2';
@@ -16,12 +16,10 @@ ChartJS.register( RadialLinearScale, PointElement, LineElement, Filler, Tooltip,
 
 function DashboardDoghnuts() {
   const { user } = useContext(UserDataContext);
-  const matches = user?.matchePlayed.length;
+  const matches = user?.matchePlayed ? user?.matchePlayed.length : 0;
   
-    const win = (user?.matcheWon / matches) * 100;
-    const lose = (user?.matcheLost / matches) * 100;
-    const matchedraw = matches - (user?.matcheWon + user?.matcheLost);
-    const draw = (matchedraw / matches) * 100;
+  const matchedraw = matches - (user?.matcheWon + user?.matcheLost);
+
     const data = {
         labels: [
           'Victory',
@@ -30,6 +28,7 @@ function DashboardDoghnuts() {
         ],
         datasets: [{
           label: 'Matches',
+          active: false,
           data: [user?.matcheWon, user?.matcheLost, matchedraw],
           fill: true,
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
@@ -41,6 +40,11 @@ function DashboardDoghnuts() {
         }]
       };
       const options = {
+        plugins: {
+          legend: {
+            onClick: null,
+          },
+        },
         elements: {
           line: {
             tension: 0.08,

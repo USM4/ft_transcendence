@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 from django.db.models import Q
 import pyotp
+from django.db.models import Count
 import qrcode
 from dotenv import load_dotenv
 from django.shortcuts import redirect
@@ -28,10 +29,18 @@ class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
         if not serializer.is_valid():
+            if ('username' in serializer.errors):
+                return Response({'error': 'username: ' + serializer.errors['username'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('email' in serializer.errors):
+                return Response({'error': 'email: ' + serializer.errors['email'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('password' in serializer.errors):
+                return Response({'error': 'password: ' + serializer.errors['password'][0]}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"error": "Invalid data format "}, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')
+        if not password.isalnum() or len(password) < 6:
+            return Response({"error": "Password must be at least 8 characters and contain at least one letter and one number"}, status=status.HTTP_400_BAD_REQUEST)
         newpassword = request.data.get('newpassword', '')
         if password != newpassword:
             return Response({"error": "Passwords do not match "}, status=status.HTTP_400_BAD_REQUEST)
@@ -49,8 +58,10 @@ class SignInView(APIView):
     def post(self, request):
         parse_login = request.data.get('login')
         password = request.data.get('password')
-        print(f"\nparse login : {parse_login}\n")
-        print(f"\npassword : {password}\n")
+
+        if not parse_login or not password:
+            return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+
         if '@' in parse_login and '.' in parse_login:
             try:
                 client = Client.objects.get(email=parse_login)
@@ -65,7 +76,6 @@ class SignInView(APIView):
             access = str(refresh.access_token)
             redirect_url = client.is_2fa_enabled and '/2fa' or '/dashboard'
             response = Response({'success': 'Logged in successfully', 'redirect_url': redirect_url}, status=status.HTTP_200_OK)
-            # print(f"Setting cookies with access token: {access}")
             response.set_cookie(
                 'client',
                 access,
@@ -93,7 +103,6 @@ class ExtractCodeFromIntraUrl(APIView):
         load_dotenv()
         CLIENT_ID = os.getenv('CLIENT_ID', 'default-client-id')
         SECRET_ID = os.getenv('SECRET_ID')
-        print("SECRET ID :", SECRET_ID)
         client_id = CLIENT_ID
         client_secret = SECRET_ID
         redirect_uri = 'http://localhost:8000/accounts/42school/login/callback/'
@@ -164,25 +173,74 @@ class LogoutView(APIView):
         response.delete_cookie('refresh')
         return response
 
-def get_game(user):
+class GameLeaderboard(APIView):
 
-    game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('start_time').reverse())
-    r = []
-    for g in game:
-        i = game.index(g)
-        r.append([
-            {
-                'id': g.game_id,
-                'player1': {'username': g.player1_id.username, 'avatar': g.player1_id.avatar},
-                'player2': {'username': g.player2_id.username, 'avatar': g.player2_id.avatar},
-                'winner': g.winner.username,
-                'score_player1': g.score_player1,
-                'score_player2': g.score_player2,
-                'xp_gained_player1': g.xp_gained_player1,
-                'xp_gained_player2': g.xp_gained_player2
-            }
-        ])
-    return r
+    def get(self, request):
+        try:
+            game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2', 'winner', 'score_player1', 'score_player2', 'start_time', 'end_time'))
+            player_xp = {}
+            for g in game:
+                if g['player1_id'] not in player_xp:
+                    player_xp[g['player1_id']] = 0
+                if g['player2_id'] not in player_xp:
+                    player_xp[g['player2_id']] = 0
+                player_xp[g['player1_id']] += g['xp_gained_player1']
+                player_xp[g['player2_id']] += g['xp_gained_player2']
+            sorted_xp = dict(sorted(player_xp.items(), key=lambda item: item[1], reverse=True))
+            data = []
+            for player_id, xp in sorted_xp.items():
+                if not player_id:
+                    continue
+                player = Client.objects.get(id=player_id)
+                data.append({
+                    'id': player_id,
+                    'username': player.username,
+                    'avatar': player.avatar if player.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                    'xp': xp
+                })
+
+            return Response({'game_xp': data[:5]}, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
+
+def get_game(user):
+    try:
+        game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('game_id'))
+        r = []
+        for g in game:
+            player1 = g.player1_id if g.player1_id == user else g.player2_id
+            player2 = g.player2_id if g.player2_id != user else g.player1_id
+
+
+            if g.end_time:
+                time_difference = abs(g.end_time - g.start_time)
+            else:
+                time_difference = timedelta(seconds=0)
+
+            total_seconds = time_difference.total_seconds()
+            hours = int(total_seconds // 3600)
+            minutes = int((total_seconds % 3600) // 60)
+            seconds = int(total_seconds % 60)
+
+            formatted_duration = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
+
+            r.append([
+                {
+                    'id': g.game_id,
+                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                    'winner': g.winner.username,
+                    'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
+                    'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
+                    'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
+                    'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
+                    'duration': formatted_duration,
+                    'total_seconds': total_seconds,
+                }
+            ])
+        return r
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
 class DashboardView(APIView):
     def get(self, request):
@@ -190,33 +248,34 @@ class DashboardView(APIView):
         if not user.is_authenticated:
             return Response({'error': 'Unauthorized'}, status=401)
         game = get_game(user)
+
         xp = []
         for g in game:
-            if g[0]['player1'] == user:
-                xp.append(g[0]['xp_gained_player1'])
-            else:
-                xp.append(g[0]['xp_gained_player2'])
+            xp.append(g[0]['xp_gained_player1'])
 
         return Response({
             'id': user.id,
             'email': user.email,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else '/player1.jpeg',
+            'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
             'twoFa': user.is_2fa_enabled,
+            'bio': user.bio,
             'is_online': user.is_online,
             'matchePlayed': game,
             'matcheWon': len([g for g in game if g[0]['winner'] == user.username]),
             'matcheLost': len([g for g in game if g[0]['winner'] != user.username]),
-            'xp': xp
+            'xp': xp,
+            'win_rate': len([g for g in game if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
+            'average_xp': sum(xp) / len(xp) if len(xp) > 0 else 0,
+            'total_time_spent': int(sum([g[0]['total_seconds'] for g in game]) // 3600) if int(sum([g[0]['total_seconds'] for g in game])) // 3600 > 0 else (sum([g[0]['total_seconds'] for g in game]) % 3600) // 60,
         })
 
 class SendFriendRequest(APIView):
     def post(self, request):
         from_user = request.user
-        print("dataaaaaa :", request.data)
+
         to_user = request.data.get('to_user')
-        print("from_user", from_user)
-        print('to_id_user', to_user)
+
         if not to_user:
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -235,34 +294,63 @@ class SendFriendRequest(APIView):
             FriendShip.objects.filter(from_user=to_user, to_user=from_user).update(status='pending')
 
         # Check if a notification for this friend request already exists
-        if not Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").exists():
-            Notification.objects.create(user=to_user, message=f"{from_user.username} sent you a friend request ")
+
+        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", receiver=to_user).exists():
+            Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a friend request ", notification_type='friend_request', receiver=to_user)
         else:
-            Notification.objects.filter(user=to_user, message=f"{from_user.username} sent you a friend request ").update(is_read=False)
+            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a friend request ", notification_type='friend_request', receiver=to_user).update(is_read=False)
         return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
     def get(self, request):
-        notifications = Notification.objects.filter(user=request.user, is_read=False)
-        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at} for n in notifications]
+        notifications = Notification.objects.filter(receiver=request.user, is_read=False)
+        data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at, 'notification_type': n.notification_type, 'sender_id': n.sender_id} for n in notifications]
         return Response(data)
+
+class NotificationGameInvite(APIView):
+    def post(self, request):
+        from_user = request.user
+        to_user = request.data.get('to_user')
+        try:
+            to_user = Client.objects.get(id=to_user)
+        except Client.DoesNotExist:
+            return Response({'error': 'Recipient user not found'}, status=status.HTTP_404_NOT_FOUND)
+        if not to_user:
+            return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).exists():
+            Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a game invite ", notification_type='game_invite', receiver=to_user)
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
+        else:
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
+            else:
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
+        return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
     def post(self, request):
+        request_type = request.data.get('type')
         request_id = request.data.get('request_id')
+        user_id = Notification.objects.get(id=request_id).sender.id
+        to_user_id = Notification.objects.get(id=request_id).receiver.id
         try:
-            user_id = Notification.objects.get(id=request_id).user.id
-            # print("user_id--------------->", user_id)
-            friend_request = FriendShip.objects.get(to_user=user_id, status='pending')
-            # print("accepeted friend request", friend_request)
+            if request_type == "game_invite":
+                isread = Notification.objects.filter(id=request_id).update(is_read=True)
+                return Response({'message': 'game invite accepted'},  status=200)
+
+            friend_request = FriendShip.objects.get(from_user=user_id, to_user=to_user_id,status='pending')
+
             friend_request.status = 'accepted'
             friend_request.save()
-            # print("friend_request.status", friend_request.status)
-            sender = friend_request.to_user
-            receiver = friend_request.from_user
+
+            sender = friend_request.from_user
+            receiver = friend_request.to_user
             Friend.objects.create(user=sender, friend=receiver,blocker=None)
             Friend.objects.create(user=receiver, friend=sender,blocker=None)
-            Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+            Notification.objects.filter(receiver=request.user, sender=user_id, is_read=False).update(is_read=True)
 
             #get the channel layer
             channel_layer = get_channel_layer()
@@ -280,7 +368,7 @@ class AcceptFriendRequest(APIView):
                             'friend': {
                                 'id': sender.id,
                                 'username': sender.username,
-                                'avatar': sender.avatar if sender.avatar else '/player1.jpeg',
+                                'avatar': sender.avatar if sender.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
                                 # 'is_blocked': sender.is_blocked,
                                 'is_blocked': False,
                                 'is_online': sender.is_online
@@ -297,7 +385,7 @@ class AcceptFriendRequest(APIView):
                             'friend': {
                                 'id': receiver.id,
                                 'username': receiver.username,
-                                'avatar': receiver.avatar if receiver.avatar else '/player1.jpeg',
+                                'avatar': receiver.avatar if receiver.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
                                 # 'is_blocked': receiver.is_blocked,
                                 'is_blocked': False,
                                 'is_online': receiver.is_online
@@ -315,14 +403,34 @@ class FriendsList(APIView):
     def get(self, request):
         user = request.user
         friends = Friend.objects.filter(user=user).select_related('friend')
+        for friend in friends:
+            friend.friend.is_online = friend.friend.is_online
+
+        game = {}
+        for friend in friends:
+            game[friend.friend.id] = get_game(friend.friend)
+        xp = {}
+        for friend in friends:
+            xp[friend.friend.id] = []
+            for g in game[friend.friend.id]:
+                xp[friend.friend.id].append(g[0]['xp_gained_player1'])
+
         data = [
             {
                 'id': friend.friend.id,
                 'username': friend.friend.username,
-                'avatar': friend.friend.avatar if friend.friend.avatar else '/player1.jpeg',
+                'avatar': friend.friend.avatar if friend.friend.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
                 'is_blocked': friend.is_blocked,
+                'bio': friend.friend.bio,
                 'is_online': friend.friend.is_online,
-                'blocker': friend.blocker.username if friend.blocker else None
+                'blocker': friend.blocker.username if friend.blocker else None,
+                'matchePlayed': game[friend.friend.id],
+                'matcheWon': len([g for g in game[friend.friend.id] if g[0]['winner'] == friend.friend.username]),
+                'matcheLost': len([g for g in game[friend.friend.id] if g[0]['winner'] != friend.friend.username]),
+                'xp': xp[friend.friend.id],
+                'win_rate': len([g for g in game[friend.friend.id] if g[0]['winner'] == user.username]) / len(game) * 100 if len(game) > 0 else 0,
+                'average_xp': sum(xp[friend.friend.id]) / len(xp[friend.friend.id]) if len(xp[friend.friend.id]) > 0 else 0,
+                'total_time_spent': int(sum([g[0]['total_seconds'] for g in game[friend.friend.id]]) // 3600) if int(sum([g[0]['total_seconds'] for g in game[friend.friend.id]])) // 3600 > 0 else int((sum([g[0]['total_seconds'] for g in game[friend.friend.id]]) % 3600) // 60),
             }
             for friend in friends
         ]
@@ -335,7 +443,7 @@ class Search(APIView):
             {
                 'id': c.id,
                 'username': c.username,
-                'avatar': c.avatar if c.avatar else '/player1.jpeg'
+                'avatar': c.avatar if c.avatar else 'http://localhost:8000/media/avatars/anonyme.png'
             }
             for c in clients
         ]
@@ -344,19 +452,19 @@ class Search(APIView):
 class Profile(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            # print("kwargs", kwargs)
+
             username = kwargs.get('username')
             user = Client.objects.get(username=username)
             me = request.user
             friendship_status = ''
             is_friend = Friend.objects.filter(Q(user=me, friend=user) | Q(user=me, friend=user)).exists()
-            # print("is_friend---------------------------->", is_friend)
+
             if is_friend:
                 friendship_status = 'friends'
             else:
-                # the friendship object between the two users
+
                 friendship = FriendShip.objects.filter(from_user=me, to_user=user).first()
-                # check if the friendship is None before accessing  status
+
                 if friendship is None:
                     friendship_status = 'not_friend'
                 else:
@@ -367,9 +475,10 @@ class Profile(APIView):
         return Response({
             'id': user.id,
             'username': user.username,
-            'avatar': user.avatar if user.avatar else '/player1.jpeg',
+            'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
             'friendship_status': friendship_status,
             'is_online': user.is_online,
+            'bio': user.bio,
         })
 
 class RemoveFriend(APIView):
@@ -410,7 +519,7 @@ def generate_otp(username):
     user = Client.objects.get(username=username)
     user.secret_key = secret_key
     user.save()
-    print("Generated secret ------------> ", user.secret_key)
+
     url = pyotp.totp.TOTP(user.secret_key).provisioning_uri(name=user.username, issuer_name="ft_transcendence")
     qrcode_directory = "media/qr_codes/"
     if not os.path.exists(qrcode_directory):
@@ -424,17 +533,14 @@ def generate_otp(username):
 class QrCode(APIView):
     def get(self, request):
         generate_otp(username=request.user.username)
-        # define the path to the QR code in the media directory
         qrcode_path = os.path.join(settings.MEDIA_ROOT, 'qr_codes', f'{request.user.username}.png')
-         # creating  the media URL for the frontend to access
         qrcode_url = request.build_absolute_uri(settings.MEDIA_URL + f'qr_codes/{request.user.username}.png')
-        # print('qrcode_url:', qrcode_url)
+
         return Response({'qrcode': qrcode_url})
 
 class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
-        print("otp", otp)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
@@ -446,21 +552,14 @@ class Activate2FA(APIView):
     def post(self, request):
         otp = request.data.get('code')
         user = Client.objects.get(username=request.user.username)
-        print("user from get objs", user)
-        print("otp", otp)
-        print("request.user", request.user)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
 
-        # print("------------ Activate otp  --------------------",  totp.verify(otp))
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = True
         user.save()
-        print("User saved successfully. New values:", user)
-        print("is_2fa_enabled:", user.is_2fa_enabled)
-        print("Checked secret_key:", user.secret_key)
 
         return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
 
@@ -479,38 +578,29 @@ class Disable2FA(APIView):
         user.is_2fa_enabled = False
         user.secret_key = None
         user.save()
-        print("User saved successfully. New values:", user)
-        print("is_2fa_enabled:", user.is_2fa_enabled)
-        print("Checked secret_key:", user.secret_key)
+
 
         from django.db import connection
         if connection.in_atomic_block:
             connection.commit()
     
-        # user.refresh_from_db()
-        print("User 2FA status updated:", user.is_2fa_enabled, user.secret_key)
         return Response({'message': '2FA disabled successfully', 'is_2fa_enabled': False})
 
 class UpdateUserInfos(APIView):
     def post(self, request):
         user = request.user
         avatar = request.data.get('avatar')
-        address = request.data.get('address')
+        bio = request.data.get('bio')
         phone = request.data.get('phone')
-        # print("==============> avatar from request ",avatar)
         avatar_file = request.FILES.get('avatar')
+
         if avatar_file:
-            # print("==============> avatar_file =============================",avatar_file)
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
-            file_url = request.build_absolute_uri(default_storage.url(file_path))  # generate absolute URL localhost:8000/... not localhost:5173/media/...
-            # print("==============> file url" ,file_url)
+            file_url = request.build_absolute_uri(default_storage.url(file_path))
             user.avatar = file_url
-        else:
-            print("No avatar file uploaded.")
-            user.avatar = None
-        # Update other fields if provided
-        if address:
-            user.address = address
+
+        if bio:
+            user.bio = bio
         if phone:
             user.phone = phone
         user.save()

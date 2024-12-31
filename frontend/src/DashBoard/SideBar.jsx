@@ -74,9 +74,7 @@ function SideBar({username}) {
             <li
               className={`middle-sidebar-icon-${value.title}`}
               key={key}
-              // onClick={() => {
-              //   window.location.pathname = value.link;
-              // }}
+
               onClick={() => {
                 navigate(value.link);
               }}

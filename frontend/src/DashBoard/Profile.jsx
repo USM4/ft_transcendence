@@ -24,38 +24,21 @@ import { SocketContext } from "./SocketContext.jsx";
 import toast from "react-hot-toast";
 function Profile() {
 
-  const {socket} = useContext(SocketContext);
+  const { socket } = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
   const navigate = useNavigate();
   const [stranger, setStranger] = useState(false);
-  const { friends, setFriends} = useContext(FriendDataContext);
+  const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
 
-  // console.log("----------------------SALAAAAMO3ALIKOM----------------------------")
-  // console.log("HADA RAH L USR", user.username);
-  // console.log("USER IS:", user)
-  // useEffect(() => {
-  //   if(socket === null) return;
-  //   socket.onmessage = (e) => {
-  //     const data = JSON.parse(e.data);
-  //     console.log("data", data);
-  //     if (data.type === "friend_request_accepted") {
-  //       setFriends((prevFriends) => [...prevFriends, data.friend]);
-  //     } else if (data.type === "friend_removed_you") {
-  //       setFriends((prevFriends   ) =>
-  //         prevFriends.filter((friend) => friend.id !== data.friend.id)
-  //       );
-  //     }
-  //   }
-  // }, [socket]);
+
   useEffect(() => {
     if (socket === null) return;
-    
+
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      console.log("data", data);
-  
+
       if (data.type === "friend_request_accepted") {
         // Prevent adding duplicates
         setFriends((prevFriends) => {
@@ -71,9 +54,9 @@ function Profile() {
         });
       }
     };
-  
+
   }, [socket]);
-  
+
 
 
   const sendFriendRequest = async (to_user) => {
@@ -99,7 +82,7 @@ function Profile() {
   };
 
   const getButtonText = () => {
-    if (switchUser.friendship_status === "pending") return "Pending";
+    if (switchUser?.friendship_status === "pending") return "Pending";
     else if (switchUser.friendship_status === "friends") return "Remove Friend";
     else return "Add Friend";
   };
@@ -141,8 +124,7 @@ function Profile() {
     });
   };
   const handleFriendShip = async () => {
-    if (switchUser.friendship_status === "friends")
-    {
+    if (switchUser.friendship_status === "friends") {
       await removeFriend(switchUser.id);
       setFriends((prevFriends) =>
         prevFriends.filter((friend) => friend.id !== switchUser.id)
@@ -154,7 +136,7 @@ function Profile() {
   };
 
   useEffect(() => {
-    if (username !== user.username) {
+    if (username !== user?.username) {
       const fetchStranger = async () => {
         const response = await fetch(
           `http://localhost:8000/auth/profile/${username}/`,
@@ -167,7 +149,6 @@ function Profile() {
         if (response.ok) {
           setStranger(true);
           setStrangerData(data);
-          console.log("stranger-------->", data);
         } else {
           setStranger(false);
           navigate("/dashboard");
@@ -189,9 +170,9 @@ function Profile() {
         <div className="profile-img-name">
           <img src={switchUser?.avatar || player} alt="" />
           <div className="profile-infos">
-            <div className="profile-name"> {switchUser.username}</div>
+            <div className="profile-name"> {switchUser?.username}</div>
             <div className="profile-bio">
-              ag1hegoat is the greatest man a live, the king , the only
+              {switchUser?.bio || "No bio available"}
             </div>
           </div>
         </div>
@@ -233,23 +214,22 @@ function Profile() {
           <div className="prfl-chart">
             <div className="prfl-chart-title"> Statistics </div>
             <div className="profile-barchart">
-              {" "}
-              <ProfileBarChart />{" "}
+              <ProfileBarChart profile={switchUser} is_user={stranger}/>
             </div>
           </div>
           <div className="history-and-radar">
             <div className="prfl-match-history">
               <div className="prfl-history-title">
                 <p>Match History</p>
-                <div className="prfl-match-history-results">
-                  <ProfileMatchHistory />
-                </div>
+              </div>
+              <div className="prfl-match-history-results">
+                <ProfileMatchHistory profile={switchUser} is_user={stranger}/>
               </div>
             </div>
             <div className="prfl-radar">
               <div className="prfl-radar-title">Skills</div>
               <div className="prfl-radar-component">
-                <ProfileRadar />
+                <ProfileRadar profile={switchUser} is_user={stranger}/>
               </div>
             </div>
           </div>

@@ -7,31 +7,30 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
+import anonyme from '../../public/anonyme.png'
 
 import Switch from "@mui/material/Switch";
 import toast from "react-hot-toast";
 
 function ProfileSettings() {
   const [isTwoFactor, setisTwoFactor] = useState(false);
-  const { user, updateUser} = useContext(UserDataContext);
+  const { user, updateUser } = useContext(UserDataContext);
   const [QrCodeUrl, setQrCodeUrl] = useState(null);
   const [code, setCode] = useState("");
   const [isEnabled, setIsEnabled] = useState(user?.twoFa);
   const [avatar, setAvatar] = useState("");
-  const [address, setAddress] = useState("");
+  const [bio, setbio] = useState("");
   const [phone, setPhone] = useState("");
   const formData = new FormData();
   formData.append('avatar', avatar);
-  formData.append('address', address);
+  formData.append('bio', bio);
   formData.append('phone', phone);
 
   const saveCode = async (e) => {
-    e.preventDefault();
-    console.log("save code", code);
-    console.log("is enabled", isEnabled);
+    e.preventDefault(); // Prevent the page from refreshing
     const endpoint = isEnabled
-    ? "http://localhost:8000/auth/activate2fa/"
-    : "http://localhost:8000/auth/desactivate2fa/";
+      ? "http://localhost:8000/auth/activate2fa/"
+      : "http://localhost:8000/auth/desactivate2fa/";
     try {
       const response = await fetch(`${endpoint}`, {
         method: "POST",
@@ -53,21 +52,30 @@ function ProfileSettings() {
     } catch (error) {
       console.log(error);
     }
+    setCode("");
   };
   const updateInfos = async () => {
+    if (!avatar && !bio && !phone) {
+      toast.error("You must fill at least one field");
+      return;
+    }
     try {
+      setbio("");
+      setPhone("");
+      setAvatar("");
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",
         body: formData,
       });
+      const data = await response.json();
       if (response.ok) {
-        const data = await response.json();
-        // console.log("******************** avatar url ******************** ",data.user.avatar);
-
-        updateUser(data.user);
+        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.username }));
         toast.success(data.message);
-      } else console.log("error");
+      } else {
+        toast.error(data.error);
+        console.log(data);
+      };
     } catch (error) {
       console.log(error);
     }
@@ -91,8 +99,6 @@ function ProfileSettings() {
   };
 
   useEffect(() => {
-    // console.log("is enabled", user?.twoFa);
-    // console.log("is 2FA", user?.twoFa);
     if (isEnabled && !user?.twoFa) getQRCode();
     else setQrCodeUrl(null);
   }, [isEnabled, user?.twoFa]);
@@ -101,7 +107,7 @@ function ProfileSettings() {
     <div className="settings-component">
       <div className="profile-settings">
         <div className="settings-user-image">
-          <img src={user?.avatar || "/skull.jpeg"} alt="" />
+          <img src={user?.avatar || anonyme} alt="" />
           <p> {user?.username} </p>
         </div>
         <div className="settings-options">
@@ -114,7 +120,7 @@ function ProfileSettings() {
               <button>Edit Profile Informations</button>
             </div>
             <div className="two-fa-settings" onClick={() => setisTwoFactor(true)}>
-              <button> 
+              <button>
                 Two Factor Settings
               </button>
             </div>
@@ -139,8 +145,8 @@ function ProfileSettings() {
                   <Switch
                     checked={isEnabled}
                     onChange={() => {
-                      console.log("toggle is enabled", isEnabled);
-                      setIsEnabled((prev) => !prev)}
+                      setIsEnabled((prev) => !prev)
+                    }
                     }
                     color="secondary"
                   />
@@ -177,19 +183,19 @@ function ProfileSettings() {
                 <div>2FA IS ENABLED</div>
               ) : (
                 user.twoFa ? (
-                <div className="disable-component">
+                  <div className="disable-component">
                     <p>ENTER THE CODE TO DISABLE 2FA</p>
-                  <div className="desable-input">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={code}
-                      placeholder="Enter the code"
-                      onChange={(e) => setCode(e.target.value)}
-                    />
-                    <div className="disable-btn"><button onClick={saveCode}> disable </button></div>
+                    <div className="desable-input">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={code}
+                        placeholder="Enter the code"
+                        onChange={(e) => setCode(e.target.value)}
+                      />
+                      <div className="disable-btn"><button onClick={saveCode}> disable </button></div>
+                    </div>
                   </div>
-              </div>
                 ) : (
                   <></>
                 )
@@ -201,27 +207,27 @@ function ProfileSettings() {
             <div className="update-avatar">
               <p> Update Avatar : </p>
               <div className="custom-file-upload">
-                <input 
+                <input
                   type="file"
-                  accept="image/*" 
+                  accept="image/*"
                   onChange={(e) => setAvatar(e.target.files[0])} // Using files[0] to get the selected file
                 />
               </div>
             </div>
             <div className="update-nickname">
-              <p>Update Address : </p>
-              <input 
+              <p>Update BIO : </p>
+              <input
                 type="text"
-                placeholder="Enter your new address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}              
+                placeholder="Enter your new bio"
+                value={bio}
+                onChange={(e) => setbio(e.target.value)}
               />
             </div>
             <div className="update-nickname">
               <p>Update Phone number : </p>
-              <input 
-                type="text" 
-                placeholder="Enter your new phone" 
+              <input
+                type="text"
+                placeholder="Enter your new phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />

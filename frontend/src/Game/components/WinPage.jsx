@@ -6,8 +6,8 @@ const WinPage = ({ winner, text, resetGame }) => {
 
   return (
     <div className="win-page">
-      <h1>{winner} {text}</h1>
-      <button onClick={() => navigate("/tournament/options/game")}>Back to home</button>
+      <h1>witk 3el lkhwinz {winner} rbe7 !</h1>
+      <button onClick={() => navigate("/tournament/options")}>Back to home</button>
       <button onClick={resetGame}>
         Play Again
       </button>

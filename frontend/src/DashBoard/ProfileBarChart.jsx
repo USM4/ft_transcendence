@@ -1,29 +1,39 @@
-import React from "react";
+import React ,{useContext, useState} from "react";
 import { Bar } from 'react-chartjs-2';
 import { colors } from "@mui/material";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, Tooltip, Legend } from 'chart.js';
-
+import {UserDataContext} from "./UserDataContext";
+import {FriendDataContext} from "./FriendDataContext";
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, Tooltip, Legend);
 
-function ProfileBarChart() {
+function ProfileBarChart({ profile,is_user}) {
+  let { user } = useContext(UserDataContext);
+  const {friends, setFriends} = useContext(FriendDataContext);
+  if (is_user)
+    friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
+  if (is_user && user.username !== profile.username)
+    return (
+        <div className="profile-match-history-item">
+            <h1 className="data-chart-h1">You can't see this player's Stats</h1>
+            </div>);
+  
+  const matche = user?.matchePlayed ? user?.matchePlayed.map((matche, index) => `Match ${index + 1}`) : [];
   const data = {
-    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturay', 'Sunday'],
+    labels: matche,
     datasets: [
       {
-        label: 'Victory',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        label: `${user?.username}'s activity`,
+        data: user?.xp,
         fill: false,
         backgroundColor: 'green',
         borderColor: 'rgb(174, 255, 218)',
-        tension: 0.1,
       },
       {
-        label: 'Lost',
-        data: [65, 100, 30, 66, 55, 90, 200],
+        label: 'Opponent activity',
+        data: user?.matchePlayed ? user?.matchePlayed.map((match) => match[0]['xp_gained_player2']) : [],
         fill: false,
         backgroundColor: '#D4FCB5',
         borderColor: 'rgb(0, 191, 255) ',
-        tension: 0.1,
       },
     ],
   };
@@ -34,7 +44,7 @@ function ProfileBarChart() {
       legend: {
         position: 'bottom',
         labels: {
-            color: 'rgb(0, 0, 128)', // Set the color of the legend labels
+          color: 'rgb(0, 191, 255)',
           },
       },
     },

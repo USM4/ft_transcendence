@@ -8,11 +8,11 @@
   font-weight: 400;
   /* color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87); */
-  /* background-image: url('/b.png'); */
+  background-image: url('/b.png');
   /* background: linear-gradient(-45deg, #3a6073, #16222a, #1e90ff, #4682b4); */
-  background: linear-gradient(-45deg, #2c3e50, #34495e, #16222a, #02468a);
+  /* background: linear-gradient(-45deg, #2c3e50, #34495e, #16222a, #02468a); */
 
-  animation: gradientAnimation 15s ease infinite;
+  animation: gradientAnimation 300s ease infinite;
   background-size: 400% 400%;
   background-position: 50% 40%;
   color: #f8f9fa;

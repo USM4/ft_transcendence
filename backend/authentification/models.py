@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 class Client(AbstractUser):
     avatar = models.URLField(max_length=500, blank=True, null=True)
     username = models.CharField(max_length=255, unique=True)
-    address = models.CharField(max_length=255, blank=True, null=True , default='No address')
+    bio = models.CharField(max_length=255, blank=True, null=True , default="I don't just play ping pong—I redefine it. Every serve, every smash, every point, I'm not just winning the game; I'm making history.")
     phone = models.CharField(max_length=255, blank=True, null=True , default='No phone')
     email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
@@ -37,9 +37,11 @@ class Friend(models.Model):
 
 
 class Notification(models.Model):
-    user = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='notifications')
+    sender = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='sender_notifications')
+    receiver = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='receiver_notifications')
     message = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    notification_type = models.CharField(max_length=255, null=True, blank=True, default='default')
     is_read = models.BooleanField(default=False)
 
 class Search(models.Model):

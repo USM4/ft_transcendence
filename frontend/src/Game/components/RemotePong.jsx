@@ -1,11 +1,15 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
-// import { GameSocketContext } from "./GameSocketContext"; 
+import { useLocation, useNavigate } from "react-router-dom";
+import WinPage from "./WinPage";
+import Loser from "./Loser";
+// import { GameSocketContext } from "./GameSocketContext";
+import Swal from "sweetalert2";
 import WaitingOpponent from "./WaitingOpponent"; 
 import player3Image from "../../../public/anonyme.png";
 
 import { UserDataContext } from "../../DashBoard/UserDataContext";
 import { GameSocketContext } from "./GameSocketContext";
+import toast from "react-hot-toast";
 
 const RemotePong = () => {
   const canvasRef = useRef(null);
@@ -13,16 +17,18 @@ const RemotePong = () => {
   if(localStorage.getItem("gameState") === null)
     localStorage.setItem("gameState", "Playing");
   const location = useLocation();
-  const { player} = location.state || {};
+  const { players} = location.state || {};
   const [gameState, setGameState] = useState(localStorage.getItem("gameState"));
 
   const [scores, setScores] = useState({ leftPlayer: 0, rightPlayer: 0 });
-  const [winner, setWinner] = useState(null);
-  // const [score1, setScore1] = useState(0);
-  // const [score2, setScore2] = useState(0);
+  const [winner, setWinner] = useState(false);
+  const [loser , setLoser] = useState(false);
+  const navigate = useNavigate();
+
+  const {wsRef, message} = useContext(GameSocketContext);
+
 
   const gameSocketRef = useContext(GameSocketContext);
-
   const ballRef = useRef({
     x: 500,
     y: 250,
@@ -59,13 +65,27 @@ const RemotePong = () => {
     ArrowDown: false,
   });
 
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSeconds(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (totalSeconds) => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainingSeconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
 useEffect(() => {
-  if (gameSocketRef.current) {
-      const socket = gameSocketRef.current;
+  if (wsRef.current && message) {
+      const socket = wsRef.current;
       
-      const handleGameMessage = (event) => {
-          const data = JSON.parse(event.data);
-          console.log("Received message:", data);
+          const data = message;
           switch(data.type) {
               case "game_state_update":
                   const gameState = data.message;
@@ -77,44 +97,48 @@ useEffect(() => {
                   break;
                   
               case "waiting_for_players":
-                  localStorage.setItem("gameState", "Waiting");
-                  setGameState("Waiting");
+                  navigate("/tournament/options/game");
                   break;
                   
               case "score_update":
-                console.log("data.message.scorer", data.message.scorer);
-                if (data.message.scorer === user.username) {
-                    setScores({ leftPlayer: data.message.score.player1, rightPlayer: data.message.score.player2 })
-                }
-                else {
-                  setScores({ leftPlayer: data.message.score.player2 , rightPlayer: data.message.score.player1 });
-                  console.log("player.username !== user.username", player.username, user.username);
-                }
+                setScores({ leftPlayer: data.message.score.player1, rightPlayer: data.message.score.player2 })
               case "game_over":
-          
-                  if (data.winner === user.username) {
-                      setWinner("You win!");
-                      alert("You win!");
-                    }
-                    else {
-                      setWinner("You lose!");
+                  const resetGame = () => {
+                    navigate('tournament/options/game');
                   }
-                  console.log("GameOver");
+                  if (data.winner === user.username)
+                  {
+                      setWinner(true);
+                      console.log("Winner is", data.winner);
+                    }
+                    else if(data.loser === user.username)
+                    {
+                      setLoser(true);
+                      console.log("Loser is", data.loser);
+                      // return <Loser loser={data.loser}/>;
+                    }
                   break;
-                  
+              case "player_disconnected":
+                Swal.fire({
+                  title: 'Ooops!',
+                  text: "Your opponent has disconnected !",
+                  icon: 'warning',
+                  showCancelButton: false,
+                  confirmButtonText: "Find another opponent",
+                  confirmButtonColor: '#28a745',
+                  cancelButtonColor: '#dc3545',
+                  background: '#000',
+                  color: '#fff',
+                }).then(async (result) => {
+                  if (result.isConfirmed) {
+                    navigate("/tournament/options/game");
+                  }
+                });
               default:
           
           }
-      };
-
-      socket.addEventListener('message', handleGameMessage);
-      
-      return () => {
-  
-          socket.removeEventListener('message', handleGameMessage);
-      };
   }
-}, [gameSocketRef]);
+}, [wsRef, message]);
 
 
 const handleKeyDown = (e) => {
@@ -127,10 +151,9 @@ const handleKeyDown = (e) => {
       };
 
 
-      if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
-        // console.log("Sending key press:", message.key); 
-        gameSocketRef.current.send(JSON.stringify(message)); 
-        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr 
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify(message));
+        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = true
       } else {
         console.error("WebSocket is not open, message not sent");
@@ -140,8 +163,6 @@ const handleKeyDown = (e) => {
   
   const handleKeyUp = (e) => {
     const key = e.key.toLowerCase();
-    // console.log("Key up:", key); 
-    
     if ( ["w", "s", "arrowup", "arrowdown"].includes(key) && keyState.current[key]) {
       const message = {
         type: "key_release",
@@ -149,9 +170,8 @@ const handleKeyDown = (e) => {
       };
       
       
-      if (gameSocketRef.current && gameSocketRef.current.readyState === WebSocket.OPEN) {
-        // console.log("Sending key release:", message.key); 
-        gameSocketRef.current.send(JSON.stringify(message)); 
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify(message)); 
         //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
         // keyState.current[key] = false; 
       } else {
@@ -173,7 +193,6 @@ const handleKeyDown = (e) => {
   useEffect(() => {
     const animate = () => {
       if (canvasRef.current === null) {
-        // console.log("Canvas is null");
         return;
       }
       const canvas = canvasRef.current;
@@ -213,23 +232,40 @@ const handleKeyDown = (e) => {
 
     animate();
   }, []);
+  
+
 
   return (
     <div className="Game-render">
+      {winner && (
+        <WinPage
+          winner={user.username}
+          resetGame={() => {
+            navigate("/tournament/options/game");
+          }}
+        />
+      )}
+      {loser && (
+        <Loser
+          loser={user.username}
+        />
+      )}
+    
+              
       {localStorage.getItem("gameState") === "Waiting" && <WaitingOpponent isVisible={true} />}
       {localStorage.getItem("gameState") === "Playing" && (
         <>
           <div className="player-profiles">
             <div className="player-card">
               <div className="player-name">
-                <h3>{user?.username}</h3>
+                <h3>{players?.user1 && players?.user1.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.leftPlayer}</span>
               </div>
               <div className="player-avatar">
-                <img src={user?.avatar || player3Image} alt="Player 1" />
+                <img src={players?.user1 && players?.user1.avatar || player3Image} alt="Player 1" />
                 <div className="glow-effect"></div>
               </div>
             </div>
@@ -240,17 +276,14 @@ const handleKeyDown = (e) => {
 
             <div className="player-card">
               <div className="player-name">
-                {/* {console.log("player --------------->", player)} */}
-                <h3>{player?.username}</h3>
+                <h3>{players?.user1 && players?.user2.username}</h3>
                 <span className="status-dot active"></span>
               </div>
               <div className="score-container">
                 <span className="score">{scores.rightPlayer}</span>
               </div>
               <div className="player-avatar">
-                {/* { console.log("player.name --------------->" ,player.name) } 
-                { console.log("player.avatar --------------->" ,player.avatar) }  */}
-                <img src={player?.avatar || player3Image} alt="Player 2" />
+                <img src={players?.user1 && players?.user2.avatar || player3Image} alt="Player 2" />
                 <div className="glow-effect"></div>
               </div>
             </div>
@@ -262,7 +295,9 @@ const handleKeyDown = (e) => {
               width={1000}
               height={500}
             />
-            <div className="match-timer">00:00</div>
+            <div className="match-timer">
+            {formatTime(seconds)}
+            </div>
           </div>
         </>
       )}

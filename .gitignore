@@ -31,9 +31,11 @@ backend/env
 /coverage/
 /build/
 /dist/
+/backend/env/
+/backend/media/
 /*.egg-info/
 MANIFEST
 coverage.*
 db.sqlite3
 db.sqlite3
-media/
+# media/

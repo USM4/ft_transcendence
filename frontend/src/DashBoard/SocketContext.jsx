@@ -12,7 +12,7 @@ function SocketContextProvider({ children }) {
 
     useEffect(() => {
         // Function to establish a WebSocket connection
-        console.log("SocketContextProvider", pathname, user, socket);
+        // console.log("SocketContextProvider", pathname, user, socket);
 
         const establishConnection = () => {
             console.log("Establishing WebSocket connection... socketa dyal online status");
@@ -40,7 +40,7 @@ function SocketContextProvider({ children }) {
             pathname !== '/signin' &&
             pathname !== '/' &&
             pathname !== '/signup' &&
-            pathname !== '/features' &&
+            pathname !== '/about' &&
             pathname !== '/howtoplay' &&
             user && // Only if user is present
             !socket // Only open a new connection if there's no existing one
@@ -53,7 +53,7 @@ function SocketContextProvider({ children }) {
             pathname === '/signin' ||
             pathname === '/' ||
             pathname === '/signup' ||
-            pathname === '/features' ||
+            pathname === '/about' ||
             pathname === '/howtoplay' ||
             !user
         ) {
@@ -66,13 +66,13 @@ function SocketContextProvider({ children }) {
 
         // Cleanup: Close WebSocket when component unmounts or when necessary 
 
-        return () => {
-            if (socket) {
-                socket.close(); // Ensure to close the socket when the component unmounts or on path changes
-                console.log("WebSocket connection closed 2.");
-                setSocket(null); // Cleanup the socket state
-            }
-        };
+        // return () => {
+        //     if (socket) {
+        //         socket.close(); // Ensure to close the socket when the component unmounts or on path changes
+        //         console.log("WebSocket connection closed 2.");
+        //         setSocket(null); // Cleanup the socket state
+        //     }
+        // };
 
     }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
 

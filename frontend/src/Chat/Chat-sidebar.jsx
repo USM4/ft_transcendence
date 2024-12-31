@@ -26,7 +26,6 @@ export default function Chat_sidebar() {
 
 	useEffect(() => {
 		selectedFriendRef.current = selectedFriend;
-		console.log("Selected: " ,selectedFriend);
 	}, [selectedFriend]);
 
 	useEffect(() => {
@@ -35,14 +34,18 @@ export default function Chat_sidebar() {
 			const data = JSON.parse(event.data);
 			const { chat_room, message, message_id } = data;
 
-			if (chat_room)
-				setChatroom(chat_room);
+			if (data.type !== 'online')
+			if (data.type === 'history') {
+				if (chat_room === 'no_messages')
+					setChatroom(null);
+				else if (chat_room)
+					setChatroom(chat_room);
+			}
 			if (message) {
-
+				setChatroom(chat_room);
 				setMessage((prevMessage) => {
 					const chatMessage = prevMessage[chat_room] || [];
 					const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
-
 
 					if (!messageExists) {
 						return {
@@ -105,7 +108,9 @@ export default function Chat_sidebar() {
 		friendsRef.current = friends;
 		setFriendsList([...friends]);
 	}, [friends, socket]);
-	const chatroomMessages = message[chatroom] || [];
+	const chatroomMessages = chatroom ? message[chatroom] : [];
+
+
 
 	useEffect(() => {
 		if (location.state && location.state.friend) {
@@ -120,6 +125,8 @@ export default function Chat_sidebar() {
 			if (updatedFriend) {
 				setSelectedFriend(updatedFriend);
 			}
+			else 
+				setSelectedFriend(null);
 		}
 	}, [friendsList]);
 
@@ -130,10 +137,10 @@ export default function Chat_sidebar() {
 			setSelectedFriend(friend);
 		{ clicked != friend.id && (socket.send(JSON.stringify({ type: 'history', message: null, receiver: friend.id, flag: null, })), setClicked(friend.id)) }
 	}
-	
+
 	useEffect(() => {
 		const fetchStatuses = async () => {
-			socket.send(JSON.stringify({ type: 'online', message: null, receiver: null, flag: null, }));
+			socket.send(JSON.stringify({ type: 'online', message: null, receiver: null, flag: null }));
 		};
 
 		fetchStatuses();

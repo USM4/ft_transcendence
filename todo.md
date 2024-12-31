@@ -1,8 +1,18 @@
-> 1 - update image should be on the server not just the name of the image (DONE)
-> change game socket  (DONE)
-> 4 - fix waiting for opponent w l match making  (DONE)
-> 2 - ghanchof score li rbe7 n savih f database w ndiro howa l winner (WORKING ON IT ) 
-> 3 - match history (fetch from the database)
-> 5 -  invite friend from chat w from dashboard hta hya
 > add postgress (minor module)
-> 
+****************Yahia******************
+> profile charts (Ongoing)
+
+> online(setinterval online friends )
+
+> update info profile katkhwr retrieve dluser fchat (block)
+
+**************Oussama********************
+>invite friend from chat w from dashboard hta hya (DONE)
+
+> paddles in the match making invite (DONE)
+> pictures and names of the players in the local and the bot (DONE)
+> dashboard user undefined in the dashboard  after updating the picture matlan (DONE ...
+)
+
+
+> added an ai game code still have to rea

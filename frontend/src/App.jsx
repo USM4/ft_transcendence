@@ -14,7 +14,6 @@ import AboutSection from './About.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import UserDataProvider from './DashBoard/UserDataContext.jsx'
-import FriendDataProvider from './DashBoard/FriendDataContext.jsx'
 import SocketContextProvider from './DashBoard/SocketContext.jsx';
 import { Toaster } from 'react-hot-toast';
 import TwoFa from './TwoFa.jsx';
@@ -25,6 +24,7 @@ import TournamentRegistration from './Tournament/TournamentRegistration.jsx';
 import PongGame from './Tournament/PongGame.jsx';
 import AppGame from './Game/AppGame.jsx';
 import { GameSocketProvider } from "./Game/components/GameSocketContext.jsx";
+import  FriendDataProvider  from "./DashBoard/FriendDataContext.jsx";
 
 function App() {
   return (
@@ -37,7 +37,8 @@ function App() {
       >
         <UserDataProvider>
         <SocketContextProvider>
-        <GameSocketProvider>        
+        <GameSocketProvider>
+        <FriendDataProvider>   
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
             {/* Public Routes */}
@@ -50,32 +51,22 @@ function App() {
 
             {/* Protected Routes */}
             <Route path="/dashboard" element={
-                <FriendDataProvider>
                   <ProtectedRoute component={NavbarSideBar} />
-                </FriendDataProvider>
             }>
               <Route path="" element={
-                <FriendDataProvider>
                   <ProtectedRoute component={Dashboard} />
-                </FriendDataProvider>
               } />
               <Route path="profile/:username" element={
-                <FriendDataProvider>
                   <ProtectedRoute component={Profile} />
-                </FriendDataProvider>
               } />
               <Route path="settings" element={<ProtectedRoute component={ProfileSettings} />} />
             </Route>
 
             <Route path="/Chat" element={
-                <FriendDataProvider>
                   <ProtectedRoute component={NavbarSideBar} />
-                </FriendDataProvider>
             }>
               <Route path="" element={
-                <FriendDataProvider>
                   <ProtectedRoute component={Chat} />
-                </FriendDataProvider>
               } />
             </Route>
 
@@ -84,9 +75,7 @@ function App() {
             }>
               {/* Default OptionsPage for Tournament Options */}
               <Route path="" element={
-                <FriendDataProvider>
                   <ProtectedRoute component={OptionsPage} />
-                </FriendDataProvider>
               } />
               <Route path="play-tournament" element={
                   <ProtectedRoute component={Tournament} />
@@ -101,14 +90,13 @@ function App() {
                 <ProtectedRoute component={AppGame} />
             }>
             <Route path='' element={
-              <FriendDataProvider>
                 <ProtectedRoute component={AppGame} />
-              </FriendDataProvider>
             }/>
             </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </FriendDataProvider>
           </GameSocketProvider>
         </SocketContextProvider>
         </UserDataProvider>

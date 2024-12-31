@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import Chat_sidebar from './Chat-sidebar.jsx';
-// import SocketContext from '../Dashboard/SocketContext.jsx';
 
 export const ChatSocketContext = createContext()
 export default function Chat() {
@@ -20,7 +19,7 @@ export default function Chat() {
         console.log("Chat connection closed.")
       };
     }
-    if (pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/features' && pathname !== '/howtoplay')
+    if (pathname !== '/signin' && pathname !== '/' && pathname !== '/signup' && pathname !== '/about' && pathname !== '/howtoplay')
       establishConnection();
   }, [])
 

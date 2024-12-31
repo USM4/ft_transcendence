@@ -12,7 +12,7 @@ export default function Chat_input({ selected }) {
             if (selected.is_blocked) {
                 return;
             }
-            message && (socket.send(
+            (message && message.trimStart()) && (socket.send(
                 JSON.stringify({
                     type: 'message',
                     message: message,
@@ -35,8 +35,9 @@ export default function Chat_input({ selected }) {
                     <textarea className="text-areas-input"
                         placeholder="Type a message..."
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        
+                        onChange={(e) => setMessage(e.target.value !== '\n' ? e.target.value : '')}
+                        onKeyDown={(e) => e.key === 'Enter' ? handleSubmit() : null}
+
                     /></div>
                     <div className="button-area"><button onClick={() => handleSubmit()} type="submit"><SendRoundedIcon /></button></div></>)
                 : null}

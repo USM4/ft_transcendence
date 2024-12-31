@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useContext} from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Radar } from 'react-chartjs-2';
 import {
@@ -11,27 +11,36 @@ import {
   Legend,
 } from 'chart.js';
 import { colors } from "@mui/material";
+import { UserDataContext } from "./UserDataContext.jsx";
+import { FriendDataContext } from "./FriendDataContext.jsx";
 ChartJS.register( RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-function ProfileRadar() {
+function ProfileRadar({ profile,is_user}) {
+    const {friends, setFriends} = useContext(FriendDataContext);
+    
+    let { user } = useContext(UserDataContext);
+    if (is_user)
+        friends.map((friend) => { friend.username === profile.username ? user = friend : null; });
+    if (is_user && user.username !== profile.username)
+        return (
+            <div className="profile-match-history-item">
+                <h1 className="data-chart-h1">You can't see this player's Radar</h1>
+                </div>);
 
     const data = {
         labels: [
-            'Offensive Skills',
-            'Defensive Skills',
-            'Speed',
-            'Shot Precision',
-            'Consistency',
-            'Strategy',
-            'Tactical Awareness',
+            'Total Games Played',
+            'Games Won',
+            'Games Lost',
+            'Total Minutes Spent',
         ],
         datasets: 
         [
             {
-                label: "Player Skills",
-                data: [80, 80, 100, 80, 100, 70, 100],
+                label: "Minutes or Matches",
+                data: [user?.matchePlayed ? user?.matchePlayed.length : 0, user?.matcheWon, user?.matcheLost,  user?.total_time_spent],
                 fill: true,
-                backgroundColor: 'rgba(255, 111, 97, 0.5)', // Adjust alpha for transparency as needed
+                backgroundColor: 'rgba(255, 111, 97, 0.5)',
                 borderColor: 'rgba(255, 111, 97, 1)',
                 pointBackgroundColor: 'rgba(255, 111, 97, 1)',
                 pointBorderColor: '#fff',
@@ -49,8 +58,7 @@ function ProfileRadar() {
     },
     scales: {
         r: {
-        suggestedMin: 50,
-        suggestedMax: 100,
+            beginAtZero: true,
             ticks: {
                 stepSize: 10,
                 color: 'black',
