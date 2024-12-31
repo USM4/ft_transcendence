@@ -14,7 +14,7 @@ function SignIn() {
 
     const handle42Intra = () =>{
         const client_id=import.meta.env.VITE_CLIENT_ID;
-        const auth_url=import.meta.env.VITE_INTRA_API;
+        const auth_url=import.meta.env.VITE_INTRA_API_LINK;
         const host=import.meta.env.VITE_HOST_URL;
         const response_type = 'code';
         const redirectUri=`${host}/accounts/42school/login/callback/`;

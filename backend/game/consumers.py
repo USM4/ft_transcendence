@@ -1,6 +1,7 @@
 import asyncio
 import random
 import json
+import os
 from authentification.models import Client
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -11,12 +12,15 @@ from collections import deque
 from game.models import Game
 from urllib.parse import parse_qs
 from datetime import datetime
+from dotenv import load_dotenv
 connected_users = deque()  # list of connected clients
 invited_users = deque()  # list of connected clients
 connected_users_set = set()  # set of connected clients
 user_channels = {}  # map of user to channel name
 game_states = {}  # Dictionary to store GameState instances for each match
 max_score = 2
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+DEFAULT_AVATAR = os.getenv('DEFAULT_AVATAR')
 
 
 class GameState:
@@ -261,7 +265,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 			else:
 				self.player["numberPlayer"] = "1" 
-				invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else "https://localhost:443/media/avatars/anonyme.png",
+				invited_users.append({"player1": self.player, "player2": {"username": player.username,"avatar": player.avatar if player.avatar else DEFAULT_AVATAR,
 																		"numberPlayer": "2",
 																		"id": player.id,
 																		"match_name": "",
@@ -352,7 +356,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		self.player = {
 			"username": self.scope.get('user').username,
-			"avatar": self.scope.get('user').avatar if self.scope.get('user').avatar else "https://localhost:443/media/avatars/anonyme.png",
+			"avatar": self.scope.get('user').avatar if self.scope.get('user').avatar else DEFAULT_AVATAR,
 			"numberPlayer": "",
 			"id": self.scope.get('user').id,
 			"match_name": "",

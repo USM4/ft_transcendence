@@ -17,15 +17,14 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+print(f"Looking for .env at: {env_path}")
+
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
 
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Media settings for dynamically generated files like QR codes
 MEDIA_URL = '/media/'
@@ -37,7 +36,10 @@ SECRET_KEY = 'django-insecure-w@)mu=t95zxg_&mu1l13+4d$rd9$4g0i65^1y8b&woqlvlk7st
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-HOST_URL = os.getenv('HOST_URL', 'https://localhost')
+HOST_URL = os.getenv('HOST_URL')
+
+if not HOST_URL:
+    raise ValueError("HOST_URL environment variable is required")
 
 ALLOWED_HOSTS = ['*']
 
@@ -98,11 +100,11 @@ WSGI_APPLICATION = 'ft_transcendence.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-POSTGRES_DB = os.getenv('POSTGRES_DB', 'mydabatayz')
-POSTGRES_USER = os.getenv('POSTGRES_USER', 'oussama')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'mypasswordhh')
-POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'postgres')
-POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 
 DATABASES = {
     "default": {
@@ -137,8 +139,8 @@ if os.getenv('DJANGO_ENV') == 'development':
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME' : timedelta(minutes=2),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
     'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
     'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HttpOnly
@@ -188,13 +190,11 @@ print("----------------------------HOST_URL----------------------------", HOST_U
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     HOST_URL,
-    'http://localhost',
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
     HOST_URL,
-    'http://localhost'
 ]
 
 # Internationalization
