@@ -2778,7 +2778,11 @@ body {
   aspect-ratio: 2 / 1;
   margin: 0 auto;
 }
-
+.multi-canvas-game{
+  display: block;
+  border-radius: 20px;
+  border: 2px solid red;
+}
 .canvas-game {
   position: absolute;
   top: 0;
@@ -3028,4 +3032,42 @@ body {
   font-weight: bold;
   color: green;
   animation: pulse 1.5s infinite ease-in-out;
+}
+
+.FGame-render {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+.Fcanvas-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bot-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+.bot-row .player-profiles {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+}
+
+.top-row, .bot-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px 0;
 }
