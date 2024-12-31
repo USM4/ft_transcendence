@@ -22,10 +22,6 @@ function ProfileMatchHistory({ profile,is_user}) {
                 <h1 className="data-chart-h1">You can't see this player's Match History</h1>
                 </div>);
 
-    console.log("user", user);
-    console.log("profile", profile);
-    console.log("is_user", is_user);
-
     return (
         <div className="profile-match-history-item">
             {(!user?.matchePlayed || user?.matchePlayed.length === 0) ? <h1 className="data-chart-h1">No matches played yet</h1>

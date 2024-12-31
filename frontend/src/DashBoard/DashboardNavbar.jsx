@@ -105,6 +105,7 @@ function DashboardNavbar() {
                     <Link
                       to={`/dashboard/profile/${result.username}`}
                       className="search-result"
+                      onClick={() => {setSearchToggle(false); setSearch('')}}
                     >
                       <img
                         className="search-result-img"

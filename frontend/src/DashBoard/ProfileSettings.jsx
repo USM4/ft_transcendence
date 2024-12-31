@@ -7,6 +7,7 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import { UserDataContext } from "./UserDataContext.jsx";
 import oredoine from "/oredoine.jpeg";
+import anonyme from '../../public/anonyme.png'
 
 import Switch from "@mui/material/Switch";
 import toast from "react-hot-toast";
@@ -18,17 +19,15 @@ function ProfileSettings() {
   const [code, setCode] = useState("");
   const [isEnabled, setIsEnabled] = useState(user?.twoFa);
   const [avatar, setAvatar] = useState("");
-  const [address, setAddress] = useState("");
+  const [bio, setbio] = useState("");
   const [phone, setPhone] = useState("");
   const formData = new FormData();
   formData.append('avatar', avatar);
-  formData.append('address', address);
+  formData.append('bio', bio);
   formData.append('phone', phone);
 
   const saveCode = async (e) => {
-    e.preventDefault();
-    console.log("save code", code);
-    console.log("is enabled", isEnabled);
+    e.preventDefault(); // Prevent the page from refreshing
     const endpoint = isEnabled
       ? "http://localhost:8000/auth/activate2fa/"
       : "http://localhost:8000/auth/desactivate2fa/";
@@ -53,10 +52,17 @@ function ProfileSettings() {
     } catch (error) {
       console.log(error);
     }
+    setCode("");
   };
   const updateInfos = async () => {
+    if (!avatar && !bio && !phone) {
+      toast.error("You must fill at least one field");
+      return;
+    }
     try {
-      console.log("update infos", formData);
+      setbio("");
+      setPhone("");
+      setAvatar("");
       const response = await fetch("http://localhost:8000/auth/update_infos/", {
         method: "POST",
         credentials: "include",
@@ -93,8 +99,6 @@ function ProfileSettings() {
   };
 
   useEffect(() => {
-    // console.log("is enabled", user?.twoFa);
-    // console.log("is 2FA", user?.twoFa);
     if (isEnabled && !user?.twoFa) getQRCode();
     else setQrCodeUrl(null);
   }, [isEnabled, user?.twoFa]);
@@ -103,7 +107,7 @@ function ProfileSettings() {
     <div className="settings-component">
       <div className="profile-settings">
         <div className="settings-user-image">
-          <img src={user?.avatar || "/skull.jpeg"} alt="" />
+          <img src={user?.avatar || anonyme} alt="" />
           <p> {user?.username} </p>
         </div>
         <div className="settings-options">
@@ -141,7 +145,6 @@ function ProfileSettings() {
                   <Switch
                     checked={isEnabled}
                     onChange={() => {
-                      console.log("toggle is enabled", isEnabled);
                       setIsEnabled((prev) => !prev)
                     }
                     }
@@ -212,12 +215,12 @@ function ProfileSettings() {
               </div>
             </div>
             <div className="update-nickname">
-              <p>Update Address : </p>
+              <p>Update BIO : </p>
               <input
                 type="text"
-                placeholder="Enter your new address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter your new bio"
+                value={bio}
+                onChange={(e) => setbio(e.target.value)}
               />
             </div>
             <div className="update-nickname">
