@@ -259,6 +259,7 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
             'twoFa': user.is_2fa_enabled,
+            'bio': user.bio,
             'is_online': user.is_online,
             'matchePlayed': game,
             'matcheWon': len([g for g in game if g[0]['winner'] == user.username]),
@@ -413,6 +414,7 @@ class FriendsList(APIView):
                 'username': friend.friend.username,
                 'avatar': friend.friend.avatar if friend.friend.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
                 'is_blocked': friend.is_blocked,
+                'bio': friend.friend.bio,
                 'is_online': friend.friend.is_online,
                 'blocker': friend.blocker.username if friend.blocker else None,
                 'matchePlayed': game[friend.friend.id],
@@ -469,6 +471,7 @@ class Profile(APIView):
             'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
             'friendship_status': friendship_status,
             'is_online': user.is_online,
+            'bio': user.bio,
         })
 
 class RemoveFriend(APIView):
@@ -580,16 +583,17 @@ class UpdateUserInfos(APIView):
     def post(self, request):
         user = request.user
         avatar = request.data.get('avatar')
-        address = request.data.get('address')
+        bio = request.data.get('bio')
         phone = request.data.get('phone')
         avatar_file = request.FILES.get('avatar')
+
         if avatar_file:
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
             file_url = request.build_absolute_uri(default_storage.url(file_path))
             user.avatar = file_url
 
-        if address:
-            user.address = address
+        if bio:
+            user.bio = bio
         if phone:
             user.phone = phone
         user.save()
