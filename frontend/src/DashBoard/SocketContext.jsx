@@ -40,7 +40,7 @@ function SocketContextProvider({ children }) {
             pathname !== '/signin' &&
             pathname !== '/' &&
             pathname !== '/signup' &&
-            pathname !== '/features' &&
+            pathname !== '/about' &&
             pathname !== '/howtoplay' &&
             user && // Only if user is present
             !socket // Only open a new connection if there's no existing one
@@ -53,7 +53,7 @@ function SocketContextProvider({ children }) {
             pathname === '/signin' ||
             pathname === '/' ||
             pathname === '/signup' ||
-            pathname === '/features' ||
+            pathname === '/about' ||
             pathname === '/howtoplay' ||
             !user
         ) {

@@ -29,10 +29,18 @@ class SignUpView(APIView):
     def post(self, request):
         serializer = ClientSignUpSerializer(data=request.data)
         if not serializer.is_valid():
+            if ('username' in serializer.errors):
+                return Response({'error': 'username: ' + serializer.errors['username'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('email' in serializer.errors):
+                return Response({'error': 'email: ' + serializer.errors['email'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('password' in serializer.errors):
+                return Response({'error': 'password: ' + serializer.errors['password'][0]}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"error": "Invalid data format "}, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')
+        if not password.isalnum() or len(password) < 6:
+            return Response({"error": "Password must be at least 8 characters and contain at least one letter and one number"}, status=status.HTTP_400_BAD_REQUEST)
         newpassword = request.data.get('newpassword', '')
         if password != newpassword:
             return Response({"error": "Passwords do not match "}, status=status.HTTP_400_BAD_REQUEST)
@@ -251,6 +259,7 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
             'twoFa': user.is_2fa_enabled,
+            'bio': user.bio,
             'is_online': user.is_online,
             'matchePlayed': game,
             'matcheWon': len([g for g in game if g[0]['winner'] == user.username]),
@@ -310,8 +319,15 @@ class NotificationGameInvite(APIView):
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
         if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).exists():
             Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a game invite ", notification_type='game_invite', receiver=to_user)
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
         else:
-            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
+            else:
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
         return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
@@ -405,6 +421,7 @@ class FriendsList(APIView):
                 'username': friend.friend.username,
                 'avatar': friend.friend.avatar if friend.friend.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
                 'is_blocked': friend.is_blocked,
+                'bio': friend.friend.bio,
                 'is_online': friend.friend.is_online,
                 'blocker': friend.blocker.username if friend.blocker else None,
                 'matchePlayed': game[friend.friend.id],
@@ -461,6 +478,7 @@ class Profile(APIView):
             'avatar': user.avatar if user.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
             'friendship_status': friendship_status,
             'is_online': user.is_online,
+            'bio': user.bio,
         })
 
 class RemoveFriend(APIView):
@@ -572,16 +590,17 @@ class UpdateUserInfos(APIView):
     def post(self, request):
         user = request.user
         avatar = request.data.get('avatar')
-        address = request.data.get('address')
+        bio = request.data.get('bio')
         phone = request.data.get('phone')
         avatar_file = request.FILES.get('avatar')
+
         if avatar_file:
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
             file_url = request.build_absolute_uri(default_storage.url(file_path))
             user.avatar = file_url
 
-        if address:
-            user.address = address
+        if bio:
+            user.bio = bio
         if phone:
             user.phone = phone
         user.save()
