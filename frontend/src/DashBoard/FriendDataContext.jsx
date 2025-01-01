@@ -13,7 +13,6 @@ function FriendDataProvider({ children }) {
   useEffect(() => {
     const fetchFriendList = async () => {
       if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay') {
-
         const response = await fetch('http://localhost:8000/auth/friends/',
           {
             method: 'GET',
@@ -24,7 +23,8 @@ function FriendDataProvider({ children }) {
           setFriends(responseData.data);
         }
         else {
-          console.log('something went wrong');
+          const responseData = await response.json();
+          console.log(responseData.error);
         }
       }
     }

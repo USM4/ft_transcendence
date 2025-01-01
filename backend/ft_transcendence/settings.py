@@ -53,8 +53,8 @@ INSTALLED_APPS = [
 ASGI_APPLICATION = 'ft_transcendence.asgi.application'
 
 MIDDLEWARE = [
-    'authentification.middleware.JWTAuthFromCookieMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'authentification.middleware.JWTAuthFromCookieMiddleware',
     'authentification.middleware.RefreshTokenMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
