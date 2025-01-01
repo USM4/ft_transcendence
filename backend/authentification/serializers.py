@@ -1,6 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from .models import Client
+from django.core.validators import RegexValidator
 
 class ClientSignUpSerializer(serializers.ModelSerializer):
 
@@ -12,6 +13,12 @@ class ClientSignUpSerializer(serializers.ModelSerializer):
             'username': {'required': True,
                 'min_length': 9,
                 'max_length': 20,
+                'validators': [
+                    RegexValidator(
+                        regex='^[a-zA-Z0-9]+$',
+                        message="Username must contain only alphanumeric characters."
+                    )
+                ]
             },
         }
 

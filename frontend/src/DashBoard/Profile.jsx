@@ -32,12 +32,12 @@ function Profile() {
   const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
 
+
   useEffect(() => {
     if (socket === null) return;
 
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      console.log("data", data);
 
       if (data.type === "friend_request_accepted") {
         // Prevent adding duplicates
@@ -152,7 +152,6 @@ function Profile() {
         if (response.ok) {
           setStranger(true);
           setStrangerData(data);
-          console.log("stranger-------->", data);
         } else {
           setStranger(false);
           navigate("/dashboard");
@@ -168,7 +167,6 @@ function Profile() {
   }, [username, user?.username]);
   const switchUser = stranger ? stranger_data : user;
 
-
   return (
     <div className="profile-component">
       <div className="top-side-prfl">
@@ -177,7 +175,7 @@ function Profile() {
           <div className="profile-infos">
             <div className="profile-name"> {switchUser?.username}</div>
             <div className="profile-bio">
-              ag1hegoat is the greatest man a live, the king , the only
+              {switchUser?.bio || "No bio available"}
             </div>
           </div>
         </div>

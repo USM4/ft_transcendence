@@ -19,12 +19,13 @@ function TwoFa() {
         body: JSON.stringify({'otp': otp}),
       });
       if (response.ok) {
-        navigate('/dashboard');
+        const data = await response.json();
+        navigate(data.redirect_url);
       } else {
         const data = await response.json();
-        toast.error(data.error);
+        toast.error(data.status);
       }
-    } catch (error) {
+    } catch(error) {
       console.log(error);
     }
   }

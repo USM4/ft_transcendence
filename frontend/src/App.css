@@ -1034,11 +1034,12 @@ body {
   display: flex;
   font-size: 22px;
   font-family: inherit;
-  color: #D4FCB5;
 }
 
 .top-side-prfl  .profile-bio{
-  color: #685E5E;
+  color: #78e724;
+  font-size: 18px;
+  font-family: cursive;
 }
 
 
@@ -1621,7 +1622,7 @@ body {
   font-size: 20px;
   font-family: inherit;
   padding: 10px;
-  color:rgb(255, 223, 128);
+  color:rgb(255, 191, 0);
 }
 
 .disable-component{
@@ -1666,7 +1667,7 @@ body {
   font-size: 20px;
   font-family: inherit;
   padding: 10px;
-  color:rgb(255, 223, 128);
+  color:rgb(255, 191, 0);
 }
 
 /* -------------------------------------------------- CHAT ------------------------------------------------------------------------*/
@@ -2777,7 +2778,11 @@ body {
   aspect-ratio: 2 / 1;
   margin: 0 auto;
 }
-
+.multi-canvas-game{
+  display: block;
+  border-radius: 20px;
+  border: 2px solid red;
+}
 .canvas-game {
   position: absolute;
   top: 0;
@@ -3027,4 +3032,42 @@ body {
   font-weight: bold;
   color: green;
   animation: pulse 1.5s infinite ease-in-out;
+}
+
+.FGame-render {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+.Fcanvas-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bot-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+.bot-row .player-profiles {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+}
+
+.top-row, .bot-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px 0;
 }

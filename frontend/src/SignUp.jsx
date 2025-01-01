@@ -3,6 +3,7 @@ import "./App.css"
 import { Link } from "react-router-dom";
 import SignIn from './SignIn.jsx'
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function SignUp() {
     const [username, setUsername] = useState('');
@@ -16,27 +17,32 @@ function SignUp() {
         setErrorMessages([]);
         setSuccessMessages([]);
         e.preventDefault();
-        const host=import.meta.env.VITE_HOST_URL;
-        const response = await fetch(`${host}/auth/signup/`,{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({username, email, password , newpassword}),
-        });
-        const data = await response.json();
-        if (response.ok)
+        try
         {
-            const successmsg = Object.values(data);
-            setSuccessMessages(successmsg);
-            navigate('/signin');
-        }
-        else 
-        {
-            if (!response.ok) {
-                const errors = Object.values(data);
-                setErrorMessages(errors);
+            const host=import.meta.env.VITE_HOST_URL;
+            const response = await fetch(`${host}/auth/signup/`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({username, email, password , newpassword}),
+            });
+            const data = await response.json();
+            if (response.ok)
+            {
+                const successmsg = Object.values(data);
+                setSuccessMessages(successmsg);
+                navigate('/signin');
             }
+            else 
+            {
+                    const errors = Object.values(data);
+                    toast.error(errors[0]);
+            }
+        }
+        catch (error)
+        {
+            console.error('An error occurred:', error);
         }
     };
 

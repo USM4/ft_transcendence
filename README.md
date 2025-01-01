@@ -147,3 +147,13 @@ WebSockets are a communication protocol that enables a persistent, two-way conne
 * Configured with MEDIA_URL and MEDIA_ROOT.  
 
 -> REMOTE GAME INSTRUCTIONS
+
+
+**SET_PASSWORD() ALGORITHM**
+* Django's set_password() uses the PBKDF2 (Password-Based Key Derivation Function 2) algorithm by default, with SHA256 as the hash function. It:
+* Generates a random salt
+* Performs multiple iterations (default: 600,000 in recent Django versions)
+* Combines password with salt
+* Produces a 256-bit derived key
+* The final stored password format is: <algorithm>$<iterations>$<salt>$<hash>
+* You can customize the algorithm and iterations in Django settings with PASSWORD_HASHERS and PASSWORD_HASHER_OPTIONS.

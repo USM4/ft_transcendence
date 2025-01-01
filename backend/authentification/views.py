@@ -33,12 +33,27 @@ INTRA_TARGET = os.getenv('INTRA_TARGET', '')
 
 class SignUpView(APIView):
     def post(self, request):
+        username = request.data.get('username', '')
+        if Client.objects.filter(username=username).exists():
+            return Response(
+                {"error": "Username already exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = ClientSignUpSerializer(data=request.data)
         if not serializer.is_valid():
+            if ('username' in serializer.errors):
+                return Response({'error': 'username: ' + serializer.errors['username'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('email' in serializer.errors):
+                return Response({'error': 'email: ' + serializer.errors['email'][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if ('password' in serializer.errors):
+                return Response({'error': 'password: ' + serializer.errors['password'][0]}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"error": "Invalid data format "}, status=status.HTTP_400_BAD_REQUEST)
         username = request.data.get('username', '')
         email = request.data.get('email', '')
         password = request.data.get('password', '')
+        if not password.isalnum() or len(password) < 6:
+            return Response({"error": "Password must be at least 8 characters and contain at least one letter and one number"}, status=status.HTTP_400_BAD_REQUEST)
         newpassword = request.data.get('newpassword', '')
         if password != newpassword:
             return Response({"error": "Passwords do not match "}, status=status.HTTP_400_BAD_REQUEST)
@@ -62,8 +77,9 @@ class SignInView(APIView):
 
         if '@' in parse_login and '.' in parse_login:
             try:
-                client = Client.objects.get(email=parse_login)
-                username = client.username
+                clients = Client.objects.filter(Q(email=parse_login) & ~Q(password=""))
+                for user in clients:
+                    username = user.username if authenticate(username=user.username, password=password) else None
             except Client.DoesNotExist:
                 return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -128,8 +144,8 @@ class ExtractCodeFromIntraUrl(APIView):
         })
         user_data = user_info_response.json()
         user_email = user_data.get('email')
-        user = Client.objects.filter(email=user_email).first()
         username = user_data.get('login')
+        user = Client.objects.filter(username=username).first()
         #ila makanch had l user ghaycreeyih bl infos d inta
         avatar = user_data.get('image', {}).get('versions', {}).get('large')
         if user is None:
@@ -140,6 +156,14 @@ class ExtractCodeFromIntraUrl(APIView):
         access = str(refresh.access_token)
         if user.is_2fa_enabled:
             response = redirect(f'{HOST_URL}/2fa')
+            response.set_cookie(
+                '2fa_pending', 
+                'true',
+                max_age=300,  # 5 minutes
+                secure=True,
+                httponly=True,
+                samesite='None'
+            )
         else:
             response = redirect(f'{HOST_URL}/dashboard')
             print("dkheeeeeeeeeeeeeel")
@@ -172,6 +196,10 @@ class LogoutView(APIView):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         response.delete_cookie('refresh')
+        user = response.user
+        if user.is_2fa_enabled:
+            user.is_2fa_validated = False
+            user.save()
         return response
   
 class GameLeaderboard(APIView):
@@ -261,6 +289,7 @@ class DashboardView(APIView):
             'username': user.username,
             'avatar': user.avatar if user.avatar else DEFAULT_AVATAR,
             'twoFa': user.is_2fa_enabled,
+            'bio': user.bio,
             'is_online': user.is_online,
             'matchePlayed': game,
             'matcheWon': len([g for g in game if g[0]['winner'] == user.username]),
@@ -320,8 +349,15 @@ class NotificationGameInvite(APIView):
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
         if not Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).exists():
             Notification.objects.create(sender=from_user, message=f"{from_user.username} sent you a game invite ", notification_type='game_invite', receiver=to_user)
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
         else:
-            Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
+            if Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user , is_read=False).exists():
+                Notification.objects.filter(sender=to_user, message=f"{to_user.username} sent you a game invite ", receiver=from_user).update(is_read=True)
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=True)
+            else:
+                Notification.objects.filter(sender=from_user, message=f"{from_user.username} sent you a game invite ", receiver=to_user).update(is_read=False)
         return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
@@ -415,6 +451,7 @@ class FriendsList(APIView):
                 'username': friend.friend.username,
                 'avatar': friend.friend.avatar if friend.friend.avatar else DEFAULT_AVATAR,
                 'is_blocked': friend.is_blocked,
+                'bio': friend.friend.bio,
                 'is_online': friend.friend.is_online,
                 'blocker': friend.blocker.username if friend.blocker else None,
                 'matchePlayed': game[friend.friend.id],
@@ -471,6 +508,7 @@ class Profile(APIView):
             'avatar': user.avatar if user.avatar else DEFAULT_AVATAR,
             'friendship_status': friendship_status,
             'is_online': user.is_online,
+            'bio': user.bio,
         })
 
 class RemoveFriend(APIView):
@@ -534,10 +572,43 @@ class CheckOtp(APIView):
         otp = request.data.get('otp')
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
+            
         totp = pyotp.totp.TOTP(request.user.secret_key)
-        if not totp.verify(otp):
-            return Response({'error': 'Invalid OTP'}, status=400)
-        return Response({'message': 'OTP verified successfully'})
+        if totp.verify(otp):
+            # Set cookies after successful OTP verification
+            refresh = RefreshToken.for_user(request.user)
+            access = str(refresh.access_token)
+            response = Response({
+                'status': 'success',
+                'redirect_url': '/dashboard'
+            }, status=status.HTTP_200_OK)
+            response.set_cookie('client', access, httponly=True, samesite='None', secure=True)
+            response.set_cookie('refresh', str(refresh), httponly=True, samesite='None', secure=True)
+            response.delete_cookie('2fa_pending')
+            return response
+            
+        return Response({
+            'error': 'Invalid OTP'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+# class CheckOtp(APIView):
+#     def post(self, request):
+#         otp = request.data.get('otp')
+#         if not otp:
+#             return Response({'error': 'OTP is required'}, status=400)
+            
+#         totp = pyotp.totp.TOTP(request.user.secret_key)
+#         if totp.verify(otp):
+#             response = Response({
+#                 'status': 'success',
+#                 'redirect_url': '/dashboard'
+#             }, status=status.HTTP_200_OK)
+#             response.delete_cookie('2fa_pending')
+#             return response
+            
+#         return Response({
+#             'error': 'Invalid OTP'
+#         }, status=status.HTTP_400_BAD_REQUEST)
 
 class Activate2FA(APIView):
     def post(self, request):
@@ -550,6 +621,7 @@ class Activate2FA(APIView):
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = True
+        user.is_2fa_validated = False
         user.save()
 
         return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
@@ -567,6 +639,7 @@ class Disable2FA(APIView):
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = False
+        user.is_2fa_validated = True
         user.secret_key = None
         user.save()
 
@@ -581,9 +654,10 @@ class UpdateUserInfos(APIView):
     def post(self, request):
         user = request.user
         avatar = request.data.get('avatar')
-        address = request.data.get('address')
+        bio = request.data.get('bio')
         phone = request.data.get('phone')
         avatar_file = request.FILES.get('avatar')
+
         if avatar_file:
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
             file_url = request.build_absolute_uri(default_storage.url(file_path))
@@ -591,8 +665,8 @@ class UpdateUserInfos(APIView):
             file_url = file_url.replace(":80", ":443")
             user.avatar = file_url
 
-        if address:
-            user.address = address
+        if bio:
+            user.bio = bio
         if phone:
             user.phone = phone
         user.save()

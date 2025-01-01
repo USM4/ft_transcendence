@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'authentification.middleware.JWTAuthFromCookieMiddleware',
     'authentification.middleware.RefreshTokenMiddleware',
+    'authentification.middleware.TwoFactorMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -139,8 +140,8 @@ if os.getenv('DJANGO_ENV') == 'development':
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
-    'REFRESH_TOKEN_LIFETIME' : timedelta(minutes=2),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME' : timedelta(days=7),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
     'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
     'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HttpOnly
