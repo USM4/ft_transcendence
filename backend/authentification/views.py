@@ -27,6 +27,13 @@ from django.core.files.storage import default_storage
 
 class SignUpView(APIView):
     def post(self, request):
+        username = request.data.get('username', '')
+        if Client.objects.filter(username=username).exists():
+            return Response(
+                {"error": "Username already exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer = ClientSignUpSerializer(data=request.data)
         if not serializer.is_valid():
             if ('username' in serializer.errors):
@@ -64,8 +71,9 @@ class SignInView(APIView):
 
         if '@' in parse_login and '.' in parse_login:
             try:
-                client = Client.objects.get(email=parse_login)
-                username = client.username
+                clients = Client.objects.filter(Q(email=parse_login) & ~Q(password=""))
+                for user in clients:
+                    username = user.username if authenticate(username=user.username, password=password) else None
             except Client.DoesNotExist:
                 return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -139,23 +147,24 @@ class ExtractCodeFromIntraUrl(APIView):
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
         if user.is_2fa_enabled:
-            response = redirect('http://localhost:5173/2fa')
+            response = redirect(f'http://localhost:5173/2fa/{user.username}')
+            response.user = user
         else:       
             response = redirect('http://localhost:5173/dashboard')
-        response.set_cookie(
-            'client',
-            access,
-            httponly=True,
-            samesite='None',
-            secure=True,
-        )
-        response.set_cookie(
-            'refresh',
-            str(refresh),
-            httponly=True,
-            samesite='None',
-            secure=True,
-        )
+            response.set_cookie(
+                'client',
+                access,
+                httponly=True,
+                samesite='None',
+                secure=True,
+            )
+            response.set_cookie(
+                'refresh',
+                str(refresh),
+                httponly=True,
+                samesite='None',
+                secure=True,
+            )
         return response
 
 class VerifyTokenView(APIView):
@@ -171,6 +180,8 @@ class LogoutView(APIView):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         response.delete_cookie('refresh')
+        if request.user.is_2fa_enabled:
+            request.user.save()
         return response
 
 class GameLeaderboard(APIView):
@@ -401,6 +412,8 @@ class AcceptFriendRequest(APIView):
 class FriendsList(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'Unauthorized'}, status=401)
         user = request.user
         friends = Friend.objects.filter(user=user).select_related('friend')
         for friend in friends:
@@ -541,12 +554,27 @@ class QrCode(APIView):
 class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
+        username = request.data.get('username')
+        print("*********************************************************************************************",username)
+        user = Client.objects.get(username=username)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
-        totp = pyotp.totp.TOTP(request.user.secret_key)
-        if not totp.verify(otp):
-            return Response({'error': 'Invalid OTP'}, status=400)
-        return Response({'message': 'OTP verified successfully'})
+            
+        totp = pyotp.totp.TOTP(user.secret_key)
+        if totp.verify(otp):
+            # Set cookies after successful OTP verification
+            refresh = RefreshToken.for_user(user)
+            access = str(refresh.access_token)
+            response = Response({
+                'status': 'success',
+                'redirect_url': '/dashboard'
+            }, status=status.HTTP_200_OK)
+            response.set_cookie('client', access, httponly=True, samesite='None', secure=True)
+            response.set_cookie('refresh', str(refresh), httponly=True, samesite='None', secure=True)
+            return response    
+        return Response({
+            'error': 'Invalid OTP'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 class Activate2FA(APIView):
     def post(self, request):

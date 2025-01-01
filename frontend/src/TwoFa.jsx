@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function TwoFa() {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
+  const username = window.location.pathname.split("/")[2];
   const checkOtp = async (e) => {
     e.preventDefault();
     try {
@@ -15,7 +16,9 @@ function TwoFa() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({'otp': otp}),
+        body: JSON.stringify({'otp': otp, 
+                            'username': username
+        }),
       });
       if (response.ok) {
         navigate('/dashboard');
