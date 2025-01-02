@@ -12,7 +12,7 @@ function FriendDataProvider({ children }) {
 
   useEffect(() => {
       const fetchFriendList = async () => {
-        if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay') {
+        if (pathname !== '/signin' && pathname !== '/signup' && !pathname.startsWith('/2fa') && pathname !== '/about' && pathname !== '/howtoplay'){
         const host=import.meta.env.VITE_HOST_URL;
         const response = await fetch(`${host}/auth/friends/`,
         {
@@ -24,7 +24,8 @@ function FriendDataProvider({ children }) {
           setFriends(responseData.data);
         }
         else {
-          console.log('something went wrong');
+          const responseData = await response.json();
+          console.log(responseData.error);
         }
       }
     }

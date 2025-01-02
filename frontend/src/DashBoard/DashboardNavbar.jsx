@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
+import anonymous from "../../public/anonyme.png"
 import Swal from "sweetalert2";
 import { FriendDataContext } from "./FriendDataContext.jsx";
 import {
@@ -143,7 +144,7 @@ function DashboardNavbar() {
           >
             <img
               className="profile-img"
-              src={user?.avatar || "./player1.jpeg"}
+              src={user?.avatar || anonymous}
               alt=""
             />
           </button>

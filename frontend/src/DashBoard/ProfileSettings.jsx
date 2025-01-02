@@ -75,7 +75,6 @@ function ProfileSettings() {
         toast.success(data.message);
       } else {
         toast.error(data.error);
-        console.log(data);
       };
     } catch (error) {
       console.log(error);

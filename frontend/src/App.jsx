@@ -45,7 +45,7 @@ function App() {
             <Route path="/" element={<><Navbar /><HomePage /></>} />
             <Route path="/signin" element={<><Navbar /><SignIn /></>} />
             <Route path="/signup" element={<><Navbar /><SignUp /></>} />
-            <Route path="/2fa" element={<><Navbar /><TwoFa /></>} />
+            <Route path="/2fa/:username" element={<><Navbar /><TwoFa /></>} />
             <Route path="/about" element={<><Navbar /><AboutSection /></>} />
             <Route path="/howtoplay" element={<><Navbar /><HowToPlay /></>} />
 

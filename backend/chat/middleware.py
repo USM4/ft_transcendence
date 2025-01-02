@@ -21,7 +21,7 @@ class QueryAuthMiddleware:
     async def __call__(self, scope, receive, send):
         cookies = scope.get('cookies', {})
         token = cookies.get('client')
-
+        
         if token:
             try:
                 # Decode the JWT

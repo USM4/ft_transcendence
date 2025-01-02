@@ -75,12 +75,9 @@ function NotificationsToggle({ displayNotification }) {
 
 
   const handleNotificationsSwitch = (notification) => {
-    console.log("Notification received:", notification);
     if (notification.notification_type === 'friend_request') {
       acceptFriendRequest(notification);
-      console.log("friend request accepted");
     } else if (notification.notification_type === 'game_invite') {
-      console.log("Game invite accepted----------->", notification);
       acceptFriendRequest(notification);
       navigate('/tournament/options/game/matchMaking', { state: { target: notification.sender_id, old_pathname: pathname} })
     }

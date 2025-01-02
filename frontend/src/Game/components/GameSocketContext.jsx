@@ -28,13 +28,9 @@ export const GameSocketProvider = ({ children }) => {
         },
     });
     useEffect(() => {
-        // Only create socket if it doesn't exist and we're on the correct paths
-        // console.log("pathname outside", pathname);
         if (wsRef.current &&
             pathname !== "/tournament/options/game/matchMaking" &&
             pathname !== "/tournament/options/game/online") {
-            // console.log("wsRef.current", wsRef.current);
-            console.log("wsRef.current &&  pathname !== /tournament/options/game/matchMaking && pathname !== /tournament/options/game/online");
             wsRef.current.close();
             wsRef.current = null;
             setMessage(null);
@@ -43,7 +39,6 @@ export const GameSocketProvider = ({ children }) => {
             (pathname === "/tournament/options/game/matchMaking" ||
                 pathname === "/tournament/options/game/online")) {
             let socket = null
-            console.log("--------------------------", message);
             if ((message && message.type === "error")) {
                 toast.error(message.message);
                 setMessage(null);
@@ -73,14 +68,9 @@ export const GameSocketProvider = ({ children }) => {
 
                 socket.onclose = () => {
                     console.log("WebSocket connection closed for Game.");
-                    // if (wsRef.current)
-                    //   wsRef.current.close();
                     wsRef.current = null;
                 };
-                // socket.onmessage = (event) =>{
-                //   const data = JSON.parse(event.data)
-                // //   console.log("message context", data);
-                // }
+
                 socket.onerror = (error) => {
                     console.error("WebSocket error:", error);
                 };
@@ -90,10 +80,7 @@ export const GameSocketProvider = ({ children }) => {
         }
 
         if (old_pathname === "/tournament/options/game/matchMaking" && pathname === "/tournament/options/game/matchMaking") {
-            console.log("send to the backend");
             if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-                console.log('target', target);
-                console.log('wsref', wsRef.current);
                 wsRef.current.send(
                     JSON.stringify({
                         type: 'invited',
@@ -103,12 +90,9 @@ export const GameSocketProvider = ({ children }) => {
             }
         }
         return () => {
-            // Only close if we're navigating away from game pages
 
             if (wsRef.current &&
                 !pathname.includes("/tournament/options/game/")) {
-                console.log("Closing WebSocket connection");
-                console.log("in return of the useEffect");
                 wsRef.current.close();
                 wsRef.current = null;
                 setMessage(null);
@@ -119,7 +103,6 @@ export const GameSocketProvider = ({ children }) => {
         if (isReady) {
 
             const navigateTimeout = setTimeout(() => {
-                // ghaymchi l page online f 3 seconds ila kan ready
                 if (dataPlayers) {
                     navigate("/tournament/options/game/online", { state: { players: dataPlayers } });
                 }

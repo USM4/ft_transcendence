@@ -62,17 +62,15 @@ useEffect(() => {
     useEffect(() => {
         if (isReady) {
             const countdownInterval = setInterval(() => {
-                setCountdown((prev) => prev - 1); // Decrementi l countdown
+                setCountdown((prev) => prev - 1);
             }, 1000);
 
             const navigateTimeout = setTimeout(() => {
-                // ghaymchi l page online f 3 seconds ila kan ready
                 if (dataPlayers) {
                     navigate("/tournament/options/game/online", { state: { players: dataPlayers } });
                 }
             }, 3000);
 
-            // Cleanup intervals and timeouts
             return () => {
                 clearInterval(countdownInterval);
                 clearTimeout(navigateTimeout);

@@ -56,15 +56,12 @@ const PongGame = () => {
       radius: 10,
       color: "yellow",
     };
-    // setLeftRacket((prev) => ({ ...prev, y: 200 }));
-    // setRightRacket((prev) => ({ ...prev, y: 200 }));
     setScores({ leftPlayer: 0, rightPlayer: 0 });
     setWinner(null);
     canvasRef.current = null;
   };
 
   const moveAIRacket = () => {
-    // setRightRacket((prev) => {
     if (ballRef.current.velocityX < 0) return;
     const direction =
       ballRef.current.y > rightRacket.current.y + rightRacket.current.height / 2
@@ -73,16 +70,13 @@ const PongGame = () => {
     let newY = rightRacket.current.y + direction * rightRacket.current.velocity;
     newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
     rightRacket.current = { ...rightRacket.current, y: newY };
-    // });
   };
 
   const resetPositions = () => {
-    // setLeftRacket((prev) => ({
     leftRacket.current = {
       ...leftRacket.current,
       y: 200,
     };
-    // }));
 
     rightRacket.current = {
       ...rightRacket.current,
@@ -222,7 +216,6 @@ const PongGame = () => {
 
     const animate = () => {
       if (canvasRef.current === null) {
-        console.log("Canvas is null");
         return;
       }
       const canvas = canvasRef.current;
@@ -280,7 +273,6 @@ const PongGame = () => {
       localStorage.setItem('matchePlayed', JSON.stringify(matche));
       localStorage.removeItem('matche');
       navigate("/tournament/options/play-tournament");
-      console.log("Winner is", winner);
     }
   }, [winner, navigate]);
 

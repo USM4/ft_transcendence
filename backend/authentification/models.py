@@ -9,7 +9,6 @@ class Client(AbstractUser):
     email = models.EmailField(max_length=255)
     password = models.CharField(max_length=255)
     is_2fa_enabled = models.BooleanField(default=False)
-    is_2fa_validated = models.BooleanField(default=True)
     secret_key = models.CharField(max_length=32, blank=True, null=True)
     is_online = models.BooleanField(default=False )
     # def __str__(self):

@@ -11,26 +11,26 @@ function UserDataProvider({ children }) {
 
   useEffect(() => {
     const getData = async () => {
-      if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay') {
-      try {
-        const host=import.meta.env.VITE_HOST_URL;
-        const response = await fetch(`${host}/auth/dashboard/`, {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
+      if (pathname !== '/signin' && pathname !== '/signup' && !pathname.startsWith('/2fa') && pathname !== '/about' && pathname !== '/howtoplay') {
+        try {
+            const host=import.meta.env.VITE_HOST_URL;
+            const response = await fetch(`${host}/auth/dashboard/`, {
+              method: "GET",
+              credentials: "include",
+            });
+            if (response.ok) {
+              const data = await response.json();
+              setUser(data);
+            } 
+            else {
+              const data = await response.json();
+              console.error(data.error);
+              navigate('/signin');
+            }
+        } catch (error) {
+          console.error('error getting data :', error);
         }
-        else if (pathname !== '/signin' && pathname !== '/signup' && pathname !== '/2fa' && pathname !== '/about' && pathname !== '/howtoplay' )
-        {
-          navigate('signin/')
-        }
-
-      } catch (error) {
-        console.error('error getting data :', error);
-      }
-    }
+    } 
   };
     getData();
   }, [pathname]);

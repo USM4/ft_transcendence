@@ -10,9 +10,7 @@ import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import ReorderIcon from "@mui/icons-material/Reorder";
 import SideBar from "./SideBar";
 import ProfileFriendList from "./ProfileFriendList.jsx";
-import oredoine from "../../public/oredoine.jpeg";
-import skull from "../../public/skull.jpeg";
-import player from "../../public/player1.jpeg";
+import player from "../../public/anonyme.png";
 import "../App.css";
 import ProfileBarChart from "./ProfileBarChart.jsx";
 import ProfileRadar from "./ProfileRadar.jsx";
@@ -43,12 +41,11 @@ function Profile() {
         // Prevent adding duplicates
         setFriends((prevFriends) => {
           if (!prevFriends.some(friend => friend.id === data.friend.id)) {
-            return [...prevFriends, data.friend];  // Add only if friend is not already in the list
+            return [...prevFriends, data.friend];
           }
-          return prevFriends;  // Return the same list if friend already exists
+          return prevFriends;
         });
       } else if (data.type === "friend_removed_you") {
-        // Remove the friend if they are in the list
         setFriends((prevFriends) => {
           return prevFriends.filter((friend) => friend.id !== data.friend.id);
         });

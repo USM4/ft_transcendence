@@ -15,7 +15,5 @@
 )
 
 ***********************
-> sign in with an intra username with empty password 
-something went wrong FriendDataContext.jsx:25:18
-XHRPOST
-https://localhost/auth/signin/
+>GET https://e2r10p15/player1.jpeg NS_BINDING_ABORTED
+

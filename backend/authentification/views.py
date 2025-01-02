@@ -88,7 +88,7 @@ class SignInView(APIView):
         if client:
             refresh = RefreshToken.for_user(client)
             access = str(refresh.access_token)
-            redirect_url = client.is_2fa_enabled and '/2fa' or '/dashboard'
+            redirect_url = client.is_2fa_enabled and f'/2fa/{client.username}' or '/dashboard'
             response = Response({'success': 'Logged in successfully', 'redirect_url': redirect_url}, status=status.HTTP_200_OK)
             response.set_cookie(
                 'client',
@@ -155,31 +155,22 @@ class ExtractCodeFromIntraUrl(APIView):
         refresh = RefreshToken.for_user(user)
         access = str(refresh.access_token)
         if user.is_2fa_enabled:
-            response = redirect(f'{HOST_URL}/2fa')
-            response.set_cookie(
-                '2fa_pending', 
-                'true',
-                max_age=300,  # 5 minutes
-                secure=True,
-                httponly=True,
-                samesite='None'
-            )
+            response = redirect(f'{HOST_URL}/2fa/{user}')
         else:
             response = redirect(f'{HOST_URL}/dashboard')
-            print("dkheeeeeeeeeeeeeel")
             response.set_cookie(
                 'client',
                 access,
                 httponly=True,
                 samesite='None',
-                secure=True
+                secure=True,
             )
             response.set_cookie(
                 'refresh',
                 str(refresh),
                 httponly=True,
                 samesite='None',
-                secure=True
+                secure=True,
             )
         return response
 
@@ -196,10 +187,6 @@ class LogoutView(APIView):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         response.delete_cookie('refresh')
-        user = response.user
-        if user.is_2fa_enabled:
-            user.is_2fa_validated = False
-            user.save()
         return response
   
 class GameLeaderboard(APIView):
@@ -274,7 +261,6 @@ def get_game(user):
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
-        print ("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$user", user)
         if not user.is_authenticated:
             return Response({'error': 'Unauthorized', }, status=401)
         game = get_game(user)
@@ -431,6 +417,8 @@ class AcceptFriendRequest(APIView):
 class FriendsList(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'error': 'Unauthorized'}, status=401)
         user = request.user
         friends = Friend.objects.filter(user=user).select_related('friend')
         for friend in friends:
@@ -570,13 +558,16 @@ class QrCode(APIView):
 class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
+        username = request.data.get('username')
+        print("*********************************************************************************************",username)
+        user = Client.objects.get(username=username)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
             
-        totp = pyotp.totp.TOTP(request.user.secret_key)
+        totp = pyotp.totp.TOTP(user.secret_key)
         if totp.verify(otp):
             # Set cookies after successful OTP verification
-            refresh = RefreshToken.for_user(request.user)
+            refresh = RefreshToken.for_user(user)
             access = str(refresh.access_token)
             response = Response({
                 'status': 'success',
@@ -584,31 +575,10 @@ class CheckOtp(APIView):
             }, status=status.HTTP_200_OK)
             response.set_cookie('client', access, httponly=True, samesite='None', secure=True)
             response.set_cookie('refresh', str(refresh), httponly=True, samesite='None', secure=True)
-            response.delete_cookie('2fa_pending')
-            return response
-            
+            return response    
         return Response({
             'error': 'Invalid OTP'
         }, status=status.HTTP_400_BAD_REQUEST)
-
-# class CheckOtp(APIView):
-#     def post(self, request):
-#         otp = request.data.get('otp')
-#         if not otp:
-#             return Response({'error': 'OTP is required'}, status=400)
-            
-#         totp = pyotp.totp.TOTP(request.user.secret_key)
-#         if totp.verify(otp):
-#             response = Response({
-#                 'status': 'success',
-#                 'redirect_url': '/dashboard'
-#             }, status=status.HTTP_200_OK)
-#             response.delete_cookie('2fa_pending')
-#             return response
-            
-#         return Response({
-#             'error': 'Invalid OTP'
-#         }, status=status.HTTP_400_BAD_REQUEST)
 
 class Activate2FA(APIView):
     def post(self, request):
@@ -621,9 +591,7 @@ class Activate2FA(APIView):
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = True
-        user.is_2fa_validated = False
         user.save()
-
         return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
 
 class Disable2FA(APIView):
@@ -639,7 +607,6 @@ class Disable2FA(APIView):
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = False
-        user.is_2fa_validated = True
         user.secret_key = None
         user.save()
 

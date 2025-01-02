@@ -11,8 +11,6 @@ function SocketContextProvider({ children }) {
     const pathname = location.pathname;
 
     useEffect(() => {
-        // Function to establish a WebSocket connection
-        // console.log("SocketContextProvider", pathname, user, socket);
 
         const establishConnection = () => {
             console.log("Establishing WebSocket connection... socketa dyal online status");
@@ -35,21 +33,18 @@ function SocketContextProvider({ children }) {
             };
         };
 
-        // Only establish the WebSocket connection if user is logged in
-        // and the pathname is not one of the ignored paths
         if (
             pathname !== '/signin' &&
             pathname !== '/' &&
             pathname !== '/signup' &&
             pathname !== '/about' &&
             pathname !== '/howtoplay' &&
-            user && // Only if user is present
-            !socket // Only open a new connection if there's no existing one
+            user &&
+            !socket
         ) {
             establishConnection();
         }
 
-        // If the pathname matches an ignored path or user is not logged in, close the WebSocket
         if (
             pathname === '/signin' ||
             pathname === '/' ||
@@ -59,23 +54,13 @@ function SocketContextProvider({ children }) {
             !user
         ) {
             if (socket) {
-                socket.close();  // Close WebSocket if it's open
+                socket.close();  
                 console.log("WebSocket connection closed 1.");
-                setSocket(null);  // Clear socket state
+                setSocket(null);  
             }
         }
 
-        // Cleanup: Close WebSocket when component unmounts or when necessary 
-
-        // return () => {
-        //     if (socket) {
-        //         socket.close(); // Ensure to close the socket when the component unmounts or on path changes
-        //         console.log("WebSocket connection closed 2.");
-        //         setSocket(null); // Cleanup the socket state
-        //     }
-        // };
-
-    }, [pathname, user, socket]); // Dependencies: pathname, user, and socket state
+    }, [pathname, user, socket]); 
 
     return (
         <SocketContext.Provider value={{ socket }}>

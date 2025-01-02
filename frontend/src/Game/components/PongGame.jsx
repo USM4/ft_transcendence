@@ -61,8 +61,6 @@ const PongGame = ({ isAIEnabled }) => {
       radius: 10,
       color: "yellow",
     };
-    // setLeftRacket((prev) => ({ ...prev, y: 200 }));
-    // setRightRacket((prev) => ({ ...prev, y: 200 }));
     setScores({ leftPlayer: 0, rightPlayer: 0 });
     setWinner(null);
     canvasRef.current = null;
@@ -96,6 +94,8 @@ const PongGame = ({ isAIEnabled }) => {
     }
   };
 
+
+
   const resetPositions = () => {
     leftRacket.current = {
       ...leftRacket.current,
@@ -109,7 +109,6 @@ const PongGame = ({ isAIEnabled }) => {
   };
 
   const updateBallPosition = useCallback(() => {
-    // setBall((prevBall) => {
     let { x, y, velocityX, velocityY } = ballRef.current;
     x += velocityX + Math.random() * 0.5;
     y += velocityY + Math.random() * 0.5;
@@ -155,7 +154,7 @@ const PongGame = ({ isAIEnabled }) => {
     if (x - ballRef.current.radius <= 0) {
       setScores((prevScores) => {
         if (prevScores.rightPlayer + 1 === 5) {
-          setWinner("Player 2");
+          setWinner(isAIEnabled ? "Mjinina" : "Player 2");
         }
         return {
           ...prevScores,
@@ -227,7 +226,6 @@ const PongGame = ({ isAIEnabled }) => {
 
     const animate = () => {
       if (canvasRef.current === null) {
-        // console.log("Canvas is null");
         return;
       }
       const canvas = canvasRef.current;
@@ -284,8 +282,6 @@ const PongGame = ({ isAIEnabled }) => {
   );
 
   if (winner) {
-    console.log("Winner is", winner);
-    console.log("Scores", scores);
     return <WinPage winner={winner} resetGame={resetGame} />;
   }
 

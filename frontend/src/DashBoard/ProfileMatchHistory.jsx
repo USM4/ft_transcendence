@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import DetailsIcon from '@mui/icons-material/Details';
-import skull from '/skull.jpeg'
-import oredoine from '/oredoine.jpeg'
+import anonyme from  "../../public/anonyme.png"
 import { UserDataContext } from "./UserDataContext.jsx";
 import CancelIcon from '@mui/icons-material/Cancel';
 import { FriendDataContext } from "./FriendDataContext.jsx";
@@ -11,7 +10,6 @@ function ProfileMatchHistory({ profile,is_user}) {
     const {friends, setFriends} = useContext(FriendDataContext);
     
     let { user } = useContext(UserDataContext);
-    const anonyme = skull;
     const [open, setOpen] = useState([false]);
     const [matchDetails, setMatchDetails] = useState(null);
     if (is_user)

@@ -314,7 +314,7 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
         const interval = setInterval(() => {
             updateRackets();
             updateBall();
-        }, 16);
+        }, 12);
         return () => clearInterval(interval);
     }, [updateRackets, updateBall]);
 
