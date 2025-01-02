@@ -261,7 +261,7 @@ body {
   border-radius: 30px;
   padding: 20px;
 
-  background-color: #1a2b49;
+  background-color: rgba(222, 216, 216, 0.691);
 }
 
 .about-div{
@@ -276,7 +276,7 @@ body {
   gap: 5px;
   border: 1px dashed #cc9a2c;
   border-radius: 50px;
-  background-color: #1a2b49;
+  background-color: #956208ad;
 }
 .about section p{
   padding: 10px;
