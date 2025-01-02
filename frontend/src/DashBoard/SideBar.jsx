@@ -20,13 +20,11 @@ function SideBar({username}) {
     {
       title: "Chat",
       icon: <TextsmsIcon/>,
-      // chat scoope
       link: "/chat",
     },
     {
       title: "Game",
       icon: <GamepadIcon />,
-      // Game scoope
       link: "/tournament/options",
     },
     {

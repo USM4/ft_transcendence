@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import WinPage from "./WinPage";
 import Loser from "./Loser";
-// import { GameSocketContext } from "./GameSocketContext";
 import Swal from "sweetalert2";
 import WaitingOpponent from "./WaitingOpponent"; 
 import player3Image from "../../../public/anonyme.png";
@@ -109,13 +108,10 @@ useEffect(() => {
                   if (data.winner === user.username)
                   {
                       setWinner(true);
-                      console.log("Winner is", data.winner);
                     }
                     else if(data.loser === user.username)
                     {
                       setLoser(true);
-                      console.log("Loser is", data.loser);
-                      // return <Loser loser={data.loser}/>;
                     }
                   break;
               case "player_disconnected":
@@ -153,8 +149,6 @@ const handleKeyDown = (e) => {
 
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify(message));
-        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
-        // keyState.current[key] = true
       } else {
         console.error("WebSocket is not open, message not sent");
       }
@@ -172,8 +166,6 @@ const handleKeyDown = (e) => {
       
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         wsRef.current.send(JSON.stringify(message)); 
-        //ila wrrrekty 3la l paddles bjoj fde99a atkhessr
-        // keyState.current[key] = false; 
       } else {
         console.error("WebSocket is not open, message not sent");
       }

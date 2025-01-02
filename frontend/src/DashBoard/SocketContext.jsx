@@ -13,7 +13,6 @@ function SocketContextProvider({ children }) {
     useEffect(() => {
 
         const establishConnection = () => {
-            console.log("Establishing WebSocket connection... socketa dyal online status");
             const socket_var=import.meta.env.VITE_WSS_URL
             const ws = new WebSocket(`${socket_var}/ws/online_status/`);
 

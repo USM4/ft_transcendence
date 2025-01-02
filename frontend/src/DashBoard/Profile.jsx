@@ -38,7 +38,6 @@ function Profile() {
       const data = JSON.parse(e.data);
 
       if (data.type === "friend_request_accepted") {
-        // Prevent adding duplicates
         setFriends((prevFriends) => {
           if (!prevFriends.some(friend => friend.id === data.friend.id)) {
             return [...prevFriends, data.friend];

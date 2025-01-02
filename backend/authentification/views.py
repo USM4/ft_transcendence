@@ -559,7 +559,6 @@ class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
         username = request.data.get('username')
-        print("*********************************************************************************************",username)
         user = Client.objects.get(username=username)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)

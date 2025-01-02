@@ -85,7 +85,6 @@ const PongGame = () => {
   };
 
   const updateBallPosition = useCallback(() => {
-    // setBall((prevBall) => {
     let { x, y, velocityX, velocityY } = ballRef.current;
     x += velocityX + Math.random() * 0.5;
     y += velocityY + Math.random() * 0.5;
@@ -161,37 +160,23 @@ const PongGame = () => {
         y: 250,
       };
     }
-    // setScores(updatedScores);
   });
-
-  // useEffect(() => {
-  //   window.addEventListener('keydown', handleKeyDown);
-  //   window.addEventListener('keyup', handleKeyUp);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //     window.removeEventListener('keyup', handleKeyUp);
-  //   };
-  // }, []);
 
   useEffect(() => {
     const moveLeftRacket = (direction) => {
-      // setLeftRacket((prev) => {
       let newY = leftRacket.current.y + direction * leftRacket.current.velocity;
       newY = Math.max(0, Math.min(newY, 500 - leftRacket.current.height));
       leftRacket.current = { ...leftRacket.current, y: newY };
-      // });
     };
 
     const moveRightRacket = (direction) => {
-      // setRightRacket((prev) => {
       let newY =
         rightRacket.current.y + direction * rightRacket.current.velocity;
       newY = Math.max(0, Math.min(newY, 500 - rightRacket.current.height));
       rightRacket.current = { ...rightRacket.current, y: newY };
-      // });
     };
     const handleKeyDown = (e) => {
-      keys[e.key] = true; // Set the key state to true when pressed
+      keys[e.key] = true;
       if (keys["w"] || keys["W"]) {
         moveLeftRacket(-1);
       }
@@ -252,7 +237,6 @@ const PongGame = () => {
         rightRacket.current.height
       );
       requestAnimationFrame(animate);
-      // if (winner) return;
     };
     animate();
     return () => {

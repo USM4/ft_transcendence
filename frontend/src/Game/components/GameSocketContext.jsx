@@ -108,7 +108,6 @@ export const GameSocketProvider = ({ children }) => {
                 }
             }, 3000);
 
-            // Cleanup intervals and timeouts
             return () => {
                 clearTimeout(navigateTimeout);
             };

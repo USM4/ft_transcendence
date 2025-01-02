@@ -18,7 +18,6 @@ function SignIn() {
         const host=import.meta.env.VITE_HOST_URL;
         const response_type = 'code';
         const redirectUri=`${host}/accounts/42school/login/callback/`;
-        console.log ("-----------------------------------", redirectUri);
         const auth_url_concatinated = `${auth_url}?client_id=${client_id}&redirect_uri=${redirectUri}&response_type=${response_type}`;
         window.location.href = auth_url_concatinated;
     };

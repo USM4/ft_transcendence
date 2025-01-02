@@ -211,7 +211,7 @@ function ProfileSettings() {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setAvatar(e.target.files[0])} // Using files[0] to get the selected file
+                  onChange={(e) => setAvatar(e.target.files[0])}
                 />
               </div>
             </div>

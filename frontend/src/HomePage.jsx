@@ -6,7 +6,6 @@ import { useLocation } from "react-router-dom";
 function HomePage() {
 
     const location = useLocation()
-    console.log ("----------------window.location.host----------------", window.location.host)
     return(
         <div className="container">
             <div className="body-text">

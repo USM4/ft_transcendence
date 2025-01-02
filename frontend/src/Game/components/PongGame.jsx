@@ -201,7 +201,7 @@ const PongGame = ({ isAIEnabled }) => {
       rightRacket.current = { ...rightRacket.current, y: newY };
     };
     const handleKeyDown = (e) => {
-      keys[e.key] = true; // Set the key state to true when pressed
+      keys[e.key] = true;
       if (keys["w"] || keys["W"]) {
         moveLeftRacket(-1);
       }

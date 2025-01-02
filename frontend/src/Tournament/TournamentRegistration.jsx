@@ -19,7 +19,6 @@ const TournamentRegistration = () => {
   const [players, setPlayers] = useState([]);
 
   const handleNext = () => {
-      // checking if all players have valid names
       const invalidPlayers = players.filter(player => !player.name.trim());
       if (invalidPlayers.length > 0) {
         toast.error("Players name mustn't be empty!");

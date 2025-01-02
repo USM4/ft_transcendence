@@ -436,7 +436,6 @@ const FPlayer = ({ canvasWidth = 600, canvasHeight = 600 }) => {
   );
 
   if (winner) {
-    console.log(winner);
     return <Loser loser={winner} resetGame={resetGame} />;
   }
 

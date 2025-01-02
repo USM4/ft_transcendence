@@ -39,7 +39,6 @@ const Matchmaking = () => {
 useEffect(() => {
     if (wsRef.current && message) {
             const data = message;
-            console.log("data", data);
             switch(data.type) {
                 case "connected":
                     break;
