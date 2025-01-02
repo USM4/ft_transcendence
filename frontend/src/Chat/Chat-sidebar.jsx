@@ -34,17 +34,20 @@ export default function Chat_sidebar() {
 			const data = JSON.parse(event.data);
 			const { chat_room, message, message_id } = data;
 
-			if (data.type !== 'online')
 			if (data.type === 'history') {
-				if (chat_room === 'no_messages')
-					setChatroom(null);
-				else if (chat_room)
 					setChatroom(chat_room);
 			}
 			if (message) {
 				setMessage((prevMessage) => {
 					const chatMessage = prevMessage[chat_room] || [];
 					const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
+					if (chatMessage.length === 0 && 
+						chat_room !== 'no_messages' && 
+						selectedFriendRef.current && 
+						(message.includes(selectedFriendRef.current.id) || 
+						message.includes(selectedFriendRef.current.username))) {
+						setChatroom(chat_room);
+					}
 
 					if (!messageExists) {
 						return {
