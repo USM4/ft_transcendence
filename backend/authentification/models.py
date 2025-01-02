@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 class Client(AbstractUser):
     avatar = models.URLField(max_length=500, blank=True, null=True)
     username = models.CharField(max_length=255, unique=True)
-    bio = models.CharField(max_length=255, blank=True, null=True , default="I don't just play ping pong—I redefine it. Every serve, every smash, every point, I'm not just winning the game; I'm making history.")
+    bio = models.CharField(max_length=255, blank=True, null=True , default="I don't just play ping pong—I redefine it. Every serve, every smash, every point, I'm not just winning the game, I'm making history")
     phone = models.CharField(max_length=255, blank=True, null=True , default='No phone')
     email = models.EmailField(max_length=255)
     password = models.CharField(max_length=255)

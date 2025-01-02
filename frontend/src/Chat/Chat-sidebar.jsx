@@ -45,7 +45,6 @@ export default function Chat_sidebar() {
 				setMessage((prevMessage) => {
 					const chatMessage = prevMessage[chat_room] || [];
 					const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
-
 					if (!messageExists) {
 						return {
 							...prevMessage,

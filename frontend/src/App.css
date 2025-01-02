@@ -1038,10 +1038,9 @@ body {
 
 .top-side-prfl  .profile-bio{
   color: #78e724;
-  font-size: 18px;
-  font-family: cursive;
+  font-size: 17px;
+  font-family: inherit;
 }
-
 
 .top-side-prfl  img{
   width: 170px;
