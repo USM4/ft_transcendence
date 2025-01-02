@@ -42,7 +42,6 @@ export default function Chat_sidebar() {
 					setChatroom(chat_room);
 			}
 			if (message) {
-				setChatroom(chat_room);
 				setMessage((prevMessage) => {
 					const chatMessage = prevMessage[chat_room] || [];
 					const messageExists = chatMessage.some((msg) => msg.message_id === message_id);
@@ -53,6 +52,7 @@ export default function Chat_sidebar() {
 							[chat_room]: [...chatMessage, data],
 						};
 					}
+					prevMessage[chat_room].sort((a, b) => a.message_id - b.message_id);
 					return prevMessage;
 				});
 			}
