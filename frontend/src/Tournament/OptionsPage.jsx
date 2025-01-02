@@ -12,15 +12,10 @@ return (
             </div>
             <div className="options">
                 <div className="option">
-                    {/*------------------------------------------ */}
                     <button 
                         onClick={() => {navigate('game')}}
                     >Play Vs Friend</button>
-                    {/*------------------------------------------ */}
                 </div>
-                {/* <div className="option">
-                    <button>Play Vs Bot</button>
-                </div> */}
                 <div className="option">
                     <button
                         type="submit"

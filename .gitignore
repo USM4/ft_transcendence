@@ -34,6 +34,8 @@ backend/env
 /backend/env/
 /backend/media/
 /*.egg-info/
+.env
+
 MANIFEST
 coverage.*
 db.sqlite3

@@ -41,7 +41,6 @@ function App() {
         <FriendDataProvider>   
           <Toaster position="top-center" reverseOrder={false} />
           <Routes>
-            {/* Public Routes */}
             <Route path="/" element={<><Navbar /><HomePage /></>} />
             <Route path="/signin" element={<><Navbar /><SignIn /></>} />
             <Route path="/signup" element={<><Navbar /><SignUp /></>} />
@@ -49,7 +48,6 @@ function App() {
             <Route path="/about" element={<><Navbar /><AboutSection /></>} />
             <Route path="/howtoplay" element={<><Navbar /><HowToPlay /></>} />
 
-            {/* Protected Routes */}
             <Route path="/dashboard" element={
                   <ProtectedRoute component={NavbarSideBar} />
             }>
@@ -73,7 +71,6 @@ function App() {
             <Route path="/tournament/options" element={
                 <ProtectedRoute component={NavbarSideBar} />
             }>
-              {/* Default OptionsPage for Tournament Options */}
               <Route path="" element={
                   <ProtectedRoute component={OptionsPage} />
               } />

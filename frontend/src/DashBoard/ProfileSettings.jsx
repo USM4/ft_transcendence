@@ -219,6 +219,7 @@ function ProfileSettings() {
               <p>Update BIO : </p>
               <input
                 type="text"
+                maxLength={100}
                 placeholder="Enter your new bio"
                 value={bio}
                 onChange={(e) => setbio(e.target.value)}
@@ -227,7 +228,8 @@ function ProfileSettings() {
             <div className="update-nickname">
               <p>Update Phone number : </p>
               <input
-                type="text"
+                type="number"
+                maxLength={10}
                 placeholder="Enter your new phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
