@@ -14,8 +14,8 @@ from urllib.parse import parse_qs
 from datetime import datetime
 from dotenv import load_dotenv
 connected_users = deque()  # list of connected clients
-invited_users = deque()  # list of connected clients
-connected_users_set = set()  # set of connected clients
+invited_users = deque()  # list of connected invited clients
+connected_users_set = set()  # set of connected in game  clients (third party)
 user_channels = {}  # map of user to channel name
 game_states = {}  # Dictionary to store GameState instances for each match
 max_score = 2

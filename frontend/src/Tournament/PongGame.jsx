@@ -8,6 +8,11 @@ import player2Image from '/pensioner.png';
 const PongGame = () => {
   const navigate = useNavigate();
   const matche = JSON.parse(localStorage.getItem('matche')) || {};
+  useEffect(() => {
+    if (!matche.Player1 || !matche.Player2) {
+        navigate("/tournament/options/tournament-registration");
+    }
+}, [matche]);
   const canvasRef = useRef(null);
   const keys = {};
   const ballRef = useRef({
