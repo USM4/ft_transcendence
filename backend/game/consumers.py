@@ -331,7 +331,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 					# Add players to match-specific group
 					if user1 and user2:
-						await self.channel_layer.group_add(self.match_name, user1["channel_name"]) 
+						await self.channel_layer.group_add(self.match_name, user1["channel_name"])
 						await self.channel_layer.group_add(self.match_name, user2["channel_name"])
 
 						await self.channel_layer.group_send(self.match_name, {
