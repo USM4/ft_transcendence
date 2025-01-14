@@ -11,6 +11,7 @@ class Client(AbstractUser):
     is_2fa_enabled = models.BooleanField(default=False)
     secret_key = models.CharField(max_length=32, blank=True, null=True)
     is_online = models.BooleanField(default=False )
+    display_name = models.CharField(max_length=32, blank=True, null=True, default="player1")
     # def __str__(self):
     #     return self.username
 

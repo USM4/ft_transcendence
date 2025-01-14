@@ -21,10 +21,12 @@ function ProfileSettings() {
   const [avatar, setAvatar] = useState("");
   const [bio, setbio] = useState("");
   const [phone, setPhone] = useState("");
+  const [display_name, setDisplayName] = useState("");
   const formData = new FormData();
   formData.append('avatar', avatar);
   formData.append('bio', bio);
   formData.append('phone', phone);
+  formData.append('display_name', display_name);
 
   const saveCode = async (e) => {
     e.preventDefault();
@@ -80,7 +82,6 @@ function ProfileSettings() {
       console.log(error);
     }
   };
-
 
 
   const getQRCode = async () => {
@@ -223,6 +224,16 @@ function ProfileSettings() {
                 placeholder="Enter your new bio"
                 value={bio}
                 onChange={(e) => setbio(e.target.value)}
+              />
+            </div>
+            <div className="update-nickname">
+              <p>Set a Tournament Display Name: </p>
+              <input
+                type="text"
+                maxLength={32}
+                placeholder="Set a Smasher Name"
+                value={display_name}
+                onChange={(e) => setDisplayName(e.target.value)}
               />
             </div>
             <div className="update-nickname">
