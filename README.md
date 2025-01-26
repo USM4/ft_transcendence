@@ -1,168 +1,105 @@
 # ft_transcendence
 
--> Creating the folder structure for the project  
--> installed the envirement for the backend (DRF)  
--> Design the authentification (Sign In && Sign Up)  
--> Implemented the design in frontend with react.js  
--> learning more about JWT in Django Rest Framework for implementing the backend authentification   
--> (to do ) design more frames for the project ...  
+## Project Structure & Workflow
 
-# DRF  
-**Model (Database Layer)**
->A model in Django (or DRF) represents the structure of your data and the tables in the database/. Think of a model as a rgb(0, 191, 255) print for   creating objects that are stored in a database.  
->Imagine you are filling out a form for a library card. The form asks for specific details like your name, email, and address. The model defines what fields you need (e.g., name, email, address) and the types of data (e.g., text, integers, dates).
+- **Created the folder structure for the project**  
+- **Installed the environment for the backend (DRF)**  
+- **Designed authentication (Sign In & Sign Up)**  
+- **Implemented the frontend design with React.js**  
+- **Learning more about JWT in Django Rest Framework for implementing backend authentication**  
+- **To-do: Design more frames for the project**
 
-**View (Logic Layer)**
-> A view in DRF handles the logic of what happens when a user makes a request (GET, POST, etc.) to a specific URL. It’s where you define what  should be returned when someone requests data or what happens when someone submits data.  
-> Think of a view as a clerk at a library. If you walk into the library (or make a request to a URL), the clerk decides what happens next: they may help you find a book (GET request), or accept your new book for return (POST request).  
+## DRF
 
-**URL (Routing Layer)**
-> A URL is the address or path that someone visits to access a specific view. It’s like the address of a house. In Django, the URL is how the system knows which view to call when a request is made.  
-> When you visit a website, you type a URL (like example.com/books/). That URL leads to a specific page (or view) on the website, which shows you the data you requested (like a list of books).  
+### **Model (Database Layer)**
+A model in Django (or DRF) represents the structure of your data and the tables in the database. Think of a model as a blueprint for creating objects that are stored in a database.  
+For example:  
+- **Fields**: `name`, `email`, `address`
+- **Data types**: `text`, `integer`, `date`
 
-**Steps for JWT authentification**  
+### **View (Logic Layer)**
+A view in DRF handles the logic of what happens when a user makes a request (GET, POST, etc.) to a specific URL. It defines what happens when a user submits data.  
+Think of it as a **clerk at the library** who processes requests from customers (users).
 
-![alt text](16new.png)  
+### **URL (Routing Layer)**
+A URL is the address or path that someone visits to access a specific view.  
+For example, `/api/books/` would return a list of books if the server is set up to return data at that URL.
 
-> -> User starts by logging in using a login form implemented with React  
-> -> This causes the React code to send the username and the password to the server address /api/login as an HTTP POST request.  
-> -> If the username and the password are correct, the server generates a token that somehow identifies the logged-in user.  
-> -> The backend responds with a status code indicating the operation was successful and returns the token with the response.  
-> -> The browser saves the token, for example to the state of a React application.  
-> -> When the user creates a new note (or does some other operation requiring identification), the React code sends the token to the server with the request.  
-> -> The server uses the token to identify the user  
+### **JWT Authentication Flow**
+**JWT (JSON Web Tokens)** are used for secure communication between the client and server. Here’s the basic flow:
 
+1. **User logs in** through a React login form.
+2. **React sends a POST request** with the username and password to `/api/login`.
+3. **Server generates a token** after successful authentication.
+4. **Token is returned** to the frontend with a success message.
+5. **Frontend stores the token** (e.g., in the state).
+6. **For any future request**, the frontend sends the token in the HTTP headers.
 
-**OAuth**  
--> What is OAuth?
->OAuth (Open Authorization) is a standard protocol that allows third-party services to exchange secure user data without exposing   
->their passwords. It involves a flow where the user grants permission to an app (your DRF backend) to access certain information  
->from their account (like name, email) on a provider (Google, Facebook, etc.).  
+---
 
-**How OAuth works**
-* Library (42 API): The place where you can get the book (user data).  
-* Library Card (Authorization code): To rent a book, you first need to get a library card.  
-* Library Reception (Backend): You have to show your library card to the reception to get the actual book.  
-* Book (Access token): Once the reception verifies your card, they give you the book.  
-* You: The user.  
-  
-1. Step 1: You (user) walk to the library (42 API) and ask for a library card (authorization code).  
-2.  Step 2: The library gives you a card (authorization code) and tells you to go to the reception (backend) to get the book.  
-3. Step 3: You take your library card to the reception (backend) and give it to them. They check your card to verify if it's valid.  
-4. Step 4: If your card is valid, the reception (backend) gives you the book (access token), which is what you wanted.  
-5. Step 5: You (the user) now have the book (access token), and you can start reading it (accessing user data).  
+## OAuth
+OAuth allows secure third-party access to user data **without exposing passwords**.  
+It involves these steps:
+1. **User requests access** to a third-party service (e.g., Google).
+2. **Authorization code is issued**, which is then used by the backend to get an access token.
 
-**Use Cases Of**
+### How OAuth Works:
+- **Library**: 42 API (The third-party service where user data is stored)
+- **Library Card**: The authorization code given to the user.
+- **Reception**: The backend that verifies the authorization code.
+- **Book**: The access token returned to the user.
 
-* Use View when developing a traditional web application with HTML responses.  
-* Use APIView when building APIs that need to return JSON and handle different data formats, as well  as when you need built-in support for authentication and permissions.  
+---
 
-# FriendShip
+## **Friendship Module**
 
-**Database Relationships**  
-  
->Many To Many  
-* A user can have many friends.  
-* A friend can be a friend of many users.  
->One to Many  
-* Teacher and Students: One teacher can teach many students, but each student only has one main teacher.  
-> One to One    
-* Person and Passport: Each person has one passport, and each passport is linked to one person.  
+### **Database Relationships**  
+- **Many to Many**: A user can have many friends, and each friend can be a friend of many users.
+- **One to Many**: A teacher can have many students, but each student has only one teacher.
+- **One to One**: A person can have only one passport.
 
+### **Key Concepts:**
 
-**Foreign Key (FK):**  
->A Foreign Key creates a link between two tables.  
->It connects one table's primary key to another table, showing relationships between records.  
+- **Foreign Key (FK)**: A foreign key connects one table’s primary key to another table, establishing a relationship between the two tables.
+- **Primary Key (PK)**: A primary key uniquely identifies each row in a table.
 
-**Primary Key (PK):**
->A Primary Key is a unique identifier for each row in a table. No two rows can have the same primary key.  
+#### **Example Relationships:**
 
-**friendships_initiated**
-* is the list of people you sent friend requests to.  
+- **friendships_initiated**: List of users that you have sent friend requests to.
+- **friendships_received**: List of users who have sent you friend requests.
 
-**friendships_received**  
-* is the list of people who sent you friend requests.  
+---
 
-**CASCADE:**
->When the referenced object is deleted,  
->also delete the objects that have references to it (when you remove a blog post for instance,  
->you might want to delete comments as well). SQL equivalent: CASCADE.  
+## **WebSockets and Real-time Communication**
+WebSockets are used to create **persistent, two-way connections** between the client and server, allowing real-time communication.  
+For example:
+- **Django Channels** enables this functionality, improving interaction without needing to refresh the page or open multiple connections.
 
-**Send Friend Request**  
-1. we get the user id whom we will send friend request  
-2. create a new friend request instance where we set to_user = the user whom the request will be sent to ,  
-3. from_user will be the user who is sending the request i.e request.user or current user  
--> source : [text](https://medium.com/analytics-vidhya/add-friends-with-689a2fa4e41d)
+---
 
-**Accept Friend Request**  
+## **Two-Factor Authentication (2FA)**  
+2FA is an additional layer of security where the user’s device (like a phone with Google Authenticator) generates a time-based code (TOTP) to verify identity.  
+- **pyotp.random_base32()** generates a random base32 string for the shared secret.
 
-1. we get the request id of the request we are going to accept  
-2. also we make sure that to_user of the request is the current user i.e the user whom the request is sent is the current user accesing the request ,  
-3. then we add the current user to from_user’s ( the user who sent the request) friends field  
-4. we also add the from_user to the current user’s friends field  
+---
 
-**The auto_now_add**  
-* will set the timezone.now() only when the instance is created, and auto_now will update the field every time the save a method is called.  
+## **File Storage: Static vs. Media**
 
-**Fiter() in React and Django**  
+1. **Static Directory**: Stores files that do not change, like images, CSS, and JavaScript.
+2. **Media Directory**: Stores user-generated files like profile pictures, QR codes, etc.
 
-* In React, filter() is a method available on JavaScript arrays. It creates a new array with all elements that pass the test implemented by the provided function.  
-* In Django REST Framework, filter() is often used in the context of querysets to retrieve a subset of records from the database based on certain criteria. It is part of Django’s ORM   (Object-Relational Mapping).  
+---
 
-**WebSockets**
-* 
-WebSockets are a communication protocol that enables a persistent, two-way connection between a client (like a web browser) and a server. This differs from traditional HTTP, where each request from the client to the   server initiates a new connection and the server sends back a response, closing the connection right after. WebSockets, on the other hand, keep the connection open, allowing real-time, low-latency communication between   the client and server.  
- **Django Channels**  
+## **Password Hashing (PBKDF2)**  
+Django’s `set_password()` method uses the PBKDF2 algorithm to hash passwords.  
+- The hash format is: `algorithm$iterations$salt$hash`
 
-![alt text](1_aXz4upk63jPFzJFPeI4OPQ.webp)  
+---
 
-
-**The difference Between HTTP and WebSockets**
-
-![alt text](HTTP-Connection.png)
-
-![alt text](WebSocket-Connection.png)
-
-**About the 2FA**
-
-* The TOTP algorithm requires a shared secret key between the server and the user's device (often their phone with an authenticator app like Google Authenticator or Authy). This shared secret key is a unique identifier for generating the 2FA codes.
-
-* pyotp.random_base32() creates this random secret key in base32 encoding, which is compatible with most 2FA apps.
-* The generated string looks random, e.g., JBSWY3DPEHPK3PXP.
-* This key will be stored on the server and shared with the user (usually via a QR code). Once stored, both the server and the user's authenticator app will   generate matching codes based on this key.  
-
-
-**For storing dynamically** 
-
-1. static directory:
-
-* Stores files that are part of your app itself, like JavaScript, CSS, and images used for design  (logos, icons, etc.).
-* These files don’t change per user and are typically version-controlled because they are a core part of your app.
-* Configured with STATIC_URL and STATICFILES_DIRS.  
-
-2. media directory:  
-
-* Stores user-generated or dynamic content, like profile pictures or QR codes generated for * specific users.  
-* These files change depending on user actions or content and aren’t typically tracked by   versioncontrol.
-* Configured with MEDIA_URL and MEDIA_ROOT.  
-
--> REMOTE GAME INSTRUCTIONS
-
-
-**SET_PASSWORD() ALGORITHM**
-
-* Django's set_password() uses the PBKDF2 (Password-Based Key Derivation Function 2) algorithm by default, with SHA256 as the hash function. It:
-* Generates a random salt
-* Performs multiple iterations (default: 600,000 in recent Django versions)
-* Combines password with salt
-* Produces a 256-bit derived key
-* The final stored password format is: <algorithm>$<iterations>$<salt>$<hash>
-* You can customize the algorithm and iterations in Django settings with PASSWORD_HASHERS and PASSWORD_HASHER_OPTIONS.
-
-**This creates an AI opponent that:**
-
-* Only moves when the ball is moving towards it
-* Updates its position every second
-* Has a slight delay in tracking the ball
-* Stays within the game boundaries
-* Tries to center itself on the ball's position
+## **AI Opponent in Ping Pong Game**  
+The AI opponent:
+- **Moves only when the ball is moving towards it.**
+- **Updates its position every second.**
+- **Has a slight delay in following the ball’s movements.**
+- **Stays within the game boundaries.**
+- **Centers itself on the ball’s position.**
