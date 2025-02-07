@@ -4,6 +4,7 @@ import SaveIcon from '@mui/icons-material/Save';
 
 const RenderPlayers = ( {onPlayersChange}) => {
   const [isEditing, setIsEditing] = useState(null);
+  
   const [players, setPlayers] = useState([
     { name: "Player_1" },
     { name: "Player_2" },
