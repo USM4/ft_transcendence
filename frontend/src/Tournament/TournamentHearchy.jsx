@@ -6,37 +6,43 @@ const TournamentHearchy = () => {
 	const navigate = useNavigate();
 	const [winner, setWinner] = useState("");
 	const playersName = JSON.parse(localStorage.getItem('players'));
+	useEffect(() => {
+		if (!playersName) {
+			navigate("/tournament/options/tournament-registration");
+		}
+	}, []);
 
 	const [tournamentState, setTournamentState] = useState({
         players: {
             matche1: {
-                Player1: playersName[0].name,
-                Player2: playersName[1].name,
+                Player1: playersName ? playersName[0].name : "Player1",
+                Player2: playersName ? playersName[1].name : "Player2",
                 score1: 0,
                 score2: 0,
                 winner: null,
             },
             matche2: {
-                Player1: playersName[2].name,
-                Player2: playersName[3].name,
+                Player1: playersName ? playersName[2].name : "Player3",
+                Player2: playersName ? playersName[3].name : "Player4",
                 score1: 0,
                 score2: 0,
                 winner: null,
             },
             matche3: {
-                Player1: playersName[4].name,
-                Player2: playersName[5].name,
+                Player1: playersName ? playersName[4].name : "Player5",
+                Player2: playersName ? playersName[5].name : "Player6",
                 score1: 0,
                 score2: 0,
                 winner: null,
             },
             matche4: {
-                Player1: playersName[6].name,
-                Player2: playersName[7].name,
+                Player1: playersName ? playersName[6].name : "Player7",
+                Player2: playersName ? playersName[7].name : "Player8",
                 score1: 0,
                 score2: 0,
                 winner: null,
             },
+
         },
         semi_players: {
             matche1: {
@@ -65,8 +71,8 @@ const TournamentHearchy = () => {
         },
         ongoing:
 		{
-			Player1: playersName[0].name,
-            Player2: playersName[1].name,
+			Player1: playersName ? playersName[0].name : "Player1",
+			Player2: playersName ? playersName[1].name : "Player2",
 			score1: 0,
 			score2: 0,
 			winner: null,

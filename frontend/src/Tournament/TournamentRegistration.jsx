@@ -59,9 +59,9 @@ const TournamentRegistration = () => {
                 <WarningAmberIcon fontSize="large" style={{color: 'yellow'}}/>
                 <h3>Tournament Rules:</h3>
                 <ul>
+                  <li>Proposing Tournament must be irl</li>
                   <li>Players must be available at match time.</li>
-                  <li>Players should be more than 3 (3la hasab)</li>
-                  <li>10 minutes break between each round.</li>
+                  <li>Click on (Start The Party 🔥) Button to Start each match </li>
                 </ul>
                 <div className="next-to-trnmt">
                   <button
