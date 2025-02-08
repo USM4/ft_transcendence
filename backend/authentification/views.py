@@ -187,6 +187,8 @@ class LogoutView(APIView):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         response.delete_cookie('refresh')
+        if request.user.is_2fa_enabled:
+            request.user.save()
         return response
   
 class GameLeaderboard(APIView):
@@ -258,6 +260,75 @@ def get_game(user):
     except Exception as e:
         return Response({'error': str(e)}, status=400)
 
+class GameLeaderboard(APIView):
+
+    def get(self, request):
+        try:
+            game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2', 'winner', 'score_player1', 'score_player2', 'start_time', 'end_time'))
+            player_xp = {}
+            for g in game:
+                if g['player1_id'] not in player_xp:
+                    player_xp[g['player1_id']] = 0
+                if g['player2_id'] not in player_xp:
+                    player_xp[g['player2_id']] = 0
+                player_xp[g['player1_id']] += g['xp_gained_player1']
+                player_xp[g['player2_id']] += g['xp_gained_player2']
+            sorted_xp = dict(sorted(player_xp.items(), key=lambda item: item[1], reverse=True))
+            data = []
+            for player_id, xp in sorted_xp.items():
+                if not player_id:
+                    continue
+                player = Client.objects.get(id=player_id)
+                data.append({
+                    'id': player_id,
+                    'username': player.username,
+                    'avatar': player.avatar if player.avatar else 'http://localhost:8000/media/avatars/anonyme.png',
+                    'xp': xp
+                })
+
+            return Response({'game_xp': data[:5]}, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
+
+def get_game(user):
+    try:
+        game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('game_id'))
+        r = []
+        for g in game:
+            player1 = g.player1_id if g.player1_id == user else g.player2_id
+            player2 = g.player2_id if g.player2_id != user else g.player1_id
+
+
+            if g.end_time:
+                time_difference = abs(g.end_time - g.start_time)
+            else:
+                time_difference = timedelta(seconds=0)
+
+            total_seconds = time_difference.total_seconds()
+            hours = int(total_seconds // 3600)
+            minutes = int((total_seconds % 3600) // 60)
+            seconds = int(total_seconds % 60)
+
+            formatted_duration = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
+
+            r.append([
+                {
+                    'id': g.game_id,
+                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else 'http://localhost:8000/media/avatars/anonyme.png'},
+                    'winner': g.winner.username,
+                    'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
+                    'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
+                    'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
+                    'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
+                    'duration': formatted_duration,
+                    'total_seconds': total_seconds,
+                }
+            ])
+        return r
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
@@ -274,6 +345,7 @@ class DashboardView(APIView):
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else DEFAULT_AVATAR,
+            'display_name': user.display_name,
             'twoFa': user.is_2fa_enabled,
             'bio': user.bio,
             'is_online': user.is_online,
@@ -623,6 +695,7 @@ class UpdateUserInfos(APIView):
         bio = request.data.get('bio')
         phone = request.data.get('phone')
         avatar_file = request.FILES.get('avatar')
+        display_name = request.FILES.get('display_name')
 
         if avatar_file:
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
@@ -630,13 +703,16 @@ class UpdateUserInfos(APIView):
             file_url = file_url.replace("http://", "https://")
             file_url = file_url.replace(":80", ":443")
             user.avatar = file_url
+        
+        if display_name:
+            user.display_name = display_name
 
         if bio:
             user.bio = bio
         if phone:
             user.phone = phone
         user.save()
-        user = Client.objects.get(id=user.id)  
+        user = Client.objects.get(id=user.id)
         return Response(
             {
                 'message': 'User infos updated successfully',
@@ -644,5 +720,6 @@ class UpdateUserInfos(APIView):
                     'id': user.id,
                     'email': user.email,
                     'username': user.username,
+                    'display_name': user.display_name,
                     'avatar': user.avatar
             },})

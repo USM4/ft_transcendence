@@ -11,7 +11,7 @@ function UserDataProvider({ children }) {
 
   useEffect(() => {
     const getData = async () => {
-      if (pathname !== '/signin' && pathname !== '/signup' && !pathname.startsWith('/2fa') && pathname !== '/about' && pathname !== '/howtoplay') {
+      if (pathname !== '/signin' && pathname !== '/signup' && !pathname.startsWith('/2fa') && pathname !== '/about' && pathname !== '/howtoplay' && pathname !== '/') {
         try {
             const host=import.meta.env.VITE_HOST_URL;
             const response = await fetch(`${host}/auth/dashboard/`, {

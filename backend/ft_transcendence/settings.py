@@ -139,8 +139,8 @@ if os.getenv('DJANGO_ENV') == 'development':
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME' : timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
     'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
     'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HttpOnly
@@ -177,21 +177,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis", 6379)],  # match Redis hostname and port as defined docker setup.
-        },
-    },
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    HOST_URL,
-]
-
-
-CSRF_TRUSTED_ORIGINS = [
-    HOST_URL,
+    'http://localhost:5173',
 ]
 
 # Internationalization
@@ -220,7 +212,7 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False 
+SESSION_COOKIE_SAMESITE = None
+CSRF_COOKIE_SAMESITE = None 

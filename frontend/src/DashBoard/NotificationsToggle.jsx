@@ -33,7 +33,6 @@ function NotificationsToggle({ displayNotification }) {
     }
   };
   
-
   const acceptFriendRequest = async (notificationItem) => {
     try {
       const host=import.meta.env.VITE_HOST_URL;

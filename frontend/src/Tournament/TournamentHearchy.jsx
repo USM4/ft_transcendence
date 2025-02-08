@@ -69,13 +69,13 @@ const TournamentHearchy = () => {
             },
         },
         ongoing:
-        {
-            Player1: playersName ? playersName[0].name : "Player1",
-            Player2: playersName ? playersName[1].name : "Player2",
-            score1: 0,
-            score2: 0,
-            winner: null,
-        }
+		{
+			Player1: playersName ? playersName[0].name : "Player1",
+			Player2: playersName ? playersName[1].name : "Player2",
+			score1: 0,
+			score2: 0,
+			winner: null,
+		}
     });
 
 	useEffect(() => {

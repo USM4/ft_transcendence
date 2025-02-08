@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import { UserDataContext } from '../DashBoard/UserDataContext.jsx';
 
 const RenderPlayers = ( {onPlayersChange}) => {
   const [isEditing, setIsEditing] = useState(null);
-  
+  const { user } = useContext(UserDataContext);
   const [players, setPlayers] = useState([
-    { name: "Player_1" },
+    { name: user.display_name},
     { name: "Player_2" },
     { name: "Player_3" },
     { name: "Player_4" },
@@ -35,7 +36,7 @@ const RenderPlayers = ( {onPlayersChange}) => {
       {players.map((player, index) => (
         <div key={index} className="player">
           <h3>Player Name:</h3>
-          {isEditing === index ? (
+          {(isEditing === index && index !== 0) ? (
             <input
               type="text"
               value={player.name}
@@ -49,7 +50,7 @@ const RenderPlayers = ( {onPlayersChange}) => {
             </span>
           )}
           <button onClick={() => setIsEditing(isEditing === index ? null : index)}>
-            {isEditing === index ? <SaveIcon/> : <EditIcon/>}
+            {index !== 0 && (isEditing === index ? <SaveIcon/> : <EditIcon/>)}
           </button>
         </div>
       ))}

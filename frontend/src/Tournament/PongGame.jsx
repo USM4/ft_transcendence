@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useCallback,useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-import player1Image from '/pensioner.png';
-import player2Image from '/pensioner.png';
-
+import player1Image from "/pensioner.png";
+import player2Image from "/pensioner.png";
 
 const PongGame = () => {
   const navigate = useNavigate();
-  const matche = JSON.parse(localStorage.getItem('matche')) || {};
+  const matche = JSON.parse(localStorage.getItem("matche")) || {};
   useEffect(() => {
     if (!matche.Player1 || !matche.Player2) {
-        navigate("/tournament/options/tournament-registration");
+      navigate("/tournament/options/tournament-registration");
     }
-}, [matche]);
+  }, [matche]);
   const canvasRef = useRef(null);
   const keys = {};
   const ballRef = useRef({
@@ -195,7 +194,6 @@ const PongGame = () => {
       if (keys["ArrowDown"]) {
         moveRightRacket(1);
       }
-      
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -259,8 +257,8 @@ const PongGame = () => {
       }
       matche.score1 = scores.leftPlayer;
       matche.score2 = scores.rightPlayer;
-      localStorage.setItem('matchePlayed', JSON.stringify(matche));
-      localStorage.removeItem('matche');
+      localStorage.setItem("matchePlayed", JSON.stringify(matche));
+      localStorage.removeItem("matche");
       navigate("/tournament/options/play-tournament");
     }
   }, [winner, navigate]);
@@ -281,11 +279,11 @@ const PongGame = () => {
             <div className="glow-effect"></div>
           </div>
         </div>
-        
+
         <div className="vs-container">
           <span className="vs-text">VS</span>
         </div>
-        
+
         <div className="player-card">
           <div className="player-name">
             <h3>{matche.Player2}</h3>
