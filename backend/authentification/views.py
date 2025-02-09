@@ -111,7 +111,11 @@ class ExtractCodeFromIntraUrl(APIView):
     def get(self, request):
         code = request.GET.get('code')
         if not code:
-            return Response({'error':  "Faced a code problem in the url"}, status=400)
+            response = redirect(f'{HOST_URL}/signin')
+            return response
+        
+        # daba nprepariw request l intra bach exchangiw l code b access token
+        token_url = 'https://api.intra.42.fr/oauth/token'
         load_dotenv()
         # daba nprepariw request l intra bach exchangiw l code b access token
         INTRA_TARGET_VIEW = os.getenv('INTRA_TARGET_VIEW')

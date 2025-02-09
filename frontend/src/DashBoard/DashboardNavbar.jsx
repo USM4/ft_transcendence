@@ -11,8 +11,8 @@ import {
   Link,
 } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Search, Bell, User } from "lucide-react";
 import NotificationsToggle from "./NotificationsToggle.jsx";
-import SearchIcon from "@mui/icons-material/Search";
 import { UserDataContext } from "./UserDataContext.jsx";
 import "../App.css";
 
@@ -94,34 +94,36 @@ function DashboardNavbar() {
     <div className="dashboard-navbar">
       <div className="search-btn">
         <div className="search-input">
-          <input placeholder="Search"
-            value={search}
-            onChange={handleSearch}
-          />
+          <input placeholder="Search" value={search} onChange={handleSearch} />
           <button className="search-icon">
-            <SearchIcon color="primary" />
+            <Search color= "white"/>
           </button>
-            {searchToggle && searchResults.length > 0 && (
-              <div className="search-results" ref={dropdownRef}>
-                {searchResults.map((result) => (
-                  <div key={result.id}>
-                    <Link
-                      to={`/dashboard/profile/${result.username}`}
-                      className="search-result"
-                      onClick={() => {setSearchToggle(false); setSearch('')}}
-                    >
-                      <img
-                        className="search-result-img"
-                        src={result.avatar}
-                        alt=""
-                      />
-                      <p className="search-result-username" key={result.id}>{result.username}</p>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {searchToggle && searchResults.length > 0 && (
+            <div className="search-results" ref={dropdownRef}>
+              {searchResults.map((result) => (
+                <div key={result.id}>
+                  <Link
+                    to={`/dashboard/profile/${result.username}`}
+                    className="search-result"
+                    onClick={() => {
+                      setSearchToggle(false);
+                      setSearch("");
+                    }}
+                  >
+                    <img
+                      className="search-result-img"
+                      src={result.avatar}
+                      alt=""
+                    />
+                    <p className="search-result-username" key={result.id}>
+                      {result.username}
+                    </p>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <div className="notification-and-profile">
         <div className="notification">
@@ -129,11 +131,16 @@ function DashboardNavbar() {
             onClick={() => setShowNotification(!showNotification)}
             className="notification-icon"
           >
-            <NotificationsIcon color="primary"/>
+            <div className="notification-icon-wrapper">
+              <Bell
+                size={20}
+                color="white"
+              />
+            </div>
           </button>
           {showNotification && (
             <div className="notifications-container" ref={dropdownRef}>
-              <NotificationsToggle displayNotification={showNotification}/>
+              <NotificationsToggle displayNotification={showNotification} />
             </div>
           )}
         </div>
