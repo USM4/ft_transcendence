@@ -26,7 +26,7 @@ class RefreshTokenMiddleware(MiddlewareMixin):
         refresh_token = request.COOKIES.get('refresh')
         # If there's no access token, skip (could be an anonymous user)
         if not access_token or not refresh_token:
-            return
+            return 
       
         try:
             AccessToken(access_token)

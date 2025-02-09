@@ -698,8 +698,8 @@ class UpdateUserInfos(APIView):
         avatar = request.data.get('avatar')
         bio = request.data.get('bio')
         phone = request.data.get('phone')
+        display_name = request.data.get('display_name')
         avatar_file = request.FILES.get('avatar')
-        display_name = request.FILES.get('display_name')
 
         if avatar_file:
             file_path = default_storage.save(f"avatars/{avatar_file.name}", avatar_file)
@@ -707,10 +707,8 @@ class UpdateUserInfos(APIView):
             file_url = file_url.replace("http://", "https://")
             file_url = file_url.replace(":80", ":443")
             user.avatar = file_url
-        
         if display_name:
             user.display_name = display_name
-
         if bio:
             user.bio = bio
         if phone:

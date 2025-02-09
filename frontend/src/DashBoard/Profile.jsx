@@ -21,7 +21,6 @@ import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 import { SocketContext } from "./SocketContext.jsx";
 import toast from "react-hot-toast";
 function Profile() {
-
   const { socket } = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
@@ -29,22 +28,38 @@ function Profile() {
   const [stranger, setStranger] = useState(false);
   const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
-  const [pending, setPending] = useState(false);
-  const isFriend = friends.some((friend) => friend.username);
+
+  useEffect(() => {
+    if (socket === null) return;
+
+    socket.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+
+      if (data.type === "friend_request_accepted") {
+        setFriends((prevFriends) => {
+          if (!prevFriends.some((friend) => friend.id === data.friend.id)) {
+            return [...prevFriends, data.friend];
+          }
+          return prevFriends;
+        });
+      } else if (data.type === "friend_removed_you") {
+        setFriends((prevFriends) => {
+          return prevFriends.filter((friend) => friend.id !== data.friend.id);
+        });
+      }
+    };
+  }, [socket]);
 
   const sendFriendRequest = async (to_user) => {
-    setPending(true);
-    const response = await fetch(
-      `${host}/auth/send_friend_request/`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ to_user: to_user }),
-      }
-    );
+    const host = import.meta.env.VITE_HOST_URL;
+    const response = await fetch(`${host}/auth/send_friend_request/`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ to_user: to_user }),
+    });
     const data = await response.json();
     if (response.ok) {
       toast.success(data.message);
@@ -60,43 +75,60 @@ function Profile() {
     else if (switchUser.friendship_status === "friends") return "Remove Friend";
     else return "Add Friend";
   };
-  // const sendFriendRequest = async (to_user) => {
-  //   setPending(true);
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.send(JSON.stringify({
-  //       type: "friend_request",
-  //       to_user: to_user,
-  //       from_user: user.id,
-  //     }));
-  //   }
-  // };
 
-  // const sendFriendRequest = async (to_user) => {
-  //   setPending(true);
-  //   if (socket && socket.readyState === WebSocket.OPEN) {
-  //     socket.send(JSON.stringify({
-  //       type: "friend_request",
-  //       to_user: to_user,
-  //       from_user: user.id,
-  //     }
-  //   ));
-  //   }
-  //   else {
-  //     console.error('WebSocket not connected');
-  //   }
-  // };
+  const removeFriend = async (to_user) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to remove friend !?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, proceed!",
+      confirmButtonColor: "#28a745",
+      cancelButtonText: "No, cancel",
+      cancelButtonColor: "#dc3545",
+      background: "#000",
+      color: "#fff",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const host = import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/remove_friend/`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ friend_id: to_user }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message);
+          setStrangerData((prevData) => ({
+            ...prevData,
+            friendship_status: "not_friend",
+          }));
+        } else toast.error(data.error);
+      }
+    });
+  };
+  const handleFriendShip = async () => {
+    if (switchUser.friendship_status === "friends") {
+      await removeFriend(switchUser.id);
+      setFriends((prevFriends) =>
+        prevFriends.filter((friend) => friend.id !== switchUser.id)
+      );
+    } else if (switchUser.friendship_status === "pending")
+      toast.error("Friendship request already sent");
+    else sendFriendRequest(switchUser.id);
+  };
 
   useEffect(() => {
     if (username !== user?.username) {
       const fetchStranger = async () => {
-        const host=import.meta.env.VITE_HOST_URL;
-        const response = await fetch(
-          `${host}/auth/profile/${username}/`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const host = import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/profile/${username}/`, {
+          method: "GET",
+          credentials: "include",
+        });
         const data = await response.json();
         if (response.ok) {
           setStranger(true);
@@ -166,7 +198,7 @@ function Profile() {
           <div className="prfl-chart">
             <div className="prfl-chart-title"> Statistics </div>
             <div className="profile-barchart">
-              <ProfileBarChart profile={switchUser} is_user={stranger}/>
+              <ProfileBarChart profile={switchUser} is_user={stranger} />
             </div>
           </div>
           <div className="history-and-radar">
@@ -175,13 +207,13 @@ function Profile() {
                 <p>Match History</p>
               </div>
               <div className="prfl-match-history-results">
-                <ProfileMatchHistory profile={switchUser} is_user={stranger}/>
+                <ProfileMatchHistory profile={switchUser} is_user={stranger} />
               </div>
             </div>
             <div className="prfl-radar">
               <div className="prfl-radar-title">Skills</div>
               <div className="prfl-radar-component">
-                <ProfileRadar profile={switchUser} is_user={stranger}/>
+                <ProfileRadar profile={switchUser} is_user={stranger} />
               </div>
             </div>
           </div>

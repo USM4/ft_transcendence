@@ -231,7 +231,7 @@ function ProfileSettings() {
               <p>Set a Tournament Display Name: </p>
               <input
                 type="text"
-                maxLength={32}
+                maxLength={9}
                 placeholder="Set a Smasher Name"
                 value={display_name}
                 onChange={(e) => setDisplayName(e.target.value)}
