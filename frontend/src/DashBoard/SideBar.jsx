@@ -1,37 +1,37 @@
 import React, { useContext } from "react";
 import "../App.css";
-import HomeIcon from "@mui/icons-material/Home";
-import SendIcon from "@mui/icons-material/Send";
-import GamepadIcon from "@mui/icons-material/Gamepad";
-import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
-import PersonIcon from '@mui/icons-material/Person';
-import ReorderIcon from "@mui/icons-material/Reorder";
-import TextsmsIcon from '@mui/icons-material/Textsms';
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import {
+  House,
+  MessageCircleHeart,
+  Gamepad,
+  PersonStanding,
+  CornerDownLeft,
+} from "lucide-react";
 function SideBar({username}) {
   const navigate = useNavigate();
   const SideBarData = [
     {
       title: "Home",
-      icon: <HomeIcon />,
+      icon: <House color = "white" size={30} />,
       link: "/dashboard",
     },
     {
       title: "Chat",
-      icon: <TextsmsIcon/>,
+      icon: <MessageCircleHeart color = "white" size={30} />,
       // chat scoope
       link: "/chat",
     },
     {
       title: "Game",
-      icon: <GamepadIcon />,
+      icon: <Gamepad color = "white" size={30} />,
       // Game scoope
       link: "/tournament/options",
     },
     {
       title: "Profile",
-      icon: <PersonIcon />,
+      icon: <PersonStanding color = "white" size={30} />,
       link: `/dashboard/profile/${username}`,
     },
   ];
@@ -63,10 +63,11 @@ function SideBar({username}) {
     }
   const logout = {
     title: "Logout",
-    icon: <KeyboardReturnIcon />,
+    icon: <CornerDownLeft color="white"/>,
     link: "/",
   };
   return (
+    
     <div className="SideBar">
       <ul>
         {SideBarData.map((value, key) => {
@@ -78,7 +79,6 @@ function SideBar({username}) {
               onClick={() => {
                 navigate(value.link);
               }}
-        
             >
               <div>{value.icon}</div>
             </li>
