@@ -8,6 +8,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q 
+from django.contrib.auth import get_user_model
 from collections import deque
 from game.models import Game
 from urllib.parse import parse_qs
@@ -354,6 +355,9 @@ class GameConsumer(AsyncWebsocketConsumer):
 			}))
 			await self.close()
 	async def connect(self):
+		if not self.scope.get('user').is_authenticated:
+			await self.close()
+			return
 		self.player = {
 			"username": self.scope.get('user').username,
 			"avatar": self.scope.get('user').avatar if self.scope.get('user').avatar else DEFAULT_AVATAR,

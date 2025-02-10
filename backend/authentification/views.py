@@ -71,7 +71,7 @@ class SignInView(APIView):
     def post(self, request):
         parse_login = request.data.get('login')
         password = request.data.get('password')
-
+        username = None
         if not parse_login or not password:
             return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -84,6 +84,9 @@ class SignInView(APIView):
                 return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             username = parse_login
+        if username is None:
+            return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+        
         client = authenticate(username=username, password=password)
         if client:
             refresh = RefreshToken.for_user(client)
@@ -265,7 +268,7 @@ def get_game(user):
         return Response({'error': str(e)}, status=400)
 
 class GameLeaderboard(APIView):
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         try:
             game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2', 'winner', 'score_player1', 'score_player2', 'start_time', 'end_time'))
@@ -363,6 +366,7 @@ class DashboardView(APIView):
         })
 
 class SendFriendRequest(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         from_user = request.user
 
@@ -394,12 +398,14 @@ class SendFriendRequest(APIView):
         return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         notifications = Notification.objects.filter(receiver=request.user, is_read=False)
         data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at, 'notification_type': n.notification_type, 'sender_id': n.sender_id} for n in notifications]
         return Response(data)
 
 class NotificationGameInvite(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         from_user = request.user
         to_user = request.data.get('to_user')
@@ -423,6 +429,7 @@ class NotificationGameInvite(APIView):
         return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         request_type = request.data.get('type')
         request_id = request.data.get('request_id')
@@ -531,6 +538,7 @@ class FriendsList(APIView):
         return Response({"data": data})
 
 class Search(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, query):
         clients = Client.objects.filter(username__icontains=query).exclude(id=request.user.id)
         data = [
@@ -544,6 +552,7 @@ class Search(APIView):
         return Response(data)
 
 class Profile(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         try:
 
@@ -576,6 +585,7 @@ class Profile(APIView):
         })
 
 class RemoveFriend(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         friend_id = request.data.get('friend_id')
         try:
@@ -625,6 +635,7 @@ def generate_otp(username):
 
 
 class QrCode(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         generate_otp(username=request.user.username)
         qrcode_path = os.path.join(settings.MEDIA_ROOT, 'qr_codes', f'{request.user.username}.png')
@@ -635,10 +646,13 @@ class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
         username = request.data.get('username')
-        user = Client.objects.get(username=username)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
-            
+        try:
+            user = Client.objects.get(username=username)
+        except Client.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+             
         totp = pyotp.totp.TOTP(user.secret_key)
         if totp.verify(otp):
             # Set cookies after successful OTP verification
@@ -656,6 +670,7 @@ class CheckOtp(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 class Activate2FA(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         otp = request.data.get('code')
         user = Client.objects.get(username=request.user.username)
@@ -670,6 +685,7 @@ class Activate2FA(APIView):
         return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
 
 class Disable2FA(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         otp = request.data.get('code')
         user = Client.objects.get(username=request.user.username)
@@ -693,6 +709,7 @@ class Disable2FA(APIView):
         return Response({'message': '2FA disabled successfully', 'is_2fa_enabled': False})
 
 class UpdateUserInfos(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         user = request.user
         avatar = request.data.get('avatar')
