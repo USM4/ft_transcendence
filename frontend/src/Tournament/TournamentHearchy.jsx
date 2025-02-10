@@ -263,7 +263,7 @@ const TournamentHearchy = () => {
 			<svg
 				className="tournament-svg"
 				viewBox="0 0 1351 422"
-				xmlns="http://www.w3.org/2000/svg"
+				// xmlns="http://www.w3.org/2000/svg"
 				style={winner ? { filter: 'blur(10px)' } : {}}
 			>
 				<defs>

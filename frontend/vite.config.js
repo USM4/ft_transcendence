@@ -9,6 +9,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
+    allowedHosts: ["e2r10p14"],
     port: 5173
   },
 })
