@@ -47,7 +47,7 @@ function ProfileSettings() {
       if (response.ok) {
         toast.success(data.message);
         setIsEnabled(data.is_2fa_enabled);
-        updateUser((prevUser) => ({ ...prevUser, twoFa: data.is_2fa_enabled }));
+        updateUser((prevUser) => ({ ...prevUser, twoFa: data.is_2fa_enabled}));
       } else {
         toast.error(data.error);
       }
@@ -74,7 +74,7 @@ function ProfileSettings() {
       });
       const data = await response.json();
       if (response.ok) {
-        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.usernam, bio: data.user.bio, phone: data.user.phone, display_name: data.user.display_name }));
+        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.username, bio: data.user.bio, phone: data.user.phone, display_name: data.user.display_name }));
         toast.success(data.message);
       } else {
         toast.error(data.error);
