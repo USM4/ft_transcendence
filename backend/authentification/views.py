@@ -199,7 +199,6 @@ class LogoutView(APIView):
         return response
   
 class GameLeaderboard(APIView):
-
     def get(self, request):
         try:
             game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2', 'winner', 'score_player1', 'score_player2', 'start_time', 'end_time'))
@@ -372,7 +371,7 @@ class SendFriendRequest(APIView):
 
         to_user = request.data.get('to_user')
 
-        if not to_user:
+        if not to_user or not str(to_user).isnumeric():
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -409,6 +408,8 @@ class NotificationGameInvite(APIView):
     def post(self, request):
         from_user = request.user
         to_user = request.data.get('to_user')
+        if not to_user or not str(to_user).isnumeric():
+            return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             to_user = Client.objects.get(id=to_user)
         except Client.DoesNotExist:
@@ -433,6 +434,8 @@ class AcceptFriendRequest(APIView):
     def post(self, request):
         request_type = request.data.get('type')
         request_id = request.data.get('request_id')
+        if not request_id or not request_type:
+            return Response({'error': 'request_id and type are required'}, status=400)
         user_id = Notification.objects.get(id=request_id).sender.id
         to_user_id = Notification.objects.get(id=request_id).receiver.id
         try:
@@ -515,7 +518,6 @@ class FriendsList(APIView):
             xp[friend.friend.id] = []
             for g in game[friend.friend.id]:
                 xp[friend.friend.id].append(g[0]['xp_gained_player1'])
-
         data = [
             {
                 'id': friend.friend.id,
@@ -588,6 +590,8 @@ class RemoveFriend(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         friend_id = request.data.get('friend_id')
+        if not friend_id or not str(friend_id).isnumeric():
+            return Response({'error': 'Friend ID is required'}, status=400)
         try:
             friendship = FriendShip.objects.filter(
                         Q(from_user=request.user, to_user=friend_id) 
@@ -676,8 +680,9 @@ class Activate2FA(APIView):
         user = Client.objects.get(username=request.user.username)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
+        if not request.user.secret_key:
+            return Response({'error': 'Secret key required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = True
@@ -692,9 +697,10 @@ class Disable2FA(APIView):
 
         if not otp:
             return Response({'error': 'OTP is required for desabling'}, status=400)
+        if not request.user.secret_key:
+            return Response({'error': 'Secret key required'}, status=400)
+
         totp = pyotp.totp.TOTP(request.user.secret_key)
-
-
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = False

@@ -5,6 +5,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 import requests
 from django.conf import settings
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework_simplejwt.tokens import AccessToken
 from dotenv import load_dotenv
 # middleware.py
@@ -51,3 +52,9 @@ class RefreshTokenMiddleware(MiddlewareMixin):
             response.delete_cookie('refresh')
 
         return response
+
+class EnforceTrailingSlashMiddleware(MiddlewareMixin):
+    async def __call__(self, request):
+        if not request.path.endswith('/') and request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return JsonResponse({'error': 'API endpoint must end with a slash (/) for non-GET requests'}, status=400)
+        return await super().__call__(request)
