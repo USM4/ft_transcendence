@@ -3,6 +3,7 @@ import Sketch from 'react-p5';
 const Racket = ({ x, y, width, height, color, upKey, downKey, onMove }) => {
   useEffect(() => {
     const handleKeyPress = (event) => {
+      // console.log(event.key);
       if (event.key === upKey) onMove(-10);
       if (event.key === downKey) onMove(10);
     };

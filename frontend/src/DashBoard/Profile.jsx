@@ -21,7 +21,6 @@ import ProfileMatchHistory from "./ProfileMatchHistory.jsx";
 import { SocketContext } from "./SocketContext.jsx";
 import toast from "react-hot-toast";
 function Profile() {
-
   const { socket } = useContext(SocketContext);
   const { user } = useContext(UserDataContext);
   const [stranger_data, setStrangerData] = useState(null);
@@ -29,7 +28,6 @@ function Profile() {
   const [stranger, setStranger] = useState(false);
   const { friends, setFriends } = useContext(FriendDataContext);
   const { username } = useParams();
-
 
   useEffect(() => {
     if (socket === null) return;
@@ -39,7 +37,7 @@ function Profile() {
 
       if (data.type === "friend_request_accepted") {
         setFriends((prevFriends) => {
-          if (!prevFriends.some(friend => friend.id === data.friend.id)) {
+          if (!prevFriends.some((friend) => friend.id === data.friend.id)) {
             return [...prevFriends, data.friend];
           }
           return prevFriends;
@@ -50,24 +48,18 @@ function Profile() {
         });
       }
     };
-
   }, [socket]);
 
-
-
   const sendFriendRequest = async (to_user) => {
-    const host=import.meta.env.VITE_HOST_URL;
-    const response = await fetch(
-      `${host}/auth/send_friend_request/`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ to_user: to_user }),
-      }
-    );
+    const host = import.meta.env.VITE_HOST_URL;
+    const response = await fetch(`${host}/auth/send_friend_request/`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ to_user: to_user }),
+    });
     const data = await response.json();
     if (response.ok) {
       toast.success(data.message);
@@ -98,18 +90,15 @@ function Profile() {
       color: "#fff",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const host=import.meta.env.VITE_HOST_URL;
-        const response = await fetch(
-          `${host}/auth/remove_friend/`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ friend_id: to_user }),
-          }
-        );
+        const host = import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/remove_friend/`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ friend_id: to_user }),
+        });
         const data = await response.json();
         if (response.ok) {
           toast.success(data.message);
@@ -127,8 +116,7 @@ function Profile() {
       setFriends((prevFriends) =>
         prevFriends.filter((friend) => friend.id !== switchUser.id)
       );
-    }
-    else if (switchUser.friendship_status === "pending")
+    } else if (switchUser.friendship_status === "pending")
       toast.error("Friendship request already sent");
     else sendFriendRequest(switchUser.id);
   };
@@ -136,14 +124,11 @@ function Profile() {
   useEffect(() => {
     if (username !== user?.username) {
       const fetchStranger = async () => {
-        const host=import.meta.env.VITE_HOST_URL;
-        const response = await fetch(
-          `${host}/auth/profile/${username}/`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const host = import.meta.env.VITE_HOST_URL;
+        const response = await fetch(`${host}/auth/profile/${username}/`, {
+          method: "GET",
+          credentials: "include",
+        });
         const data = await response.json();
         if (response.ok) {
           setStranger(true);
@@ -213,7 +198,7 @@ function Profile() {
           <div className="prfl-chart">
             <div className="prfl-chart-title"> Statistics </div>
             <div className="profile-barchart">
-              <ProfileBarChart profile={switchUser} is_user={stranger}/>
+              <ProfileBarChart profile={switchUser} is_user={stranger} />
             </div>
           </div>
           <div className="history-and-radar">
@@ -222,13 +207,13 @@ function Profile() {
                 <p>Match History</p>
               </div>
               <div className="prfl-match-history-results">
-                <ProfileMatchHistory profile={switchUser} is_user={stranger}/>
+                <ProfileMatchHistory profile={switchUser} is_user={stranger} />
               </div>
             </div>
             <div className="prfl-radar">
               <div className="prfl-radar-title">Skills</div>
               <div className="prfl-radar-component">
-                <ProfileRadar profile={switchUser} is_user={stranger}/>
+                <ProfileRadar profile={switchUser} is_user={stranger} />
               </div>
             </div>
           </div>

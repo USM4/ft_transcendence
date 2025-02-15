@@ -30,10 +30,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w@)mu=t95zxg_&mu1l13+4d$rd9$4g0i65^1y8b&woqlvlk7st'
+SECRET_KEY = os.getenv('Django_SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 HOST_URL = os.getenv('HOST_URL')
@@ -67,6 +66,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'authentification.middleware.JWTAuthFromCookieMiddleware',
     'authentification.middleware.RefreshTokenMiddleware',
+    'authentification.middleware.EnforceTrailingSlashMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -117,12 +117,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 AUTH_USER_MODEL = 'authentification.Client'
 
@@ -139,8 +133,8 @@ if os.getenv('DJANGO_ENV') == 'development':
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME' : timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME' : timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME' : timedelta(days=5),
     'AUTH_COOKIE': 'client',  # Name of your access token cookie
     'AUTH_COOKIE_SECURE': True,  # Use secure cookies in production
     'AUTH_COOKIE_HTTP_ONLY': True,  # Make the cookie HttpOnly
@@ -179,18 +173,13 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],  # match Redis hostname and port as defined docker setup.
+            "hosts": [("redis", 6379)],
         },
     },
 }
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    HOST_URL,
-]
-
-
-CSRF_TRUSTED_ORIGINS = [
     HOST_URL,
 ]
 
@@ -220,7 +209,7 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False 
+SESSION_COOKIE_SAMESITE = None
+CSRF_COOKIE_SAMESITE = None 

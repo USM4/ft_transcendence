@@ -71,7 +71,7 @@ class SignInView(APIView):
     def post(self, request):
         parse_login = request.data.get('login')
         password = request.data.get('password')
-
+        username = None
         if not parse_login or not password:
             return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -84,6 +84,9 @@ class SignInView(APIView):
                 return Response({"error": "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             username = parse_login
+        if username is None:
+            return Response({'error': "Invalid email or password"}, status=status.HTTP_400_BAD_REQUEST)
+        
         client = authenticate(username=username, password=password)
         if client:
             refresh = RefreshToken.for_user(client)
@@ -111,7 +114,11 @@ class ExtractCodeFromIntraUrl(APIView):
     def get(self, request):
         code = request.GET.get('code')
         if not code:
-            return Response({'error':  "Faced a code problem in the url"}, status=400)
+            response = redirect(f'{HOST_URL}/signin')
+            return response
+        
+        # daba nprepariw request l intra bach exchangiw l code b access token
+        token_url = 'https://api.intra.42.fr/oauth/token'
         load_dotenv()
         # daba nprepariw request l intra bach exchangiw l code b access token
         INTRA_TARGET_VIEW = os.getenv('INTRA_TARGET_VIEW')
@@ -187,10 +194,11 @@ class LogoutView(APIView):
         response = Response({'Logged out successfull': True}, status=200)
         response.delete_cookie('client')
         response.delete_cookie('refresh')
+        if request.user.is_2fa_enabled:
+            request.user.save()
         return response
   
 class GameLeaderboard(APIView):
-
     def get(self, request):
         try:
             game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2', 'winner', 'score_player1', 'score_player2', 'start_time', 'end_time'))
@@ -258,6 +266,75 @@ def get_game(user):
     except Exception as e:
         return Response({'error': str(e)}, status=400)
 
+class GameLeaderboard(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            game = list(Game.objects.values('player1_id', 'player2_id', 'xp_gained_player1', 'xp_gained_player2', 'winner', 'score_player1', 'score_player2', 'start_time', 'end_time'))
+            player_xp = {}
+            for g in game:
+                if g['player1_id'] not in player_xp:
+                    player_xp[g['player1_id']] = 0
+                if g['player2_id'] not in player_xp:
+                    player_xp[g['player2_id']] = 0
+                player_xp[g['player1_id']] += g['xp_gained_player1']
+                player_xp[g['player2_id']] += g['xp_gained_player2']
+            sorted_xp = dict(sorted(player_xp.items(), key=lambda item: item[1], reverse=True))
+            data = []
+            for player_id, xp in sorted_xp.items():
+                if not player_id:
+                    continue
+                player = Client.objects.get(id=player_id)
+                data.append({
+                    'id': player_id,
+                    'username': player.username,
+                    'avatar': player.avatar if player.avatar else f'{HOST_URL}/media/avatars/anonyme.png',
+                    'xp': xp
+                })
+
+            return Response({'game_xp': data[:5]}, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
+
+def get_game(user):
+    try:
+        game = list(Game.objects.filter(Q(player1_id=user) | Q(player2_id=user)).order_by('game_id'))
+        r = []
+        for g in game:
+            player1 = g.player1_id if g.player1_id == user else g.player2_id
+            player2 = g.player2_id if g.player2_id != user else g.player1_id
+
+
+            if g.end_time:
+                time_difference = abs(g.end_time - g.start_time)
+            else:
+                time_difference = timedelta(seconds=0)
+
+            total_seconds = time_difference.total_seconds()
+            hours = int(total_seconds // 3600)
+            minutes = int((total_seconds % 3600) // 60)
+            seconds = int(total_seconds % 60)
+
+            formatted_duration = f"{hours}h {minutes}m {seconds}s" if hours else f"{minutes}m {seconds}s"
+
+            r.append([
+                {
+                    'id': g.game_id,
+                    'player1': {'username': player1.username, 'avatar': player1.avatar if player1.avatar else f'{HOST_URL}/media/avatars/anonyme.png'},
+                    'player2': {'username': player2.username, 'avatar': player2.avatar if player2.avatar else f'{HOST_URL}/media/avatars/anonyme.png'},
+                    'winner': g.winner.username,
+                    'score_player1': g.score_player1 if player1 == g.player1_id else g.score_player2,
+                    'score_player2': g.score_player2 if player1 == g.player1_id else g.score_player1,
+                    'xp_gained_player1': g.xp_gained_player1 if player1 == g.player1_id else g.xp_gained_player2,
+                    'xp_gained_player2': g.xp_gained_player2 if player1 == g.player1_id else g.xp_gained_player1,
+                    'duration': formatted_duration,
+                    'total_seconds': total_seconds,
+                }
+            ])
+        return r
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
 class DashboardView(APIView):
     def get(self, request):
         user = request.user
@@ -274,6 +351,7 @@ class DashboardView(APIView):
             'email': user.email,
             'username': user.username,
             'avatar': user.avatar if user.avatar else DEFAULT_AVATAR,
+            'display_name': user.display_name,
             'twoFa': user.is_2fa_enabled,
             'bio': user.bio,
             'is_online': user.is_online,
@@ -287,12 +365,13 @@ class DashboardView(APIView):
         })
 
 class SendFriendRequest(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         from_user = request.user
 
         to_user = request.data.get('to_user')
 
-        if not to_user:
+        if not to_user or not str(to_user).isnumeric():
             return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -318,15 +397,19 @@ class SendFriendRequest(APIView):
         return Response({'message': 'friend request sent successfully'})
 
 class NotificationList(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         notifications = Notification.objects.filter(receiver=request.user, is_read=False)
         data = [{'id': n.id, 'message': n.message, 'created_at': n.created_at, 'notification_type': n.notification_type, 'sender_id': n.sender_id} for n in notifications]
         return Response(data)
 
 class NotificationGameInvite(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         from_user = request.user
         to_user = request.data.get('to_user')
+        if not to_user or not str(to_user).isnumeric():
+            return Response({'error': 'Recipient user ID is required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             to_user = Client.objects.get(id=to_user)
         except Client.DoesNotExist:
@@ -347,9 +430,12 @@ class NotificationGameInvite(APIView):
         return Response({'message': 'game invite sent successfully'})
 
 class AcceptFriendRequest(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         request_type = request.data.get('type')
         request_id = request.data.get('request_id')
+        if not request_id or not request_type:
+            return Response({'error': 'request_id and type are required'}, status=400)
         user_id = Notification.objects.get(id=request_id).sender.id
         to_user_id = Notification.objects.get(id=request_id).receiver.id
         try:
@@ -432,7 +518,6 @@ class FriendsList(APIView):
             xp[friend.friend.id] = []
             for g in game[friend.friend.id]:
                 xp[friend.friend.id].append(g[0]['xp_gained_player1'])
-
         data = [
             {
                 'id': friend.friend.id,
@@ -455,6 +540,7 @@ class FriendsList(APIView):
         return Response({"data": data})
 
 class Search(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, query):
         clients = Client.objects.filter(username__icontains=query).exclude(id=request.user.id)
         data = [
@@ -468,6 +554,7 @@ class Search(APIView):
         return Response(data)
 
 class Profile(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         try:
 
@@ -500,8 +587,11 @@ class Profile(APIView):
         })
 
 class RemoveFriend(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         friend_id = request.data.get('friend_id')
+        if not friend_id or not str(friend_id).isnumeric():
+            return Response({'error': 'Friend ID is required'}, status=400)
         try:
             friendship = FriendShip.objects.filter(
                         Q(from_user=request.user, to_user=friend_id) 
@@ -549,6 +639,7 @@ def generate_otp(username):
 
 
 class QrCode(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         generate_otp(username=request.user.username)
         qrcode_path = os.path.join(settings.MEDIA_ROOT, 'qr_codes', f'{request.user.username}.png')
@@ -559,10 +650,13 @@ class CheckOtp(APIView):
     def post(self, request):
         otp = request.data.get('otp')
         username = request.data.get('username')
-        user = Client.objects.get(username=username)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
-            
+        try:
+            user = Client.objects.get(username=username)
+        except Client.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+             
         totp = pyotp.totp.TOTP(user.secret_key)
         if totp.verify(otp):
             # Set cookies after successful OTP verification
@@ -580,13 +674,15 @@ class CheckOtp(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 class Activate2FA(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         otp = request.data.get('code')
         user = Client.objects.get(username=request.user.username)
         if not otp:
             return Response({'error': 'OTP is required'}, status=400)
+        if not request.user.secret_key:
+            return Response({'error': 'Secret key required'}, status=400)
         totp = pyotp.totp.TOTP(request.user.secret_key)
-
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = True
@@ -594,15 +690,17 @@ class Activate2FA(APIView):
         return Response({'message': '2FA enabled successfully', 'is_2fa_enabled': True})
 
 class Disable2FA(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         otp = request.data.get('code')
         user = Client.objects.get(username=request.user.username)
 
         if not otp:
             return Response({'error': 'OTP is required for desabling'}, status=400)
+        if not request.user.secret_key:
+            return Response({'error': 'Secret key required'}, status=400)
+
         totp = pyotp.totp.TOTP(request.user.secret_key)
-
-
         if not totp.verify(otp):
             return Response({'error': 'Invalid OTP'}, status=400)
         user.is_2fa_enabled = False
@@ -617,11 +715,13 @@ class Disable2FA(APIView):
         return Response({'message': '2FA disabled successfully', 'is_2fa_enabled': False})
 
 class UpdateUserInfos(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         user = request.user
         avatar = request.data.get('avatar')
         bio = request.data.get('bio')
         phone = request.data.get('phone')
+        display_name = request.data.get('display_name')
         avatar_file = request.FILES.get('avatar')
 
         if avatar_file:
@@ -630,13 +730,14 @@ class UpdateUserInfos(APIView):
             file_url = file_url.replace("http://", "https://")
             file_url = file_url.replace(":80", ":443")
             user.avatar = file_url
-
+        if display_name:
+            user.display_name = display_name
         if bio:
             user.bio = bio
         if phone:
             user.phone = phone
         user.save()
-        user = Client.objects.get(id=user.id)  
+        user = Client.objects.get(id=user.id)
         return Response(
             {
                 'message': 'User infos updated successfully',
@@ -644,5 +745,6 @@ class UpdateUserInfos(APIView):
                     'id': user.id,
                     'email': user.email,
                     'username': user.username,
+                    'display_name': user.display_name,
                     'avatar': user.avatar
             },})

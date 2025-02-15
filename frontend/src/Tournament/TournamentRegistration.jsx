@@ -38,13 +38,17 @@ const TournamentRegistration = () => {
       localStorage.setItem('players', JSON.stringify(players));
       navigate("/tournament/options/play-tournament");
   };
+
   return (
     <div className="tournament-registration-component">
       <div className="Ping-Pong Tournament Registration">
         <div className="registration-title">
           <div className="return-icon">
             <button
-              onClick={() => { navigate("/tournament/options"); }}>
+              onClick={() => {
+                navigate("/tournament/options");
+              }}
+            >
               <ArrowBackIcon fontSize="large" />
             </button>
           </div>
@@ -53,23 +57,19 @@ const TournamentRegistration = () => {
           </div>
         </div>
         <div className="tournament-players-components">
-          <RenderPlayers onPlayersChange={setPlayers}/>
-            <div className="tournament-rules">
-                <WarningAmberIcon fontSize="large" style={{color: 'yellow'}}/>
-                <h3>Tournament Rules:</h3>
-                <ul>
-                  <li>Players must be available at match time.</li>
-                  <li>Players should be more than 3 (3la hasab)</li>
-                  <li>10 minutes break between each round.</li>
-                </ul>
-                <div className="next-to-trnmt">
-                  <button
-                    onClick={handleNext}
-                  >
-                    Next
-                  </button>
-                </div>
+          <RenderPlayers onPlayersChange={setPlayers} />
+          <div className="tournament-rules">
+            <WarningAmberIcon fontSize="large" style={{ color: "yellow" }} />
+            <h3>Tournament Rules:</h3>
+            <ul>
+              <li>Proposing Tournament must be in real life</li>
+              <li>Players must be available at match time</li>
+              <li>click on (Start The Party 🔥) button to start each match</li>
+            </ul>
+            <div className="next-to-trnmt">
+              <button onClick={handleNext}>Next</button>
             </div>
+          </div>
         </div>
       </div>
     </div>

@@ -96,10 +96,48 @@ Django’s `set_password()` method uses the PBKDF2 algorithm to hash passwords.
 
 ---
 
-## **AI Opponent in Ping Pong Game**  
-The AI opponent:
-- **Moves only when the ball is moving towards it.**
-- **Updates its position every second.**
-- **Has a slight delay in following the ball’s movements.**
-- **Stays within the game boundaries.**
-- **Centers itself on the ball’s position.**
+![alt text](WebSocket-Connection.png)
+
+**About the 2FA**
+
+* The TOTP algorithm requires a shared secret key between the server and the user's device (often their phone with an authenticator app like Google Authenticator or Authy). This shared secret key is a unique identifier for generating the 2FA codes.
+
+* pyotp.random_base32() creates this random secret key in base32 encoding, which is compatible with most 2FA apps.
+* The generated string looks random, e.g., JBSWY3DPEHPK3PXP.
+* This key will be stored on the server and shared with the user (usually via a QR code). Once stored, both the server and the user's authenticator app will   generate matching codes based on this key.  
+
+
+**For storing dynamically** 
+
+1. static directory:
+
+* Stores files that are part of your app itself, like JavaScript, CSS, and images used for design  (logos, icons, etc.).
+* These files don’t change per user and are typically version-controlled because they are a core part of your app.
+* Configured with STATIC_URL and STATICFILES_DIRS.  
+
+2. media directory:  
+
+* Stores user-generated or dynamic content, like profile pictures or QR codes generated for * specific users.  
+* These files change depending on user actions or content and aren’t typically tracked by   versioncontrol.
+* Configured with MEDIA_URL and MEDIA_ROOT.  
+
+-> REMOTE GAME INSTRUCTIONS
+
+
+**SET_PASSWORD() ALGORITHM**
+
+* Django's set_password() uses the PBKDF2 (Password-Based Key Derivation Function 2) algorithm by default, with SHA256 as the hash function. It:
+* Generates a random salt
+* Performs multiple iterations (default: 600,000 in recent Django versions)
+* Combines password with salt
+* Produces a 256-bit derived key
+* The final stored password format is: <algorithm>$<iterations>$<salt>$<hash>
+* You can customize the algorithm and iterations in Django settings with PASSWORD_HASHERS and PASSWORD_HASHER_OPTIONS.
+
+**This creates an AI opponent that:**
+
+* Only moves when the ball is moving towards it
+* Updates its position every second
+* Has a slight delay in tracking the ball
+* Stays within the game boundaries
+* Tries to center itself on the ball's position

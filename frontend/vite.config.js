@@ -9,6 +9,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
+    allowedHosts: [process.env.VITE_DOMAIN],
     port: 5173
   },
 })

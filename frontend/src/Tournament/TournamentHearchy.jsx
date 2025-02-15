@@ -69,13 +69,13 @@ const TournamentHearchy = () => {
             },
         },
         ongoing:
-        {
-            Player1: playersName ? playersName[0].name : "Player1",
-            Player2: playersName ? playersName[1].name : "Player2",
-            score1: 0,
-            score2: 0,
-            winner: null,
-        }
+		{
+			Player1: playersName ? playersName[0].name : "Player1",
+			Player2: playersName ? playersName[1].name : "Player2",
+			score1: 0,
+			score2: 0,
+			winner: null,
+		}
     });
 
 	useEffect(() => {
@@ -263,7 +263,7 @@ const TournamentHearchy = () => {
 			<svg
 				className="tournament-svg"
 				viewBox="0 0 1351 422"
-				xmlns="http://www.w3.org/2000/svg"
+				// xmlns="http://www.w3.org/2000/svg"
 				style={winner ? { filter: 'blur(10px)' } : {}}
 			>
 				<defs>

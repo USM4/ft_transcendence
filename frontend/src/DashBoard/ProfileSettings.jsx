@@ -47,7 +47,7 @@ function ProfileSettings() {
       if (response.ok) {
         toast.success(data.message);
         setIsEnabled(data.is_2fa_enabled);
-        updateUser((prevUser) => ({ ...prevUser, twoFa: data.is_2fa_enabled }));
+        updateUser((prevUser) => ({ ...prevUser, twoFa: data.is_2fa_enabled}));
       } else {
         toast.error(data.error);
       }
@@ -57,7 +57,7 @@ function ProfileSettings() {
     setCode("");
   };
   const updateInfos = async () => {
-    if (!avatar && !bio && !phone) {
+    if (!avatar && !bio && !phone && !display_name) {
       toast.error("You must fill at least one field");
       return;
     }
@@ -66,6 +66,7 @@ function ProfileSettings() {
       setbio("");
       setPhone("");
       setAvatar("");
+      setDisplayName("");
       const response = await fetch(`${host}/auth/update_infos/`, {
         method: "POST",
         credentials: "include",
@@ -73,7 +74,7 @@ function ProfileSettings() {
       });
       const data = await response.json();
       if (response.ok) {
-        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.username }));
+        updateUser((prevUser) => ({ ...prevUser, avatar: data.user.avatar, email: data.user.email, username: data.user.username, bio: data.user.bio, phone: data.user.phone, display_name: data.user.display_name }));
         toast.success(data.message);
       } else {
         toast.error(data.error);
@@ -230,7 +231,7 @@ function ProfileSettings() {
               <p>Set a Tournament Display Name: </p>
               <input
                 type="text"
-                maxLength={32}
+                maxLength={9}
                 placeholder="Set a Smasher Name"
                 value={display_name}
                 onChange={(e) => setDisplayName(e.target.value)}
